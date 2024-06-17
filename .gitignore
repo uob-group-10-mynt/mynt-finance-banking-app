@@ -1,7 +1,7 @@
-out/
-webApp/
-node_modules/
 .vscode 
 .idea
-android/
-ios/
+view/out/
+view/webApp/
+view/node_modules/
+view/android/
+view/ios/
