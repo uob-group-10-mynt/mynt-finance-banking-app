@@ -1,3 +1,7 @@
+# Ide 
+.vscode/
+.idea/
+
 # Front end Project
 view/ios/
 view/android/
