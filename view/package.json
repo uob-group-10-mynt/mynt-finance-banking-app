@@ -9,7 +9,7 @@
     "compileDesktop": "electron-forge make",
     "packageReact": "webpack --mode production",
     "devReact": "webpack server --mode development",
-    "packageMobile":"webpack --mode production && npx cap sync"
+    "packageMobile":"webpack --mode production && npx cap add ios && npx cap add android && npx cap sync"
   },
   "author": "Group10",
   "license": "ISC",
