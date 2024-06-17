@@ -1,8 +1,8 @@
 .vscode 
 .idea
+view/ios/
+view/android/
 view/out/
 view/webApp/
 view/node_modules/
-view/ios/
-view/android/
 
