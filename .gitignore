@@ -1,0 +1,7 @@
+out/
+webApp/
+node_modules/
+.vscode 
+.idea
+android/
+ios/
