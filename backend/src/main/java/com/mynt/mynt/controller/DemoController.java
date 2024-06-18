@@ -15,8 +15,15 @@ public class DemoController {
 
   private final DemoService demoService;
 
+  @GetMapping("")
+  public String defalt(){
+    return "happy day!!!";
+  }
+
+
   @GetMapping("/healthcheck")
   public String getHealthCheck() {
     return "Health Check";
   }
+
 }
