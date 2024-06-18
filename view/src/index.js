@@ -1,12 +1,11 @@
 import React from 'react';
-import ReactDom from 'react-dom';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './app'; // main component
 
-const App = () => {
-    return (
-        <div>
-            <h1>Hello world1!! - within react</h1>
-        </div>
-    );
-}
-
-ReactDom.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+    <React.StrictMode>
+        <App/>
+    </React.StrictMode>,
+    document.getElementById('root')
+);
