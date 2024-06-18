@@ -1,22 +1,21 @@
 package com.mynt.mynt.util.dto;
 
-import com.mynt.mynt.util.exceptions.MyntExceptions;
+import com.mynt.mynt.util.exceptions.ErrorResponse;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.xml.transform.Result;
 
 @Getter
+@Setter
+@AllArgsConstructor
 public class ResultResponseDTO<T> {
 
   private static final String SUCCESS = "SUCCESS";
   private static final String ERROR = "ERROR";
-  private final T object;
-  private String result;
-
-  public ResultResponseDTO(String result, T object) {
-    this.result = result;
-    this.object = object;
-  }
+  private String message;
+  private final T result;
 
   public static <T> ResultResponseDTO<T> success() {
     return new ResultResponseDTO<>(SUCCESS, null);
@@ -26,7 +25,7 @@ public class ResultResponseDTO<T> {
     return new ResultResponseDTO<>(SUCCESS, object);
   }
 
-  public static <T> ResultResponseDTO<T> error(T exception) {
-    return new ResultResponseDTO<>(ERROR, exception);
+  public static <T> ResultResponseDTO<T> error(T errorResponse) {
+    return new ResultResponseDTO<>(ERROR, errorResponse);
   }
 }
