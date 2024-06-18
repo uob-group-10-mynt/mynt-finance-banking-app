@@ -16,7 +16,6 @@ public class Auth {
   @GetMapping("")
   public String defalt(){
 
-
     // recive username && password 
     // check DB for if user exits 
     // check for correct password 
@@ -26,6 +25,13 @@ public class Auth {
     // 2.add infomation(claims) into data 
     // 3.hash steps 1 and 2 to create the secret key  
 
+    // ==========================================
+    // Notes:
+    // Recommended Java Libraries for JWT
+    // Java JWT (jjwt)
+    // Nimbus JOSE+JWT
+    // Auth0 Java JWT
+    
 
     return "happy day!!!";
   }
