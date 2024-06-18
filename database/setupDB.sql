@@ -1,21 +1,15 @@
--- Drop tables if they exist to avoid errors when creating them
-DROP TABLE IF EXISTS User;
-DROP TABLE IF EXISTS CurrencyCloud;
-
 -- Create the User table
-CREATE TABLE User (
-    id INT AUTO_INCREMENT,
-    firstName VARCHAR(100),
-    surname VARCHAR(100),
-    email VARCHAR(100) UNIQUE,
-    password VARCHAR(200),
-    PRIMARY KEY (id)  -- Corrected primary key definition
+CREATE TABLE "User" (
+    id SERIAL PRIMARY KEY,
+    "firstName" VARCHAR(100) NOT NULL,
+    surname VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(200) NOT NULL
 );
 
 -- Create the CurrencyCloud table
-CREATE TABLE CurrencyCloud (
-    contactID INT AUTO_INCREMENT,
-    userID INT,
-    PRIMARY KEY (contactID),  -- Corrected primary key definition
-    FOREIGN KEY (userID) REFERENCES User(id)  -- Corrected foreign key definition
+CREATE TABLE "CurrencyCloud" (
+    "contactID" SERIAL PRIMARY KEY,
+    "userID" INT,
+    FOREIGN KEY ("userID") REFERENCES "User"(id)
 );
