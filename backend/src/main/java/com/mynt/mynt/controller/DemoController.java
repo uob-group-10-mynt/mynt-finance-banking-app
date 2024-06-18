@@ -17,9 +17,8 @@ public class DemoController {
 
   @GetMapping("")
   public String defalt(){
-    return "happy day!!!";
+    return "happy day - original class !!!";
   }
-
 
   @GetMapping("/healthcheck")
   public String getHealthCheck() {
