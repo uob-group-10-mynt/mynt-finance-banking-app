@@ -1,6 +1,6 @@
-package com.mynt.mynt.controller;
+package com.mynt.banking.controller;
 
-import com.mynt.mynt.service.DemoService;
+import com.mynt.banking.service.DemoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,4 +1,4 @@
-package com.mynt.mynt;
+package com.mynt.banking;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

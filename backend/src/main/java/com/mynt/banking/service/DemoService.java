@@ -1,4 +1,4 @@
-package com.mynt.mynt.service;
+package com.mynt.banking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

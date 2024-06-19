@@ -1,7 +1,6 @@
-package com.mynt.mynt.util.exceptions;
+package com.mynt.banking.util.exceptions;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class MyntExceptions extends RuntimeException {
