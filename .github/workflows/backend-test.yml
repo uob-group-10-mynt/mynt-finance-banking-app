@@ -36,7 +36,7 @@ jobs:
         run: |
           mkdir .env
           cd .env
-          cat "${{ env.PEM_CONTENT }} >> "${{ env.RDS_SSL_CERT_PATH }}"
+          cat "${{ env.PEM_CONTENT }}" >> "${{ env.RDS_SSL_CERT_PATH }}"
           ls
           cd ../
 
