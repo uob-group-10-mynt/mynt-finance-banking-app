@@ -4,10 +4,16 @@ on:
     branches:
       - main
       - 'init/backend'
-      - 'feature/backend/**'
-      - '**/backend'
+      - 'feature/backend-**'
 jobs:
   build_and_test:
+    environment: Testing_Environment
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      RDS_SSL_CERT_PATH: ${{ secrets.RDS_SSL_CERT_PATH }}
+      PEM_CONTENT: ${{ secrets.PEM_CONTENT }}
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest ]
@@ -25,9 +31,17 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./backend/gradlew
 
+      - name: Create Pem File
+        run: |
+          mkdir .env
+          cd .env
+          echo "${{ env.PEM_CONTENT }}" >> "${{ env.RDS_SSL_CERT_PATH }}"
+          ls
+          cd ../
+
       - name: Build Gradle
         id: test
-        run: | 
+        run: |
           cd backend
           ./gradlew clean build test
 
