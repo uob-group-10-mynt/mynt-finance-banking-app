@@ -1,6 +1,6 @@
-package com.mynt.mynt.tests;
+package com.mynt.mynt.service.tests;
 
-import com.mynt.mynt.service.JWT;
+import com.mynt.mynt.util.jwt.JWT;
 import com.nimbusds.jose.JOSEException;
 import org.junit.jupiter.api.Test;
 

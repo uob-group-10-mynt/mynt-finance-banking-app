@@ -1,6 +1,5 @@
 package com.mynt.mynt;
 
-import com.mynt.mynt.service.JWT;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;

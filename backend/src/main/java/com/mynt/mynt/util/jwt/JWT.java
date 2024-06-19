@@ -1,12 +1,9 @@
-package com.mynt.mynt.service;
+package com.mynt.mynt.util.jwt;
 
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.text.ParseException;
-import java.util.Base64;
 import java.util.Date;
 import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
