@@ -4,7 +4,7 @@ on:
     branches:
       - main
       - 'init/backend'
-      - 'feature/backend/**'
+      - 'feature/backend-**'
       - '**/backend'
 jobs:
   build_and_test:
