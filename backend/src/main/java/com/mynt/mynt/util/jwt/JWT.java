@@ -11,6 +11,18 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 
+// create function too
+// 1.create header that has algo and type
+// 2.add infomation(claims) into data
+// 3.hash steps 1 and 2 to create the secret key
+
+// ==========================================
+// Notes:
+// Recommended Java Libraries for JWT
+// Java JWT (jjwt)
+// Nimbus JOSE+JWT
+// Auth0 Java JWT
+
 public class JWT {
 
     private byte[] secretKey;
