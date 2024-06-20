@@ -25,20 +25,25 @@ import com.nimbusds.jwt.JWTClaimsSet;
 
 public class JWT {
 
-    private byte[] secretKey;
+    private static byte[] secretKey;
+    private static long expirationTimeMillis = 30000;
+
+    public void setExpirationTimeMillis(long time) {
+        expirationTimeMillis = time;
+    }
 
     // Generate a secret key for HMAC-SHA256 (HS256)
     public void generateSecretKey() {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
             keyGenerator.init(256); // Specify the key size
-            this.secretKey = keyGenerator.generateKey().getEncoded();
+            secretKey = keyGenerator.generateKey().getEncoded();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
     }
 
-    public String createJWT(String clientName, long expirationTimeMillis) {
+    public String createJWT(String clientName) {
         try {
 
             // 1.create header that has algo and type
@@ -54,7 +59,7 @@ public class JWT {
 
             // Create HMAC signer
             // 3. create signature
-            JWSSigner signer = new MACSigner(this.secretKey);
+            JWSSigner signer = new MACSigner(secretKey);
 
             // Apply the HMAC protection
             jwt.sign(signer);
@@ -75,8 +80,8 @@ public class JWT {
             SignedJWT jwt = SignedJWT.parse(token);
 
             // Create HMAC verifier
-            JWSVerifier verifier =  new MACVerifier(this.secretKey);
-            System.out.println(new MACVerifier(this.secretKey).toString());
+            JWSVerifier verifier =  new MACVerifier(secretKey);
+            System.out.println(new MACVerifier(secretKey).toString());
 
             // Verify the token's HMAC
             if (jwt.verify(verifier)) {
@@ -96,5 +101,6 @@ public class JWT {
         }
         return false;
     }
+
 
 }
