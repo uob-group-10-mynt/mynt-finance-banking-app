@@ -1,11 +1,11 @@
 package com.mynt.mynt.controller;
 
+import com.mynt.mynt.dto.LoginDTO;
 import com.mynt.mynt.service.*;
 //import com.mynt.banking.service.DemoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,10 +14,13 @@ public class Auth {
 
   private final DemoService demoService;
 
-  @GetMapping("")
-  public String defalt(){
+  @PostMapping("")
+  public String defalt(@RequestBody LoginDTO requestBody){
 
-    // recive username && password 
+
+
+
+    // recive username && password
     // check DB for if user exits 
     // check for correct password 
 
