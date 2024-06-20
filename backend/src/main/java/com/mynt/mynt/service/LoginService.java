@@ -27,7 +27,6 @@ public class LoginService {
         // TODO: James Love Task - 4. if correct password && username return JWT to the user
         this.jwt = generateJwt(loginDTO.getUsername());
 
-
     }
 
     public LoginDTO getLoginDTO() {
@@ -43,7 +42,8 @@ public class LoginService {
     }
 
     public String generateJwt(String clientName) {
-         return new JWT().createJWT(clientName);
+        JWT newToken = new JWT();
+        return newToken.createJWT(clientName);
     }
 
 

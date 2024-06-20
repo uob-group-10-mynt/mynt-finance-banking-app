@@ -4,6 +4,7 @@ import com.mynt.mynt.dto.LoginDTO;
 import com.mynt.mynt.service.*;
 //import com.mynt.banking.service.DemoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,20 +16,17 @@ public class AuthController {
   private final DemoService demoService;
 
   @PostMapping("")
-  public String defalt(@RequestBody LoginDTO loginDTO){
+  public ResponseEntity<Object> defalt(@RequestBody LoginDTO loginDTO){
+
+    //return 400 if no data is imputed
+    if(loginDTO.getUsername() == null || loginDTO.getPassword() == null){
+      return (ResponseEntity<Object>) ResponseEntity.badRequest().build();
+    }
 
     LoginService loginService = new LoginService(loginDTO);
 
-    // add methord to retrive data for responce body
-
-
-    return "happy day!!!";
+    return ResponseEntity.ok(loginService.getJwt());
   }
-
-    // create function too check if JWT is valid
-    // 1a.hash header and payload to create the secret key
-    // 1b. if orginal secret and secret from 1a dont match == has been tampered with
-    // 2. create refresh token
 
 
 }

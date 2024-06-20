@@ -28,16 +28,22 @@ public class JWT {
     private static byte[] secretKey;
     private static long expirationTimeMillis = 30000;
 
+
     public void setExpirationTimeMillis(long time) {
         expirationTimeMillis = time;
     }
 
+    public static void loadSecretKey()  {
+        String key = System.getenv("JWT_SECRET_KEY") ;
+
+    }
+
     // Generate a secret key for HMAC-SHA256 (HS256)
-    public void generateSecretKey() {
+    public static void generateSecretKey() {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
             keyGenerator.init(256); // Specify the key size
-            secretKey = keyGenerator.generateKey().getEncoded();
+            System.out.println("New Secret Key: "+keyGenerator.generateKey().getEncoded());
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
