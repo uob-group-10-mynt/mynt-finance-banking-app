@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {Box, Input, Button, FormLabel} from '@chakra-ui/react';
 
 const Remittance = () => {
     // State for form fields
@@ -21,54 +22,56 @@ const Remittance = () => {
     };
 
     return (
-        <div className="remittance-page">
-            <h1>Transfer</h1>
+        <Box className="remittance-page">
+            <h1 className="Remittance-page-header">Transfer</h1>
             <form onSubmit={handleFormSubmit}>
-                <label>
-                    From (Payer's Name):
-                    <input
+                <FormLabel>
+                    From:
+                    <Input
+                        placeholder="Payer's name"
                         type="text"
                         value={senderName}
                         onChange={(e) => setSenderName(e.target.value)}
                         required
                     />
-                </label>
+                </FormLabel>
                 <br/>
-                <label>
-                    To (Payee's Name):
-                    <input
+                <FormLabel>
+                    To:
+                    <Input
+                        placeholder="Payee's name"
                         type="text"
                         value={recipientName}
                         onChange={(e) => setRecipientName(e.target.value)}
                         required
                     />
-                </label>
+                </FormLabel>
                 <br/>
-                <label>
+                <FormLabel>
                     Amount:
-                    <input
+                    <Input
                         type="number"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
                         required
                     />
                     <span>Available balance: {availableBalance.toFixed(2)} KES</span>
-                </label>
+                </FormLabel>
                 <br/>
-                <label>
+                <FormLabel>
                     Payment Date:
                     <br/>
-                    <input
+                    <Input
                         type="date"
                         value={paymentDate}
                         onChange={(e) => setPaymentDate(e.target.value)}
                         required
                     />
-                </label>
+                </FormLabel>
                 <br/>
-                <button type="submit">Send Money</button>
+                <Button type="submit">Send Money</Button>
             </form>
-        </div>
+        </Box>
     );
 };
 
