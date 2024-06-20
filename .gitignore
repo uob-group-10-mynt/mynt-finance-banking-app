@@ -97,6 +97,7 @@ fabric.properties
 ### Java ###
 # Compiled class file
 *.class
+backend/src/main/resources/application.properties
 
 # Log file
 *.log
