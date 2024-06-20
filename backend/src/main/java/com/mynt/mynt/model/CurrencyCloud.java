@@ -1,19 +1,24 @@
-package com.mynt.mynt.model
+package com.mynt.mynt.model;
 
-import jakarta.persistence.*
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "\"CurrencyCloud\"")
-open class CurrencyCloud {
+public class CurrencyCloud {
     @Id
     @Column(name = "user_id", nullable = false)
-    open var id: Int? = null
+    private Integer id;
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    open var user: User? = null
+    private User user;
 
     @Column(name = "\"UUID\"", nullable = false, length = 100)
-    open var uuid: String? = null
+    private String uuid;
+
 }
