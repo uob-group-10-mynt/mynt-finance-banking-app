@@ -18,6 +18,10 @@ public class AuthController {
   @PostMapping("")
   public ResponseEntity<Object> defalt(@RequestBody LoginDTO loginDTO){
 
+
+    System.out.println("========"+System.getenv("JWS_SECRET_KEY"));
+
+
     //return 400 if no data is imputed
     if(loginDTO.getUsername() == null || loginDTO.getPassword() == null){
       return (ResponseEntity<Object>) ResponseEntity.badRequest().build();

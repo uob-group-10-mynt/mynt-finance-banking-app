@@ -19,7 +19,6 @@ public class TestJWT {
     @BeforeEach
     public void setUp() {
         jwt = new JWT();
-        jwt.generateSecretKey();
     }
 
     @AfterEach
@@ -28,11 +27,23 @@ public class TestJWT {
     }
 
     @Test
+    void testGenerateSecretKey() throws JOSEException {
+        System.out.println("NewKye -> "+JWT.generateSecretKey());
+    }
+
+    @Test
+    void testLoadSecretKey() throws ParseException, JOSEException {
+        JWT key = new JWT();
+        key.loadSecretKey();
+    }
+
+    @Test
     void testGeneratingJWT() throws InterruptedException, JOSEException, ParseException {
         String token = jwt.createJWT("james");
         boolean validToken = jwt.authenticateJWT(token);
         assertTrue(validToken);
     }
+
 
     @Test
     void testExpiredTime() throws InterruptedException, JOSEException, ParseException {

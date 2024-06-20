@@ -2,14 +2,21 @@ package com.mynt.mynt.util.jwt;
 
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
+import java.util.Base64;
 import java.util.Date;
+import java.util.Objects;
 import javax.crypto.KeyGenerator;
 
+import com.mynt.mynt.config.DotenvConfig;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static io.github.cdimascio.dotenv.DslKt.dotenv;
 
 // create function too
 // 1.create header that has algo and type
@@ -27,29 +34,34 @@ public class JWT {
 
     private static byte[] secretKey;
     private static long expirationTimeMillis = 30000;
+    private Dotenv dotenv;
 
+    // Generate a secret key for HMAC-SHA256 (HS256)
+    // copy and paste secutity key into .env file into the JWT_SECRET_KEY fild
+    public static String generateSecretKey() {
+        try {
+            KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
+            keyGenerator.init(256); // Specify the key size
+            byte[] secretKey =keyGenerator.generateKey().getEncoded();
+            String base64SecretKey = Base64.getEncoder().encodeToString(secretKey);
+            return base64SecretKey;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void loadSecretKey()  {
+        Dotenv dotenv = Dotenv.configure().filename(".env").load();
+        secretKey = dotenv.get("JWT_SECRET_KEY").getBytes();
+    }
 
     public void setExpirationTimeMillis(long time) {
         expirationTimeMillis = time;
     }
 
-    public static void loadSecretKey()  {
-        String key = System.getenv("JWT_SECRET_KEY") ;
-
-    }
-
-    // Generate a secret key for HMAC-SHA256 (HS256)
-    public static void generateSecretKey() {
-        try {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
-            keyGenerator.init(256); // Specify the key size
-            System.out.println("New Secret Key: "+keyGenerator.generateKey().getEncoded());
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-    }
-
     public String createJWT(String clientName) {
+        loadSecretKey();
         try {
 
             // 1.create header that has algo and type
@@ -80,6 +92,8 @@ public class JWT {
     }
 
     public boolean authenticateJWT(String token) {
+        loadSecretKey();
+
         try {
 
             // Parse the token

@@ -1,5 +1,6 @@
 package com.mynt.mynt;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,13 @@ class MyntProjectApplicationTests {
 
 	private String schema;
 
+	private Dotenv dotenv;
+
+	@Autowired
+	public void MyService(Dotenv dotenv) {
+		this.dotenv = dotenv;
+	}
+
 	@BeforeEach
 	void setUp() {
 		schema = "http://localhost:" +  String.valueOf(this.port) ;
@@ -44,9 +52,9 @@ class MyntProjectApplicationTests {
 		HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
 		ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
-//		assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
-//		assertThat(response.getBody()).isNotNull();
-		System.out.println("\n\n=========================\n\n"+response);
+		assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+		assertThat(response.getBody()).isNotNull();
+
 	}
 
 }
