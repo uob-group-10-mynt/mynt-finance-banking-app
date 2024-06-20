@@ -1,21 +1,35 @@
 package com.mynt.mynt.service;
 
 import com.mynt.mynt.dto.LoginDTO;
+import com.mynt.mynt.model.CurrencyCloud;
+import com.mynt.mynt.repository.FindPassword;
+import com.mynt.mynt.repository.UUID;
 import com.mynt.mynt.util.jwt.JWT;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 // 1. recive username && password
 // 2. check DB for if user exits
 // 3. check for correct password
 // 4. if correct password && username return JWT to the user
 
+@Service
 public class LoginService {
 
     private LoginDTO loginDTO;
     private String jwt;
+    private UUID uuid;
 
     public LoginService(){}
 
-    public LoginService(LoginDTO loginDTO){
+    @Autowired
+    public LoginService(UUID uuid){
+        this.uuid = uuid;
+    }
+
+    public String getJwt(LoginDTO loginDTO) {
 
         // TODO: 1. recive username && password
         this.loginDTO = loginDTO;
@@ -27,17 +41,6 @@ public class LoginService {
         // TODO: James Love Task - 4. if correct password && username return JWT to the user
         this.jwt = generateJwt(loginDTO.getUsername());
 
-    }
-
-    public LoginDTO getLoginDTO() {
-        return loginDTO;
-    }
-
-    public void setLoginDTO(LoginDTO loginDTO) {
-        this.loginDTO = loginDTO;
-    }
-
-    public String getJwt() {
         return this.jwt;
     }
 

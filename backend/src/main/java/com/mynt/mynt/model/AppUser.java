@@ -1,20 +1,17 @@
 package com.mynt.mynt.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "\"User\"")
-public class User {
+@Table(name = "\"AppUser\"")
+public class AppUser {
     @Id
-    @ColumnDefault("nextval('"User_id_seq"'::regclass)")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AppUser_id_gen")
+    @SequenceGenerator(name = "AppUser_id_gen", sequenceName = "User_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Integer id;
 

@@ -24,24 +24,24 @@ public class RemittancesController {
 
     private final DemoService demoService;
 
-    @PostMapping("")
-    public ResponseEntity<Object> reciveMoney(@RequestBody LoginDTO loginDTO){
-        //return 400 if no data is imputed
-        if(loginDTO.getUsername() == null || loginDTO.getPassword() == null){
-            return (ResponseEntity<Object>) ResponseEntity.badRequest().build();
-        }
-        LoginService loginService = new LoginService(loginDTO);
-        return ResponseEntity.ok(loginService.getJwt());
-    }
-
-    public ResponseEntity<Object> sendMoney(@RequestBody LoginDTO loginDTO){
-        //return 400 if no data is imputed
-        if(loginDTO.getUsername() == null || loginDTO.getPassword() == null){
-            return (ResponseEntity<Object>) ResponseEntity.badRequest().build();
-        }
-        LoginService loginService = new LoginService(loginDTO);
-        return ResponseEntity.ok(loginService.getJwt());
-    }
+//    @PostMapping("")
+//    public ResponseEntity<Object> reciveMoney(@RequestBody LoginDTO loginDTO){
+//        //return 400 if no data is imputed
+//        if(loginDTO.getUsername() == null || loginDTO.getPassword() == null){
+//            return (ResponseEntity<Object>) ResponseEntity.badRequest().build();
+//        }
+//        LoginService loginService = new LoginService(loginDTO);
+//        return ResponseEntity.ok(loginService.getJwt());
+//    }
+//
+//    public ResponseEntity<Object> sendMoney(@RequestBody LoginDTO loginDTO){
+//        //return 400 if no data is imputed
+//        if(loginDTO.getUsername() == null || loginDTO.getPassword() == null){
+//            return (ResponseEntity<Object>) ResponseEntity.badRequest().build();
+//        }
+//        LoginService loginService = new LoginService(loginDTO);
+//        return ResponseEntity.ok(loginService.getJwt());
+//    }
 
 
 }

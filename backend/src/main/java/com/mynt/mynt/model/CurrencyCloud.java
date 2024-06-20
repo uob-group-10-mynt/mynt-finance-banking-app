@@ -1,24 +1,22 @@
 package com.mynt.mynt.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "\"CurrencyCloud\"")
+@Table(name = "currency_cloud")
 public class CurrencyCloud {
     @Id
     @Column(name = "user_id", nullable = false)
     private Integer id;
 
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @Column(name = "\"UUID\"", nullable = false, length = 100)
+    @Column(name = "uuid", nullable = false, length = 100)
     private String uuid;
 
 }
