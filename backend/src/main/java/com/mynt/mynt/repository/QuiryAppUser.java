@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface FindPassword extends JpaRepository<AppUser, Long> {
-    @Query(value = "SELECT * FROM User", nativeQuery = true)
-    List<AppUser> findByNameNative(@Param("name") String name);
+public interface QuiryAppUser extends JpaRepository<AppUser, Long> {
+
+    @Query(value = "SELECT * FROM \"AppUser\";", nativeQuery = true)
+    List<AppUser> findAllData();
+
 }

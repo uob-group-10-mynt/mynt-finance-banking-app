@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "currency_cloud")
+@Table(name = "CurrencyCloud")
 public class CurrencyCloud {
     @Id
     @Column(name = "user_id", nullable = false)

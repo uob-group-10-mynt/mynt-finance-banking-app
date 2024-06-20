@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UUID extends JpaRepository<CurrencyCloud, Long> {
-    @Query(value = "SELECT * FROM CurrencyCloud", nativeQuery = true)
-    List<CurrencyCloud> findByNameNative();
+public interface QuiryCurrencyCloud extends JpaRepository<CurrencyCloud, Long> {
+
+    @Query(value = "SELECT * FROM \"CurrencyCloud\";", nativeQuery = true)
+    List<CurrencyCloud> findAllData();
+
 }

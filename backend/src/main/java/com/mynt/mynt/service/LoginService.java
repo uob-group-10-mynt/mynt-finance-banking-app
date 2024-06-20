@@ -2,8 +2,9 @@ package com.mynt.mynt.service;
 
 import com.mynt.mynt.dto.LoginDTO;
 import com.mynt.mynt.model.CurrencyCloud;
-import com.mynt.mynt.repository.FindPassword;
-import com.mynt.mynt.repository.UUID;
+
+import com.mynt.mynt.repository.QuiryAppUser;
+import com.mynt.mynt.repository.QuiryCurrencyCloud;
 import com.mynt.mynt.util.jwt.JWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,15 @@ public class LoginService {
 
     private LoginDTO loginDTO;
     private String jwt;
-    private UUID uuid;
+    private QuiryCurrencyCloud quiryCurrencyCloud;
+    private QuiryAppUser quiryAppUser;
 
     public LoginService(){}
 
     @Autowired
-    public LoginService(UUID uuid){
-        this.uuid = uuid;
+    public LoginService(QuiryAppUser appUser , QuiryCurrencyCloud quiryCurrencyCloud){
+        this.quiryCurrencyCloud = quiryCurrencyCloud;
+        this.quiryAppUser = appUser;
     }
 
     public String getJwt(LoginDTO loginDTO) {
@@ -35,6 +38,8 @@ public class LoginService {
         this.loginDTO = loginDTO;
 
         // TODO: Alex F Task - 2. check DB for if user exits
+        System.out.println(this.quiryCurrencyCloud.findAllData());
+        System.out.println(this.quiryAppUser.findAllData().get(0).getSurname());
 
         // TODO: Alex F Task - 3. check for correct password
 
