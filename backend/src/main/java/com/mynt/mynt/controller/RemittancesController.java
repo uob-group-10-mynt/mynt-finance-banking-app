@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/remittance")
 public class RemittancesController {
 
-    private final DemoService demoService;
+//    private final remittance demoService;
 
 //    @PostMapping("")
 //    public ResponseEntity<Object> reciveMoney(@RequestBody LoginDTO loginDTO){
