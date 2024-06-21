@@ -48,12 +48,27 @@ class MyntProjectApplicationTests {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
-		String requestBody = "{\"username\":\"testuser\", \"password\":\"testpass\"}";
+		String requestBody = "{\"username\":\"james@jamesLove.com\", \"password\":\"Bristol2023!\"}";
 		HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
 		ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
 		assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
 		assertThat(response.getBody()).isNotNull();
+
+	}
+
+	@Test
+	void testAuthIncorrectCridentials() {
+		String url = schema + "/api/v1/auth";
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+		String requestBody = "{\"username\":\"test@test.com\", \"password\":\"helloworld!\"}";
+		HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+
+		ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+		assertThat(response.getStatusCode().is4xxClientError()).isTrue();
+		assertThat(response.getBody().isEmpty());
 
 	}
 

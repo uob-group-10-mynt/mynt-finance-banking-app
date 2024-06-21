@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 // 1. recive username && password
 // 2. check DB for if user exits
@@ -39,15 +40,23 @@ public class LoginService {
 
         // TODO: 1. recive username && password
         this.loginDTO = loginDTO;
+        System.out.println(loginDTO.getUsername());
+        System.out.println(loginDTO.getPassword());
 
-        // TODO: Alex F Task - 2. check DB for if user exits
-        System.out.println(this.quiryCurrencyCloud.findAllData());
-        System.out.println(this.quiryAppUser.findAllData().get(0).getSurname());
+        // TODO: Task - 2. check DB for if user exits
+        List<String> userName = this.quiryAppUser.findUsername(loginDTO.getUsername());
+        boolean correctNumberOfUsernames = userName.size() == 1;
+        boolean validUser = Objects.equals(userName.get(0), loginDTO.getUsername());
 
-        // TODO: Alex F Task - 3. check for correct password
+        // TODO: Task - 3. check for correct password
+        List<String> userPassword = this.quiryAppUser.findPassword(loginDTO.getUsername());
+        boolean correctAmountOfPasswords = userPassword.size() == 1;
+        boolean correctPassword = Objects.equals(userPassword.get(0), loginDTO.getPassword());
 
-        // TODO: James Love Task - 4. if correct password && username return JWT to the user
-        jwt.setJWT(generateJwt(loginDTO.getUsername()));
+        if(correctNumberOfUsernames && validUser && correctAmountOfPasswords && correctPassword){
+            // TODO: James Love Task - 4. if correct password && username return JWT to the user
+            jwt.setJWT(generateJwt(loginDTO.getUsername()));
+        }
 
         return this.jwt;
     }
