@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 //@RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
@@ -32,8 +34,9 @@ public class AuthController {
 
     //check for token == null
     JwtDto token = this.loginService.getJwt(loginDTO);
-    if(token == null){
-      return ResponseEntity.badRequest().build();
+    String errorMessage = "Error - Invalid username or password";
+    if(Objects.equals(token.getJWT(), errorMessage)){
+      return ResponseEntity.badRequest().body(token);
     }
     // else return token
     return ResponseEntity.ok(token);

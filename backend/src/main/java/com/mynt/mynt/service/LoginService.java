@@ -40,25 +40,33 @@ public class LoginService {
 
         // TODO: 1. recive username && password
         this.loginDTO = loginDTO;
-        System.out.println(loginDTO.getUsername());
-        System.out.println(loginDTO.getPassword());
 
         // TODO: Task - 2. check DB for if user exits
-        List<String> userName = this.quiryAppUser.findUsername(loginDTO.getUsername());
-        boolean correctNumberOfUsernames = userName.size() == 1;
-        boolean validUser = Objects.equals(userName.get(0), loginDTO.getUsername());
-
         // TODO: Task - 3. check for correct password
+        List<String> userName = this.quiryAppUser.findUsername(loginDTO.getUsername());
         List<String> userPassword = this.quiryAppUser.findPassword(loginDTO.getUsername());
-        boolean correctAmountOfPasswords = userPassword.size() == 1;
-        boolean correctPassword = Objects.equals(userPassword.get(0), loginDTO.getPassword());
 
-        if(correctNumberOfUsernames && validUser && correctAmountOfPasswords && correctPassword){
+        String errorMessage = "Error - Invalid username or password";
+
+        boolean correctNumberOfUsernames = userName.size() == 1;
+        boolean correctAmountOfPasswords = userPassword.size() == 1;
+        if ((correctNumberOfUsernames && correctAmountOfPasswords) && correctUsernameAndPassword(userName, userPassword)){
             // TODO: James Love Task - 4. if correct password && username return JWT to the user
             jwt.setJWT(generateJwt(loginDTO.getUsername()));
+        } else {
+            jwt.setJWT(errorMessage);
         }
 
         return this.jwt;
+    }
+
+    private boolean correctUsernameAndPassword(List<String> userName, List<String> userPassword){
+        boolean validUser = Objects.equals(userName.get(0), loginDTO.getUsername());
+        boolean correctPassword = Objects.equals(userPassword.get(0), loginDTO.getPassword());
+        if(validUser && correctPassword){
+            return true;
+        }
+        return false;
     }
 
     public String generateJwt(String clientName) {

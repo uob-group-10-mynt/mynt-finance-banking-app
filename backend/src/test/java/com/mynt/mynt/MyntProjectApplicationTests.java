@@ -68,7 +68,7 @@ class MyntProjectApplicationTests {
 
 		ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
 		assertThat(response.getStatusCode().is4xxClientError()).isTrue();
-		assertThat(response.getBody().isEmpty());
+		assertThat(response.getBody().contains("{\"jwt\":\"Error - Invalid username or password\"}"));
 
 	}
 
