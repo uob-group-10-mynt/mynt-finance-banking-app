@@ -1,5 +1,5 @@
 import React from 'react';
-import Remittance from './remittance';
+import RemittancePage from './pages/RemittancePage';
 import {ChakraProvider, ColorModeScript, extendTheme} from '@chakra-ui/react'
 import Theme from "./theme";
 
@@ -13,7 +13,7 @@ const App = () => {
                     MYNT Technology
                 </h1>
                 <main>
-                    <Remittance/>
+                    <RemittancePage/>
                     {/* Other components/pages can be added here */}
                 </main>
                 <footer>
