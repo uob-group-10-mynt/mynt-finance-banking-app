@@ -98,6 +98,7 @@ fabric.properties
 # Compiled class file
 *.class
 backend/src/main/resources/application.properties
+backend/bin/main/application.properties
 
 # Log file
 *.log
