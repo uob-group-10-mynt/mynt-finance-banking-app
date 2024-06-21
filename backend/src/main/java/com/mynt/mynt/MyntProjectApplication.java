@@ -1,5 +1,6 @@
 package com.mynt.mynt;
 
+import com.mynt.mynt.util.jwt.JWT;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

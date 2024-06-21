@@ -1,8 +1,7 @@
 package com.mynt.mynt.controller;
 
-
-import com.mynt.mynt.service.DemoService;
-import lombok.AllArgsConstructor;
+import com.mynt.mynt.service.*;
+//import com.mynt.banking.service.DemoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +16,8 @@ public class DemoController {
 
   @GetMapping("")
   public String defalt(){
-    return "happy day!!!";
+    return "happy day - original class !!!";
   }
-
 
   @GetMapping("/healthcheck")
   public String getHealthCheck() {

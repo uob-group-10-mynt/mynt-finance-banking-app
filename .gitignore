@@ -97,6 +97,8 @@ fabric.properties
 ### Java ###
 # Compiled class file
 *.class
+backend/src/main/resources/application.properties
+backend/bin/main/application.properties
 
 # Log file
 *.log
@@ -307,6 +309,7 @@ web_modules/
 
 # dotenv environment variable files
 .env
+backend/.env
 .env.development.local
 .env.test.local
 .env.production.local
