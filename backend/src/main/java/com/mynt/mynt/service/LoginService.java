@@ -51,7 +51,7 @@ public class LoginService {
         boolean correctNumberOfUsernames = userName.size() == 1;
         boolean correctAmountOfPasswords = userPassword.size() == 1;
         if ((correctNumberOfUsernames && correctAmountOfPasswords) && correctUsernameAndPassword(userName, userPassword)){
-            // TODO: James Love Task - 4. if correct password && username return JWT to the user
+            // TODO: Task - 4. if correct password && username return JWT to the user
             jwt.setJWT(generateJwt(loginDTO.getUsername()));
         } else {
             jwt.setJWT(errorMessage);
