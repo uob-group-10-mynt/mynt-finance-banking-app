@@ -38,11 +38,11 @@ public class LoginService {
 
     public JwtDto getJwt(LoginDTO loginDTO) {
 
-        // TODO: 1. recive username && password
+        // Task - 1. recive username && password
         this.loginDTO = loginDTO;
 
-        // TODO: Task - 2. check DB for if user exits
-        // TODO: Task - 3. check for correct password
+        // Task - 2. check DB for if user exits
+        // Task - 3. check for correct password
         List<String> userName = this.quiryAppUser.findUsername(loginDTO.getUsername());
         List<String> userPassword = this.quiryAppUser.findPassword(loginDTO.getUsername());
 
@@ -51,7 +51,7 @@ public class LoginService {
         boolean correctNumberOfUsernames = userName.size() == 1;
         boolean correctAmountOfPasswords = userPassword.size() == 1;
         if ((correctNumberOfUsernames && correctAmountOfPasswords) && correctUsernameAndPassword(userName, userPassword)){
-            // TODO: Task - 4. if correct password && username return JWT to the user
+            // Task - 4. if correct password && username return JWT to the user
             jwt.setJWT(generateJwt(loginDTO.getUsername()));
         } else {
             jwt.setJWT(errorMessage);
