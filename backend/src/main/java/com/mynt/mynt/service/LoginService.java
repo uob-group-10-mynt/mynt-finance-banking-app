@@ -1,5 +1,6 @@
 package com.mynt.mynt.service;
 
+import com.mynt.mynt.dto.JwtDto;
 import com.mynt.mynt.dto.LoginDTO;
 import com.mynt.mynt.model.CurrencyCloud;
 
@@ -20,9 +21,10 @@ import java.util.List;
 public class LoginService {
 
     private LoginDTO loginDTO;
-    private String jwt;
+//    private String jwt;
     private QuiryCurrencyCloud quiryCurrencyCloud;
     private QuiryAppUser quiryAppUser;
+    private JwtDto jwt;
 
     public LoginService(){}
 
@@ -30,9 +32,10 @@ public class LoginService {
     public LoginService(QuiryAppUser appUser , QuiryCurrencyCloud quiryCurrencyCloud){
         this.quiryCurrencyCloud = quiryCurrencyCloud;
         this.quiryAppUser = appUser;
+        this.jwt = new JwtDto();
     }
 
-    public String getJwt(LoginDTO loginDTO) {
+    public JwtDto getJwt(LoginDTO loginDTO) {
 
         // TODO: 1. recive username && password
         this.loginDTO = loginDTO;
@@ -44,7 +47,7 @@ public class LoginService {
         // TODO: Alex F Task - 3. check for correct password
 
         // TODO: James Love Task - 4. if correct password && username return JWT to the user
-        this.jwt = generateJwt(loginDTO.getUsername());
+        jwt.setJWT(generateJwt(loginDTO.getUsername()));
 
         return this.jwt;
     }

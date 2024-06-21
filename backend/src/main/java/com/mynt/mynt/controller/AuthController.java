@@ -1,5 +1,6 @@
 package com.mynt.mynt.controller;
 
+import com.mynt.mynt.dto.JwtDto;
 import com.mynt.mynt.dto.LoginDTO;
 import com.mynt.mynt.service.*;
 //import com.mynt.banking.service.DemoService;
@@ -28,7 +29,14 @@ public class AuthController {
     if(loginDTO.getUsername() == null || loginDTO.getPassword() == null){
       return (ResponseEntity<Object>) ResponseEntity.badRequest().build();
     }
-    return ResponseEntity.ok(this.loginService.getJwt(loginDTO));
+
+    //check for token == null
+    JwtDto token = this.loginService.getJwt(loginDTO);
+    if(token == null){
+      return ResponseEntity.badRequest().build();
+    }
+    // else return token
+    return ResponseEntity.ok(token);
   }
 
 
