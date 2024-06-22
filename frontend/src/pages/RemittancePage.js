@@ -6,7 +6,6 @@ const Remittance = () => {
     const [senderName, setSenderName] = useState('');
     const [recipientName, setRecipientName] = useState('');
     const [amount, setAmount] = useState('');
-    const [paymentDate, setPaymentDate] = useState('');
 
     const availableBalance = 1000; // To be replaced with logic to fetch balance dynamically from an API
 
@@ -22,9 +21,9 @@ const Remittance = () => {
     };
 
     const remitanceInputList = [
-        { label: "From:", placeholder: "Payer's name", type:"text", required: true, value: senderName, onChange: () => setSenderName(e.target.value) },
-        { label: "To:", placeholder: "Payee's name", type:"text", required: true, value: recipientName, onChange: () => setRecipientName(e.target.value) },
-        { label: "Amount:", placeholder: 0, type:"number", required: true, value: amount, onChange: () => setRecipientName(e.target.value), helperText: `Available balance: ${availableBalance.toFixed(2)} KES` },
+        { label: "From:", placeholder: "Payer's name", type:"text", required: true, value: senderName, onChange: (e) => setSenderName(e.target.value) },
+        { label: "To:", placeholder: "Payee's name", type:"text", required: true, value: recipientName, onChange: (e) => setRecipientName(e.target.value) },
+        { label: "Amount:", placeholder: 0, type:"number", required: true, value: amount, onChange: (e) => setAmount(e.target.value), helperText: `Available balance: ${availableBalance.toFixed(2)} KES` },
     ];
 
     const renderedRemittancesInput = remitanceInputList.map((inputList) => {
