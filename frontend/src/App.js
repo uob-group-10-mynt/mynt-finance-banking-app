@@ -1,29 +1,33 @@
 import React from 'react';
-import RemittancePage from './pages/RemittancePage';
 import {ChakraProvider, ColorModeScript, extendTheme} from '@chakra-ui/react'
-import Theme from "./theme";
+import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
+
+//Pages
+import Home from './pages/Home';
+import Login from './pages/Login';
+import RemittancePage from './pages/RemittancePage'
+
+//Layouts
+import RootLayout from './pages/RootLayout';
 
 const App = () => {
     return (
         <ChakraProvider theme={theme}>
             <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
-            <div className="App">
-                <Theme>Mode</Theme>
-                <h1 className="App-header">
-                    MYNT Technology
-                </h1>
-                <main>
-                    <RemittancePage/>
-                    {/* Other components/pages can be added here */}
-                </main>
-                <footer>
-                    <p>&copy; 2024 Mynt. All rights reserved.</p>
-                </footer>
-            </div>
+            <RouterProvider router={router}/>
         </ChakraProvider>
     );
 };
 
+const router = createBrowserRouter(
+    createRoutesFromElements(
+        <Route path='/' element={<RootLayout/>}>
+            <Route index element={<Home/>}/>
+            <Route path='login' element={<Login/>}/>
+            <Route path='remittance' element={<RemittancePage/>}/>
+        </Route>
+    )
+);
 
 const theme = extendTheme({
     config: {
