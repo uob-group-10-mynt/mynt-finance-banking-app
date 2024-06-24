@@ -1,36 +1,43 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { rules, plugins } = require('eslint-config-react-app');
+const webpack = require('webpack');
+const dotenv = require('dotenv');
+
+// Load environment variables from .env file
+dotenv.config();
 
 module.exports = {
-    entry:'./src/index.js',
+    entry: './src/index.js',
     output: {
-        path: path.resolve(__dirname,'webApp'),
+        path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js'
     },
-    module:{
-        rules:[
+    module: {
+        rules: [
             {
-                test: /\js$/,
+                test: /\.js$/,
                 exclude: /node_modules/,
                 use: {
-                    loader:'babel-loader'
+                    loader: 'babel-loader'
                 }
             },
             {
                 test: /\.css$/,
-                use: ['style-loader','css-loader']
+                use: ['style-loader', 'css-loader']
             }
         ]
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './src/index.html'
+            template: './public/index.html'
+        }),
+        new webpack.DefinePlugin({
+            'process.env': JSON.stringify(process.env)
         })
     ],
     devServer: {
         static: {
-            directory: path.join(__dirname, 'webApp'),
+            directory: path.join(__dirname, 'dist'),
         },
         compress: true,
         port: 9001
