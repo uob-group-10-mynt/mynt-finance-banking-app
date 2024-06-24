@@ -7,8 +7,6 @@ function useAxios(endpoint, method = "get", options = {}) {
   const [ loading, setLoading ] = useState(true);
   // const token = localStorage.getItem("accessToken");
 
-  console.log(process.env.REACT_APP_BASE_URL);
-
   const fetchResult = async () => {
     try {
       const response = await axios({
