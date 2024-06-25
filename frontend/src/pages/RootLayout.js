@@ -12,7 +12,7 @@ export default function RootLayout() {
             </h1>
             <nav>
                 <NavLink to='/'>Home</NavLink>
-                <NavLink to='login'>Log in</NavLink>
+                <NavLink to='login' data-cy="LoginLink">Log in</NavLink>
                 <NavLink to='remittance'>Send money</NavLink>
             </nav>
         </header>

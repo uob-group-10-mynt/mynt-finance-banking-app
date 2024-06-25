@@ -9,7 +9,9 @@
     "compileDesktop": "electron-forge make",
     "packageReact": "webpack --mode production",
     "devReact": "webpack server --mode development",
-    "packageMobile": "webpack --mode production && npx cap add ios && npx cap add android && npx cap sync"
+    "packageMobile": "webpack --mode production && npx cap add ios && npx cap add android && npx cap sync",
+    "cy:open": "cypress open",
+    "e2e:chrome": "cypress run --browser chrome --headed"
   },
   "author": "Group10",
   "license": "ISC",
@@ -49,6 +51,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
     "@electron-forge/plugin-fuses": "^7.4.0",
     "@electron/fuses": "^1.8.0",
+    "cypress": "^13.12.0",
     "electron": "^30.1.0",
     "eslint-config-react-app": "^7.0.1"
   }
