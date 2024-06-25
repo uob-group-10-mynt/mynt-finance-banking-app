@@ -1,4 +1,3 @@
-import React from 'react';
 import RemittancePage from './pages/RemittancePage';
 import {ChakraProvider, ColorModeScript, extendTheme} from '@chakra-ui/react'
 import Theme from "./theme";
