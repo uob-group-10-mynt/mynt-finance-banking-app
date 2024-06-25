@@ -2,7 +2,7 @@ import React, {Suspense, lazy} from 'react';
 import {createRoot} from 'react-dom';
 import {createBrowserRouter,RouterProvider,Route,Link} from "react-router-dom";
 
-const App = lazy(() => import('./App'));
+const App = lazy(() => import('./pages/App'));
 const Error = lazy(() => import('./pages/Error'));
 const CreateAccount = lazy(() => import('./pages/CreateAccount'));
 const SignIn = lazy(() => import('./pages/SignIn'));
