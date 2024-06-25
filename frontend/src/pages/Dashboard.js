@@ -1,7 +1,10 @@
+import Layout from '../components/Layout/Layout'; 
 
 function dashboard(){
     return(
-        <h1>Home && Dashboard</h1>
+        <Layout>
+            <h1>Dashboard</h1>
+        </Layout>
     )
 }
 

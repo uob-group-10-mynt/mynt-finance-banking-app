@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import {Box, Input, FormLabel, FormControl, FormHelperText, Button } from '@chakra-ui/react';
-// import Header from './components/SymaticPageComponents/Header';
-import Header from '../components/Layout/Header';
-import Footer from '../components/Layout/Footer';
+import Layout from '../components/Layout/Layout'; 
+
 
 const Remittance = () => {
     // State for form fields
@@ -51,8 +50,7 @@ const Remittance = () => {
 
     return (
         <div>
-            <Header></Header>
-            <main>
+            <Layout>
                 <Box className="remittance-page">
                     <h1 className="Remittance-page-header">Transfer</h1>
                     <form onSubmit={handleFormSubmit}>
@@ -60,8 +58,7 @@ const Remittance = () => {
                         <Button margin='0.5em' type="submit">Send Money</Button>
                     </form>
                 </Box>
-            </main>
-            <Footer></Footer>
+            </Layout>
         </div>
     );
 };
