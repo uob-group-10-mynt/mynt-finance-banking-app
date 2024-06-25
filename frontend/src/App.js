@@ -11,15 +11,8 @@ const App = () => {
             
             <div className="App">
                 
-                <Header></Header>
 
-                <main>
-                    <RemittancePage/>
-                    {/* Other components/pages can be added here */}
-                </main>
-
-                <Footer></Footer>
-                
+                    <RemittancePage/>                
 
             </div>
         </ChakraProvider>
