@@ -28,8 +28,8 @@ const Login = () => {
       })
     }
     const loginFieldsInputList = [
-      { label: "Email", placeholder: "hello@email.com", type: "email", value: email, required: true, onChange: (e) => setEmail(e.target.value) },
-      { label: "Password", placeholder: "*******", type: "password", value: password,required: true, onChange: (e) => setPassword(e.target.value) },
+      { label: "Email", testId: "emailInput", placeholder: "hello@email.com", type: "email", value: email, required: true, onChange: (e) => setEmail(e.target.value) },
+      { label: "Password", testId: "passwordInput", placeholder: "*******", type: "password", value: password,required: true, onChange: (e) => setPassword(e.target.value) },
     ]
 
     const inputFields = loginFieldsInputList.map((inputList) => {
@@ -42,6 +42,7 @@ const Login = () => {
             placeholder={inputList.placeholder} 
             value={inputList.value}
             onChange={inputList.onChange}
+            data-cy={inputList.testId}
             />
         </FormControl>  
       );
@@ -56,7 +57,7 @@ const Login = () => {
           <Box my={4} textAlign="left">
             <form onSubmit={handleSubmit}>
               {inputFields}
-              <Button width="full" mt={4} type="submit">
+              <Button data-cy="submitButton" width="full" mt={4} type="submit">
                 Sign In 
               </Button>
             </form>
