@@ -11,7 +11,6 @@ export default function RootLayout() {
                 MYNT Technology
             </h1>
             <nav>
-                <NavLink to='/'>Dashboard</NavLink>
                 <NavLink to='login'>Log in</NavLink>
                 <NavLink to='remittance'>Send money</NavLink>
             </nav>
