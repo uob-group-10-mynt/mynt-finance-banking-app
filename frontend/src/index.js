@@ -17,16 +17,18 @@ const Loans = lazy(() => import('./pages/Loans'));
 const Home = lazy(() => import('./pages/Dashboard'));
 
 
-const router = createBrowserRouter([
-    { path: "*", element: <Error /> },
-    { path: "/", element: <App />, errorElement: <Error /> },
-    { path: "home", element: <Home />, errorElement: <Error /> },
-    { path: "error", element: <Error />, errorElement: <Error /> },
-    { path: "create", element: <CreateAccount />, errorElement: <Error /> },
-    { path: "signIn", element: <SignIn />, errorElement: <Error /> },
-    { path: "remittances", element: <Remittance />, errorElement: <Error /> },
-    { path: "loan", element: <Loans />, errorElement: <Error /> },
-]);
+const router = createBrowserRouter(
+    [
+    { path: "*",            element: <Home />,         errorElement: <Error /> },
+    { path: "/",            element: <App />,          errorElement: <Error /> },
+    { path: "home",         element: <Home />,         errorElement: <Error /> },
+    { path: "error",        element: <Error />,        errorElement: <Error /> },
+    { path: "create",       element: <CreateAccount />,errorElement: <Error /> },
+    { path: "signIn",       element: <SignIn />,       errorElement: <Error /> },
+    { path: "remittances",  element: <Remittance />,   errorElement: <Error /> },
+    { path: "loan",         element: <Loans />,        errorElement: <Error /> },
+    ]
+);
 
 const root = createRoot(document.getElementById('root'));
 root.render(

@@ -1,7 +1,7 @@
 import RemittancePage from './pages/RemittancePage';
 import {ChakraProvider, ColorModeScript, extendTheme} from '@chakra-ui/react'
-import Header from './components/SymaticPageComponents/Header';
-import Footer from './components/SymaticPageComponents/Footer';
+import Header from './components/Layout/Header';
+import Footer from './components/Layout/Footer';
 
 
 const App = () => {

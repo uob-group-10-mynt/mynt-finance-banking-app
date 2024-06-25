@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {Box, Input, FormLabel, FormControl, FormHelperText, Button } from '@chakra-ui/react';
 // import Header from './components/SymaticPageComponents/Header';
-import Header from '../components/SymaticPageComponents/Header';
-import Footer from '../components/SymaticPageComponents/Footer';
+import Header from '../components/Layout/Header';
+import Footer from '../components/Layout/Footer';
 
 const Remittance = () => {
     // State for form fields
