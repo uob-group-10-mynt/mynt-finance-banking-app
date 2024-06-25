@@ -8,12 +8,8 @@ const App = () => {
     return (
         <ChakraProvider theme={theme}>
             <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
-            
             <div className="App">
-                
-
                     <RemittancePage/>                
-
             </div>
         </ChakraProvider>
     );

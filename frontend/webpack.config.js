@@ -20,8 +20,9 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: ['style-loader','css-loader']
-            }
-        ]
+            },
+
+        ],
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -33,6 +34,7 @@ module.exports = {
             directory: path.join(__dirname, 'webApp'),
         },
         compress: true,
-        port: 9001
+        port: 9001,
+        historyApiFallback: true,
     }
 };
