@@ -27,6 +27,25 @@ const Login = () => {
         setPassword('');
       })
     }
+    const loginFieldsInputList = [
+      { label: "Email", placeholder: "hello@email.com", type: "email", value: email, required: true, onChange: (e) => setEmail(e.target.value) },
+      { label: "Password", placeholder: "*******", type: "password", value: password,required: true, onChange: (e) => setPassword(e.target.value) },
+    ]
+
+    const inputFields = loginFieldsInputList.map((inputList) => {
+      return (
+        <FormControl isRequired={inputList.required} key={inputList.label}>
+          <FormLabel>{inputList.label}</FormLabel>
+          <Input 
+            isRequired={inputList.required} 
+            type={inputList.type} 
+            placeholder={inputList.placeholder} 
+            value={inputList.value}
+            onChange={inputList.onChange}
+            />
+        </FormControl>  
+      );
+    });
 
     return(
       <Flex width="full" align="center" justifyContent="center">
@@ -36,26 +55,7 @@ const Login = () => {
           </Box>
           <Box my={4} textAlign="left">
             <form onSubmit={handleSubmit}>
-              <FormControl>
-                <FormLabel>Email</FormLabel>
-                <Input 
-                isRequired 
-                type="email" 
-                placeholder="hello@email.com" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}/>
-              </FormControl>
-
-              <FormControl mt={6}>
-                <FormLabel>Password</FormLabel>
-                <Input 
-                  isRequired 
-                  type="password" 
-                  placeholder="*******" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </FormControl>
+              {inputFields}
               <Button width="full" mt={4} type="submit">
                 Sign In 
               </Button>
