@@ -7,12 +7,12 @@ app.on('ready', () => {
 
 const createWindow = () => {
     const win = new BrowserWindow({
-        width:900,
-        height:700,
+        width:800,
+        height:600,
     })
     win.loadFile('webApp/index.html')
 
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
 }
 
 app.whenReady().then(()=> {
