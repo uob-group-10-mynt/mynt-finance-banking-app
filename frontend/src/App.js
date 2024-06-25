@@ -8,16 +8,25 @@ const App = () => {
             <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
             <div className="App">
                 <Theme>Mode</Theme>
-                <h1 className="App-header">
-                    MYNT Technology
-                </h1>
+
+                <header>
+                    <h1 className="App-header">
+                        MYNT Technology
+                    </h1>
+                </header>
+
+                
+
                 <main>
                     <RemittancePage/>
                     {/* Other components/pages can be added here */}
                 </main>
+
+
                 <footer>
                     <p>&copy; 2024 Mynt. All rights reserved.</p>
                 </footer>
+
             </div>
         </ChakraProvider>
     );
