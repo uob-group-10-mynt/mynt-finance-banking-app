@@ -1,31 +1,25 @@
 import RemittancePage from './pages/RemittancePage';
 import {ChakraProvider, ColorModeScript, extendTheme} from '@chakra-ui/react'
-import Theme from "./components/Theme/theme";
+import Header from './components/SymaticPageComponents/Header';
+import Footer from './components/SymaticPageComponents/Footer';
+
 
 const App = () => {
     return (
         <ChakraProvider theme={theme}>
             <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
+            
             <div className="App">
-                <Theme>Mode</Theme>
-
-                <header>
-                    <h1 className="App-header">
-                        MYNT Technology
-                    </h1>
-                </header>
-
                 
+                <Header></Header>
 
                 <main>
                     <RemittancePage/>
                     {/* Other components/pages can be added here */}
                 </main>
 
-
-                <footer>
-                    <p>&copy; 2024 Mynt. All rights reserved.</p>
-                </footer>
+                <Footer></Footer>
+                
 
             </div>
         </ChakraProvider>
