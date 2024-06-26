@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {Box, Input, FormLabel, FormControl, FormHelperText, Button } from '@chakra-ui/react';
 
 const Remittance = () => {

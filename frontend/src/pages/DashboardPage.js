@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import CustomTable from "../components/CustomTable";
 
 const LATEST = 'latest';
