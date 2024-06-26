@@ -1,13 +1,13 @@
-package com.mynt.mynt;
+package com.mynt.banking;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MyntProjectApplication {
+public class main {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MyntProjectApplication.class, args);
+		SpringApplication.run(main.class, args);
 	}
 
 }

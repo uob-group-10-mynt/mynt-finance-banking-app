@@ -1,4 +1,4 @@
-package com.mynt.mynt.util.exceptions;
+package com.mynt.banking.util.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

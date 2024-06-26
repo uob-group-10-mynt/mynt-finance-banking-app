@@ -1,4 +1,4 @@
-package com.mynt.mynt;
+package com.mynt.banking;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

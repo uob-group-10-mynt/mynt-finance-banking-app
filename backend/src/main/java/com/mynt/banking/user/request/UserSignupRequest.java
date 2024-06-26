@@ -1,9 +1,7 @@
-package com.mynt.mynt.dto;
-
+package com.mynt.banking.user.request;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
-
 
 @Getter
 @Setter

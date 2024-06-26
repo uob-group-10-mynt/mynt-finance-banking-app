@@ -1,11 +1,8 @@
-package com.mynt.mynt.util.dto;
+package com.mynt.banking.util.dto;
 
-import com.mynt.mynt.util.exceptions.ErrorResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.xml.transform.Result;
 
 @Getter
 @Setter

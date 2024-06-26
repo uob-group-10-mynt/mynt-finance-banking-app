@@ -1,6 +1,6 @@
-package com.mynt.mynt.util.exceptions;
+package com.mynt.banking.util.exceptions;
 
-import com.mynt.mynt.util.dto.ResultResponseDTO;
+import com.mynt.banking.util.dto.ResultResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
