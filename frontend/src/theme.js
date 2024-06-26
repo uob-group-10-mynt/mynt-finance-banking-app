@@ -1,4 +1,3 @@
-import React from 'react';
 import {useColorMode, Button, useColorModeValue} from '@chakra-ui/react';
 
 function Theme() {
