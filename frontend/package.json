@@ -15,7 +15,7 @@
   },
   "author": "Group10",
   "license": "ISC",
-  "description": "HelloWorld!!",
+  "description": "Mynt - A Challenger Bank for Kenya",
   "dependencies": {
     "@babel/core": "^7.24.7",
     "@babel/preset-env": "^7.24.7",
