@@ -14,7 +14,7 @@ const Login = lazy(() => import('../pages/Login'))
 const RemittancePage = lazy(() => import('../pages/RemittancePage'))
 
 // Layouts
-const RootLayout = lazy(() => import('../pages/RootLayout'))
+const RootLayout = lazy(() => import('../layouts/RootLayout'))
 
 //Loading components
 const placeholderLoading = <div>loading...</div>
