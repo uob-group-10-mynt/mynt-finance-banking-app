@@ -6,6 +6,7 @@ import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } 
 import Home from './pages/Home';
 import Login from './pages/Login';
 import RemittancePage from './pages/RemittancePage'
+import CreateUser from './pages/CreateUser';
 
 //Layouts
 import RootLayout from './pages/RootLayout';
@@ -25,6 +26,7 @@ const router = createBrowserRouter(
             <Route index element={<Home/>}/>
             <Route path='login' element={<Login/>}/>
             <Route path='remittance' element={<RemittancePage/>}/>
+            <Route path='signUp' element={<CreateUser/>}/>
         </Route>
     )
 );
