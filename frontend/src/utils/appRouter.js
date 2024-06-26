@@ -12,6 +12,7 @@ import {
 const Home = lazy(() => import('../pages/Home'))
 const Login = lazy(() => import('../pages/Login'))
 const RemittancePage = lazy(() => import('../pages/RemittancePage'))
+const CreateUser = lazy(() => import('../pages/CreateUser'))
 
 // Layouts
 const RootLayout = lazy(() => import('../layouts/RootLayout'))
@@ -25,6 +26,7 @@ const appRouter = createBrowserRouter(
             <Route index element={lazyLoad(Home, placeholderLoading)}/>
             <Route path='login' element={lazyLoad(Login, placeholderLoading)}/>
             <Route path='remittance' element={lazyLoad(RemittancePage, placeholderLoading)}/>
+            <Route path='signup' element={lazyLoad(CreateUser, placeholderLoading)}/>
         </Route>
     )
 );
