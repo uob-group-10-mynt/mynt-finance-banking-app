@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:backend/src/main/java/com/mynt/banking/util/dto/ResultResponseDTO.java
 package com.mynt.banking.util.dto;
+========
+package com.mynt.mynt.dto;
+>>>>>>>> dev:backend/src/main/java/com/mynt/mynt/dto/ResultResponseDTO.java
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

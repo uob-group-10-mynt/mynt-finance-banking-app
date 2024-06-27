@@ -3,12 +3,11 @@
 .idea/
 
 # Front end Project
-view/ios/
-view/android/
-view/out/
-view/webApp/
-view/node_modules/
-
+frontend/ios/
+frontend/android/
+frontend/out/
+frontend/webApp/
+frontend/node_modules/
 
 # User-specific stuff
 .idea/**/workspace.xml
@@ -97,6 +96,8 @@ fabric.properties
 ### Java ###
 # Compiled class file
 *.class
+backend/src/main/resources/application.properties
+backend/bin/main/application.properties
 
 # Log file
 *.log
@@ -307,6 +308,7 @@ web_modules/
 
 # dotenv environment variable files
 .env
+backend/.env
 .env.development.local
 .env.test.local
 .env.production.local
