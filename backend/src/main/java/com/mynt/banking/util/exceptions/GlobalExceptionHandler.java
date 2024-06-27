@@ -1,10 +1,7 @@
 package com.mynt.banking.util.exceptions;
 
-<<<<<<< HEAD:backend/src/main/java/com/mynt/banking/util/exceptions/GlobalExceptionHandler.java
-import com.mynt.banking.util.dto.ResultResponseDTO;
-=======
-import com.mynt.mynt.dto.ResultResponseDTO;
->>>>>>> dev:backend/src/main/java/com/mynt/mynt/util/exceptions/GlobalExceptionHandler.java
+import com.mynt.banking.util.dto.*;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
