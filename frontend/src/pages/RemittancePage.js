@@ -21,9 +21,9 @@ const Remittance = () => {
     };
 
     const remitanceInputList = [
-        { label: "From:", placeholder: "Payer's name", type:"text", required: true, value: senderName, onChange: (e) => setSenderName(e.target.value) },
-        { label: "To:", placeholder: "Payee's name", type:"text", required: true, value: recipientName, onChange: (e) => setRecipientName(e.target.value) },
-        { label: "Amount:", placeholder: 0, type:"number", required: true, value: amount, onChange: (e) => setAmount(e.target.value), helperText: `Available balance: ${availableBalance.toFixed(2)} KES` },
+        { testId: "fromInput",label: "From:", placeholder: "Payer's name", type:"text", required: true, value: senderName, onChange: (e) => setSenderName(e.target.value) },
+        { testId: "toInput",label: "To:", placeholder: "Payee's name", type:"text", required: true, value: recipientName, onChange: (e) => setRecipientName(e.target.value) },
+        { testId: "amountInput",label: "Amount:", placeholder: 0, type:"number", required: true, value: amount, onChange: (e) => setAmount(e.target.value), helperText: `Available balance: ${availableBalance.toFixed(2)} KES` },
     ];
 
     const renderedRemittancesInput = remitanceInputList.map((inputList) => {
@@ -38,6 +38,7 @@ const Remittance = () => {
                         value={inputList.value}
                         onChange={inputList.onChange}
                         required={inputList.required}
+                        data-cy={inputList.testId}
                     />
                     {inputList.helperText ? <FormHelperText>{inputList.helperText}</FormHelperText> : null}
                 </FormControl>
@@ -51,7 +52,7 @@ const Remittance = () => {
             <h1 className="Remittance-page-header">Transfer</h1>
             <form onSubmit={handleFormSubmit}>
                 {renderedRemittancesInput}
-                <Button margin='0.5em' type="submit">Send Money</Button>
+                <Button margin='0.5em' type="submit" data-cy="submitButton">Send Money</Button>
             </form>
         </Box>
     );
