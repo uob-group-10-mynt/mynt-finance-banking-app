@@ -21,9 +21,9 @@ const Remittance = () => {
     };
 
     const remitanceInputList = [
-        { testId: "fromInput",label: "From:", placeholder: "Payer's name", type:"text", required: true, value: senderName, onChange: (e) => setSenderName(e.target.value) },
-        { testId: "toInput",label: "To:", placeholder: "Payee's name", type:"text", required: true, value: recipientName, onChange: (e) => setRecipientName(e.target.value) },
-        { testId: "amountInput",label: "Amount:", placeholder: 0, type:"number", required: true, value: amount, onChange: (e) => setAmount(e.target.value), helperText: `Available balance: ${availableBalance.toFixed(2)} KES` },
+        { label: "From:",testId: "fromInput", placeholder: "Payer's name", type:"text", required: true, value: senderName, onChange: (e) => setSenderName(e.target.value) },
+        { label: "To:", testId: "toInput",placeholder: "Payee's name", type:"text", required: true, value: recipientName, onChange: (e) => setRecipientName(e.target.value) },
+        { label: "Amount:", testId: "amountInput", placeholder: 0, type:"number", required: true, value: amount, onChange: (e) => setAmount(e.target.value), helperText: `Available balance: ${availableBalance.toFixed(2)} KES` },
     ];
 
     const renderedRemittancesInput = remitanceInputList.map((inputList) => {
