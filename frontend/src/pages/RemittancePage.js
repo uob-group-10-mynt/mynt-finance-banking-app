@@ -52,7 +52,7 @@ const Remittance = () => {
             <h1 className="Remittance-page-header">Transfer</h1>
             <form onSubmit={handleFormSubmit}>
                 {renderedRemittancesInput}
-                <Button margin='0.5em' type="submit">Send Money</Button>
+                <Button margin='0.5em' type="submit" data-cy="submitButton">Send Money</Button>
             </form>
         </Box>
     );
