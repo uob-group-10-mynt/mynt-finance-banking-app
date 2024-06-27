@@ -1,0 +1,63 @@
+name: Frontend CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'dev'
+      - '**/frontend-**'
+
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Node modules
+        id: cache-json
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Node.js
+        if: steps.cache-json.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Verify Cypress installation
+        run: |
+          cd frontend
+          npx cypress verify
+
+      - name: Build project
+        run: |
+          cd frontend
+          npm run devReact &
+
+      - name: Cypress run
+        run: |
+          cd frontend
+          npm run e2e:chrome
+
+  report:
+    needs: build-test
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output Information
+        run: |
+          echo "Something went wrong"
+          echo "${{ toJSON(github) }}"
