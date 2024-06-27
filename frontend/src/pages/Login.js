@@ -15,8 +15,8 @@ const Login = () => {
     const handleSubmit = (e) => {
       e.preventDefault();
       const credentials = { email, password };
-      //TODO send POST request
-      fetch('URL FOR API ENDPOINT', {
+      //TODO send POST request to correct URL
+      fetch('http://localhost:9001/api/login', {
         method: 'POST',
         headers: { "Content-type": "application/json" },
         body: JSON.stringify(credentials)

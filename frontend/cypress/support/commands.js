@@ -23,3 +23,9 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('inspectFormSubmission', (interception, requestBody) => {
+    const body = interception.request.body;
+    expect(body).to.deep.equal(requestBody)
+    expect(interception.request.method).to.equal('POST')
+})
