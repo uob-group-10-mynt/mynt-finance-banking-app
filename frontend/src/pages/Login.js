@@ -8,7 +8,6 @@ import {
   Input, 
   Button 
 } from "@chakra-ui/react";
-
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
