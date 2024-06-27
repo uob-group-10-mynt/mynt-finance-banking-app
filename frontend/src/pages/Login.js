@@ -33,7 +33,7 @@ const Login = () => {
         if (!response.ok) {
           throw new Error('Authentication failed');
         }
-  
+        console.log(response.json());
         console.log('Form submitted', credentials);
         setEmail('');
         setPassword('');
