@@ -105,7 +105,7 @@ function signUp(){
 
     return(
         <Flex width="full" align="center" justifyContent="center">
-        <Box p={2} className="remittance-page">
+        <Box p={2} className="page">
           <Box textAlign="center">
             <Heading>Sign Up</Heading>
           </Box>
