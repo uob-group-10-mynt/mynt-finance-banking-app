@@ -19,10 +19,10 @@ public class CurrencyCloudService {
     @Value("${currencycloud.api.url}")
     private String apiUrl;
 
-    @Value("${currencycloud.api.loginId}")
+    @Value("${currencycloud.api.login_id}")
     private String loginId;
 
-    @Value("${currencycloud.api.apiKey}")
+    @Value("${currencycloud.api.key}")
     private String apiKey;
 
     public CurrencyCloudService(RestTemplate restTemplate) {
