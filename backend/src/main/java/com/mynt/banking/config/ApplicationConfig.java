@@ -37,7 +37,6 @@ public class ApplicationConfig {
         return username -> repository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
-
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -45,11 +44,6 @@ public class ApplicationConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
-
-//    @Bean
-//    public AuditorAware<Integer> auditorAware() {
-//        return new ApplicationAuditAware();
-//    }
 
     @Bean
     public CommonsRequestLoggingFilter logFilter() {
@@ -61,7 +55,6 @@ public class ApplicationConfig {
         filter.setAfterMessagePrefix("REQUEST DATA : ");
         return filter;
     }
-
     @Bean
     public RestTemplate restTemplate() {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
@@ -86,18 +79,17 @@ public class ApplicationConfig {
                     System.out.println("Response Headers: " + Arrays.toString(response.getAllHeaders()));
                 })
                 .build();
-
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
         return new RestTemplate(factory);
     }
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }
+

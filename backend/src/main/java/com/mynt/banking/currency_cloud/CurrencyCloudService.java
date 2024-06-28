@@ -1,9 +1,7 @@
 package com.mynt.banking.currency_cloud;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -12,7 +10,6 @@ import java.util.Map;
 
 @Service
 public class CurrencyCloudService {
-
     private final RestTemplate restTemplate;
     private String authToken;
 
@@ -47,20 +44,90 @@ public class CurrencyCloudService {
         }
     }
 
-    public String getBalance() {
+    private HttpHeaders createHeadersWithAuth() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(authToken);
+        return headers;
+    }
+
+    public String getBalance(String currency) {
         if (authToken == null) {
             authenticate();
         }
 
-        String url = apiUrl + "/v2/balances/find";
+        String url = apiUrl + "/v2/balances/" + currency;
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(authToken);
-
+        HttpHeaders headers = createHeadersWithAuth();
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        return restTemplate.getForObject(url, String.class, request);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
+        return response.getBody();
     }
 
-    // Add more methods for other API interactions as needed
+    public Map<String, Object> createBeneficiary(Map<String, Object> beneficiaryDetails) {
+        if (authToken == null) {
+            authenticate();
+        }
+
+        String url = apiUrl + "/v2/beneficiaries/create";
+
+        HttpHeaders headers = createHeadersWithAuth();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(beneficiaryDetails, headers);
+
+        ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
+        return response.getBody();
+    }
+
+    public Map<String, Object> getQuote(Map<String, Object> quoteDetails) {
+        if (authToken == null) {
+            authenticate();
+        }
+
+        String url = apiUrl + "/v2/rates/detailed";
+
+        HttpHeaders headers = createHeadersWithAuth();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(quoteDetails, headers);
+
+        ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
+        return response.getBody();
+    }
+
+    public Map<String, Object> createConversion(Map<String, Object> conversionDetails) {
+        if (authToken == null) authenticate();
+
+        String url = apiUrl + "/v2/conversions/create";
+
+        HttpHeaders headers = createHeadersWithAuth();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(conversionDetails, headers);
+
+        ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
+        return response.getBody();
+    }
+
+    public Map<String, Object> createPayment(Map<String, Object> paymentDetails) {
+        if (authToken == null) authenticate();
+
+        String url = apiUrl + "/v2/payments/create";
+
+        HttpHeaders headers = createHeadersWithAuth();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(paymentDetails, headers);
+
+        ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
+        return response.getBody();
+    }
+
+    public Map<String, Object> authorizePayment(String paymentId) {
+        if (authToken == null) authenticate();
+        return null;
+    }
 }
+
+
