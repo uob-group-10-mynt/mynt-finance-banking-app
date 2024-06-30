@@ -9,7 +9,7 @@ dotenv.config();
 module.exports = {
     entry: './src/index.js',
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'webApp'),
         filename: 'bundle.js'
     },
     module: {
