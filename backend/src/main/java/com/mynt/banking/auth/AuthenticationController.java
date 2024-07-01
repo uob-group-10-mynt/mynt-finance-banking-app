@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -20,7 +21,7 @@ public class AuthenticationController {
     private final AuthenticationService service;
 
     @PostMapping(value = "/register", consumes = {"application/json", "text/plain"})
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody @Valid RegisterRequest request) {
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody @Valid RegisterRequest request) throws URISyntaxException, IOException, InterruptedException {
 
 
 
