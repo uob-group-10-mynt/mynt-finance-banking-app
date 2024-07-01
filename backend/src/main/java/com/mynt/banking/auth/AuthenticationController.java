@@ -18,10 +18,17 @@ import java.io.IOException;
 public class AuthenticationController {
 
     private final AuthenticationService service;
+
     @PostMapping(value = "/register", consumes = {"application/json", "text/plain"})
     public ResponseEntity<AuthenticationResponse> register(@RequestBody @Valid RegisterRequest request) {
+
+
+
         return ResponseEntity.ok(service.register(request));
+
     }
+
+
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(service.authenticate(request));

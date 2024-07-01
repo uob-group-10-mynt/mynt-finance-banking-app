@@ -2,6 +2,7 @@ import React from 'react';
 import reactDom  from 'react-dom';
 import { useState } from "react";
 import { Flex, Box, Heading, FormControl, FormLabel, Input, Button, Text } from "@chakra-ui/react";
+import axios from 'axios';
 
 function signUp(){
     const [firstName, setFirstName] = useState('');
@@ -28,6 +29,18 @@ function signUp(){
         setMessage('Passwords do not match!');
       }
 
+
+    };
+
+    // function onfidoGetApplicantID(){
+    //   axios.
+
+
+
+
+    // }
+
+
       //TODO send POST request
       //  fetch('URL FOR API ENDPOINT', {
       //    method: 'POST',
@@ -38,7 +51,6 @@ function signUp(){
       //    setEmail('');
       //    setPassword('');
       //  })
-    };
 
     const fieldsInputList = [
       { 
