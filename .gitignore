@@ -2,6 +2,10 @@
 .vscode/
 .idea/
 
+# Spring Application Properties and Keys:
+/backend/src/main/resources/application.properties
+application.properties
+
 # Front end Project
 frontend/ios/
 frontend/android/
@@ -11,6 +15,7 @@ frontend/node_modules/
 
 # backend
 backend/bin
+
 
 # User-specific stuff
 .idea/**/workspace.xml
