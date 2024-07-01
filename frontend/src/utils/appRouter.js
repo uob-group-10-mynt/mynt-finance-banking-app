@@ -15,6 +15,7 @@ const RemittancePage = lazy(() => import('../pages/RemittancePage'))
 const CreateUser = lazy(() => import('../pages/CreateUser'))
 const DashBoard = lazy(() => import('../pages/DashboardPage'));
 const NotFound404 = lazy(() => import('../pages/ErrorPage'));
+const Kyc = lazy(() => import('../pages/KYC'));
 
 // Layouts
 const RootLayout = lazy(() => import('../layouts/RootLayout'))
@@ -29,6 +30,7 @@ const appRouter = createBrowserRouter(
             <Route path='login' element={lazyLoad(Login, placeholderLoading)}/>
             <Route path='remittance' element={lazyLoad(RemittancePage, placeholderLoading)}/>
             <Route path='signup' element={lazyLoad(CreateUser, placeholderLoading)}/>
+            <Route path='kyc' element={lazyLoad(Kyc, placeholderLoading)}/>
             <Route path='dashboard' element={lazyLoad(DashBoard, placeholderLoading)}></Route>
             <Route path={'*'} element={lazyLoad(NotFound404, placeholderLoading)}></Route>
         </Route>
