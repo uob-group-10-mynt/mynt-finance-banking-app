@@ -3,7 +3,7 @@
 .idea/
 
 # Spring Application Properties and Keys:
-application.properties
+/backend/src/main/resources/application.properties
 
 # Front end Project
 frontend/ios/
