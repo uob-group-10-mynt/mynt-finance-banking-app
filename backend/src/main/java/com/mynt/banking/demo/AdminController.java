@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @PreAuthorize("hasRole('ADMIN')")
 @Tag(name = "Admin")
 public class AdminController {
-
     @GetMapping
     @PreAuthorize("hasAuthority('admin:read')")
     public String get() {

@@ -26,15 +26,20 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
-	implementation 'org.bitbucket.b_c:jose4j:0.9.6'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation:3.3.0'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 	implementation 'org.springframework.boot:spring-boot-starter-validation:3.3.1'
 	implementation 'javax.validation:validation-api:2.0.1.Final'
 	implementation 'org.hibernate.validator:hibernate-validator:6.2.0.Final'
+	implementation 'org.postgresql:postgresql:42.7.3'
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+	implementation 'io.github.cdimascio:dotenv-java:3.0.1'
+	implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+	implementation 'org.apache.httpcomponents:httpcore:4.4.13'
+	implementation 'org.apache.httpcomponents.client5:httpclient5:5.1'
+    implementation 'org.apache.httpcomponents.core5:httpcore5:5.1'
+	implementation 'org.springframework.boot:spring-boot-starter-logging'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
@@ -46,18 +51,9 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'junit:junit:4.13.2'
-	implementation 'com.fasterxml.jackson.core:jackson-core:2.17.1'
-	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.17.1'
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
-	implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '9.40'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.hibernate.orm:hibernate-core:6.2.0.Final'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	runtimeOnly 'org.postgresql:postgresql:42.5.0'
-	implementation 'org.hibernate:hibernate-tools:5.4.30.Final'
+	//implementation 'org.antlr:antlr4-runtime:4.10.1'
 }
 
-//	implementation 'com.nimbusds:nimbus-jose-jwt:9.31'
 
 tasks.named('test') {
 	useJUnitPlatform()
