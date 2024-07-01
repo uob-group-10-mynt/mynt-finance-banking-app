@@ -1,12 +1,12 @@
 
+import axios from 'axios';
 import { Onfido } from 'onfido-sdk-ui';
 import { useEffect } from 'react';
 
-
 function kyc(){
 
+    // axios.
 
-    
 
 
     useEffect(()=>{
