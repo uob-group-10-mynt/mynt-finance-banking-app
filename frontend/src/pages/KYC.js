@@ -5,6 +5,10 @@ import { useEffect } from 'react';
 
 function kyc(){
 
+
+    
+
+
     useEffect(()=>{
         Onfido.init({
             token: '<YOUR_SDK_TOKEN>',

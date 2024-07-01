@@ -30,6 +30,8 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
 
+        System.out.println(request);
+
         var user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
