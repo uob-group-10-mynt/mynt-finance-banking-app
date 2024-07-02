@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +20,8 @@ public class AuthenticationController {
     private final AuthenticationService service;
     private final KYCService kycService;
 
-    @PostMapping(value = "/sdk")
-    public ResponseEntity<SDKResponceDTO> sdk(SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
+    @PostMapping(value = "/sdk", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SDKResponceDTO> sdk(@RequestBody SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
         return ResponseEntity.ok(kycService.getSDK(request)) ;
     }
 

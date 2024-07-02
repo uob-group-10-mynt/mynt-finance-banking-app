@@ -16,11 +16,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignUpRequest {
 
-    @NotBlank(message = "Firstname is required")
+//    @NotBlank(message = "Firstname is required")
     @Size(max = 50, message = "Forename cannot be longer than 50 characters")
     private String firstname;
 
-    @NotBlank(message = "Lastname is required")
+//    @NotBlank(message = "Lastname is required")
     @Size(max = 50, message = "Surname cannot be longer than 50 characters")
     private String lastname;
 

@@ -14,11 +14,24 @@ function signUp(){
     const [message, setMessage] = useState('');
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
       e.preventDefault();
+      
+      try {
+        const response = await axios.post('http://localhost:8080/api/v1/auth/sdk', {
+          firstname: "firsdsfadsfddsftName",
+          lastname: "surdfdaadsfdssfname",
+          email: "edsafdfddsafdsamail",
+        }) 
+        console.log("response: "+JSON.stringify(response));
+        } catch (error) {
+          console.error('There was an error!', error);
+          setMessage('An error occurred. Please try again later.');
+        };
+
+      
       if (password === confirmPassword) {
           const credentials = { firstName, surname,  email, password , confirmPassword };
-          console.log(credentials);
           setEmail('');
           setFirstName('');
           setSurname('');
@@ -30,33 +43,7 @@ function signUp(){
         setMessage('Passwords do not match!');
       }
 
-
-    };
-
-    async function onfidoGetApplicantID(){
-      const sdk = await axios(
-        {
-          method:'post',
-          url: `http://localhost:8080/api/v1/auth/kyc`,
-        }
-      );
-      return sdk;
-    }
-
-    useEffect(() => {
-
-      const fetchApplicantID = async () => {
-        try {
-          const result = await onfidoGetApplicantID();
-          console.log(result);
-          console.log("headers: "+result.headers);
-          console.log("data: "+result.data);
-        } catch (error) {
-          console.error("Error fetching applicant ID:", error);
-        }
-      }  
-      alert(fetchApplicantID());
-    }, [])
+    };  
 
 
       //TODO send POST request
@@ -77,7 +64,7 @@ function signUp(){
         placeholder: "James",
         type: "firstName",
         value: firstName,
-        required: true,
+        // required: true,
         onChange: (e) => setFirstName(e.target.value) },
       { 
         label: "Surname", 
@@ -85,7 +72,7 @@ function signUp(){
         placeholder: "Love",
         type: "surname",
         value: surname,
-        required: true,
+        // required: true,
         onChange: (e) => setSurname(e.target.value) 
       },
       { 
@@ -94,7 +81,7 @@ function signUp(){
         placeholder: "james@jameslove.com",
         type: "email",
         value: email,
-        required: true,
+        // required: true,
         onChange: (e) => setEmail(e.target.value) 
       },
       { 
@@ -103,7 +90,7 @@ function signUp(){
         placeholder: "*******",
         type: "password",
         value: password,
-        required: true,
+        // required: true,
         onChange: (e) => setPassword(e.target.value) 
       },
       { 
@@ -112,7 +99,7 @@ function signUp(){
         placeholder: "*******",
         type: "password",
         value: confirmPassword,
-        required: true,
+        // required: true,
         onChange: (e) => setConfirmPassword(e.target.value) 
       },
     ];
