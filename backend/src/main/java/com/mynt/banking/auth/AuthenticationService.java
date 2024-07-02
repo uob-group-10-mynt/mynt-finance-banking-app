@@ -1,5 +1,7 @@
 package com.mynt.banking.auth;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.mynt.banking.config.JWTService;
 import com.mynt.banking.token.Token;
 import com.mynt.banking.token.TokenRepository;
@@ -28,6 +30,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -39,31 +43,6 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) throws URISyntaxException, IOException, InterruptedException {
-
-        HttpRequest postRequest = (HttpRequest) HttpRequest.newBuilder()
-                .uri(new URI("https://api.eu.onfido.com/v3.6/applicants/"))
-                .header("Authorization","Token token=api_sandbox.IYA-2r1JzLQ._kIRoOo62rJjh0JJQdYdI9vMaL63smxf")
-                .header("Content-Type", "application/json")
-                .POST(BodyPublishers.ofString("""
-                   {
-                      "first_name": "Jane",
-                      "last_name": "Doe",
-                      "dob": "1990-01-31",
-                      "address": {
-                        "building_number": "100",
-                        "street": "Main Street",
-                        "town": "London",
-                        "postcode": "SW4 6EH",
-                        "country": "GBR"
-                      }
-                   }
-                """))
-                .build();
-
-        HttpClient httpClient = HttpClient.newHttpClient();
-        HttpResponse<String> postResponse = httpClient.send(postRequest, HttpResponse.BodyHandlers.ofString());
-        System.out.println("\n\nResponse: "+postResponse.body()+"\n\n");
-
 
         var user = User.builder()
                 .firstname(request.getFirstname())

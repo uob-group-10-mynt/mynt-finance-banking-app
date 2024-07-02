@@ -1,6 +1,7 @@
 import React from 'react';
 import reactDom  from 'react-dom';
-import { useState } from "react";
+// import { useState } from "react";
+import { useEffect, useState } from 'react';
 import { Flex, Box, Heading, FormControl, FormLabel, Input, Button, Text } from "@chakra-ui/react";
 import axios from 'axios';
 
@@ -32,13 +33,30 @@ function signUp(){
 
     };
 
-    // function onfidoGetApplicantID(){
-    //   axios.
+    async function onfidoGetApplicantID(){
+      const sdk = await axios(
+        {
+          method:'post',
+          url: `http://localhost:8080/api/v1/auth/kyc`,
+        }
+      );
+      return sdk;
+    }
 
+    useEffect(() => {
 
-
-
-    // }
+      const fetchApplicantID = async () => {
+        try {
+          const result = await onfidoGetApplicantID();
+          console.log(result);
+          console.log("headers: "+result.headers);
+          console.log("data: "+result.data);
+        } catch (error) {
+          console.error("Error fetching applicant ID:", error);
+        }
+      }  
+      alert(fetchApplicantID());
+    }, [])
 
 
       //TODO send POST request
@@ -129,6 +147,8 @@ function signUp(){
                 Sign In 
               </Button>
             </form>
+
+            {/* <iframe src='https://eu.onfido.app/l/014a828f-8a93-4651-b446-081b02d45c2b'></iframe> */}
           </Box>
         </Box>
       </Flex>
