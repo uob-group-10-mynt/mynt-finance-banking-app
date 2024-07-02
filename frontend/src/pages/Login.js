@@ -37,15 +37,13 @@ const Login = () => {
         }
         
         const data = await response.json()
-        console.log('access: ', data.access_token)
-        console.log('refresh: ', data.refresh_token)
-        console.log('REPONSE: ', data);
         sessionStorage.setItem('access', data.access_token)
         sessionStorage.setItem('refresh', data.refresh_token)
         setLoggedIn(true)
         navigate('/')
       } catch (error) {
-        console.log(error);
+        //TODO handle errors by redirecting to relevant error page
+        console.error(error);
       } 
     };
 
