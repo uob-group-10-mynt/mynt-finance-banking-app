@@ -1,8 +1,15 @@
 import Theme from "../theme";
 import {NavLink, Outlet} from "react-router-dom";
 import CustomDrawer from "../components/CustomDrawer";
+import { useContext } from "react";
+import { LoggedInContext } from "../App";
+
+
 
 export default function RootLayout() {
+    const [loggedIn, setLoggedIn, logOut] = useContext(LoggedInContext)
+
+
     return (
         <div className="App">
             <Theme>Mode</Theme>
@@ -12,8 +19,16 @@ export default function RootLayout() {
                 </h1>
                 <CustomDrawer text="Navigation" testId="navButton">
                     <NavLink to='/'>Home</NavLink>
-                    <NavLink to='login' data-cy="LoginLink">Log In / Sign Up</NavLink>
+                    <NavLink to ='signup' data-cy="SignUpLink">Sign Up</NavLink>
                     <NavLink to='remittance' data-cy="RemittanceLink">Transfer</NavLink>
+                    {
+                        loggedIn ? 
+                        <NavLink to={'login'} data-cy="LogOutLink" onClick={() => {
+                            logOut();
+                        }}>Log Out</NavLink>
+                        :
+                        <NavLink to={'login'} data-cy="LoginLink">Log In</NavLink>
+                    }
                 </CustomDrawer>
             </header>
             <main>
