@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { 
   Flex, 
   Box,
@@ -7,11 +7,12 @@ import {
   Input, 
   Button 
 } from "@chakra-ui/react";
-
+import { LoggedInContext } from "../App";
 import PageHeader from "../components/forms/PageHeader";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+    const [loggedIn, setLoggedIn] = useContext(LoggedInContext)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
@@ -37,6 +38,7 @@ const Login = () => {
         console.log('REPONSE: ', data);
         sessionStorage.setItem('access', data.access_token)
         sessionStorage.setItem('refresh', data.refresh_token)
+        setLoggedIn(true)
         navigate('/')
       } catch (error) {
         console.log(error);
