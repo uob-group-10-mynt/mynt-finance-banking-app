@@ -1,4 +1,7 @@
 {
   "email": "sion@uob.ac.uk",
-  "password": "test"
+  "password": "test",
+  "firstName": "Sion",
+  "lastname": "Hannuna",
+  "role":"USER"
 }
