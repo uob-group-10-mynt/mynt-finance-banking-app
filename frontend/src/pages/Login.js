@@ -9,19 +9,15 @@ import {
 } from "@chakra-ui/react";
 
 import PageHeader from "../components/forms/PageHeader";
-import useAxios from "../hooks/useAxios";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const navigate = useNavigate();
   
     const handleSubmit = async (e) => {
       e.preventDefault();
-      setLoading(true);
-      setError(null);
-  
       const credentials = { email, password };
   
       try {
@@ -30,52 +26,22 @@ const Login = () => {
           headers: { "Content-type": "application/json" },
           body: JSON.stringify(credentials)
         });
-  
+        setEmail('');
+        setPassword('');
         if (!response.ok) {
           throw new Error('Authentication failed');
         }
-        console.log(response.json());
-        console.log('Form submitted', credentials);
-        setEmail('');
-        setPassword('');
+        const data = await response.json()
+        console.log('access: ', data.access_token)
+        console.log('refresh: ', data.refresh_token)
+        console.log('REPONSE: ', data);
+        sessionStorage.setItem('access', data.access_token)
+        sessionStorage.setItem('refresh', data.refresh_token)
+        navigate('/')
       } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
+        console.log(error);
+      } 
     };
-
-
-    // const [email, setEmail] = useState('');
-    // const [password, setPassword] = useState('');
-    // const handleSubmit = (e) => {
-    //   e.preventDefault();
-    //   const { fetchData, error, loading } = useAxios('/auth/authenticate', 
-    //     'POST', {
-    //       data: {
-    //         email,
-    //         password
-    //       }
-    //     })
-    //     console.log(fetchData, error, loading)
-    //     setEmail(' ')
-    //     setPassword(' ')
-    // }
-    //TODO hash password before posting it
-    // const handleSubmit = (e) => {
-    //   e.preventDefault();
-    //   const credentials = { email, password };
-    //   //TODO send POST request
-    //   fetch('http://localhost:8080/api/v1/auth/authenticate', {
-    //     method: 'POST',
-    //     headers: { "Content-type": "application/json" },
-    //     body: JSON.stringify(credentials)
-    //   }).then(()=> {
-    //     console.log('Form submitted', credentials);
-    //     setEmail('');
-    //     setPassword('');
-    //   })
-    // }
 
     const loginFieldsInputList = [
       { label: "Email", testId: "emailInput", placeholder: "hello@email.com", type: "email", value: email, required: true, onChange: (e) => setEmail(e.target.value) },
