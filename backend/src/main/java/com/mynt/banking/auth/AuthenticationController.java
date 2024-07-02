@@ -20,11 +20,14 @@ public class AuthenticationController {
     private final AuthenticationService service;
     private final KYCService kycService;
 
+
+    //TODO: change SDK name to something more appropriate
     @PostMapping(value = "/sdk", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SDKResponceDTO> sdk(@RequestBody SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
         return ResponseEntity.ok(kycService.getSDK(request)) ;
     }
 
+    //TODO: valadate SDK Data
 //    @PostMapping(value = "/validate", consumes = {"application/json", "text/plain"})
 //    public ResponseEntity<AuthenticationResponse> validate(@RequestBody @Valid RegisterRequest request) throws URISyntaxException, IOException, InterruptedException {
 //        return ResponseEntity.ok(kycService.getReults(request));

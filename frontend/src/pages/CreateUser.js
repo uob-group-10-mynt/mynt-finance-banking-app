@@ -17,6 +17,8 @@ function signUp(){
     const handleSubmit = async (e) => {
       e.preventDefault();
       
+
+      //TODO: get frontend for this API to work
       try {
         const response = await axios.post('http://localhost:8080/api/v1/auth/sdk', {
           firstname: "firsdsfadsfddsftName",
