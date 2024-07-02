@@ -1,5 +1,5 @@
 describe('Sign Up Page', () => {
-    it('can be found via end point /signup, and form accepts valid credentials', () => {
+    it('can be found via /signup, and form accepts valid credentials', () => {
         cy.visit('/signup')
         
         cy.get('[data-cy="firstNameInput"]').type("James")
