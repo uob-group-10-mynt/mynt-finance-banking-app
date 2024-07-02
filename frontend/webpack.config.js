@@ -9,7 +9,7 @@ dotenv.config();
 module.exports = {
     entry: './src/index.js',
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'webApp'),
         filename: 'bundle.js'
     },
     module: {
@@ -41,7 +41,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './public/index.html'
+            template: './src/index.html'
         }),
         new webpack.DefinePlugin({
             'process.env': JSON.stringify(process.env)

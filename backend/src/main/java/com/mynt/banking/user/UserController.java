@@ -1,7 +1,6 @@
 package com.mynt.banking.user;
 
 import com.mynt.banking.user.request.ChangePasswordRequest;
-import com.mynt.banking.user.request.UserSignupRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

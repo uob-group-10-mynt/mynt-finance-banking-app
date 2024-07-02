@@ -2,6 +2,9 @@
 .vscode/
 .idea/
 
+# Spring Application Properties and Keys:
+application.properties
+
 # Front end Project
 frontend/ios/
 frontend/android/
