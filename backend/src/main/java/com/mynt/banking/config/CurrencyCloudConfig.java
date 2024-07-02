@@ -17,6 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Setter
 @Getter
@@ -33,9 +36,12 @@ public class CurrencyCloudConfig {
     @Value("${currencycloud.api.key}")
     private String apiKey;
 
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
     @Bean
     public CurrencyCloudClient currencyCloudClient() {
-        return new CurrencyCloudClient(
+
+        CurrencyCloudClient client = new CurrencyCloudClient(
                 CurrencyCloudClient.Environment.demo,
                 loginId,
                 apiKey,
@@ -43,5 +49,25 @@ public class CurrencyCloudConfig {
                         .httpConnTimeout(15000)
                         .httpReadTimeout(35000)
                         .build());
+
+        return Reauthenticator.createProxy(client);
+    }
+
+    private void authenticate(CurrencyCloudClient client) {
+        try {
+            client.authenticate();
+            startTokenRefreshTask(client);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void startTokenRefreshTask(CurrencyCloudClient client) {
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                authenticate(client);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, 25, 25, TimeUnit.MINUTES);  // Refresh every 25 minutes
     }
 }

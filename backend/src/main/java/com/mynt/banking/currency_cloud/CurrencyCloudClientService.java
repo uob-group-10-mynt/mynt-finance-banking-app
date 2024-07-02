@@ -42,11 +42,6 @@ public class CurrencyCloudClientService {
         );
     }
 
-
-    api_key=3e44b490705e76da3e416c0266de9098ea19598c4ae6008540e1939b576799e4
-            email=af17918@bristol.ac.uk
-    password=wcYApv7@MV6xLB8
-
     @SneakyThrows
     private <T> Optional<T> executeWithBackOff(Callable<T> task) {
         BackOffResult<T> result = BackOff.<T>builder()
