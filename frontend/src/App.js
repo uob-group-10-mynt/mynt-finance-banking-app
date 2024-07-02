@@ -9,7 +9,7 @@ import SplashPage from './pages/SplashPage';
 const FOUR_SECONDS = 4000;
 
 const App = () => {
-    const [ isLoading, setIsLoading ] = useState(true);
+    const [ isLoading, setIsLoading ] = useState(false);
     useEffect(() => {
         setTimeout(() => {
             setIsLoading(false);
