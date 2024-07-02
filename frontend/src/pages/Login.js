@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { 
   Flex, 
-  Box, 
-  Heading, 
+  Box,
   FormControl, 
   FormLabel, 
   Input, 
   Button 
 } from "@chakra-ui/react";
+
+import PageHeader from "../components/forms/PageHeader";
 import useAxios from "../hooks/useAxios";
 
 const Login = () => {
@@ -100,9 +101,7 @@ const Login = () => {
     return(
       <Flex width="full" align="center" justifyContent="center">
         <Box p={2} className="remittance-page">
-          <Box textAlign="center">
-            <Heading>Login</Heading>
-          </Box>
+          <PageHeader title="Login"/>
           <Box my={4} textAlign="left">
             <form onSubmit={handleSubmit}>
               {inputFields}

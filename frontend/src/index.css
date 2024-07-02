@@ -1,4 +1,4 @@
-.remittance-page {
+.page {
     max-width: 600px;
     margin: 20px auto;
     padding: 20px;
@@ -6,7 +6,7 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.remittance-page form {
+.page form {
     display: flex;
     flex-direction: column;
 }
@@ -17,19 +17,9 @@ footer {
     padding: 1rem;
 }
 
-h1 {
-    font-weight: bold;
-}
-
 .App-header {
     font-size: 24px;
     margin-top: 10px;
     margin-left: 10px;
 }
 
-.Remittance-page-header {
-    font-size: 20px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    text-align: center;
-}
