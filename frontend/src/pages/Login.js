@@ -5,7 +5,8 @@ import {
   FormControl, 
   FormLabel, 
   Input, 
-  Button 
+  Button, 
+  FormErrorMessage
 } from "@chakra-ui/react";
 import { LoggedInContext } from "../App";
 import PageHeader from "../components/forms/PageHeader";
@@ -15,6 +16,7 @@ const Login = () => {
     const [loggedIn, setLoggedIn] = useContext(LoggedInContext)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [invalidCredentialsMsg, setInvalidCredentialsMsg] = useState('');
     const navigate = useNavigate();
   
     const handleSubmit = async (e) => {
@@ -30,8 +32,10 @@ const Login = () => {
         setEmail('');
         setPassword('');
         if (!response.ok) {
+          setInvalidCredentialsMsg('incorrect email or password')
           throw new Error('Authentication failed');
         }
+        
         const data = await response.json()
         console.log('access: ', data.access_token)
         console.log('refresh: ', data.refresh_token)
@@ -46,13 +50,13 @@ const Login = () => {
     };
 
     const loginFieldsInputList = [
-      { label: "Email", testId: "emailInput", placeholder: "hello@email.com", type: "email", value: email, required: true, onChange: (e) => setEmail(e.target.value) },
-      { label: "Password", testId: "passwordInput", placeholder: "*******", type: "password", value: password,required: true, onChange: (e) => setPassword(e.target.value) },
+      { label: "Email", testId: "emailInput", placeholder: "hello@email.com", type: "email", value: email, required: true, onChange: (e) => setEmail(e.target.value), errorMsg: "Incorrect email or password" },
+      { label: "Password", testId: "passwordInput", placeholder: "*******", type: "password", value: password,required: true, onChange: (e) => setPassword(e.target.value), errorMsg: "Incorrect email or password" },
     ]
 
     const inputFields = loginFieldsInputList.map((inputList) => {
       return (
-        <FormControl isRequired={inputList.required} key={inputList.label}>
+        <FormControl isInvalid={invalidCredentialsMsg} isRequired={inputList.required} key={inputList.label}>
           <FormLabel>{inputList.label}</FormLabel>
           <Input 
             isRequired={inputList.required} 
@@ -62,6 +66,7 @@ const Login = () => {
             onChange={inputList.onChange}
             data-cy={inputList.testId}
             />
+            <FormErrorMessage data-cy="errorMessage">{inputList.errorMsg}</FormErrorMessage>
         </FormControl>  
       );
     });
