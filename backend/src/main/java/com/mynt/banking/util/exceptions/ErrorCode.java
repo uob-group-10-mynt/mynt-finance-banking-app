@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode {
   USER_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "USER NOT FOUND!"),
-  CURRENCY_CLOUD_API_CONNECTION_ERROR(HttpStatus.FAILED_DEPENDENCY, "CURRENCY CLOUD CONNECTION FAILURE")
-  ;
+  CURRENCY_CLOUD_API_ERROR(HttpStatus.FAILED_DEPENDENCY, "CURRENCY CLOUD CONNECTION FAILURE"),
+  CURRENCY_CLOUD_AUTH_ERROR(HttpStatus.UNAUTHORIZED, "CURRENCY CLOUD AUTHENTICATION ERROR!");
 
   private final HttpStatus status;
   private final String description;
