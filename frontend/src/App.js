@@ -1,32 +1,26 @@
-import {ChakraProvider, ColorModeScript, extendTheme} from '@chakra-ui/react'
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
 import { RouterProvider } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import appRouter from './utils/appRouter';
+import ChakraUITheme from './utils/ChakraUITheme';
+import SplashPage from './pages/SplashPage';
 
-const theme = extendTheme({
-    config: {
-        initialColorMode: 'light',
-        useSystemColorMode: false,
-    },
-    colors: {
-        // Define your light and dark mode colors here
-        brand: {
-            500: '#2ecc71', // Example brand color
-        },
-    },
-    styles: {
-        global: (props) => ({
-            body: {
-                bg: props.colorMode === 'dark' ? 'gray.800' : 'white',
-                color: props.colorMode === 'dark' ? 'white' : 'gray.800',
-            },
-        }),
-    },
-});
+
+const FOUR_SECONDS = 4000;
 
 const App = () => {
+    const [ isLoading, setIsLoading ] = useState(true);
+    useEffect(() => {
+        setTimeout(() => {
+            setIsLoading(false);
+        }, FOUR_SECONDS);
+    }, []);
+
     return (
-        <ChakraProvider theme={theme}>
-            <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
+        isLoading 
+        ? <SplashPage /> 
+        :<ChakraProvider theme={ChakraUITheme}>
+            <ColorModeScript initialColorMode={ChakraUITheme.config.initialColorMode}/>
             <RouterProvider router={appRouter}/>
         </ChakraProvider>
     );
