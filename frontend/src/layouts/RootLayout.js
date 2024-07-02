@@ -10,9 +10,9 @@ export default function RootLayout() {
                 <h1 className="App-header">
                     MYNT Technology
                 </h1>
-                <CustomDrawer text="Navigation">
+                <CustomDrawer text="Navigation" testId="navButton">
                     <NavLink to='/'>Home</NavLink>
-                    <NavLink to='login' data-cy="LoginLink">Login</NavLink>
+                    <NavLink to='login' data-cy="LoginLink">Log In / Sign Up</NavLink>
                     <NavLink to='remittance' data-cy="RemittanceLink">Transfer</NavLink>
                 </CustomDrawer>
             </header>

@@ -1,6 +1,7 @@
 describe('remittance page', () => {
     it('can be found access via home page, can edit form and click submit', () => {
-        cy.visit('/')
+        cy.visit('/remittance')
+        cy.get('[data-cy="navButton"]').click()
         cy.get('[data-cy="RemittanceLink"]').click()
         cy.get('[data-cy="fromInput"]').type("Vincent Xu")
         cy.get('[data-cy="toInput"]').type("Jan Philips")

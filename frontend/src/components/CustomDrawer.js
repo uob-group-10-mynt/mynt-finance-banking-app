@@ -11,14 +11,14 @@ import {
     VStack, Center,
 } from '@chakra-ui/react'
 
-function CustomDrawer({text, children}) {
+function CustomDrawer({text, children, testId}) {
     const {isOpen, onOpen, onClose} = useDisclosure()
     const btnRef = React.useRef()
 
     return (
         <>
             <Center>
-                <Button ref={btnRef} colorScheme='teal' onClick={onOpen}>
+                <Button ref={btnRef} colorScheme='teal' onClick={onOpen} data-cy={testId}>
                     {text}
                 </Button>
             </Center>
