@@ -56,7 +56,7 @@ jobs:
 
       - name: Build backend
         run: |
-          cd ../backend
+          cd backend
           ./gradlew bootRun &
 
       - name: Cypress run
