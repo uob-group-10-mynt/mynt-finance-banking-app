@@ -2,7 +2,7 @@
 
 APPLICATION_PROPERTIES='./backend/src/main/resources/db/application.properties'
 
-touch $APPLICATION_PROPERTIES
+mkdir -p $(dirname $APPLICATION_PROPERTIES)
 
 echo "spring.datasource.url=$1" >> $APPLICATION_PROPERTIES
 echo "spring.datasource.username=$2" >> $APPLICATION_PROPERTIES
