@@ -43,6 +43,11 @@ jobs:
         run: |
           cd frontend
           npm ci
+          
+      - name: Setup application.properties
+        run: |
+          chmod +x ./CI_Scripts/initApplicationProperties.sh
+          ./CI_Scripts/initApplicationProperties.sh ${{ env.DB_URL }} ${{ env.DB_USERNAME }} ${{ env.DB_PASSWORD }}
 
       - name: Verify Cypress installation
         run: |
