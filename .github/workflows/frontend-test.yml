@@ -9,6 +9,13 @@ on:
 
 jobs:
   build-test:
+    environment: Testing_Environment
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      RDS_SSL_CERT_PATH: ${{ secrets.RDS_SSL_CERT_PATH }}
+      PEM_CONTENT: ${{ secrets.PEM_CONTENT }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
@@ -42,10 +49,15 @@ jobs:
           cd frontend
           npx cypress verify
 
-      - name: Build project
+      - name: Build frontend
         run: |
           cd frontend
           npm run devReact &
+
+      - name: Build backend
+        run: |
+          cd ../backend
+          ./gradlew bootRun &
 
       - name: Cypress run
         run: |
