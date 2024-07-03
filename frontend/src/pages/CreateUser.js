@@ -1,9 +1,10 @@
 import React from 'react';
 import reactDom  from 'react-dom';
 // import { useState } from "react";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Flex, Box, Heading, FormControl, FormLabel, Input, Button, Text } from "@chakra-ui/react";
 import axios from 'axios';
+import {Onfido} from 'onfido-sdk-ui';
 
 function signUp(){
     const [firstName, setFirstName] = useState('');
@@ -12,41 +13,83 @@ function signUp(){
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [apiResponce,setApiResponce ] = useState('');
+    const [workflowRunID,setWorkflowRunID ] = useState('');
+    const [sdkToken,setSdkToken ] = useState('');
 
-
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
       e.preventDefault();
-      
+      apiCalls();
+      clearHooks();
+    };  
 
-      //TODO: get frontend for this API to work
-      try {
-        const response = await axios.post('http://localhost:8080/api/v1/auth/onfidoSdk', {
-          firstname: "firsdsfadsfddsftName",
-          lastname: "surdfdaadsfdssfname",
-          email: "edsafdfddsafdsamail",
-        }) 
-        console.log("response: "+JSON.stringify(response));
-        } catch (error) {
-          console.error('There was an error!', error);
-          setMessage('An error occurred. Please try again later.');
-        };
-
-      
+    function clearHooks(){
       if (password === confirmPassword) {
-          const credentials = { firstName, surname,  email, password , confirmPassword };
-          setEmail('');
-          setFirstName('');
-          setSurname('');
-          setPassword('');
-          setConfirmPassword('');  
+        const credentials = { firstName, surname,  email, password , confirmPassword };
+        setEmail('');
+        setFirstName('');
+        setSurname('');
+        setPassword('');
+        setConfirmPassword('');  
       } else {
         setPassword('');
         setConfirmPassword(''); 
         setMessage('Passwords do not match!');
       }
+    }
 
-    };  
 
+    async function apiCalls(){
+      try {
+        let response = await axios.post('http://localhost:8080/api/v1/auth/onfidoSdk', {
+          firstname: "dfs",
+          lastname: "dfas",
+          email: "dasf",
+        }) 
+        kycChecks(response);
+        
+      } catch (error) {
+          console.error('There was an error!', error);
+          setMessage('An error occurred. Please try again later.');
+      };
+    }
+
+    function kycChecks(response){
+      console.log(JSON.stringify(response.data.data, null, 2));
+
+      const YOUR_WORKFLOW_RUN_ID = response.data.data.YOUR_WORKFLOW_RUN_ID;
+      const sdkToken = response.data.data.sdkToken;
+      let urlink = response.data.data.url;
+      urlink = JSON.stringify(urlink)
+        .replace(/=/g, "\":\"")
+        .replace(/, /g,",")
+        .replace(/,/g, "\",\"")
+        .replace(/{/g, "{\"")
+        .replace(/}/g, "\"}")
+        .replace(/"{/g, "{")
+        .replace(/}"/g, "}");
+      const url = JSON.parse(urlink).url
+      console.log("url:  "+JSON.parse(urlink).url);
+      // window.location.href = urlink.url;
+      const kycId = document.getElementById("onfido-mount").innerHTML = `<iframe src='${url}' style='height: 700px;'> </iframe>`;
+      kycId();
+
+      // Onfido.init({
+      //   token: sdkToken,
+      //   containerId: 'onfido-mount',
+      //   onComplete: function (data) {
+      //     console.log('everything is complete')
+      //   },
+      //   workflowRunId: YOUR_WORKFLOW_RUN_ID ,
+      // })
+    }
+
+
+    // crossDevicePolicy: 'force',
+    // _crossDeviceLinkMethods: ['qr_code', 'copy_link', 'sms'],
+    // userDetails: {
+    //   redirect_url: 'http://localhost:9001/kyc'
+    // }
 
       //TODO send POST request
       //  fetch('URL FOR API ENDPOINT', {
@@ -58,6 +101,7 @@ function signUp(){
       //    setEmail('');
       //    setPassword('');
       //  })
+
 
     const fieldsInputList = [
       { 
@@ -123,12 +167,13 @@ function signUp(){
     });
 
     return(
-        <Flex width="full" align="center" justifyContent="center">
-        <Box p={2} className="remittance-page">
+      <Flex width="full" align="center" justifyContent="center">
+        <div id="onfido-mount">
+        <Box p={10} className="remittance-page">
           <Box textAlign="center">
             <Heading>Sign Up</Heading>
           </Box>
-          <Box my={4} textAlign="left">
+          <Box my={10} textAlign="left">
             <form onSubmit={handleSubmit}>
               {inputFields}
               <Text color={'red.500'}>{message}</Text>
@@ -136,10 +181,10 @@ function signUp(){
                 Sign In 
               </Button>
             </form>
-
-            {/* <iframe src='https://eu.onfido.app/l/014a828f-8a93-4651-b446-081b02d45c2b'></iframe> */}
           </Box>
+          
         </Box>
+        </div>
       </Flex>
     );
 }

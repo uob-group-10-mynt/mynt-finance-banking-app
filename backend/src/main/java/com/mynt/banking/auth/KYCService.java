@@ -1,7 +1,6 @@
 package com.mynt.banking.auth;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -23,36 +22,42 @@ public class KYCService {
 
     @Value("${api.onfido}")
     private String onfido;
-    
+
+    private String ApplicantId;
+    private String workflow_ID;
+    private String workflowRunId;
+    private String referrrer;
+    private String redirectURL;
+    private String url;
+    private String sdkToken;
+
     public SDKResponceDTO getOnfidoSDK(SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
 
         SDKResponceDTO sdkResponceDTO = new SDKResponceDTO();
 
         String apiToken = "Token token="+onfido;
-        String workflow_ID  = "c3c68677-2a4d-44cb-8bbc-f2d4693ec7be";
-        String referrrer = "https://localhost:9001/kyc";
+        workflow_ID  = "c3c68677-2a4d-44cb-8bbc-f2d4693ec7be"; //KYC
+//        workflow_ID  = "792f7968-d06b-4b6b-80cc-4e9a9a089ad2" ; //Basic Test - Versions
+        referrrer = "http://localhost:9001/signup/*";
+        redirectURL = "http://localhost:9001/kyc";
 
         try{
             HashMap<String,Object> createApplicant = createApplicant(request, apiToken);
-            sdkResponceDTO.setStage("createApplication");
-            sdkResponceDTO.setData(createApplicant);
+            ApplicantId = createApplicant.get("id").toString();
 
-            String id = createApplicant.get("id").toString();
+            HashMap<String,Object> createWorkflowRun = createWorkflowRun(workflow_ID, ApplicantId , apiToken, redirectURL);
+            workflowRunId = (String) createWorkflowRun.get("id");
+            url = createWorkflowRun.get("link").toString();
 
-            HashMap<String,Object> createWorkflowRun = createWorkflowRun(workflow_ID, id , apiToken);
-            sdkResponceDTO.setStage("createWorkflowRun");
-            sdkResponceDTO.setData(createWorkflowRun);
-
-            String workflowRunId = (String) createWorkflowRun.get("id");
-
-            HashMap<String,Object> sdkDetails = getSDKDetails(id, referrrer, apiToken);
-            sdkResponceDTO.setStage("getSDKDetails");
-            sdkResponceDTO.setData(sdkDetails);
+            HashMap<String,Object> sdkDetails = getSDKDetails(ApplicantId, referrrer, apiToken);
+            sdkToken = (String) sdkDetails.get("token");
+//            sdkResponceDTO.setStage("createWorkflowRun");
+//            sdkResponceDTO.setData(createWorkflowRun);
 
             HashMap<String, Object> response = new HashMap<>();
-            response.put("sdkToken", sdkDetails.get("token"));
+            response.put("sdkToken", sdkToken);
             response.put("YOUR_WORKFLOW_RUN_ID",workflowRunId);
-            response.put("url",createWorkflowRun.get("link") );
+            response.put("url", url);
             sdkResponceDTO.setData(response);
 
         } catch (URISyntaxException e) {
@@ -89,49 +94,72 @@ public class KYCService {
         Map<String, Object> map = mapper.readValue(createApplicant.body(), new TypeReference<Map<String, Object>>() {
         });
 
-        // keep here until I need it later
-//        "dob": "1990-01-31",
-//                "address": {
-//            "building_number": "100",
-//                    "street": "Main Street",
-//                    "town": "London",
-//                    "postcode": "SW4 6EH",
-//                    "country": "GBR"
-//        }
-
         return (HashMap<String, Object>) map;
     }
 
-    private HashMap<String,Object> createWorkflowRun(String workflow_id, String applicant_id, String apiToken) throws URISyntaxException, IOException, InterruptedException {
+    private HashMap createWorkflowRun(String workflow_id, String applicant_id,
+                                      String apiToken, String redirectURL
+                                                     ) throws URISyntaxException,
+                                                              IOException,
+                                                              InterruptedException {
 
-        Map<String, String> requestMap = new HashMap();
-        requestMap.put("workflow_id",workflow_id);
-        requestMap.put("applicant_id", applicant_id);
+        String json = "{ \"workflow_id\": \""+workflow_id+"\","+
+                "\"applicant_id\":\""+applicant_id+"\","+
+                "\"link\":{"+
+                    "\"completed_redirect_url\":\""+redirectURL+"\","+
+                    "\"expired_redirect_url\":\""+redirectURL+"\","+
+                    "\"language\":\"en_US\""+
+            "}"+
+        "}";
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(requestMap);
+//        HashMap<String,Object> link = new HashMap<>();
+//        link.put("completed_redirect_url", redirectURL);
+//        link.put("expired_redirect_url", redirectURL);
+//        link.put("language", "en_US");
+//
+//        HashMap<String,Object> requstData = new HashMap<>();
+//        requstData.put("workflow_id", workflow_id);
+//        requstData.put("applicant_id", applicant_id);
+//        requstData.put("link", link);
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        String json = objectMapper.writeValueAsString(requstData);
 
         HttpRequest createWorkflowRunRequest = (HttpRequest) HttpRequest.newBuilder()
                 .uri(new URI("https://api.eu.onfido.com/v3.6/workflow_runs"))
                 .header("Authorization",apiToken)
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .POST(HttpRequest.BodyPublishers.ofString(json.toString()))
                 .build();
 
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpResponse<String> createWorkflowRun = httpClient.send(createWorkflowRunRequest, HttpResponse.BodyHandlers.ofString());
 
-        ObjectMapper workflowMapper = new ObjectMapper();
-        Map<String, Object> responceMap = workflowMapper.readValue(createWorkflowRun.body(), new TypeReference<Map<String, Object>>() {});
+        ObjectMapper mapper = new ObjectMapper();
+        HashMap result =  mapper.readValue(createWorkflowRun.body(),HashMap.class);
 
-        return (HashMap<String, Object>) responceMap;
+//        Type type = new TypeToken<HashMap<String, Object>>(){}.getType();
+//        Gson gson = new Gson();
+//        HashMap<String, Object> resultMap = gson.fromJson(createWorkflowRun.body(),type);
+//        System.out.println("\n\n\nGSON: "+resultMap);
+
+//        ObjectMapper mapper = new ObjectMapper();
+//        JsonNode rootNode = mapper.readTree(createWorkflowRun.body());
+//
+//        System.out.println("rootNode: "+rootNode.fieldNames());
+//
+//        ObjectMapper m = new ObjectMapper();
+//        HashMap<String, Object> result = m.convertValue(rootNode,HashMap.class);
+
+        return result;
     }
 
     private HashMap<String,Object> getSDKDetails(String applicant_id, String referrrer, String apiToken) throws IOException, URISyntaxException, InterruptedException {
 
         Map<String, String> requestSDK = new HashMap<>();
-        requestSDK.put("applicant_id",applicant_id);
+        requestSDK.put("applicant_id", "f2d0cc8d-e876-40b6-b577-bddf44990a9c"); //applicant_id
         requestSDK.put("referrer",referrrer);
+//        requestSDK.put("cross_device_url","http://localhost:9001/");
 
         ObjectMapper sdkMapper = new ObjectMapper();
         String jsonSDK = sdkMapper.writeValueAsString(requestSDK);

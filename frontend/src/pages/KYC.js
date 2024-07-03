@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Onfido } from 'onfido-sdk-ui';
 import { useEffect, useState } from 'react';
 
+
+//TODO: call validateKyc and check KYC critiria to see if the user is approved
 function kyc(){
 
     const [data, setData] = useState(null);

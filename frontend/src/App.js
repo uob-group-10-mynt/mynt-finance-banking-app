@@ -25,6 +25,7 @@ const theme = extendTheme({
 
 const App = () => {
     return (
+        
         <ChakraProvider theme={theme}>
             <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
             <RouterProvider router={appRouter}/>
