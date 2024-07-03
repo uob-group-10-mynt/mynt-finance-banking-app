@@ -53,11 +53,13 @@ jobs:
         run: |
           cd frontend
           npm run devReact &
+          npx wait-on http://localhost:9001
 
       - name: Build backend
         run: |
           cd backend
           ./gradlew bootRun &
+          npx wait-on http://localhost:8080
 
       - name: Cypress run
         run: |
