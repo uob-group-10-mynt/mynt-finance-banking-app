@@ -1,7 +1,7 @@
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
 import { RouterProvider } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import appRouter from './utils/appRouter';
+import AppRouter from './utils/AppRouter';
 import ChakraUITheme from './utils/ChakraUITheme';
 import SplashPage from './pages/SplashPage';
 
@@ -21,7 +21,7 @@ const App = () => {
         ? <SplashPage /> 
         :<ChakraProvider theme={ChakraUITheme}>
             <ColorModeScript initialColorMode={ChakraUITheme.config.initialColorMode}/>
-            <RouterProvider router={appRouter}/>
+            <RouterProvider router={AppRouter}/>
         </ChakraProvider>
     );
 };

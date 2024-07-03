@@ -1,12 +1,13 @@
 import { 
-    Suspense, 
-    lazy } from 'react';
+  Suspense, 
+  lazy } from 'react';
 
 import { 
-    Route, 
-    createBrowserRouter, 
-    createRoutesFromElements 
+  Route, 
+  createBrowserRouter, 
+  createRoutesFromElements 
 } from 'react-router-dom';
+import Loading from '../components/Loading';
 
 //Pages
 const Home = lazy(() => import('../pages/Home'))
@@ -19,28 +20,25 @@ const NotFound404 = lazy(() => import('../pages/ErrorPage'));
 // Layouts
 const RootLayout = lazy(() => import('../layouts/RootLayout'))
 
-//Loading components
-const placeholderLoading = <div>loading...</div>
-
-const appRouter = createBrowserRouter(
-    createRoutesFromElements(
-        <Route path='/' element={lazyLoad(RootLayout, placeholderLoading)}>
-            <Route index element={lazyLoad(Home, placeholderLoading)}/>
-            <Route path='login' element={lazyLoad(Login, placeholderLoading)}/>
-            <Route path='remittance' element={lazyLoad(RemittancePage, placeholderLoading)}/>
-            <Route path='signup' element={lazyLoad(CreateUser, placeholderLoading)}/>
-            <Route path='dashboard' element={lazyLoad(DashBoard, placeholderLoading)}></Route>
-            <Route path={'*'} element={lazyLoad(NotFound404, placeholderLoading)}></Route>
-        </Route>
-    )
+const AppRouter = createBrowserRouter(
+  createRoutesFromElements(
+      <Route path='/' element={lazyLoad(RootLayout, <Loading />)}>
+          <Route index element={lazyLoad(Home, <Loading />)}/>
+          <Route path='login' element={lazyLoad(Login, <Loading />)}/>
+          <Route path='remittance' element={lazyLoad(RemittancePage, <Loading />)}/>
+          <Route path='signup' element={lazyLoad(CreateUser, <Loading />)}/>
+          <Route path='dashboard' element={lazyLoad(DashBoard, <Loading />)}></Route>
+          <Route path={'*'} element={lazyLoad(NotFound404, <Loading />)}></Route>
+      </Route>
+  )
 );
 
 function lazyLoad(Component, loadingComponent) {
-    return(
-        <Suspense fallback={loadingComponent}>
-            <Component/>
-        </Suspense>
-    )
+  return(
+      <Suspense fallback={loadingComponent}>
+          <Component/>
+      </Suspense>
+  )
 }
 
-export default appRouter;
+export default AppRouter;
