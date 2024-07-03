@@ -63,6 +63,12 @@ jobs:
           spring.datasource.hikari.idle-timeout=30000
           spring.datasource.hikari.connection-timeout=20000
           spring.datasource.hikari.max-lifetime=1800000' >> $APPLICATION_PROPERTIES
+      
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
           
       - name: Verify Cypress installation
         run: |
