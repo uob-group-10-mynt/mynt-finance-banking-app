@@ -36,8 +36,8 @@ public class KYCService {
         SDKResponceDTO sdkResponceDTO = new SDKResponceDTO();
 
         String apiToken = "Token token="+onfido;
-        workflow_ID  = "c3c68677-2a4d-44cb-8bbc-f2d4693ec7be"; //KYC
-//        workflow_ID  = "792f7968-d06b-4b6b-80cc-4e9a9a089ad2" ; //Basic Test - Versions
+//        workflow_ID  = "c3c68677-2a4d-44cb-8bbc-f2d4693ec7be"; //KYC
+        workflow_ID  = "792f7968-d06b-4b6b-80cc-4e9a9a089ad2" ; //Basic Test - Versions
         referrrer = "http://localhost:9001/signup/*";
         redirectURL = "http://localhost:9001/kyc";
 
@@ -112,19 +112,6 @@ public class KYCService {
             "}"+
         "}";
 
-//        HashMap<String,Object> link = new HashMap<>();
-//        link.put("completed_redirect_url", redirectURL);
-//        link.put("expired_redirect_url", redirectURL);
-//        link.put("language", "en_US");
-//
-//        HashMap<String,Object> requstData = new HashMap<>();
-//        requstData.put("workflow_id", workflow_id);
-//        requstData.put("applicant_id", applicant_id);
-//        requstData.put("link", link);
-//
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        String json = objectMapper.writeValueAsString(requstData);
-
         HttpRequest createWorkflowRunRequest = (HttpRequest) HttpRequest.newBuilder()
                 .uri(new URI("https://api.eu.onfido.com/v3.6/workflow_runs"))
                 .header("Authorization",apiToken)
@@ -138,28 +125,14 @@ public class KYCService {
         ObjectMapper mapper = new ObjectMapper();
         HashMap result =  mapper.readValue(createWorkflowRun.body(),HashMap.class);
 
-//        Type type = new TypeToken<HashMap<String, Object>>(){}.getType();
-//        Gson gson = new Gson();
-//        HashMap<String, Object> resultMap = gson.fromJson(createWorkflowRun.body(),type);
-//        System.out.println("\n\n\nGSON: "+resultMap);
-
-//        ObjectMapper mapper = new ObjectMapper();
-//        JsonNode rootNode = mapper.readTree(createWorkflowRun.body());
-//
-//        System.out.println("rootNode: "+rootNode.fieldNames());
-//
-//        ObjectMapper m = new ObjectMapper();
-//        HashMap<String, Object> result = m.convertValue(rootNode,HashMap.class);
-
         return result;
     }
 
     private HashMap<String,Object> getSDKDetails(String applicant_id, String referrrer, String apiToken) throws IOException, URISyntaxException, InterruptedException {
 
         Map<String, String> requestSDK = new HashMap<>();
-        requestSDK.put("applicant_id", "f2d0cc8d-e876-40b6-b577-bddf44990a9c"); //applicant_id
+        requestSDK.put("applicant_id", applicant_id);
         requestSDK.put("referrer",referrrer);
-//        requestSDK.put("cross_device_url","http://localhost:9001/");
 
         ObjectMapper sdkMapper = new ObjectMapper();
         String jsonSDK = sdkMapper.writeValueAsString(requestSDK);
