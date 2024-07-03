@@ -4,9 +4,9 @@ APPLICATION_PROPERTIES='./backend/src/main/resources/db/application.properties'
 
 touch $APPLICATION_PROPERTIES
 
-echo $DB_URL >> $APPLICATION_PROPERTIES
-echo $DB_USERNAME >> $APPLICATION_PROPERTIES
-echo $DB_PASSWORD >> $APPLICATION_PROPERTIES
+echo "spring.datasource.url=$1" >> $APPLICATION_PROPERTIES
+echo "spring.datasource.username=$2" >> $APPLICATION_PROPERTIES
+echo "spring.datasource.password=$3" >> $APPLICATION_PROPERTIES
 echo 'spring.datasource.driver-class-name=org.postgresql.Driver
 spring.jpa.hibernate.ddl-auto=create-drop
 spring.jpa.show-sql=false
