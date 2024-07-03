@@ -1,9 +1,11 @@
 package com.mynt.banking.auth;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,15 +21,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class KYCService {
 
-//    private static final Object apiToken = ;
-
-//    @Value(("${api.kycAPI}")
-//    private String apiToken;
-
-    public SDKResponceDTO getSDK(SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
+    @Value("${api.onfido}")
+    private String onfido;
+    
+    public SDKResponceDTO getOnfidoSDK(SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
 
         SDKResponceDTO sdkResponceDTO = new SDKResponceDTO();
-        String apiToken = "Token token="+"api_sandbox.IYA-2r1JzLQ._kIRoOo62rJjh0JJQdYdI9vMaL63smxf";
+
+        String apiToken = "Token token="+onfido;
         String workflow_ID  = "c3c68677-2a4d-44cb-8bbc-f2d4693ec7be";
         String referrrer = "https://localhost:9001/kyc";
 
@@ -42,13 +43,15 @@ public class KYCService {
             sdkResponceDTO.setStage("createWorkflowRun");
             sdkResponceDTO.setData(createWorkflowRun);
 
+            String workflowRunId = (String) createWorkflowRun.get("id");
+
             HashMap<String,Object> sdkDetails = getSDKDetails(id, referrrer, apiToken);
             sdkResponceDTO.setStage("getSDKDetails");
             sdkResponceDTO.setData(sdkDetails);
 
             HashMap<String, Object> response = new HashMap<>();
             response.put("sdkToken", sdkDetails.get("token"));
-            response.put("YOUR_WORKFLOW_RUN_ID",workflow_ID);
+            response.put("YOUR_WORKFLOW_RUN_ID",workflowRunId);
             response.put("url",createWorkflowRun.get("link") );
             sdkResponceDTO.setData(response);
 
@@ -149,28 +152,27 @@ public class KYCService {
         return (HashMap<String, Object>) responceMapper;
     }
 
+    public SDKResponceDTO retrieveResults(ValidateKycRequest request ) throws IOException, InterruptedException, URISyntaxException {
 
+        SDKResponceDTO sdkResponceDTO = new SDKResponceDTO();
 
+        String apiToken = "Token token="+onfido;
 
+        HttpRequest requestResults  = (HttpRequest) HttpRequest.newBuilder()
+                .uri(new URI("https://api.eu.onfido.com/v3.6/workflow_runs/"+request.getWORKFLOW_RUN_ID())) //
+                .header("Authorization",apiToken)
+                .GET()
+                .build();
 
-//    public AuthenticationResponse getReults(RegisterRequest request){
-//        // TODO: Create new end point for this
-//        // get results ==================================================================
-//        HttpRequest requestResults  = (HttpRequest) HttpRequest.newBuilder()
-//                .uri(new URI("https://api.eu.onfido.com/v3.6/workflow_runs/"+(String) responceMapper.get("id")))
-//                .header("Authorization","Token token=api_sandbox.IYA-2r1JzLQ._kIRoOo62rJjh0JJQdYdI9vMaL63smxf")
-//                .GET()
-//                .build();
-//
-//        httpClient = HttpClient.newHttpClient();
-//        HttpResponse<String> resultsResponse = httpClient.send(createWorkflowRunRequest, HttpResponse.BodyHandlers.ofString());
-//        ObjectMapper resultsMapper = new ObjectMapper();
-//        Map<String, Object> resultsResponceMapper = resultsMapper.readValue(resultsResponse.body(), new TypeReference<Map<String, Object>>() {});
-//        for( String key :resultsResponceMapper.keySet()){
-//            System.out.println("Result - "+key+": "+resultsResponceMapper.get(key));
-//        }
-//        return null;
-//    }
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpResponse<String> resultsResponse = httpClient.send(requestResults, HttpResponse.BodyHandlers.ofString());
+
+        ObjectMapper resultsMapper = new ObjectMapper();
+        Map<String, Object> resultsResponceMapper = resultsMapper.readValue(resultsResponse.body(), new TypeReference<Map<String, Object>>() {});
+
+        sdkResponceDTO.setData((HashMap<String,Object>) resultsResponceMapper);
+        return sdkResponceDTO;
+    }
 
 
 

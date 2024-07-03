@@ -20,7 +20,7 @@ function signUp(){
 
       //TODO: get frontend for this API to work
       try {
-        const response = await axios.post('http://localhost:8080/api/v1/auth/sdk', {
+        const response = await axios.post('http://localhost:8080/api/v1/auth/onfidoSdk', {
           firstname: "firsdsfadsfddsftName",
           lastname: "surdfdaadsfdssfname",
           email: "edsafdfddsafdsamail",
