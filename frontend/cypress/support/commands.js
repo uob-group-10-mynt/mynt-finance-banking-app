@@ -2,7 +2,7 @@
 import testUser from '../fixtures/testUser.json';
 
 Cypress.Commands.add('createTestUser', () => {
-    const authEndPoint = 'http://localhost:8080/api/v1/auth/register';
+    const authEndPoint = 'http://127.0.0.1:8080/api/v1/auth/register';
     const accountDetails = {
         firstname: testUser.firstName,
         lastname: testUser.lastname,
