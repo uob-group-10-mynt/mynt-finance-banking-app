@@ -9,13 +9,6 @@ on:
 
 jobs:
   build-test:
-    environment: Testing_Environment
-    env:
-      DB_URL: ${{ secrets.DB_URL }}
-      DB_USERNAME: ${{ secrets.DB_USERNAME }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      RDS_SSL_CERT_PATH: ${{ secrets.RDS_SSL_CERT_PATH }}
-      PEM_CONTENT: ${{ secrets.PEM_CONTENT }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
@@ -43,49 +36,16 @@ jobs:
         run: |
           cd frontend
           npm ci
-          
-      - name: Setup application.properties
-        run: |
-          APPLICATION_PROPERTIES='./backend/src/main/resources/db/application.properties'
-          mkdir -p $(dirname $APPLICATION_PROPERTIES)
-          echo "spring.datasource.url=$DB_URL" >> $APPLICATION_PROPERTIES
-          echo "spring.datasource.username=$DB_USERNAME" >> $APPLICATION_PROPERTIES
-          echo "spring.datasource.password=$DB_PASSWORD" >> $APPLICATION_PROPERTIES
-          echo 'spring.datasource.driver-class-name=org.postgresql.Driver
-          spring.jpa.hibernate.ddl-auto=create-drop
-          spring.jpa.show-sql=false
-          spring.jpa.properties.hibernate.format_sql=true
-          spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-          spring.datasource.hikari.data-source-properties.useSSL=true
-          spring.datasource.hikari.data-source-properties.requireSSL=true
-          spring.datasource.hikari.maximum-pool-size=10
-          spring.datasource.hikari.minimum-idle=5
-          spring.datasource.hikari.idle-timeout=30000
-          spring.datasource.hikari.connection-timeout=20000
-          spring.datasource.hikari.max-lifetime=1800000' >> $APPLICATION_PROPERTIES
-      
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          
+
       - name: Verify Cypress installation
         run: |
           cd frontend
           npx cypress verify
 
-      - name: Build frontend
+      - name: Build project
         run: |
           cd frontend
           npm run devReact &
-          npx wait-on http://localhost:9001
-
-      - name: Build backend
-        run: |
-          cd backend
-          ./gradlew bootRun &
-          npx wait-on http://localhost:8080
 
       - name: Cypress run
         run: |
