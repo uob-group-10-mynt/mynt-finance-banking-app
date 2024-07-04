@@ -27,26 +27,17 @@ public class User implements UserDetails {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "email", nullable = false, length = 100, unique = true)
-    private String email;
-
     @Column(name = "firstname", nullable = false, length = 50)
     private String firstname;
 
     @Column(name = "lastname", nullable = false, length = 50)
     private String lastname;
 
-    @Column(name = "dob", nullable = false, length = 50)
-    private String dob;
-
-    @Column(name = "address", nullable = false, length = 50)
-    private String address;
-
-    @Column(name = "phoneNumber", nullable = false, length = 50)
-    private String phoneNumber;
-
     @Column(name = "password", nullable = false, length = 100)
     private String password;
+
+    @Column(name = "email", nullable = false, length = 100, unique = true)
+    private String email;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
