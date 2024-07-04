@@ -22,7 +22,7 @@ public class SignUpRequest {
     private String email;
 
 //    @NotBlank(message = "Firstname is required")
-    @Size(max = 50, message = "Forename cannot be longer than 50 characters")
+    @Size(max = 50, message = "Firstname cannot be longer than 50 characters")
     private String firstname;
 
 //    @NotBlank(message = "Lastname is required")
@@ -33,13 +33,14 @@ public class SignUpRequest {
     @Size(max = 50, message = "dob cannot be longer than 50 characters")
     private String dob;
 
+    //    @NotBlank(message = "Lastname is required")
+    @Size(max = 50, message = "address cannot be longer than 50 characters")
+    private String address;
+
     @Size(max = 50, message = "phoneNumber cannot be longer than 50 characters")
     private String phoneNumber;
 
     @Size(max = 50, message = "password cannot be longer than 50 characters")
     private String password;
-
-    @Size(max = 50, message = "comfirmPassword cannot be longer than 50 characters")
-    private String comfirmPassword;
 
 }

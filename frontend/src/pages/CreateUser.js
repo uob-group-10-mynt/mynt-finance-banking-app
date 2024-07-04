@@ -20,7 +20,9 @@ function signUp(){
     const [message, setMessage] = useState('');
     const [apiResponce,setApiResponce ] = useState('');
     const [workflowRunID,setWorkflowRunID ] = useState('');
-    const [sdkToken,setSdkToken ] = useState('');
+    const [sdkToken,setSdkToken ] = useState(null);
+
+    const [iframe, setiframe] = useState('');
 
     const handleSubmit = (e) => {
       e.preventDefault();
@@ -60,24 +62,12 @@ function signUp(){
     }
 
     function kycChecks(response){
-      console.log(JSON.stringify(response.data.data, null, 2));
-
-      const YOUR_WORKFLOW_RUN_ID = response.data.data.YOUR_WORKFLOW_RUN_ID;
-      const sdkToken = response.data.data.sdkToken;
-      let urlink = response.data.data.url;
-      urlink = JSON.stringify(urlink)
-        .replace(/=/g, "\":\"")
-        .replace(/, /g,",")
-        .replace(/,/g, "\",\"")
-        .replace(/{/g, "{\"")
-        .replace(/}/g, "\"}")
-        .replace(/"{/g, "{")
-        .replace(/}"/g, "}");
-      const url = JSON.parse(urlink).url
-      console.log("url:  "+JSON.parse(urlink).url);
-      // window.location.href = urlink.url;
-      const kycId = document.getElementById("onfido-mount").innerHTML = `<iframe src='${url}' style='height: 700px;'> </iframe>`;
-      kycId();
+      const data =  JSON.parse(response.data.data);
+      let urlink = data.url;
+      console.log("urlink -> "+urlink);
+      
+      // window.location.href = urlink;
+      setiframe(urlink);
     }
 
     const fieldsInputList = [
@@ -172,23 +162,25 @@ function signUp(){
 
     return(
       <Flex width="full" align="center" justifyContent="center">
-        <div id="onfido-mount">
+        
         <Box p={10} className="remittance-page">
+        {iframe ? (<iframe src={iframe} style={{height:"700px"}} ></iframe>):(
+          <div>
           <Box textAlign="center">
-            <Heading>Sign Up</Heading>
-          </Box>
-          <Box my={10} textAlign="left">
-            <form onSubmit={handleSubmit}>
-              {inputFields}
-              <Text color={'red.500'}>{message}</Text>
-              <Button data-cy="submitButton" width="full" mt={4} type="submit">
-                Sign In 
-              </Button>
-            </form>
-          </Box>
-          
+          <Heading>Sign Up</Heading>
         </Box>
-        </div>
+        <Box my={10} textAlign="left">
+        <form onSubmit={handleSubmit}>
+          {inputFields}
+          <Text color={'red.500'}>{message}</Text>
+          <Button data-cy="submitButton" width="full" mt={4} type="submit">
+            Sign In 
+          </Button>
+        </form>
+      </Box>
+      </div>
+        )}
+        </Box>
       </Flex>
     );
 }

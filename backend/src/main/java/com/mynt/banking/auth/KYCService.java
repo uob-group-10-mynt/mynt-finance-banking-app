@@ -2,7 +2,9 @@ package com.mynt.banking.auth;
 
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,7 @@ public class KYCService {
     @Value("${api.onfido}")
     private String onfido;
 
-    private String ApplicantId;
+    private String applicantId;
     private String workflow_ID;
     private String workflowRunId;
     private String referrrer;
@@ -31,6 +33,8 @@ public class KYCService {
     private String url;
     private String sdkToken;
 
+
+    //TODO: take values and insert into DB for both endpoints && on DTO and in JS add critiria to check for correct inputs
     public SDKResponceDTO getOnfidoSDK(SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
 
         SDKResponceDTO sdkResponceDTO = new SDKResponceDTO();
@@ -42,23 +46,64 @@ public class KYCService {
         redirectURL = "http://localhost:9001/kyc";
 
         try{
-            HashMap<String,Object> createApplicant = createApplicant(request, apiToken);
-            ApplicantId = createApplicant.get("id").toString();
+            ObjectMapper objectMapper = new ObjectMapper();
 
-            HashMap<String,Object> createWorkflowRun = createWorkflowRun(workflow_ID, ApplicantId , apiToken, redirectURL);
-            workflowRunId = (String) createWorkflowRun.get("id");
-            url = createWorkflowRun.get("link").toString();
+            ObjectNode applicantBody = objectMapper.createObjectNode();
+            applicantBody.put("first_name",request.getFirstname());
+            applicantBody.put("last_name",request.getLastname());
+            String createApplicantBody = objectMapper.writeValueAsString(applicantBody);
 
-            HashMap<String,Object> sdkDetails = getSDKDetails(ApplicantId, referrrer, apiToken);
-            sdkToken = (String) sdkDetails.get("token");
-//            sdkResponceDTO.setStage("createWorkflowRun");
-//            sdkResponceDTO.setData(createWorkflowRun);
+            String endPoint =  "https://api.eu.onfido.com/v3.6/applicants/";
+            String createApplicantResponce = postRequest(createApplicantBody, endPoint, apiToken);
 
-            HashMap<String, Object> response = new HashMap<>();
-            response.put("sdkToken", sdkToken);
-            response.put("YOUR_WORKFLOW_RUN_ID",workflowRunId);
-            response.put("url", url);
-            sdkResponceDTO.setData(response);
+            JsonNode createApplicantResponceBody = objectMapper.readTree(createApplicantResponce);
+            applicantId = createApplicantResponceBody.get("id").asText();
+
+            // ===================
+
+            ObjectNode linkRequstBody = objectMapper.createObjectNode();
+            linkRequstBody.put("completed_redirect_url",redirectURL);
+            linkRequstBody.put("expired_redirect_url",redirectURL);
+            linkRequstBody.put("language","en_US");
+
+            ObjectNode createWorkFlowRunRequestBody = objectMapper.createObjectNode();
+            createWorkFlowRunRequestBody.put("workflow_id",workflow_ID);
+            createWorkFlowRunRequestBody.put("applicant_id",applicantId);
+            createWorkFlowRunRequestBody.set("link", linkRequstBody);
+            String createWorkFlowRunRequestJsonBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(createWorkFlowRunRequestBody);
+
+            endPoint =  "https://api.eu.onfido.com/v3.6/workflow_runs";
+            String createWorkFlowResponce = postRequest(createWorkFlowRunRequestJsonBody, endPoint, apiToken);
+
+            JsonNode createWorkFlowResponceBody = objectMapper.readTree(createWorkFlowResponce);
+            workflowRunId = createWorkFlowResponceBody.get("id").asText();
+            url = createWorkFlowResponceBody.get("link").get("url").asText();
+
+            // ====================
+
+            ObjectNode sdkRequest = objectMapper.createObjectNode();
+            sdkRequest.put("applicant_id",applicantId);
+            sdkRequest.put("referrer",referrrer);
+            String createSDKRequestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(sdkRequest);
+
+            endPoint =  "https://api.eu.onfido.com/v3.6/sdk_token";
+            String createSDKResponce = postRequest(createSDKRequestBody, endPoint, apiToken);
+
+            JsonNode createSDKResponceBody = objectMapper.readTree(createSDKResponce);
+            sdkToken = createSDKResponceBody.get("token").asText();
+
+            sdkResponceDTO.setStage("createSDKResponce");
+            sdkResponceDTO.setData(createSDKResponce);
+
+            //=====================
+
+            ObjectNode dtoData = objectMapper.createObjectNode();
+            dtoData.put("sdkToken",sdkToken);
+            dtoData.put("YOUR_WORKFLOW_RUN_ID",workflowRunId);
+            dtoData.put("url",url);
+            String dtoDataJsonBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dtoData);
+            sdkResponceDTO.setStage("SDKResponceDTO");
+            sdkResponceDTO.setData(dtoDataJsonBody);
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -71,17 +116,10 @@ public class KYCService {
         return sdkResponceDTO;
     }
 
-    private HashMap<String,Object> createApplicant(SignUpRequest request, String apiToken) throws URISyntaxException, IOException, InterruptedException {
+    private String postRequest(String jsonObj, String urlAndEndPoint ,String apiToken) throws URISyntaxException, IOException, InterruptedException {
 
-        HashMap<String,String> body = new HashMap<>();
-        body.put("first_name",request.getFirstname());
-        body.put("last_name",request.getLastname());
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonObj = objectMapper.writeValueAsString(body);
-
-        HttpRequest createApplicantRequest = (HttpRequest) HttpRequest.newBuilder()
-                .uri(new URI("https://api.eu.onfido.com/v3.6/applicants/"))
+        HttpRequest createApplicantRequest = HttpRequest.newBuilder()
+                .uri(new URI(urlAndEndPoint))
                 .header("Authorization", apiToken)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonObj))
@@ -90,67 +128,7 @@ public class KYCService {
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpResponse<String> createApplicant = httpClient.send(createApplicantRequest, HttpResponse.BodyHandlers.ofString());
 
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> map = mapper.readValue(createApplicant.body(), new TypeReference<Map<String, Object>>() {
-        });
-
-        return (HashMap<String, Object>) map;
-    }
-
-    private HashMap createWorkflowRun(String workflow_id, String applicant_id,
-                                      String apiToken, String redirectURL
-                                                     ) throws URISyntaxException,
-                                                              IOException,
-                                                              InterruptedException {
-
-        String json = "{ \"workflow_id\": \""+workflow_id+"\","+
-                "\"applicant_id\":\""+applicant_id+"\","+
-                "\"link\":{"+
-                    "\"completed_redirect_url\":\""+redirectURL+"\","+
-                    "\"expired_redirect_url\":\""+redirectURL+"\","+
-                    "\"language\":\"en_US\""+
-            "}"+
-        "}";
-
-        HttpRequest createWorkflowRunRequest = (HttpRequest) HttpRequest.newBuilder()
-                .uri(new URI("https://api.eu.onfido.com/v3.6/workflow_runs"))
-                .header("Authorization",apiToken)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json.toString()))
-                .build();
-
-        HttpClient httpClient = HttpClient.newHttpClient();
-        HttpResponse<String> createWorkflowRun = httpClient.send(createWorkflowRunRequest, HttpResponse.BodyHandlers.ofString());
-
-        ObjectMapper mapper = new ObjectMapper();
-        HashMap result =  mapper.readValue(createWorkflowRun.body(),HashMap.class);
-
-        return result;
-    }
-
-    private HashMap<String,Object> getSDKDetails(String applicant_id, String referrrer, String apiToken) throws IOException, URISyntaxException, InterruptedException {
-
-        Map<String, String> requestSDK = new HashMap<>();
-        requestSDK.put("applicant_id", applicant_id);
-        requestSDK.put("referrer",referrrer);
-
-        ObjectMapper sdkMapper = new ObjectMapper();
-        String jsonSDK = sdkMapper.writeValueAsString(requestSDK);
-
-        HttpRequest createSDK = (HttpRequest) HttpRequest.newBuilder()
-                .uri(new URI("https://api.eu.onfido.com/v3.6/sdk_token"))
-                .header("Authorization",apiToken)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonSDK))
-                .build();
-
-        HttpClient httpClient = HttpClient.newHttpClient();
-        HttpResponse<String> sdkResponse = httpClient.send(createSDK, HttpResponse.BodyHandlers.ofString());
-
-        ObjectMapper sdkResponseMapper = new ObjectMapper();
-        Map<String, Object> responceMapper = sdkResponseMapper.readValue(sdkResponse.body(), new TypeReference<Map<String, Object>>() {});
-
-        return (HashMap<String, Object>) responceMapper;
+        return createApplicant.body();
     }
 
     public SDKResponceDTO retrieveResults(ValidateKycRequest request ) throws IOException, InterruptedException, URISyntaxException {
@@ -171,7 +149,7 @@ public class KYCService {
         ObjectMapper resultsMapper = new ObjectMapper();
         Map<String, Object> resultsResponceMapper = resultsMapper.readValue(resultsResponse.body(), new TypeReference<Map<String, Object>>() {});
 
-        sdkResponceDTO.setData((HashMap<String,Object>) resultsResponceMapper);
+        sdkResponceDTO.setData(resultsResponceMapper.toString());
         return sdkResponceDTO;
     }
 
