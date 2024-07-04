@@ -24,6 +24,10 @@ public class RegisterRequest {
     @Size(max = 50, message = "Surname cannot be longer than 50 characters")
     private String lastname;
 
+//    @NotBlank(message = "middleName is required")
+//    @Size(max = 50, message = "middleName cannot be longer than 50 characters")
+//    private String middleName;
+
     @NotBlank(message = "Password is required")
     @Size(max = 100, message = "Password cannot be longer than 100 characters")
     private String password;
