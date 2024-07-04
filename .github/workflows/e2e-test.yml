@@ -1,0 +1,88 @@
+name: End-to-end tests CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'dev'
+
+jobs:
+  build_and_test:
+    environment: Testing_Environment
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      RDS_SSL_CERT_PATH: ${{ secrets.RDS_SSL_CERT_PATH }}
+      PEM_CONTENT: ${{ secrets.PEM_CONTENT }}
+    strategy:
+        matrix:
+          os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+  
+        - name: Setup Java
+          uses: actions/setup-java@v4
+          with:
+            distribution: 'temurin'
+            java-version: '17'
+  
+        - name: Grant execute permission for gradlew
+          run: chmod +x ./backend/gradlew
+        
+        - name: Create Pem File
+          run: |
+            mkdir .env
+            cd .env
+            echo "${{ env.PEM_CONTENT }}" >> "${{ env.RDS_SSL_CERT_PATH }}"
+            ls
+            cd ../
+        
+        - name: Run backend
+          id: test
+          run: |
+            cd backend
+            ./gradlew bootRun &
+        
+        - name: Cache Node modules
+          id: cache-json
+          uses: actions/cache@v4
+          with:
+            path: ~/.npm
+            key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
+            restore-keys: |
+              ${{ runner.os }}-node-
+
+        - name: Install Node.js
+          if: steps.cache-json.outputs.cache-hit != 'true'
+          uses: actions/setup-node@v4
+          with:
+            node-version: 18
+
+        - name: Install dependencies
+          run: |
+            cd frontend
+            npm ci
+
+        - name: Verify Cypress installation
+          run: |
+            cd frontend
+            npx cypress verify
+
+        - name: Build project
+          run: |
+            cd frontend
+            npm run devReact &
+
+        - name: Cypress run
+          run: |
+            cd frontend
+            npm run e2e:chrome
+        
+
+        
+        
+
+    
