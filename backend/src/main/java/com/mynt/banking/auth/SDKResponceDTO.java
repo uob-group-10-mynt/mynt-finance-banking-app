@@ -9,12 +9,12 @@ import java.util.HashMap;
 @Getter
 public class SDKResponceDTO {
     String stage;
-//    String data;
-    HashMap<String,Object> data;
+    String data;
+    HashMap<String,Object> keyValuePair;
 
     public SDKResponceDTO() {
-        data= new HashMap<>();
-//        data= "";
+        keyValuePair = new HashMap<>();
+        data= "";
     }
 
 }
