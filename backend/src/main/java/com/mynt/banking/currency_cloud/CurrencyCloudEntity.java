@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "\"Currency_Cloud\"")
-public class CurrencyCloud {
+public class CurrencyCloudEntity {
     @Id
     @Column(name = "\"UUID\"", nullable = false, length = Integer.MAX_VALUE)
     private String uuid;

@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "kyc")
-public class Kyc {
+public class KycEntity {
     @Id
     @Column(name = "key", nullable = false)
     private Long id;
