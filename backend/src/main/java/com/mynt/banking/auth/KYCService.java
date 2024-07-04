@@ -2,8 +2,11 @@ package com.mynt.banking.auth;
 
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mynt.banking.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class KYCService {
 
     @Value("${api.onfido}")
@@ -31,6 +34,20 @@ public class KYCService {
     private String url;
     private String sdkToken;
 
+    private final CurrencyCloudRepository currencyCloud;
+    private final KycRepository kycRepository;
+    private final UserRepository userRepository;
+
+    @Autowired
+    public KYCService(CurrencyCloudRepository currencyCloud,
+                      KycRepository kycRepository,
+                      UserRepository userRepository
+                      ){
+        this.currencyCloud = currencyCloud;
+        this.kycRepository = kycRepository;
+        this.userRepository = userRepository;
+    }
+
     public SDKResponceDTO getOnfidoSDK(SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
 
         SDKResponceDTO sdkResponceDTO = new SDKResponceDTO();
@@ -42,6 +59,12 @@ public class KYCService {
         redirectURL = "http://localhost:9001/kyc";
 
         try{
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.valueToTree(request);
+            System.out.println("\n\n\n\n"+rootNode.toPrettyString()+"\n\n\n\n");
+
+
             HashMap<String,Object> createApplicant = createApplicant(request, apiToken);
             ApplicantId = createApplicant.get("id").toString();
 
@@ -58,7 +81,7 @@ public class KYCService {
             response.put("sdkToken", sdkToken);
             response.put("YOUR_WORKFLOW_RUN_ID",workflowRunId);
             response.put("url", url);
-            sdkResponceDTO.setData(String.valueOf(response));
+            sdkResponceDTO.setData(response);
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
