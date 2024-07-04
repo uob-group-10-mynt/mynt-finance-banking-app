@@ -53,8 +53,8 @@ const App = () => {
         ? <SplashPage /> 
         :
         <LoggedInContext.Provider value={[loggedIn, setLoggedInAndStorage, logOut]}>
-            <ChakraProvider theme={ChakraUITheme}>
-                <ColorModeScript initialColorMode={ChakraUITheme.config.initialColorMode}/>
+            <ChakraProvider theme={theme}>
+                <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
                     <RouterProvider router={AppRouter}/>
             </ChakraProvider>
         </LoggedInContext.Provider>        
