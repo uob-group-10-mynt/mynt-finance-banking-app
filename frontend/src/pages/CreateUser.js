@@ -7,11 +7,16 @@ import axios from 'axios';
 import {Onfido} from 'onfido-sdk-ui';
 
 function signUp(){
+    
+    const [email, setEmail] = useState('');
     const [firstName, setFirstName] = useState('');
     const [surname, setSurname] = useState('');
-    const [email, setEmail] = useState('');
+    const [dob, setDob] = useState('');
+    const [address, setAddress] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+
     const [message, setMessage] = useState('');
     const [apiResponce,setApiResponce ] = useState('');
     const [workflowRunID,setWorkflowRunID ] = useState('');
@@ -73,37 +78,18 @@ function signUp(){
       // window.location.href = urlink.url;
       const kycId = document.getElementById("onfido-mount").innerHTML = `<iframe src='${url}' style='height: 700px;'> </iframe>`;
       kycId();
-
-      // Onfido.init({
-      //   token: sdkToken,
-      //   containerId: 'onfido-mount',
-      //   onComplete: function (data) {
-      //     console.log('everything is complete')
-      //   },
-      //   workflowRunId: YOUR_WORKFLOW_RUN_ID ,
-      // })
     }
 
-
-    // crossDevicePolicy: 'force',
-    // _crossDeviceLinkMethods: ['qr_code', 'copy_link', 'sms'],
-    // userDetails: {
-    //   redirect_url: 'http://localhost:9001/kyc'
-    // }
-
-      //TODO send POST request
-      //  fetch('URL FOR API ENDPOINT', {
-      //    method: 'POST',
-      //    headers: { "Content-type": "application/json" },
-      //    body: JSON.stringify(credentials)
-      //  }).then(()=> {
-      //    console.log('Form submitted', credentials);
-      //    setEmail('');
-      //    setPassword('');
-      //  })
-
-
     const fieldsInputList = [
+      { 
+        label: "Email", 
+        testId: "emailInput",
+        placeholder: "james@jameslove.com",
+        type: "email",
+        value: email,
+        // required: true,
+        onChange: (e) => setEmail(e.target.value) 
+      },
       { 
         label: "FirstName",
         testId: "firstNameInput",
@@ -122,13 +108,31 @@ function signUp(){
         onChange: (e) => setSurname(e.target.value) 
       },
       { 
-        label: "Email", 
-        testId: "emailInput",
-        placeholder: "james@jameslove.com",
-        type: "email",
-        value: email,
+        label: "Date Of Birth", 
+        testId: "DOBInput",
+        placeholder: "16-08-1996",
+        type: "dob",
+        value: dob,
         // required: true,
-        onChange: (e) => setEmail(e.target.value) 
+        onChange: (e) => setDob(e.target.value) 
+      },
+      { 
+        label: "Address", 
+        testId: "AddressInput",
+        placeholder: "BS8 1HB",
+        type: "address",
+        value: address,
+        // required: true,
+        onChange: (e) => setAddress(e.target.value) 
+      },
+      { 
+        label: "PhoneNumber", 
+        testId: "PhoneNumberInput",
+        placeholder: "+44 7824792473",
+        type: "phoneNumber",
+        value: phoneNumber,
+        // required: true,
+        onChange: (e) => setPhoneNumber(e.target.value) 
       },
       { 
         label: "Password", 
@@ -143,7 +147,7 @@ function signUp(){
         label: "Confirm Password", 
         testId: "confirmPasswordInput",
         placeholder: "*******",
-        type: "password",
+        type: "confirmPassword",
         value: confirmPassword,
         // required: true,
         onChange: (e) => setConfirmPassword(e.target.value) 

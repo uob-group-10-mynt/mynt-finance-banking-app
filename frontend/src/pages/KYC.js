@@ -7,63 +7,37 @@ import { useEffect, useState } from 'react';
 //TODO: call validateKyc and check KYC critiria to see if the user is approved
 function kyc(){
 
-    const [data, setData] = useState(null);
-
+    const [apiResponse, setApiResponse] = useState();  
+    
     useEffect(()=>{
-        // const registra = async () => {
-            
-        //     try{
-        //         const response = await axios({
-        //             method:'post',
-        //             url: `http://localhost:8080/api/v1/auth/register`,
-        //             data:{
-        //                 "firstname": "James",
-        //                 "lastname": "Love",
-        //                 "password": "HelloBristol!",
-        //                 "email": "James@jameslove.com",
-        //                 "role": "USER"
-        //               }
-        //         });
-        //         alert(response.request); 
-        //         setData(response);
-        //     } catch (error){
-        //         alert("clickOnce: "+error);
-        //     }
-            
-            
-            
-        // } 
-
-        // document.getElementById("kyc").addEventListener("click",()=>{
-        //     registra();
-        //     console.log("response: "+data);
-        // });
-
-        Onfido.init({
-            token: '<YOUR_SDK_TOKEN>',
-            containerId: 'onfido-mount',
-            //containerEl: <div id="root" />, an ALTERNATIVE to `containerId`
-            onComplete: function (data) {
-              console.log('everything is complete')
-            },
-            workflowRunId: '<YOUR_WORKFLOW_RUN_ID>',
-          })
-
+        api();
     },[]);
+    
 
+    async function api(){
+        const h1 = document.getElementById("responce");
+        try{
+            const response = await axios({
+                method:'post',
+                url: `http://localhost:8080/api/v1/auth/validateKyc`,
+                data:{
+                    "workflow_RUN_ID": "14d3ff8f-d512-44c9-b055-e94171781985"
+                  }
+            });
+            setApiResponse(response);
+            h1.innerText = JSON.stringify(response.data, null, 2) ;
 
-    // useEffect(()=>{
-    //     Onfido.init({
-    //         token: '<YOUR_SDK_TOKEN>',
-    //         containerId: 'onfido-mount',
-    //         steps: ["welcome", "document", "face", "complete"],
-    //     });
-    // },[]);
+        } catch (error){
+            setApiResponse(error);
+            h1.innerText = JSON.stringify(response.data, null ,2 );
+        }
+    }
+        
 
     return(
         <div>
             <h1 id="kyc">KYC</h1>
-            {/* <div id="onfido-mount"></div> */}
+            <h1 id="responce"></h1>
         </div>
     );
 };

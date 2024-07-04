@@ -58,7 +58,7 @@ public class KYCService {
             response.put("sdkToken", sdkToken);
             response.put("YOUR_WORKFLOW_RUN_ID",workflowRunId);
             response.put("url", url);
-            sdkResponceDTO.setData(response);
+            sdkResponceDTO.setData(String.valueOf(response));
 
         } catch (URISyntaxException e) {
             e.printStackTrace();

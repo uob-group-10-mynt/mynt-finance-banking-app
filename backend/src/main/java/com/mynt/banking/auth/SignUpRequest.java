@@ -16,6 +16,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignUpRequest {
 
+    //    @NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
+    @Size(max = 100, message = "Email cannot be longer than 100 characters")
+    private String email;
+
 //    @NotBlank(message = "Firstname is required")
     @Size(max = 50, message = "Forename cannot be longer than 50 characters")
     private String firstname;
@@ -24,11 +29,17 @@ public class SignUpRequest {
     @Size(max = 50, message = "Surname cannot be longer than 50 characters")
     private String lastname;
 
-//    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
-    @Size(max = 100, message = "Email cannot be longer than 100 characters")
-    private String email;
+    //    @NotBlank(message = "Lastname is required")
+    @Size(max = 50, message = "dob cannot be longer than 50 characters")
+    private String dob;
 
-//    @NotBlank(message = "Role is required")
-//    private Role role;
+    @Size(max = 50, message = "phoneNumber cannot be longer than 50 characters")
+    private String phoneNumber;
+
+    @Size(max = 50, message = "password cannot be longer than 50 characters")
+    private String password;
+
+    @Size(max = 50, message = "comfirmPassword cannot be longer than 50 characters")
+    private String comfirmPassword;
+
 }
