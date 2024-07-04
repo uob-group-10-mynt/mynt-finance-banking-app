@@ -9,9 +9,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "\"Currency_Cloud\"")
+@Table(name = "\"Currency_Cloud\"", schema = "public")
 public class CurrencyCloud {
+
     @Id
+    @GeneratedValue
     @Column(name = "\"UUID\"", nullable = false, length = Integer.MAX_VALUE)
     private String uuid;
 

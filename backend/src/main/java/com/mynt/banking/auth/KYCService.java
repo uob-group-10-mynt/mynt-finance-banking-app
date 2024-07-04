@@ -35,16 +35,15 @@ public class KYCService {
     private String sdkToken;
 
     private final CurrencyCloudRepository currencyCloud;
-    private final KycRepository kycRepository;
+//    private final KycRepository kycRepository;
     private final UserRepository userRepository;
 
     @Autowired
     public KYCService(CurrencyCloudRepository currencyCloud,
-                      KycRepository kycRepository,
                       UserRepository userRepository
                       ){
         this.currencyCloud = currencyCloud;
-        this.kycRepository = kycRepository;
+//        this.kycRepository = kycRepository;
         this.userRepository = userRepository;
     }
 

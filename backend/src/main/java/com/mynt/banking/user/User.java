@@ -1,6 +1,7 @@
 package com.mynt.banking.user;
 
 import com.mynt.banking.auth.CurrencyCloud;
+import com.mynt.banking.auth.Kyc;
 import com.mynt.banking.token.Token;
 
 import jakarta.persistence.*;
