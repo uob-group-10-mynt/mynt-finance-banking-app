@@ -13,6 +13,7 @@ import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class KYCService {
     @Value("${api.onfido}")
     private String onfido;
 
+    private final PasswordEncoder passwordEncoder;
     private String applicantId;
     private String workflow_ID;
     private String workflowRunId;
@@ -162,7 +164,7 @@ public class KYCService {
         user.setId(null);
         user.setFirstname(request.getFirstname());
         user.setLastname(request.getLastname());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail());
         user.setAddress(request.getAddress());
         user.setDob(request.getDob());
