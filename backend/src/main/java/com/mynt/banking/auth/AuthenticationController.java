@@ -25,8 +25,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(kycService.getOnfidoSDK(request)) ;
     }
 
-
-
     //@Valid
     @PostMapping(value = "/validateKyc", consumes = {"application/json", "text/plain"})
     public ResponseEntity<SDKResponceDTO> validateKyc(@RequestBody ValidateKycRequest request) throws URISyntaxException, IOException, InterruptedException {

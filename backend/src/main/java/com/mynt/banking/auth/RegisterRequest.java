@@ -16,23 +16,54 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegisterRequest {
 
-    @NotBlank(message = "Firstname is required")
-    @Size(max = 50, message = "Forename cannot be longer than 50 characters")
-    private String firstname;
+//    @NotBlank(message = "Firstname is required")
+//    @Size(max = 50, message = "Forename cannot be longer than 50 characters")
+//    private String firstname;
+//
+//    @NotBlank(message = "Lastname is required")
+//    @Size(max = 50, message = "Surname cannot be longer than 50 characters")
+//    private String lastname;
+//
+//    @NotBlank(message = "Email is required")
+//    @Email(message = "Email should be valid")
+//    @Size(max = 100, message = "Email cannot be longer than 100 characters")
+//    private String email;
+//
+//
+//    @NotBlank(message = "Password is required")
+//    @Size(max = 100, message = "Password cannot be longer than 100 characters")
+//    private String password;
+//
+//
+    @NotBlank(message = "Role is required")
+    private Role role;
 
-    @NotBlank(message = "Lastname is required")
-    @Size(max = 50, message = "Surname cannot be longer than 50 characters")
-    private String lastname;
-
-    @NotBlank(message = "Password is required")
-    @Size(max = 100, message = "Password cannot be longer than 100 characters")
-    private String password;
-
-    @NotBlank(message = "Email is required")
+    //    @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
     @Size(max = 100, message = "Email cannot be longer than 100 characters")
     private String email;
 
-    @NotBlank(message = "Role is required")
-    private Role role;
+    //    @NotBlank(message = "Firstname is required")
+    @Size(max = 50, message = "Firstname cannot be longer than 50 characters")
+    private String firstname;
+
+    //    @NotBlank(message = "Lastname is required")
+    @Size(max = 50, message = "Surname cannot be longer than 50 characters")
+    private String lastname;
+
+    //    @NotBlank(message = "Lastname is required")
+    @Size(max = 50, message = "dob cannot be longer than 50 characters")
+    private String dob;
+
+    //    @NotBlank(message = "Lastname is required")
+    @Size(max = 50, message = "address cannot be longer than 50 characters")
+    private String address;
+
+    @Size(max = 50, message = "phoneNumber cannot be longer than 50 characters")
+    private String phoneNumber;
+
+    @Size(max = 50, message = "password cannot be longer than 50 characters")
+    private String password;
+
+
 }
