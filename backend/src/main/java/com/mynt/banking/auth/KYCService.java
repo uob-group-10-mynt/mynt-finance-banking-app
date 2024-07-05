@@ -51,8 +51,8 @@ public class KYCService {
         SDKResponceDTO sdkResponceDTO = new SDKResponceDTO();
 
         String apiToken = "Token token="+onfido;
-//        workflow_ID  = "c3c68677-2a4d-44cb-8bbc-f2d4693ec7be"; //KYC
-        workflow_ID  = "792f7968-d06b-4b6b-80cc-4e9a9a089ad2" ; //Basic Test - Versions
+        workflow_ID  = "c3c68677-2a4d-44cb-8bbc-f2d4693ec7be"; //KYC
+//        workflow_ID  = "792f7968-d06b-4b6b-80cc-4e9a9a089ad2" ; //Basic Test - Versions
         referrrer = "http://localhost:9001/signup/*";
         redirectURL = "http://localhost:9001/kyc";
 

@@ -1,35 +1,63 @@
-import {ChakraProvider, ColorModeScript, extendTheme} from '@chakra-ui/react'
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
 import { RouterProvider } from 'react-router-dom';
-import appRouter from './utils/appRouter';
+import { useEffect, useState, createContext } from 'react';
+import AppRouter from './utils/AppRouter';
+import ChakraUITheme from './utils/ChakraUITheme';
+import SplashPage from './pages/SplashPage';
 
-const theme = extendTheme({
-    config: {
-        initialColorMode: 'light',
-        useSystemColorMode: false,
-    },
-    colors: {
-        // Define your light and dark mode colors here
-        brand: {
-            500: '#2ecc71', // Example brand color
-        },
-    },
-    styles: {
-        global: (props) => ({
-            body: {
-                bg: props.colorMode === 'dark' ? 'gray.800' : 'white',
-                color: props.colorMode === 'dark' ? 'white' : 'gray.800',
-            },
-        }),
-    },
-});
+const FOUR_SECONDS = 4000;
+export const LoggedInContext = createContext()
+
 
 const App = () => {
+    const [ isLoading, setIsLoading ] = useState(false);
+    useEffect(() => {
+        setTimeout(() => {
+            setIsLoading(false);
+        }, FOUR_SECONDS);
+    }, []);
+
+    const [loggedIn, setLoggedIn] = useState(
+        sessionStorage.access ? true : false
+    )
+
+    function setLoggedInAndStorage(status) {
+        setLoggedIn(status)
+        if (status === false) {
+            sessionStorage.clear()
+        }
+    }
+
+    const logOut = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/v1/auth/logout', {
+                method: 'POST',
+                headers: { 
+                    "Authorization": sessionStorage.getItem('access'),
+                    "Content-Type": "application/json"
+                    },
+                    body: {}
+            });
+            if (!response.ok) {
+                console.error("error logging out")
+                return;
+            }
+            setLoggedInAndStorage(false)
+        } catch(error) {
+            console.error("error logging out", error)
+        }
+    }
+
     return (
-        
-        <ChakraProvider theme={theme}>
-            <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
-            <RouterProvider router={appRouter}/>
-        </ChakraProvider>
+        isLoading 
+        ? <SplashPage /> 
+        :
+        <LoggedInContext.Provider value={[loggedIn, setLoggedInAndStorage, logOut]}>
+            <ChakraProvider theme={ChakraUITheme}>
+                <ColorModeScript initialColorMode={ChakraUITheme.config.initialColorMode}/>
+                    <RouterProvider router={AppRouter}/>
+            </ChakraProvider>
+        </LoggedInContext.Provider>        
     );
 };
 

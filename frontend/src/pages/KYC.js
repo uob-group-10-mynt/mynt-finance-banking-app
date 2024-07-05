@@ -23,9 +23,9 @@ function kyc(){
         const h1 = document.getElementById("responce");
         
         const email = Cookies.get("email");
-
         // const email =  document.cookie;
-        // console.log("document.cookie: "+Cookies.get("email")); 
+        console.log("document.cookie: "+Cookies.get("email")); 
+        Cookies.set("email","");
 
         try{
             const response = await axios({
@@ -37,11 +37,11 @@ function kyc(){
             });
             setApiResponse(response);
             
-            let responce = JSON.parse(response.data.data);
-            h1.innerText = `Your account is has been ${responce.status} by our team.`; // JSON.stringify(, null, 4) ;
+            let data = JSON.parse(response.data.data);
+            h1.innerText = `Your account is has been ${data.status} by our team.`; // JSON.stringify(, null, 4) ;
         } catch (error){
             setApiResponse(error);
-            h1.innerText = JSON.stringify(response.data, null ,2 );
+            // h1.innerText = JSON.stringify(response.data, null ,2 );
         }
     }
 

@@ -166,9 +166,10 @@ function signUp(){
     });
 
     return(
+
       <Flex width="full" align="center" justifyContent="center">
         
-        <Box p={10} className="remittance-page">
+        <Box p={2} className="page">
         {iframe ? (<iframe src={iframe} style={{height:"700px"}} ></iframe>):(
           <div>
           <Box textAlign="center">
