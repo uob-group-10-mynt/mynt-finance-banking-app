@@ -49,9 +49,13 @@ function signUp(){
     async function apiCalls(){
       try {
         let response = await axios.post('http://localhost:8080/api/v1/auth/onfidoSdk', {
-          firstname: "dfs",
-          lastname: "dfas",
-          email: "dasf",
+          "email": email,
+          "firstname": firstName,
+          "lastname": surname,
+          "dob": dob,
+          "address": address,
+          "phoneNumber": phoneNumber,
+          "password": password
         }) 
         kycChecks(response);
         
@@ -66,7 +70,6 @@ function signUp(){
       let urlink = data.url;
       console.log("urlink -> "+urlink);
       
-      // window.location.href = urlink;
       setiframe(urlink);
     }
 
@@ -77,7 +80,7 @@ function signUp(){
         placeholder: "james@jameslove.com",
         type: "email",
         value: email,
-        // required: true,
+        required: true,
         onChange: (e) => setEmail(e.target.value) 
       },
       { 
@@ -86,7 +89,7 @@ function signUp(){
         placeholder: "James",
         type: "firstName",
         value: firstName,
-        // required: true,
+        required: true,
         onChange: (e) => setFirstName(e.target.value) },
       { 
         label: "Surname", 
@@ -94,7 +97,7 @@ function signUp(){
         placeholder: "Love",
         type: "surname",
         value: surname,
-        // required: true,
+        required: true,
         onChange: (e) => setSurname(e.target.value) 
       },
       { 
@@ -103,7 +106,7 @@ function signUp(){
         placeholder: "16-08-1996",
         type: "dob",
         value: dob,
-        // required: true,
+        required: true,
         onChange: (e) => setDob(e.target.value) 
       },
       { 
@@ -112,7 +115,7 @@ function signUp(){
         placeholder: "BS8 1HB",
         type: "address",
         value: address,
-        // required: true,
+        required: true,
         onChange: (e) => setAddress(e.target.value) 
       },
       { 
@@ -121,7 +124,7 @@ function signUp(){
         placeholder: "+44 7824792473",
         type: "phoneNumber",
         value: phoneNumber,
-        // required: true,
+        required: true,
         onChange: (e) => setPhoneNumber(e.target.value) 
       },
       { 
@@ -130,16 +133,16 @@ function signUp(){
         placeholder: "*******",
         type: "password",
         value: password,
-        // required: true,
+        required: true,
         onChange: (e) => setPassword(e.target.value) 
       },
       { 
         label: "Confirm Password", 
         testId: "confirmPasswordInput",
         placeholder: "*******",
-        type: "confirmPassword",
+        type: "password",
         value: confirmPassword,
-        // required: true,
+        required: true,
         onChange: (e) => setConfirmPassword(e.target.value) 
       },
     ];

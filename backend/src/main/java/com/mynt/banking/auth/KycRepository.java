@@ -21,4 +21,7 @@ public interface KycRepository extends JpaRepository<KycEntity,Long> {
     List<KycEntity> findByStatus(String status);
 
     List<KycEntity> findByUser(User user);
+
+//    List<KycEntity> findById(Integer id);
+
 }
