@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mynt.banking.user.Role;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -201,8 +203,11 @@ public class KYCService {
 
         String apiToken = "Token token="+onfido;
 
+        User user = userRepository.findByEmail(request.getEmail()).get();
+        KycEntity kyc = kycRepository.findByUser(user);
+
         HttpRequest requestResults  = (HttpRequest) HttpRequest.newBuilder()
-                .uri(new URI("https://api.eu.onfido.com/v3.6/workflow_runs/"+request.getWORKFLOW_RUN_ID())) //
+                .uri(new URI("https://api.eu.onfido.com/v3.6/workflow_runs/"+kyc.getWorkFlowRunId()))
                 .header("Authorization",apiToken)
                 .GET()
                 .build();
@@ -210,10 +215,22 @@ public class KYCService {
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpResponse<String> resultsResponse = httpClient.send(requestResults, HttpResponse.BodyHandlers.ofString());
 
-        ObjectMapper resultsMapper = new ObjectMapper();
-        Map<String, Object> resultsResponceMapper = resultsMapper.readValue(resultsResponse.body(), new TypeReference<Map<String, Object>>() {});
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        sdkResponceDTO.setData(resultsResponceMapper.toString());
+        JsonNode resultsResponce = objectMapper.readTree(resultsResponse.body());
+
+        System.out.println("\n\n\n\n filtered version: "+resultsResponce.toPrettyString());
+        System.out.println("status: "+resultsResponce.get("status").asText());
+        System.out.println("id: "+kyc.getId());
+
+
+//        kycRepository.updateStatus(resultsResponce.get("status").asText(), kyc.getId() );
+
+        kycRepository.updateStatus(resultsResponce.get("status").asText(),kyc.getId());
+
+
+        String responceStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(resultsResponce);
+        sdkResponceDTO.setData(responceStr);
         return sdkResponceDTO;
     }
 

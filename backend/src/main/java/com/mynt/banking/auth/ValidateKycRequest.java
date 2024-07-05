@@ -16,7 +16,12 @@ import lombok.NoArgsConstructor;
 public class ValidateKycRequest {
 
 //    @NotBlank(message = "Firstname is required")
+//    @Size(max = 300, message = "Forename cannot be longer than 50 characters")
+//    private String WORKFLOW_RUN_ID;
+
+    @NotBlank(message = "Firstname is required")
     @Size(max = 300, message = "Forename cannot be longer than 50 characters")
-    private String WORKFLOW_RUN_ID;
+    private String Email;
+
 
 }

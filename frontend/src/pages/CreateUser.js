@@ -68,8 +68,10 @@ function signUp(){
     function kycChecks(response){
       const data =  JSON.parse(response.data.data);
       let urlink = data.url;
-      console.log("urlink -> "+urlink);
+      // console.log("urlink -> "+urlink);
       
+      document.cookie = `email=${email}`;     
+
       setiframe(urlink);
     }
 

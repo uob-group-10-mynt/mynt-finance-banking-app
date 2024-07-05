@@ -1,13 +1,17 @@
 package com.mynt.banking.auth;
 
 import com.mynt.banking.user.User;
+import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface KycRepository extends JpaRepository<KycEntity,Long> {
+public interface KycRepository extends JpaRepository<KycEntity,Integer> {
 
     @NotNull
     @Override
@@ -20,8 +24,11 @@ public interface KycRepository extends JpaRepository<KycEntity,Long> {
 
     List<KycEntity> findByStatus(String status);
 
-    List<KycEntity> findByUser(User user);
+    KycEntity findByUser(User user);
 
-//    List<KycEntity> findById(Integer id);
+    @Modifying
+    @Transactional
+    @Query("UPDATE KycEntity e SET e.status = :status WHERE e.id = :id")
+    void updateStatus(@Param("status") String status, @Param("id") Long id);
 
 }
