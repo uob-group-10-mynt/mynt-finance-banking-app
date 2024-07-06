@@ -25,13 +25,22 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private Long id;
+    private Integer id;
 
     @Column(name = "firstname", nullable = false, length = 50)
     private String firstname;
 
     @Column(name = "lastname", nullable = false, length = 50)
     private String lastname;
+
+    @Column(name = "address", nullable = false, length = 50)
+    private String address;
+
+    @Column(name = "phone_number", nullable = false, length = 50)
+    private String phone_number;
+
+    @Column(name = "dob", nullable = false, length = 50)
+    private String dob;
 
     @Column(name = "password", nullable = false, length = 100)
     private String password;

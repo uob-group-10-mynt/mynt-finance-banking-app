@@ -10,10 +10,11 @@ import {
 import Loading from '../components/Loading';
 
 //Pages
-const Home = lazy(() => import('../pages/Home'))
-const Login = lazy(() => import('../pages/Login'))
-const RemittancePage = lazy(() => import('../pages/RemittancePage'))
-const CreateUser = lazy(() => import('../pages/CreateUser'))
+const Home = lazy(() => import('../pages/Home'));
+const Login = lazy(() => import('../pages/Login'));
+const RemittancePage = lazy(() => import('../pages/RemittancePage'));
+const CreateUser = lazy(() => import('../pages/CreateUser'));
+const Kyc = lazy(() => import('../pages/KYC'));
 const DashBoard = lazy(() => import('../pages/DashboardPage'));
 const NotFound404 = lazy(() => import('../pages/ErrorPage'));
 
@@ -27,6 +28,7 @@ const AppRouter = createBrowserRouter(
           <Route path='login' element={lazyLoad(Login, <Loading />)}/>
           <Route path='remittance' element={lazyLoad(RemittancePage, <Loading />)}/>
           <Route path='signup' element={lazyLoad(CreateUser, <Loading />)}/>
+          <Route path='KYC' element={lazyLoad(Kyc, <Loading />)}/>
           <Route path='dashboard' element={lazyLoad(DashBoard, <Loading />)}></Route>
           <Route path={'*'} element={lazyLoad(NotFound404, <Loading />)}></Route>
       </Route>
