@@ -1,4 +1,4 @@
-# testReact
+# frontendNotes
 
 Test && play around with React, Capacitor and Electron to compile very basic place holder react web app && to take this app and compile it into a desktop application and mobile app. 
 
