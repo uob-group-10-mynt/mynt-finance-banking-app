@@ -3,6 +3,7 @@ import {NavLink, Outlet} from "react-router-dom";
 import CustomDrawer from "../components/CustomDrawer";
 import { useContext } from "react";
 import { LoggedInContext } from "../App";
+import Footer from "./Footer";
 
 
 
@@ -35,7 +36,7 @@ export default function RootLayout() {
                 <Outlet/>
             </main>
             <footer>
-                <p>&copy; 2024 Mynt. All rights reserved.</p>
+                <Footer></Footer>
             </footer>
         </div>
     );
