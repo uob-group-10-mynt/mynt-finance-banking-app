@@ -5,13 +5,11 @@ import com.mynt.banking.auth.AuthenticationService;
 import com.mynt.banking.auth.RegisterRequest;
 
 
-import io.github.cdimascio.dotenv.Dotenv;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
+
 
 import static com.mynt.banking.user.Role.ADMIN;
 import static com.mynt.banking.user.Role.MANAGER;
