@@ -15,9 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
-import java.util.Arrays;
-
-
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {

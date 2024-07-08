@@ -4,7 +4,6 @@ import com.mynt.banking.currency_cloud.interceptor.LoggingInterceptor;
 import com.mynt.banking.currency_cloud.interceptor.ErrorHandlingInterceptor;
 import com.mynt.banking.currency_cloud.interceptor.AuthenticationInterceptor;
 import com.mynt.banking.currency_cloud.service.CurrencyCloudAPI;
-import com.mynt.banking.currency_cloud.service.AuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -24,9 +23,10 @@ public class CurrencyCloudClientConfig {
     @Value("${currency.cloud.api.url}")
     private String apiUrl;
 
-    private static final String USER_AGENT = "Mynt-SDK/1.0 Java/5.8.0";
+    @Value("${currency.cloud.api.userAgent}")
+    private String USER_AGENT;
 
-    private final AuthenticationProvider authenticationProvider;
+    private final AuthenticationInterceptor authenticationInterceptor;
 
     @Bean
     CurrencyCloudAPI currencyCloudClient() {
@@ -38,7 +38,7 @@ public class CurrencyCloudClientConfig {
                 .filter(LoggingInterceptor.logRequest())
                 .filter(LoggingInterceptor.logResponse())
                 .filter(ErrorHandlingInterceptor.handleErrors())
-                .filter(new AuthenticationInterceptor(authenticationProvider::getAuthToken).addAuthHeader())
+                .filter(authenticationInterceptor.applyAuthentication())
                 .build();
 
         HttpServiceProxyFactory factory = HttpServiceProxyFactory
