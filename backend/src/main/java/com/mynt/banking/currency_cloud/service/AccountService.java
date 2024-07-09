@@ -44,16 +44,17 @@ public class AccountService {
         this.webClient = webClient();
     }
 
-    public String createAccount(AccountRequest requestBody){
+    public Mono<String> createAccount(AccountRequest requestBody){
 
-        String response =  this.webClient.post()
-                .uri(apiUrl + "/v2/accounts/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(requestBody))
-                .retrieve().toString();
+         Mono<String> response =  this.webClient.post()
+                 .uri(apiUrl + "/v2/accounts/create")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .body(BodyInserters.fromValue(requestBody))
+                 .retrieve()
+                 .bodyToMono(String.class);
 
-
-                 ObjectMapper mapper = new ObjectMapper();
+         response.flatMap(jsonResponce -> {
+                ObjectMapper mapper = new ObjectMapper();
                 try {
                     JsonNode tree = mapper.readTree(jsonResponce);
                     String responseTree = mapper.writeValueAsString(tree);
@@ -63,10 +64,10 @@ public class AccountService {
                 return Mono.error(new RuntimeException(e));
                 }
             })
-                .doOnError(error -> System.err.println("\n\n\n\nError creating account: " + error.getMessage()));
+            .doOnError(error -> System.err.println("\n\n\n\nError creating account: " + error.getMessage()));
 
 
-         System.out.println("\n\n\n\nCreated account " + response);
+//         System.out.println("\n\n\n\nCreated account " + response);
 
         return response;
     }

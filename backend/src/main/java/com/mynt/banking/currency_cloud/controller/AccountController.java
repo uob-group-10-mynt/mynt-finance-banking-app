@@ -6,6 +6,7 @@ import com.mynt.banking.currency_cloud.dto.AccountRequest;
 import com.mynt.banking.currency_cloud.service.AccountService;
 import com.mynt.banking.currency_cloud.service.CurrencyCloudAPI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,8 @@ public class AccountController {
 
     private final AccountService accountService;
 
-
-
     @PostMapping("/create")
-    public String createAccount(@RequestBody AccountRequest requestBody) {
+    public Mono<String>  createAccount(@RequestBody AccountRequest requestBody) {
 
 
 
