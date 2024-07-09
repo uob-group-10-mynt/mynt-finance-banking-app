@@ -37,7 +37,7 @@ public interface CurrencyCloudAPI {
 //    String createAccount(@RequestBody AccountRequest requestBody);
 
     @PostMapping(value = "/v2/accounts/create", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    String createAccount(
+    Mono<AuthenticationResponse> createAccount(
 //            @RequestHeader("X-Auth-Token") String authToken,
 //            @RequestHeader("User-Agent") String userAgent,
             @RequestParam("account_name") String accountName,

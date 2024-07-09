@@ -3,6 +3,7 @@ package com.mynt.banking.currency_cloud.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mynt.banking.currency_cloud.dto.AccountRequest;
+import com.mynt.banking.currency_cloud.dto.AuthenticationResponse;
 import com.mynt.banking.currency_cloud.service.CurrencyCloudAPI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,10 +19,7 @@ public class Accounts {
     private final CurrencyCloudAPI currencyCloudAPI;
 
     @PostMapping("/create")
-    public String createAccount(
-             @RequestBody AccountRequest requestBody) {
-
-        System.out.println("\n\n\n hello world");
+    public Mono<AuthenticationResponse> createAccount(@RequestBody AccountRequest requestBody) {
 
 
 
@@ -43,8 +41,7 @@ public class Accounts {
                         requestBody.getOnlineTrading(),
                         requestBody.getPhoneTrading(),
                         requestBody.getTermsAndConditionsAccepted()
-                );
-//                .map(ResponseEntity::ok)
-//                .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)));
+                ).matches(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)));
     }
 }
