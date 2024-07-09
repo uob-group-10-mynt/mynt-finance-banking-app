@@ -12,6 +12,10 @@ frontend/out/
 frontend/webApp/
 frontend/node_modules/
 
+# backend
+backend/bin
+
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
@@ -41,6 +45,7 @@ frontend/node_modules/
 # Gradle and Maven with auto-import
 # When using Gradle or Maven with auto-import, you should exclude module files,
 # since they will be recreated, and may cause churn.  Uncomment if using
+.idea
 # auto-import.
 # .idea/artifacts
 # .idea/compiler.xml

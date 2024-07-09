@@ -1,5 +1,6 @@
 import {useState} from 'react';
-import {Box, Input, FormLabel, FormControl, FormHelperText, Button } from '@chakra-ui/react';
+import {Box, Input, FormLabel, FormControl, FormHelperText, Button} from '@chakra-ui/react';
+import PageHeader from "../components/forms/PageHeader";
 
 const Remittance = () => {
     // State for form fields
@@ -20,20 +21,45 @@ const Remittance = () => {
         setAmount('');
     };
 
-    const remitanceInputList = [
-        { label: "From:",testId: "fromInput", placeholder: "Payer's name", type:"text", required: true, value: senderName, onChange: (e) => setSenderName(e.target.value) },
-        { label: "To:", testId: "toInput",placeholder: "Payee's name", type:"text", required: true, value: recipientName, onChange: (e) => setRecipientName(e.target.value) },
-        { label: "Amount:", testId: "amountInput", placeholder: 0, type:"number", required: true, value: amount, onChange: (e) => setAmount(e.target.value), helperText: `Available balance: ${availableBalance.toFixed(2)} KES` },
+    const remittanceInputList = [
+        {
+            label: "From:",
+            testId: "fromInput",
+            placeholder: "Payer's name",
+            type: "text",
+            required: true,
+            value: senderName,
+            onChange: (e) => setSenderName(e.target.value)
+        },
+        {
+            label: "To:",
+            testId: "toInput",
+            placeholder: "Payee's name",
+            type: "text",
+            required: true,
+            value: recipientName,
+            onChange: (e) => setRecipientName(e.target.value)
+        },
+        {
+            label: "Amount:",
+            testId: "amountInput",
+            placeholder: 0,
+            type: "number",
+            required: true,
+            value: amount,
+            onChange: (e) => setAmount(e.target.value),
+            helperText: `Available balance: ${availableBalance.toFixed(2)} KES`
+        },
     ];
 
-    const renderedRemittancesInput = remitanceInputList.map((inputList) => {
+    const renderedRemittancesInput = remittanceInputList.map((inputList) => {
         return (
             <div key={inputList.label}>
                 <FormControl isRequired={inputList.required} margin='0.5em'>
                     <FormLabel>{inputList.label}</FormLabel>
-                    <Input 
+                    <Input
                         margin='0.5em'
-                        placeholder={inputList.placeholder} 
+                        placeholder={inputList.placeholder}
                         type={inputList.type}
                         value={inputList.value}
                         onChange={inputList.onChange}
@@ -48,8 +74,8 @@ const Remittance = () => {
 
 
     return (
-        <Box className="remittance-page">
-            <h1 className="Remittance-page-header">Transfer</h1>
+        <Box className="page">
+            <PageHeader title="Transfer"/>
             <form onSubmit={handleFormSubmit}>
                 {renderedRemittancesInput}
                 <Button margin='0.5em' type="submit" data-cy="submitButton">Send Money</Button>

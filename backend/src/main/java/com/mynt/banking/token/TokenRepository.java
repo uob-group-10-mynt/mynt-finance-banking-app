@@ -16,7 +16,7 @@ public interface TokenRepository extends JpaRepository<Token, Integer> {
       on t.user.id = u.id\s
       where u.id = :id and (t.expired = false or t.revoked = false)\s
       """)
-    List<Token> findAllValidTokenByUser(Long id);
+    List<Token> findAllValidTokenByUser(Integer id);
 
     Optional<Token> findByToken(String token);
 }

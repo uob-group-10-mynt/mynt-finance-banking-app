@@ -1,26 +1,26 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { 
   Flex, 
-  Box, 
-  Heading, 
+  Box,
   FormControl, 
   FormLabel, 
   Input, 
-  Button 
+  Button, 
+  FormErrorMessage
 } from "@chakra-ui/react";
-import useAxios from "../hooks/useAxios";
+import { LoggedInContext } from "../App";
+import PageHeader from "../components/forms/PageHeader";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+    const [loggedIn, setLoggedIn] = useContext(LoggedInContext)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [invalidCredentialsMsg, setInvalidCredentialsMsg] = useState('');
+    const navigate = useNavigate();
   
     const handleSubmit = async (e) => {
       e.preventDefault();
-      setLoading(true);
-      setError(null);
-  
       const credentials = { email, password };
   
       try {
@@ -29,61 +29,32 @@ const Login = () => {
           headers: { "Content-type": "application/json" },
           body: JSON.stringify(credentials)
         });
-  
-        if (!response.ok) {
-          throw new Error('Authentication failed');
-        }
-        console.log(response.json());
-        console.log('Form submitted', credentials);
         setEmail('');
         setPassword('');
+        if (!response.ok) {
+          setInvalidCredentialsMsg('incorrect email or password')
+          throw new Error('Authentication failed');
+        }
+        
+        const data = await response.json()
+        sessionStorage.setItem('access', data.access_token)
+        sessionStorage.setItem('refresh', data.refresh_token)
+        setLoggedIn(true)
+        navigate('/')
       } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
+        //TODO handle errors by redirecting to relevant error page
+        console.error(error);
+      } 
     };
 
-
-    // const [email, setEmail] = useState('');
-    // const [password, setPassword] = useState('');
-    // const handleSubmit = (e) => {
-    //   e.preventDefault();
-    //   const { fetchData, error, loading } = useAxios('/auth/authenticate', 
-    //     'POST', {
-    //       data: {
-    //         email,
-    //         password
-    //       }
-    //     })
-    //     console.log(fetchData, error, loading)
-    //     setEmail(' ')
-    //     setPassword(' ')
-    // }
-    //TODO hash password before posting it
-    // const handleSubmit = (e) => {
-    //   e.preventDefault();
-    //   const credentials = { email, password };
-    //   //TODO send POST request
-    //   fetch('http://localhost:8080/api/v1/auth/authenticate', {
-    //     method: 'POST',
-    //     headers: { "Content-type": "application/json" },
-    //     body: JSON.stringify(credentials)
-    //   }).then(()=> {
-    //     console.log('Form submitted', credentials);
-    //     setEmail('');
-    //     setPassword('');
-    //   })
-    // }
-
     const loginFieldsInputList = [
-      { label: "Email", testId: "emailInput", placeholder: "hello@email.com", type: "email", value: email, required: true, onChange: (e) => setEmail(e.target.value) },
-      { label: "Password", testId: "passwordInput", placeholder: "*******", type: "password", value: password,required: true, onChange: (e) => setPassword(e.target.value) },
+      { label: "Email", testId: "emailInput", placeholder: "hello@email.com", type: "email", value: email, required: true, onChange: (e) => setEmail(e.target.value), errorMsg: "Incorrect email or password" },
+      { label: "Password", testId: "passwordInput", placeholder: "*******", type: "password", value: password,required: true, onChange: (e) => setPassword(e.target.value), errorMsg: "Incorrect email or password" },
     ]
 
     const inputFields = loginFieldsInputList.map((inputList) => {
       return (
-        <FormControl isRequired={inputList.required} key={inputList.label}>
+        <FormControl isInvalid={invalidCredentialsMsg} isRequired={inputList.required} key={inputList.label}>
           <FormLabel>{inputList.label}</FormLabel>
           <Input 
             isRequired={inputList.required} 
@@ -93,6 +64,7 @@ const Login = () => {
             onChange={inputList.onChange}
             data-cy={inputList.testId}
             />
+            <FormErrorMessage data-cy="errorMessage">{inputList.errorMsg}</FormErrorMessage>
         </FormControl>  
       );
     });
@@ -100,9 +72,7 @@ const Login = () => {
     return(
       <Flex width="full" align="center" justifyContent="center">
         <Box p={2} className="remittance-page">
-          <Box textAlign="center">
-            <Heading>Login</Heading>
-          </Box>
+          <PageHeader title="Login"/>
           <Box my={4} textAlign="left">
             <form onSubmit={handleSubmit}>
               {inputFields}

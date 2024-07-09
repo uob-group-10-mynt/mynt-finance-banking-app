@@ -1,5 +1,7 @@
 package com.mynt.banking.auth;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.mynt.banking.config.JWTService;
 import com.mynt.banking.token.Token;
 import com.mynt.banking.token.TokenRepository;
@@ -16,8 +18,20 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -28,22 +42,32 @@ public class AuthenticationService {
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(RegisterRequest request) throws URISyntaxException, IOException, InterruptedException {
+
         var user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
+                .dob(request.getDob())
+                .address(request.getAddress())
+                .phone_number(request.getPhoneNumber())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
                 .build();
+
         var savedUser = repository.save(user);
+
         var jwtToken = jwtService.generateToken(user);
+
         var refreshToken = jwtService.generateRefreshToken(user);
+
         saveUserToken(savedUser, jwtToken);
+
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
+
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
