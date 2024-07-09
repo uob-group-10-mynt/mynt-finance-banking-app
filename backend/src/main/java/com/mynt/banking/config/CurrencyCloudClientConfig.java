@@ -41,9 +41,13 @@ public class CurrencyCloudClientConfig {
                 .filter(authenticationInterceptor.applyAuthentication())
                 .build();
 
+
+
         HttpServiceProxyFactory factory = HttpServiceProxyFactory
                 .builderFor(WebClientAdapter.create(client))
                 .build();
+
+
 
         return factory.createClient(CurrencyCloudAPI.class);
     }

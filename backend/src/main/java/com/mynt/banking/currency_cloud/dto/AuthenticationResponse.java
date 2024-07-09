@@ -1,4 +1,4 @@
-package com.mynt.banking.currency_cloud.model;
+package com.mynt.banking.currency_cloud.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
