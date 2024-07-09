@@ -1,9 +1,11 @@
 package com.mynt.banking.currency_cloud.service;
 
-import com.mynt.banking.currency_cloud.model.Account;
-import com.mynt.banking.currency_cloud.model.AuthenticationResponse;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.mynt.banking.currency_cloud.dto.AccountRequest;
+import com.mynt.banking.currency_cloud.dto.AuthenticationResponse;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
@@ -31,10 +33,13 @@ public interface CurrencyCloudAPI {
     ///////////////////////////////////////////////////////////////////
     ///// ACCOUNTS API ////////////////////////////////////////////////
     /** Create Account */
+//    @PostMapping(value = "/v2/accounts/create", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+//    String createAccount(@RequestBody AccountRequest requestBody);
+
     @PostMapping(value = "/v2/accounts/create", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    Mono<Account> createAccount(
-            @RequestHeader("X-Auth-Token") String authToken,
-            @RequestHeader("User-Agent") String userAgent,
+    String createAccount(
+//            @RequestHeader("X-Auth-Token") String authToken,
+//            @RequestHeader("User-Agent") String userAgent,
             @RequestParam("account_name") String accountName,
             @RequestParam("legal_entity_type") String legalEntityType,
             @RequestParam("street") String street,
@@ -53,7 +58,6 @@ public interface CurrencyCloudAPI {
             @RequestParam(value = "phone_trading", required = false) Boolean phoneTrading,
             @RequestParam(value = "terms_and_conditions_accepted", required = false) Boolean termsAndConditionsAccepted
     );
-
 
 
 }
