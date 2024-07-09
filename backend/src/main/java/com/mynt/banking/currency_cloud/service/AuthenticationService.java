@@ -1,6 +1,6 @@
 package com.mynt.banking.currency_cloud.service;
 
-import com.mynt.banking.currency_cloud.model.AuthenticationResponse;
+import com.mynt.banking.currency_cloud.dto.AuthenticationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
