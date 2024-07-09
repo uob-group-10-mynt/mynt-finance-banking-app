@@ -1,5 +1,6 @@
 package com.mynt.banking.currency_cloud.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mynt.banking.currency_cloud.dto.AccountRequest;
@@ -22,7 +23,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping("/create")
-    public Mono<String>  createAccount(@RequestBody AccountRequest requestBody) {
+    public Mono<String>  createAccount(@RequestBody AccountRequest requestBody) throws JsonProcessingException {
 
 
 

@@ -44,7 +44,11 @@ public class AccountService {
         this.webClient = webClient();
     }
 
-    public Mono<String> createAccount(AccountRequest requestBody){
+    public Mono<String> createAccount(AccountRequest requestBody) throws JsonProcessingException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode ogTree = objectMapper.valueToTree(requestBody);
+        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(ogTree));
 
          Mono<String> response =  this.webClient.post()
                  .uri(apiUrl + "/v2/accounts/create")
@@ -56,8 +60,8 @@ public class AccountService {
          response.flatMap(jsonResponce -> {
                 ObjectMapper mapper = new ObjectMapper();
                 try {
-                    JsonNode tree = mapper.readTree(jsonResponce);
-                    String responseTree = mapper.writeValueAsString(tree);
+                    JsonNode tree = mapper.valueToTree(jsonResponce);
+                    String responseTree = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tree);
                     System.out.println("\n\n\n\nResponse tree: " + responseTree);
                     return Mono.just(responseTree);
                 } catch (Exception e) {
