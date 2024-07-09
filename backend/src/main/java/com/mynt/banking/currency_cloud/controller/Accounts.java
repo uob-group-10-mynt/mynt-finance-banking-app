@@ -18,33 +18,7 @@ public class Accounts {
     private final CurrencyCloudAPI currencyCloudAPI;
 
     @PostMapping("/create")
-    public String createAccount(
-             @RequestBody AccountRequest requestBody) {
-
-        System.out.println("\n\n\n hello world");
-
-
-
-        return currencyCloudAPI.createAccount(
-                        requestBody.getAccountName(),
-                        requestBody.getLegalEntityType(),
-                        requestBody.getStreet(),
-                        requestBody.getCity(),
-                        requestBody.getPostalCode(),
-                        requestBody.getCountry(),
-                        requestBody.getStateOrProvince(),
-                        requestBody.getBrand(),
-                        requestBody.getYourReference(),
-                        requestBody.getStatus(),
-                        requestBody.getSpreadTable(),
-                        requestBody.getIdentificationType(),
-                        requestBody.getIdentificationValue(),
-                        requestBody.getApiTrading(),
-                        requestBody.getOnlineTrading(),
-                        requestBody.getPhoneTrading(),
-                        requestBody.getTermsAndConditionsAccepted()
-                );
-//                .map(ResponseEntity::ok)
-//                .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)));
+    public Mono<JsonNode> createAccount(@RequestBody AccountRequest requestBody) {
+        return currencyCloudAPI.createAccount(requestBody);
     }
 }

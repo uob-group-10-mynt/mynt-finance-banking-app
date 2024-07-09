@@ -17,8 +17,7 @@ public class AuthenticationInterceptor {
 
     @PostConstruct
     public void init() {
-        authenticationService.getAuthToken().subscribe(token -> this.authToken = token);
-        System.out.println("AUTH_TOKEN: " + this.authToken);
+        refreshAuthToken().block();
     }
 
     public ExchangeFilterFunction applyAuthentication() {
@@ -26,16 +25,21 @@ public class AuthenticationInterceptor {
     }
 
     private Mono<ClientRequest> addAuthToken(ClientRequest request) {
+        // Check if the token is null or expired, then refresh it
         if (authToken == null) {
-            return authenticationService.getAuthToken().map(token -> {
+            return refreshAuthToken().flatMap(token -> {
                 this.authToken = token;
-                return ClientRequest.from(request)
+                return Mono.just(ClientRequest.from(request)
                         .header("X-Auth-Token", authToken)
-                        .build();
+                        .build());
             });
         }
         return Mono.just(ClientRequest.from(request)
                 .header("X-Auth-Token", authToken)
                 .build());
+    }
+
+    private Mono<String> refreshAuthToken() {
+        return authenticationService.getAuthToken().doOnNext(token -> this.authToken = token);
     }
 }

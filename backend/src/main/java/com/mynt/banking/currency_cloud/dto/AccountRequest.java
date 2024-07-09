@@ -11,8 +11,6 @@ import javax.validation.constraints.Size;
 @Data
 @Builder
 public class AccountRequest {
-    private String id;
-
     @JsonProperty("account_name")
     @NotNull
     @Size(max = 255)
