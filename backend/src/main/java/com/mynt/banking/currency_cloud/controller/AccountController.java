@@ -27,4 +27,9 @@ public class AccountController {
         return this.accountService.createAccount(requestBody);
 
     }
+
+    @PostMapping("/login")
+    public String login() throws JsonProcessingException {
+        return this.accountService.login();
+    }
 }
