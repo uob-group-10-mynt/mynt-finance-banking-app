@@ -2,6 +2,7 @@ package com.mynt.banking.currency_cloud.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mynt.banking.currency_cloud.dto.Account;
 import com.mynt.banking.currency_cloud.dto.AccountRequest;
 import com.mynt.banking.currency_cloud.dto.AuthenticationResponse;
 import com.mynt.banking.currency_cloud.service.CurrencyCloudAPI;
@@ -23,25 +24,7 @@ public class Accounts {
 
 
 
-        return currencyCloudAPI.createAccount(
-                        requestBody.getAccountName(),
-                        requestBody.getLegalEntityType(),
-                        requestBody.getStreet(),
-                        requestBody.getCity(),
-                        requestBody.getPostalCode(),
-                        requestBody.getCountry(),
-                        requestBody.getStateOrProvince(),
-                        requestBody.getBrand(),
-                        requestBody.getYourReference(),
-                        requestBody.getStatus(),
-                        requestBody.getSpreadTable(),
-                        requestBody.getIdentificationType(),
-                        requestBody.getIdentificationValue(),
-                        requestBody.getApiTrading(),
-                        requestBody.getOnlineTrading(),
-                        requestBody.getPhoneTrading(),
-                        requestBody.getTermsAndConditionsAccepted()
-                ).matches(ResponseEntity::ok)
+        return currencyCloudAPI.createAccount(requestBody).cache(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)));
     }
 }
