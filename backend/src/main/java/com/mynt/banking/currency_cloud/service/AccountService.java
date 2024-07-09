@@ -44,34 +44,21 @@ public class AccountService {
         this.webClient = webClient();
     }
 
-    public Mono<String> createAccount(AccountRequest requestBody) throws JsonProcessingException {
+    public String createAccount(AccountRequest requestBody) throws JsonProcessingException {
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode ogTree = objectMapper.valueToTree(requestBody);
         System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(ogTree));
 
-         Mono<String> response =  this.webClient.post()
+         String response =  this.webClient.post()
                  .uri(apiUrl + "/v2/accounts/create")
                  .contentType(MediaType.APPLICATION_JSON)
                  .body(BodyInserters.fromValue(requestBody))
                  .retrieve()
-                 .bodyToMono(String.class);
+                 .bodyToMono(String.class)
+                 .block();
 
-         response.flatMap(jsonResponce -> {
-                ObjectMapper mapper = new ObjectMapper();
-                try {
-                    JsonNode tree = mapper.valueToTree(jsonResponce);
-                    String responseTree = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tree);
-                    System.out.println("\n\n\n\nResponse tree: " + responseTree);
-                    return Mono.just(responseTree);
-                } catch (Exception e) {
-                return Mono.error(new RuntimeException(e));
-                }
-            })
-            .doOnError(error -> System.err.println("\n\n\n\nError creating account: " + error.getMessage()));
-
-
-//         System.out.println("\n\n\n\nCreated account " + response);
+         System.out.println("\n\n\n\nCreated account " + response);
 
         return response;
     }
@@ -82,7 +69,6 @@ public class AccountService {
     private WebClient webClient(){
         return WebClient.builder()
                 .baseUrl(apiUrl)
-                .defaultHeader("User-Agent", USER_AGENT)
                 .clientConnector(new ReactorClientHttpConnector(HttpClient.create()
                         .responseTimeout(Duration.ofSeconds(10))))
                 .filter(LoggingInterceptor.logRequest())
