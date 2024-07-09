@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.dto.AccountRequest;
 import com.mynt.banking.currency_cloud.dto.AuthenticationResponse;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -37,7 +38,7 @@ public interface CurrencyCloudAPI {
 //    String createAccount(@RequestBody AccountRequest requestBody);
 
     @PostMapping(value = "/v2/accounts/create", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    Mono<AuthenticationResponse> createAccount(
+    Mono<ResponseEntity<Account>> createAccount(
 //            @RequestHeader("X-Auth-Token") String authToken,
 //            @RequestHeader("User-Agent") String userAgent,
             @RequestParam("account_name") String accountName,

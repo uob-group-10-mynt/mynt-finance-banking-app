@@ -19,7 +19,7 @@ public class Accounts {
     private final CurrencyCloudAPI currencyCloudAPI;
 
     @PostMapping("/create")
-    public Mono<AuthenticationResponse> createAccount(@RequestBody AccountRequest requestBody) {
+    public Mono<ResponseEntity<Account>> createAccount(@RequestBody AccountRequest requestBody) {
 
 
 
