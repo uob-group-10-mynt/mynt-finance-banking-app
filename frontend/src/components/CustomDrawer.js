@@ -8,7 +8,7 @@ import {
     DrawerCloseButton,
     Button,
     useDisclosure,
-    VStack, Center,
+    VStack
 } from '@chakra-ui/react'
 import { GiHamburgerMenu } from "react-icons/gi";
 
@@ -18,11 +18,9 @@ function CustomDrawer({text, children, testId}) {
 
     return (
         <>
-            {/* <Center> */}
-                <Button ref={btnRef} colorScheme='teal' onClick={onOpen} data-cy={testId}>
-                    <GiHamburgerMenu/>
-                </Button>
-            {/* </Center> */}
+            <Button ref={btnRef} colorScheme='teal' onClick={onOpen} data-cy={testId}>
+                <GiHamburgerMenu/>
+            </Button>
             <Drawer
                 isOpen={isOpen}
                 placement='left'
