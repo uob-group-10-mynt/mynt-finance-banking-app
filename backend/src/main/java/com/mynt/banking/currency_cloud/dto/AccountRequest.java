@@ -37,4 +37,54 @@ public class AccountRequest {
     @Size(max = 2)  // ISO 3166-1 alpha-2 country codes
     private String country;
 
+//    @JsonProperty("postal_code")
+//    @NotNull
+//    @Size(max = 20)
+//    private String postalCode;
+
+//    @JsonProperty("state_or_province")
+//    @Size(max = 255)
+//    private String stateOrProvince;
+//
+//    @JsonProperty("brand")
+//    @Size(max = 255)
+//    private String brand;
+//
+//    @JsonProperty("your_reference")
+//    @Size(max = 255)
+//    private String yourReference;
+//
+//    @JsonProperty("status")
+//    @Size(max = 255)
+//    private String status;
+//
+//    @JsonProperty("spread_table")
+//    @Size(max = 255)
+//    private String spreadTable;
+//
+//    @JsonProperty("identification_type")
+//    @Size(max = 255)
+//    private String identificationType;
+//
+//    @JsonProperty("identification_value")
+//    @Size(max = 255)
+//    private String identificationValue;
+//
+//    @JsonProperty("api_trading")
+//    private Boolean apiTrading;
+//
+//    @JsonProperty("online_trading")
+//    private Boolean onlineTrading;
+//
+//    @JsonProperty("phone_trading")
+//    private Boolean phoneTrading;
+//
+//    @JsonProperty("terms_and_conditions_accepted")
+//    private Boolean termsAndConditionsAccepted;
+
+
 }
+
+
+
+
