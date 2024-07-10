@@ -1,9 +1,11 @@
 package com.mynt.banking.currency_cloud.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.dto.AccountRequest;
 import com.mynt.banking.currency_cloud.dto.AuthenticationResponse;
+import com.mynt.banking.currency_cloud.dto.CreateAccountRequest;
+import com.mynt.banking.currency_cloud.dto.CreateAccountResponse;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -32,26 +34,9 @@ public interface CurrencyCloudAPI {
     ///////////////////////////////////////////////////////////////////
     ///// ACCOUNTS API ////////////////////////////////////////////////
     /** Create Account */
-    @PostMapping(value = "/v2/accounts/create", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    Mono<JsonNode> createAccount(@RequestBody AccountRequest accountRequest);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //    @PostMapping(value = "/v2/accounts/create", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-//    Mono<JsonNode> createAccount(
+//    ResponseEntity<CreateAccountResponse> createAccount(
 //            @RequestHeader("X-Auth-Token") String authToken,
-//            @RequestHeader("User-Agent") String userAgent,
 //            @RequestParam("account_name") String accountName,
 //            @RequestParam("legal_entity_type") String legalEntityType,
 //            @RequestParam("street") String street,
@@ -71,5 +56,10 @@ public interface CurrencyCloudAPI {
 //            @RequestParam(value = "terms_and_conditions_accepted", required = false) Boolean termsAndConditionsAccepted
 //    );
 
+    @PostMapping(value = "/v2/accounts/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<CreateAccountResponse> createAccount(
+            @RequestHeader("X-Auth-Token") String authToken,
+            @RequestBody CreateAccountRequest createAccountRequest
+    );
 
 }

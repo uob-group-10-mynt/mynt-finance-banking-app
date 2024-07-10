@@ -1,83 +1,78 @@
 package com.mynt.banking.currency_cloud.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class AccountRequest {
+public class CreateAccountRequest {
+
     @JsonProperty("account_name")
     @NotNull
-    @Size(max = 255)
     private String accountName;
 
     @JsonProperty("legal_entity_type")
-    @NotNull
-    @Size(max = 255)
-    private String legalEntityType;
+    @Builder.Default
+    private String legalEntityType = "individual";
 
     @JsonProperty("street")
     @NotNull
-    @Size(max = 255)
     private String street;
 
     @JsonProperty("city")
     @NotNull
-    @Size(max = 255)
     private String city;
 
     @JsonProperty("postal_code")
-    @NotNull
-    @Size(max = 20)
-    private String postalCode;
+    @Builder.Default
+    private String postalCode = "";
 
     @JsonProperty("country")
     @NotNull
-    @Size(max = 2)  // ISO 3166-1 alpha-2 country codes
     private String country;
 
     @JsonProperty("state_or_province")
-    @Size(max = 255)
     private String stateOrProvince;
 
     @JsonProperty("brand")
-    @Size(max = 255)
     private String brand;
 
     @JsonProperty("your_reference")
-    @Size(max = 255)
     private String yourReference;
 
     @JsonProperty("status")
-    @Size(max = 255)
-    private String status;
+    @Builder.Default
+    private String status = "enabled";
 
     @JsonProperty("spread_table")
-    @Size(max = 255)
     private String spreadTable;
 
     @JsonProperty("identification_type")
-    @Size(max = 255)
     private String identificationType;
 
     @JsonProperty("identification_value")
-    @Size(max = 255)
     private String identificationValue;
 
     @JsonProperty("api_trading")
-    private Boolean apiTrading;
+    @Builder.Default
+    private Boolean apiTrading = true;
 
     @JsonProperty("online_trading")
-    private Boolean onlineTrading;
+    @Builder.Default
+    private Boolean onlineTrading = true;
 
     @JsonProperty("phone_trading")
-    private Boolean phoneTrading;
+    @Builder.Default
+    private Boolean phoneTrading = true;
 
     @JsonProperty("terms_and_conditions_accepted")
-    private Boolean termsAndConditionsAccepted;
+    @Builder.Default
+    private Boolean termsAndConditionsAccepted = true;
 }
