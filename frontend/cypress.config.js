@@ -8,5 +8,7 @@ module.exports = defineConfig({
     },
     baseUrl: "http://localhost:9001"
   },
-  watchForFileChanges: false
+  watchForFileChanges: false,
+  viewportWidth: 760
+
 });
