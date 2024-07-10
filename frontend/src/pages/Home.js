@@ -4,7 +4,6 @@ import Icon from "../components/Icon";
 import Container from "../components/Container";
 import InfoBlock from "../components/InfoBlock";
 import { Box } from "@chakra-ui/react";
-import { SuccessBlock } from "../components/successBlock";
 
 const fetchAccountData = [
     {
