@@ -4,21 +4,19 @@ import { Image } from "@chakra-ui/react";
 
 const iconMapper = {
   mynt: myntIcon,
-  default: defaultIcon
+  others: defaultIcon
 }
 
 function Icon({
-  mynt,
+  bank,
   ...rest
 }) {
-  const mapper = (mynt) ? 'mynt' : 'default';
-
   return (
     <Image 
-      src={iconMapper[mapper]}
+      src={iconMapper[bank]}
       alt='icon'
       objectFit='cover'
-      boxSize={{ base: '3em', md: '4em', lg: '5em' }}
+      boxSize={{ base: '2em', md: '3em', lg: '4em' }}
       { ...rest }
     />
   )
