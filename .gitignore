@@ -4,7 +4,6 @@
 
 # Spring Application Properties and Keys:
 /backend/src/main/resources/application.properties
-application.properties
 
 # Front end Project
 frontend/ios/
