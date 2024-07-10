@@ -1,10 +1,8 @@
 package com.mynt.banking.currency_cloud.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mynt.banking.currency_cloud.dto.CreateAccountRequest;
-import com.mynt.banking.currency_cloud.dto.CreateAccountResponse;
 import com.mynt.banking.currency_cloud.dto.FindAccountRequest;
 import com.mynt.banking.currency_cloud.dto.FindAccountResponse;
 import com.mynt.banking.currency_cloud.utils.Utils;

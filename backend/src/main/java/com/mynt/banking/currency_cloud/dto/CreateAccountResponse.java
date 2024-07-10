@@ -85,3 +85,4 @@ public class CreateAccountResponse {
     @JsonProperty("bank_account_verified")
     private String bankAccountVerified;
 }
+
