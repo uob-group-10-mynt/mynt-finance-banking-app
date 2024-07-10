@@ -31,8 +31,8 @@ public class CreateAccountRequest {
     private String city;
 
     @JsonProperty("postal_code")
-    @Builder.Default
-    private String postalCode = "";
+    @NotNull
+    private String postalCode;
 
     @JsonProperty("country")
     @NotNull
@@ -42,7 +42,8 @@ public class CreateAccountRequest {
     private String stateOrProvince;
 
     @JsonProperty("brand")
-    private String brand;
+    @Builder.Default
+    private String brand = "currencycloud";
 
     @JsonProperty("your_reference")
     private String yourReference;

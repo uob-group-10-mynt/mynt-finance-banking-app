@@ -8,69 +8,7 @@ import jakarta.annotation.Nullable;
 import org.aspectj.runtime.internal.Conversions;
 import org.springframework.http.MediaType;
 
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 
-/**
- * This is the low-level Currency Cloud HTTP API Java implementation. This interface's methods map directly to
- * the HTTP endpoints, as described in the HTTP API documentation.
- */
-@Path("v1")
-@Produces(MediaType.APPLICATION_JSON)
-public interface CurrencyCloud {
-
-    ///////////////////////////////////////////////////////////////////
-    ///// AUTHENTICATE API ////////////////////////////////////////////
-
-    /** API User Login */
-    @POST
-    @Path("authenticate/api")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    AuthenticateResponse authenticate(
-            @HeaderParam("User-Agent") String userAgent,
-            @FormParam("login_id") String loginId,
-            @FormParam("api_key") String apiKey
-    ) throws ResponseException;
-
-    /** End API session */
-    @POST
-    @Path("authenticate/close_session")
-    Object endSession(
-            @HeaderParam("X-Auth-Token") String authToken,
-            @HeaderParam("User-Agent") String userAgent
-    ) throws ResponseException;
-
-
-    ///////////////////////////////////////////////////////////////////
-    ///// ACCOUNTS API ////////////////////////////////////////////////
-
-    /** Create Account */
-    @POST
-    @Path("accounts/create")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    Account createAccount(
-            @HeaderParam("X-Auth-Token") String authToken,
-            @HeaderParam("User-Agent") String userAgent,
-            @FormParam("account_name") String accountName,
-            @FormParam("legal_entity_type") String legalEntityType,
-            @FormParam("street") String street,
-            @FormParam("city") String city,
-            @FormParam("postal_code") String postalCode,
-            @FormParam("country") String country,
-            @Nullable @FormParam("state_or_province") String stateOrProvince,
-            @Nullable @FormParam("brand") String brand,
-            @Nullable @FormParam("your_reference") String yourReference,
-            @Nullable @FormParam("status") String status,
-            @Nullable @FormParam("spread_table") String spreadTable,
-            @Nullable @FormParam("identification_type") String identificationType,
-            @Nullable @FormParam("identification_value") String identificationValue,
-            @Nullable @FormParam("api_trading") Boolean apiTrading,
-            @Nullable @FormParam("online_trading") Boolean onlineTrading,
-            @Nullable @FormParam("phone_trading") Boolean phoneTrading,
-            @Nullable @FormParam("terms_and_conditions_accepted") Boolean termsAndConditionsAccepted
-    ) throws ResponseException;
 
     /** Retrieve an Account */
     @GET
