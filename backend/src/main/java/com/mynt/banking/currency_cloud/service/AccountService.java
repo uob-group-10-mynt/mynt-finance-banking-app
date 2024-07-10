@@ -64,7 +64,7 @@ public class AccountService {
 
         String response = this.webClient
                 .post()
-                .uri("https://devapi.currencycloud.com" +"/v2/authenticate/api")
+                .uri("/v2/authenticate/api")
                 .body(BodyInserters.fromValue(dto))
                 .retrieve()
                 .bodyToMono(String.class)
@@ -87,7 +87,7 @@ public class AccountService {
 
          String response =  this.webClient
                  .post()
-                 .uri("https://devapi.currencycloud.com" + "/v2/accounts/create")
+                 .uri("/v2/accounts/create")
                  .header("X-Auth-Token",this.auth_token)
                  .body(BodyInserters.fromValue(requestBody))
                  .retrieve()
@@ -102,7 +102,7 @@ public class AccountService {
     }
 
     private WebClient webClient(){
-        return WebClient.create();
+        return WebClient.create("https://devapi.currencycloud.com");
     }
 
 
