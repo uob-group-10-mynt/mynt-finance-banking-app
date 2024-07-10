@@ -27,17 +27,6 @@ public class AccountCCTest {
     @Autowired
     private AccountService accountService;
 
-//    @Test
-//    public void contextLoads() {
-//        assertThat(accountService).isNotNull();
-//    }
-
-//    @Test
-//    public void testLogin() throws JsonProcessingException {
-//        String result = accountService.login();
-//        assertThat(result).isNotNull();
-//    }
-
     @Test
     public void testCreateAccount() throws JsonProcessingException {
 
