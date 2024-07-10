@@ -24,9 +24,6 @@ public class AccountCCTest {
     @Autowired
     private AccountService accountService;
 
-//    @Autowired
-//    private AccountRequest accountRequest;
-
     @Test
     public void contextLoads() {
         assertThat(accountService).isNotNull();
@@ -41,13 +38,24 @@ public class AccountCCTest {
     @Test
     public void testCreateAccount() throws JsonProcessingException {
 
-        //TODO: fill out all of the body
         AccountRequest requestBody = AccountRequest.builder()
                 .accountName("hello123")
                 .legalEntityType("individual")
                 .street("The Mall")
                 .city("London")
                 .country("GB")
+                .postalCode("SW1A 1AA")
+                .stateOrProvince("string")
+                .brand("currencycloud")
+                .yourReference("MyntFinance")
+                .status("enabled")
+                .spreadTable("")
+                .identificationType("none")
+                .identificationValue("")
+                .apiTrading(true)
+                .onlineTrading(true)
+                .phoneTrading(true)
+                .termsAndConditionsAccepted(true)
                 .build();
 
         ResponseEntity<JsonNode> result = accountService.createAccount(requestBody).block();
@@ -64,6 +72,19 @@ public class AccountCCTest {
         assertEquals(responseBody.get("legal_entity_type").asText(),"individual");
         assertEquals(responseBody.get("city").asText(),"London");
         assertEquals(responseBody.get("country").asText(),"GB");
+        assertEquals(responseBody.get("postal_code").asText(),"SW1A 1AA");
+        assertEquals(responseBody.get("state_or_province").asText(),"string");
+        assertEquals(responseBody.get("brand").asText(),"currencycloud");
+        assertEquals(responseBody.get("your_reference").asText(),"MyntFinance");
+        assertEquals(responseBody.get("status").asText(),"enabled");
+        assertEquals(responseBody.get("spread_table").asText(),"");
+        assertEquals(responseBody.get("identification_type").asText(),"none");
+        assertEquals(responseBody.get("identification_value").asText(),"");
+        assertEquals(responseBody.get("api_trading").asText(),"true");
+        assertEquals(responseBody.get("online_trading").asText(),"true");
+        assertEquals(responseBody.get("phone_trading").asText(),"true");
+        assertEquals(responseBody.get("terms_and_conditions_accepted").asText(),"null");
+
     }
 
     @Test
