@@ -55,12 +55,17 @@ public class AccountService {
         this.webClient = webClient();
     }
 
+    //TODO: Testing - Done
+    //TODO: DTO partial fillout - done
+    //TODO: JsonNode return
+    //TODO: Mono Respone body
+    //TODO: Response entity
+
     public String login() throws JsonProcessingException {
 
         LoginDto dto = new LoginDto();
         dto.setLogin_id(loginId);
         dto.setApi_key(apiKey);
-
 
         String response = this.webClient
                 .post()
@@ -85,6 +90,8 @@ public class AccountService {
 
 //        .body(BodyInserters.fromValue(requestBody))
 
+//        System.out.println("\n\n\n\n\nbrand: "+requestBody.getBrand());
+
          String response =  this.webClient
                  .post()
                  .uri("/v2/accounts/create")
@@ -96,9 +103,9 @@ public class AccountService {
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode tree = mapper.readTree(response);
-        System.out.println("\n\n\n\nmapper"+mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tree));
-
-        return response;
+        String output = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tree);
+        System.out.println("\n\n\n\noutput: "+output);
+        return output;
     }
 
     private WebClient webClient(){

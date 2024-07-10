@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 @OpenAPIDefinition(
         info = @Info(
                 contact = @Contact(
-                        name = "Alexander Fisher",
+                        name = "Group10",
                         email = "af17918@bristol.ac.uk",
                         url = ""
                 ),
