@@ -12,8 +12,11 @@ import org.junit.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
+import reactor.core.publisher.Mono;
 
 import javax.validation.constraints.AssertTrue;
+import java.util.Objects;
 
 @SpringBootTest(classes = main.class)
 public class AccountCCTest {
@@ -47,18 +50,20 @@ public class AccountCCTest {
                 .country("GB")
                 .build();
 
-        String result = accountService.createAccount(requestBody);
+        ResponseEntity<JsonNode> result = accountService.createAccount(requestBody).block();
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode tree = mapper.readTree(result);
-//        System.out.println("\n\n\n\noutput: "+mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tree));
+        assert result != null;
+        int responseCode = result.getStatusCode().value();
+        assertEquals(responseCode, 200);
 
-        assertThat(tree.get("id").asText()).isNotNull();
-        assertEquals(tree.get("account_name").asText(),"hello123");
-        assertEquals(tree.get("street").asText(),"The Mall");
-        assertEquals(tree.get("legal_entity_type").asText(),"individual");
-        assertEquals(tree.get("city").asText(),"London");
-        assertEquals(tree.get("country").asText(),"GB");
+        JsonNode responseBody = result.getBody();
+        assert responseBody != null;
+        assertThat(responseBody.get("id").asText()).isNotNull();
+        assertEquals(responseBody.get("account_name").asText(),"hello123");
+        assertEquals(responseBody.get("street").asText(),"The Mall");
+        assertEquals(responseBody.get("legal_entity_type").asText(),"individual");
+        assertEquals(responseBody.get("city").asText(),"London");
+        assertEquals(responseBody.get("country").asText(),"GB");
     }
 
     @Test
@@ -72,18 +77,17 @@ public class AccountCCTest {
                 .country("GB")
                 .build();
 
-        String result = accountService.createAccount(requestBody);
+        ResponseEntity<JsonNode> result = accountService.createAccount(requestBody).block();
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode tree = mapper.readTree(result);
-        System.out.println("\n\n\n\noutput: "+mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tree));
+        assert result != null;
+        assertEquals(result.getStatusCode().value(),200);
 
-        assertThat(tree.get("id").asText()).isNotNull();
-        assertEquals(tree.get("account_name").asText(),"hello123");
-        assertEquals(tree.get("street").asText(),"The Mall");
-        assertEquals(tree.get("legal_entity_type").asText(),"individual");
-        assertEquals(tree.get("city").asText(),"London");
-        assertEquals(tree.get("country").asText(),"GB");
+        assertThat(Objects.requireNonNull(result.getBody()).get("id").asText()).isNotNull();
+        assertEquals(result.getBody().get("account_name").asText(),"hello123");
+        assertEquals(result.getBody().get("street").asText(),"The Mall");
+        assertEquals(result.getBody().get("legal_entity_type").asText(),"individual");
+        assertEquals(result.getBody().get("city").asText(),"London");
+        assertEquals(result.getBody().get("country").asText(),"GB");
     }
 
 }

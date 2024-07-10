@@ -23,7 +23,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping("/create")
-    public String  createAccount(@RequestBody AccountRequest requestBody) throws JsonProcessingException {
+    public Mono<ResponseEntity<JsonNode>>  createAccount(@RequestBody AccountRequest requestBody) throws JsonProcessingException {
         return this.accountService.createAccount(requestBody);
 
     }

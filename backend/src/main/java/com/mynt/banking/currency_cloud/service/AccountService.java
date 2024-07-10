@@ -3,12 +3,14 @@ package com.mynt.banking.currency_cloud.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mynt.banking.currency_cloud.dto.AccountRequest;
 import com.mynt.banking.currency_cloud.dto.AuthenticationResponse;
 import com.mynt.banking.currency_cloud.dto.LoginDto;
 import com.mynt.banking.currency_cloud.interceptor.AuthenticationInterceptor;
 import com.mynt.banking.currency_cloud.interceptor.ErrorHandlingInterceptor;
 import com.mynt.banking.currency_cloud.interceptor.LoggingInterceptor;
+import io.swagger.v3.core.util.Json;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -55,12 +58,6 @@ public class AccountService {
         this.webClient = webClient();
     }
 
-    //TODO: Testing - Done
-    //TODO: DTO partial fillout - done
-    //TODO: JsonNode return
-    //TODO: Mono Respone body
-    //TODO: Response entity
-
     public String login() throws JsonProcessingException {
 
         LoginDto dto = new LoginDto();
@@ -83,29 +80,32 @@ public class AccountService {
         return response;
     }
 
+    //TODO: Testing - Done
+    //TODO: DTO partial fillout - done
+    //TODO: JsonNode return - done
+    //TODO: Mono Respone body - done
+    //TODO: Response entity - done
 
-    public String createAccount(AccountRequest requestBody) throws JsonProcessingException {
+
+    public Mono<ResponseEntity<JsonNode>> createAccount(AccountRequest requestBody) throws JsonProcessingException {
 
         this.login();
 
-//        .body(BodyInserters.fromValue(requestBody))
-
-//        System.out.println("\n\n\n\n\nbrand: "+requestBody.getBrand());
-
-         String response =  this.webClient
+        return this.webClient
                  .post()
                  .uri("/v2/accounts/create")
                  .header("X-Auth-Token",this.auth_token)
-                 .body(BodyInserters.fromValue(requestBody))
-                 .retrieve()
-                 .bodyToMono(String.class)
-                 .block();
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode tree = mapper.readTree(response);
-        String output = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tree);
-        System.out.println("\n\n\n\noutput: "+output);
-        return output;
+                 .bodyValue(requestBody)
+                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
+                 .flatMap(response -> {
+                     if(response.getStatusCode().is2xxSuccessful()){
+                         JsonNode jsonNode = response.getBody();
+                         ObjectNode objectNode = ((ObjectNode) jsonNode).put("Custom Messsage","Hello World");
+                         ResponseEntity<JsonNode> newResponseEntity = new ResponseEntity<>(objectNode,response.getStatusCode());
+                        return Mono.just(newResponseEntity);
+                     }
+                     return Mono.just(response);
+                 }) ;
     }
 
     private WebClient webClient(){
