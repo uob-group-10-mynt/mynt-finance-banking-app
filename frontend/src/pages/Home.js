@@ -4,6 +4,7 @@ import Icon from "../components/Icon";
 import Container from "../components/Container";
 import InfoBlock from "../components/InfoBlock";
 import { Box } from "@chakra-ui/react";
+import { SuccessBlock } from "../components/successBlock";
 
 const fetchAccountData = [
     {
@@ -40,6 +41,7 @@ export default function Home() {
                             <CustomText black big>{data.currencySymbol}{data.amount}</CustomText>
                         </InfoBlock>
                         <CustomButton side>Send</CustomButton>
+                        
                     </>
                 );
             },
