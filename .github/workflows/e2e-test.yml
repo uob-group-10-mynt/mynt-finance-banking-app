@@ -29,9 +29,9 @@ jobs:
             distribution: 'temurin'
             java-version: '17'
             
-        - name: Test DB connection
-          run: |
-            pg_isready -d Data -h users.c3g02ksos4tb.eu-west-2.rds.amazonaws.com -p 5432 -U postgres -d postgres
+        # - name: Test DB connection
+        #   run: |
+        #     pg_isready -d Data -h users.c3g02ksos4tb.eu-west-2.rds.amazonaws.com -p 5432 -U postgres -d postgres
           
         - name: Grant execute permission for gradlew
           run: chmod +x ./backend/gradlew
