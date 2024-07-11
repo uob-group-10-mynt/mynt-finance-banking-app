@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@Schema(description = "Find Benificiaries")
 public class FindRequestDto {
 
     @JsonProperty("name")
