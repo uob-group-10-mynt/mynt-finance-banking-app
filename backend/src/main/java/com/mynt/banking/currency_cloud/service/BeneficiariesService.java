@@ -1,8 +1,7 @@
 package com.mynt.banking.currency_cloud.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mynt.banking.currency_cloud.dto.beneficiaries.FindRequestDto;
+import com.mynt.banking.currency_cloud.dto.beneficiaries.FindBeneficiaries;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,7 @@ public class BeneficiariesService {
     private final AuthenticationService authenticationService;
     private final WebClient webClient;
 
-    public Mono<ResponseEntity<JsonNode>> find(FindRequestDto requestBody) {
+    public Mono<ResponseEntity<JsonNode>> find(FindBeneficiaries requestBody) {
         return webClient
                 .post()
                 .uri("/v2/beneficiaries/find")

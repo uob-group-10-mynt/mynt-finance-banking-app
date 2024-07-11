@@ -1,8 +1,7 @@
 package services;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mynt.banking.currency_cloud.dto.beneficiaries.FindRequestDto;
+import com.mynt.banking.currency_cloud.dto.beneficiaries.FindBeneficiaries;
 import com.mynt.banking.currency_cloud.service.AccountService;
 import com.mynt.banking.currency_cloud.service.BeneficiariesService;
 import com.mynt.banking.main;
@@ -25,7 +24,7 @@ public class BeneficiariesCCTest {
     @Test
     public void testFindBenificiary(){
 
-        FindRequestDto fDto = FindRequestDto.builder()
+        FindBeneficiaries fDto = FindBeneficiaries.builder()
                 .name("james")
                 .bankAccountHolderName("")
                 .bankCountry("")

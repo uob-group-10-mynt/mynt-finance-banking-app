@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mynt.banking.currency_cloud.dto.account.CreateAccountRequest;
 import com.mynt.banking.currency_cloud.dto.account.FindAccountRequest;
 import com.mynt.banking.currency_cloud.dto.account.FindAccountResponse;
-import com.mynt.banking.currency_cloud.dto.beneficiaries.FindRequestDto;
+import com.mynt.banking.currency_cloud.dto.beneficiaries.FindBeneficiaries;
 import com.mynt.banking.currency_cloud.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -61,7 +61,7 @@ public class AccountService {
         return findAccountResponseMono.block();
     }
 
-    public Mono<ResponseEntity<JsonNode>> find(FindRequestDto requestBody) {
+    public Mono<ResponseEntity<JsonNode>> find(FindBeneficiaries requestBody) {
         return webClient
                 .post()
                 .uri("/v2/beneficiaries/find")

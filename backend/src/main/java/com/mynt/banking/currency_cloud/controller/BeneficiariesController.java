@@ -1,8 +1,7 @@
 package com.mynt.banking.currency_cloud.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.dto.account.FindAccountRequest;
-import com.mynt.banking.currency_cloud.dto.beneficiaries.FindRequestDto;
+import com.mynt.banking.currency_cloud.dto.beneficiaries.FindBeneficiaries;
 import com.mynt.banking.currency_cloud.service.BeneficiariesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,7 @@ public class BeneficiariesController {
     private final BeneficiariesService beneficiariesService;
 
     @PostMapping("/find")
-    public Mono<ResponseEntity<JsonNode>> find(@RequestBody FindRequestDto requestBody){
+    public Mono<ResponseEntity<JsonNode>> find(@RequestBody FindBeneficiaries requestBody){
         return beneficiariesService.find(requestBody) ;
     }
 
