@@ -14,17 +14,10 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class FindBalances {
 
-    @JsonProperty("currency")
-    @Size(max = 255)
-    @NotNull
-    @Schema(description = "Three-letter ISO currency code.", example = " ")
-    @Builder.Default
-    private String currency = "";
-
     @JsonProperty("on_behalf_of")
     @Size(max = 255)
     @Schema(description = "A contact UUID for the sub-account you're acting on behalf of.", example = " ")
     @Builder.Default
-    private String amountFrom = "";
+    private String onBehalfOf = "";
 
 }
