@@ -7,7 +7,7 @@ on:
       - 'dev'
 
 jobs:
-  build_and_test:
+  e2e_tests:
     environment: Testing_Environment
     env:
       DB_URL: ${{ secrets.DB_URL }}
