@@ -1,7 +1,5 @@
 package com.mynt.banking.auth;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.mynt.banking.config.JWTService;
 import com.mynt.banking.token.Token;
 import com.mynt.banking.token.TokenRepository;
@@ -13,25 +11,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.GET;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +29,7 @@ public class AuthenticationService {
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) throws URISyntaxException, IOException, InterruptedException {
+    public AuthenticationResponse register(@NotNull RegisterRequest request) {
 
         var user = User.builder()
                 .firstname(request.getFirstname())
@@ -70,7 +57,7 @@ public class AuthenticationService {
 
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(@NotNull AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -99,7 +86,7 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(User user) {
+    private void revokeAllUserTokens(@NotNull User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty()) return;
         validUserTokens.forEach(token -> {
@@ -109,7 +96,7 @@ public class AuthenticationService {
         tokenRepository.saveAll(validUserTokens);
     }
 
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void refreshToken(@NotNull HttpServletRequest request, HttpServletResponse response) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String userEmail;
