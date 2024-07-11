@@ -35,8 +35,6 @@ jobs:
             mkdir .env
             cd .env
             echo "${{ env.PEM_CONTENT }}" >> "${{ env.RDS_SSL_CERT_PATH }}"
-            ls
-            cd ../
         
         - name: Setup application.properties
           run: |
