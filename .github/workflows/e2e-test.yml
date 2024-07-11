@@ -60,20 +60,15 @@ jobs:
             application.security.jwt.secret-key=$JWT_SECRET_KEY
             application.security.jwt.expiration=600000
             application.security.jwt.refresh-token.expiration=604800000
-            # CurrencyCloud:
             currencycloud.api.url=https://devapi.currencycloud.com
             currencycloud.api.login_id=$CURRENCY_CLOUD_ID
             currencycloud.api.key=$CURRENCY_CLOUD_API_KEY
-            # Enable DEBUG level logging for web requests
             logging.level.org.springframework.web=DEBUG
             logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG
-            # Configure logging pattern (optional)
             logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %msg%n
-            # Enable logging for RestTemplate and Apache HttpClient
             logging.level.org.apache.http=DEBUG
             logging.level.org.apache.http.wire=DEBUG
             logging.level.org.apache.http.headers=DEBUG
-            # Logback configuration
             logging.level.root=INFO
             logging.level.org.springframework.web.client.RestTemplate=DEBUG
             logging.level.com.mynt.banking=DEBUG" >> $APPLICATION_PROPERTIES
