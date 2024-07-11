@@ -37,6 +37,14 @@ jobs:
             ls
             cd ../
         
+        - name: Setup application.properties
+          run: |
+            chmod +x ./CI_Scripts/initApplicationProperties.sh
+            ./CI_Scripts/initApplicationProperties.sh ${{ env.DB_URL }} ${{ env.DB_USERNAME }} ${{ env.DB_PASSWORD }}
+
+        - name: Print application.properties
+          run: cat ./backend/src/main/resources/application.properties
+        
         - name: Run backend
           run: |
             cd backend
