@@ -2,9 +2,6 @@ name: End-to-end tests CI
 
 on:
   push:
-    branches:
-      - main
-      - 'dev'
 
 jobs:
   e2e_tests:
