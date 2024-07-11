@@ -1,13 +1,13 @@
-// CustomHeader.js
 import React from 'react';
-import {Box, Heading} from '@chakra-ui/react';
+import {Box} from '@chakra-ui/react';
+import CustomHeading from "../CustomHeading";
 
-function PageHeader({title}) {
+function PageHeader({children}) {
     return (
-        <Box mt="10px" mb="10px" textAlign="center">
-            <Heading fontSize="20px">
-                {title}
-            </Heading>
+        <Box textAlign="center">
+            <CustomHeading>
+                {children}
+            </CustomHeading>
         </Box>
     );
 }

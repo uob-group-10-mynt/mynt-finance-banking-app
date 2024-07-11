@@ -1,4 +1,4 @@
-import React from 'react';
+import { useRef } from 'react';
 import {
     Drawer,
     DrawerBody,
@@ -8,20 +8,19 @@ import {
     DrawerCloseButton,
     Button,
     useDisclosure,
-    VStack, Center,
+    VStack
 } from '@chakra-ui/react'
+import { GiHamburgerMenu } from "react-icons/gi";
 
-function CustomDrawer({text, children, testId}) {
+function CustomDrawer({children, testId}) {
     const {isOpen, onOpen, onClose} = useDisclosure()
-    const btnRef = React.useRef()
+    const btnRef = useRef()
 
     return (
         <>
-            <Center>
-                <Button ref={btnRef} colorScheme='teal' onClick={onOpen} data-cy={testId}>
-                    {text}
-                </Button>
-            </Center>
+            <Button ref={btnRef} colorScheme='teal' onClick={onOpen} data-cy={testId}>
+                <GiHamburgerMenu/>
+            </Button>
             <Drawer
                 isOpen={isOpen}
                 placement='left'
