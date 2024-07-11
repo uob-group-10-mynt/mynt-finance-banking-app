@@ -24,7 +24,11 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 public class SecurityConfig {
     private static final String[] WHITE_LIST_URL = {
-            "api/v1/currency-cloud/accounts/**",
+            "/api/v1/currency-cloud/accounts/**",
+            "/api/v1/currency-cloud/balances/**",
+            "/api/v1/currency-cloud/beneficiaries/**",
+            "/api/v1/currency-cloud/payments/**",
+            "/api/v1/currency-cloud/reference/**",
             "/api/v1/auth/**",
             "/api/v1/auth/sdk**",
             "/api/v1/auth/sdk",

@@ -2,9 +2,10 @@ package com.mynt.banking.currency_cloud.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mynt.banking.currency_cloud.dto.CreateAccountRequest;
-import com.mynt.banking.currency_cloud.dto.FindAccountRequest;
-import com.mynt.banking.currency_cloud.dto.FindAccountResponse;
+import com.mynt.banking.currency_cloud.dto.account.CreateAccountRequest;
+import com.mynt.banking.currency_cloud.dto.account.FindAccountRequest;
+import com.mynt.banking.currency_cloud.dto.account.FindAccountResponse;
+import com.mynt.banking.currency_cloud.dto.beneficiaries.FindRequestDto;
 import com.mynt.banking.currency_cloud.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -59,4 +60,27 @@ public class AccountService {
 
         return findAccountResponseMono.block();
     }
+
+    public Mono<ResponseEntity<JsonNode>> find(FindRequestDto requestBody) {
+        return webClient
+                .post()
+                .uri("/v2/beneficiaries/find")
+                .header("X-Auth-Token", authenticationService.getAuthToken())
+                .bodyValue(requestBody)
+                .exchangeToMono(response -> response.toEntity(JsonNode.class))
+                .flatMap(response -> {
+                    if(response.getStatusCode().is2xxSuccessful()) {
+                        // Exsample code
+                        JsonNode jsonNode = response.getBody();
+                        ObjectNode objectNode = ((ObjectNode) jsonNode).put("Custom Messsage","Hello World");
+                        ResponseEntity<JsonNode> newResponseEntity = new ResponseEntity<>(objectNode,response.getStatusCode());
+                        return Mono.just(newResponseEntity);
+//                        return Mono.just(response);
+                    }
+                    return Mono.just(response);
+                });
+    }
+
+
+
 }

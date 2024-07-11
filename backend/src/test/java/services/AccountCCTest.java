@@ -4,21 +4,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.mynt.banking.currency_cloud.dto.AccountRequest;
 //import com.mynt.banking.currency_cloud.service.AccountService;
-import com.mynt.banking.currency_cloud.dto.CreateAccountRequest;
-import com.mynt.banking.currency_cloud.dto.CreateAccountResponse;
+import com.mynt.banking.currency_cloud.dto.account.CreateAccountRequest;
 import com.mynt.banking.currency_cloud.service.AccountService;
 import com.mynt.banking.main;
-import org.junit.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
-import reactor.core.publisher.Mono;
 
-import javax.validation.constraints.AssertTrue;
 import java.util.Objects;
 
 @SpringBootTest(classes = main.class)

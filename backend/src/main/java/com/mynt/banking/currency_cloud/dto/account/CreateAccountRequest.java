@@ -1,5 +1,6 @@
-package com.mynt.banking.currency_cloud.dto;
+package com.mynt.banking.currency_cloud.dto.account;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -10,6 +11,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @Builder
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Schema(description = "CreateAccountRequest")
 public class CreateAccountRequest {
 
