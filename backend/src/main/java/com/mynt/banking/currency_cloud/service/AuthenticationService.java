@@ -1,11 +1,11 @@
 package com.mynt.banking.currency_cloud.service;
 
 import com.mynt.banking.currency_cloud.dto.AuthenticationResponse;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -17,9 +17,9 @@ import reactor.core.publisher.Mono;
 @Service("currencyCloudAuthenticationService")
 public class AuthenticationService {
 
-    private String authToken;
+    private final WebClient webClient;
 
-    private final WebClient authWebClient;
+    private String authToken;
 
     @Value("${currency.cloud.api.url}")
     private String apiUrl;
@@ -39,7 +39,7 @@ public class AuthenticationService {
     }
 
     public Mono<AuthenticationResponse> authenticate() {
-        return authWebClient.post()
+        return webClient.post()
                 .uri("/v2/authenticate/api")
                 .header("User-Agent", userAgent)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -49,16 +49,10 @@ public class AuthenticationService {
                 .bodyToMono(AuthenticationResponse.class);
     }
 
+    @NotNull
     private Mono<String> refreshAuthToken() {
         return authenticate()
                 .map(AuthenticationResponse::getAuthToken)
                 .doOnNext(token -> this.authToken = token);
-    }
-
-    @Bean
-    public WebClient authWebClient() {
-        return WebClient.builder()
-                .baseUrl(apiUrl)
-                .build();
     }
 }
