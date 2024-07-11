@@ -75,7 +75,7 @@ const Remittance = () => {
 
     return (
         <Box className="page">
-            <PageHeader title="Transfer"/>
+            <PageHeader>Transfer</PageHeader>
             <form onSubmit={handleFormSubmit}>
                 {renderedRemittancesInput}
                 <Button margin='0.5em' type="submit" data-cy="submitButton">Send Money</Button>
