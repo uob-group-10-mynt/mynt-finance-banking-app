@@ -13,6 +13,8 @@ jobs:
       RDS_SSL_CERT_PATH: ${{ secrets.RDS_SSL_CERT_PATH }}
       PEM_CONTENT: ${{ secrets.PEM_CONTENT }}
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      CURRENCY_CLOUD_ID: ${{ secrets.CURRENCY_CLOUD_ID }}
+      CURRENCY_CLOUD_API_KEY: ${{ secrets.CURRENCY_CLOUD_API_KEY }}
     strategy:
         matrix:
           os: [ ubuntu-latest, macos-latest ]
@@ -57,7 +59,24 @@ jobs:
             spring.datasource.hikari.max-lifetime=1800000
             application.security.jwt.secret-key=$JWT_SECRET_KEY
             application.security.jwt.expiration=600000
-            application.security.jwt.refresh-token.expiration=604800000' >> $APPLICATION_PROPERTIES
+            application.security.jwt.refresh-token.expiration=604800000
+            # CurrencyCloud:
+            currencycloud.api.url=https://devapi.currencycloud.com
+            currencycloud.api.login_id=$CURRENCY_CLOUD_ID
+            currencycloud.api.key=$CURRENCY_CLOUD_API_KEY
+            # Enable DEBUG level logging for web requests
+            logging.level.org.springframework.web=DEBUG
+            logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG
+            # Configure logging pattern (optional)
+            logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %msg%n
+            # Enable logging for RestTemplate and Apache HttpClient
+            logging.level.org.apache.http=DEBUG
+            logging.level.org.apache.http.wire=DEBUG
+            logging.level.org.apache.http.headers=DEBUG
+            # Logback configuration
+            logging.level.root=INFO
+            logging.level.org.springframework.web.client.RestTemplate=DEBUG
+            logging.level.com.mynt.banking=DEBUG' >> $APPLICATION_PROPERTIES
 
         - name: Print application.properties
           run: cat ./backend/src/main/resources/application.properties
