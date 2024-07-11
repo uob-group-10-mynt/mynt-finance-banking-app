@@ -64,9 +64,9 @@ public class AccountCCTest {
         assertEquals(responseBody.get("brand").asText(),"currencycloud");
         assertEquals(responseBody.get("your_reference").asText(),"MyntFinance");
         assertEquals(responseBody.get("status").asText(),"enabled");
-        assertEquals(responseBody.get("spread_table").asText(),"");
+        assertEquals(responseBody.get("spread_table").asText(),"flat_0.00");
         assertEquals(responseBody.get("identification_type").asText(),"none");
-        assertEquals(responseBody.get("identification_value").asText(),"");
+        assertEquals(responseBody.get("identification_value").asText(),"null");
         assertEquals(responseBody.get("api_trading").asText(),"true");
         assertEquals(responseBody.get("online_trading").asText(),"true");
         assertEquals(responseBody.get("phone_trading").asText(),"true");
