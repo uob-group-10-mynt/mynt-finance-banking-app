@@ -5,8 +5,7 @@ import { useContext } from "react";
 import { LoggedInContext } from "../App";
 import { useMediaQuery } from "react-responsive";
 import NavigationLinks from "../components/NavigationLinks";
-
-
+import CustomHeading from "../components/CustomHeading";
 
 export default function RootLayout() {
     const [loggedIn, setLoggedIn, logOut] = useContext(LoggedInContext)
@@ -17,9 +16,7 @@ export default function RootLayout() {
         <div className="App">
             <Theme>Mode</Theme>
             <header className="App-header">
-                <h1 className="App-header">
-                    MYNT Technology
-                </h1>
+                <CustomHeading size={"lg"}>Mynt</CustomHeading>
                 { isTabletOrSmaller && <CustomDrawer text="Navigation" testId="navButton" children={<NavigationLinks/>}/> }
                 { isDesktop && <NavigationLinks/> }
             </header>

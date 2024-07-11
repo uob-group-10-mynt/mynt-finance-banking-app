@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { GiHamburgerMenu } from "react-icons/gi";
 
-function CustomDrawer({text, children, testId}) {
+function CustomDrawer({children, testId}) {
     const {isOpen, onOpen, onClose} = useDisclosure()
     const btnRef = useRef()
 
