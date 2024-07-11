@@ -40,7 +40,10 @@ jobs:
         - name: Run backend
           run: |
             cd backend
-            ./gradlew bootRun &
+            ./gradlew bootRun 
+
+        - name: hacky wait for server to start
+          run: sleep 20
 
         - name: Is backend running
           run: curl -I 'http://localhost:8080/api/v1/demo-controller'
