@@ -12,6 +12,7 @@ jobs:
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       RDS_SSL_CERT_PATH: ${{ secrets.RDS_SSL_CERT_PATH }}
       PEM_CONTENT: ${{ secrets.PEM_CONTENT }}
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
     strategy:
         matrix:
           os: [ ubuntu-latest, macos-latest ]
@@ -55,7 +56,10 @@ jobs:
             spring.datasource.hikari.minimum-idle=5
             spring.datasource.hikari.idle-timeout=30000
             spring.datasource.hikari.connection-timeout=20000
-            spring.datasource.hikari.max-lifetime=1800000' >> $APPLICATION_PROPERTIES
+            spring.datasource.hikari.max-lifetime=1800000
+            application.security.jwt.secret-key=$JWT_SECRET_KEY
+            application.security.jwt.expiration=600000
+            application.security.jwt.refresh-token.expiration=604800000' >> $APPLICATION_PROPERTIES
 
         - name: Print application.properties
           run: cat ./backend/src/main/resources/application.properties
