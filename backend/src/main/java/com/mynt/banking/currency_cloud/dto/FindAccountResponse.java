@@ -9,18 +9,18 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class FindAccountResponse {
 
     @JsonProperty("accounts")
     private List<Account> accounts;
 
     @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
     public static class Account {
 
         @JsonProperty("id")

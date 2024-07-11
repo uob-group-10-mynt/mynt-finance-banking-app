@@ -37,7 +37,7 @@ public class KYCService {
     private String applicantId;
     private String workflow_ID;
     private String workflowRunId;
-    private String referrrer;
+    private String referrer;
     private String redirectURL;
     private String url;
     private String sdkToken;
@@ -55,7 +55,7 @@ public class KYCService {
         String apiToken = "Token token="+onfido;
         workflow_ID  = "c3c68677-2a4d-44cb-8bbc-f2d4693ec7be"; //KYC
 //        workflow_ID  = "792f7968-d06b-4b6b-80cc-4e9a9a089ad2" ; //Basic Test - Versions
-        referrrer = "http://localhost:9001/signup/*";
+        referrer = "http://localhost:9001/signup/*";
         redirectURL = "http://localhost:9001/kyc";
 
         try{
@@ -105,7 +105,7 @@ public class KYCService {
 
         ObjectNode sdkRequest = objectMapper.createObjectNode();
         sdkRequest.put("applicant_id",applicantId);
-        sdkRequest.put("referrer",referrrer);
+        sdkRequest.put("referrer",referrer);
         String createSDKRequestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(sdkRequest);
 
         String endPoint =  "https://api.eu.onfido.com/v3.6/sdk_token";
@@ -157,8 +157,6 @@ public class KYCService {
 
     }
 
-
-
     private void addDataToDB (SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
         User user = new User();
         user.setId(null);
@@ -181,8 +179,6 @@ public class KYCService {
         kycEntity.setUser( userRepository.findByEmail(request.getEmail()).get());
         kycRepository.save(kycEntity);
     }
-
-
 
     private String postRequest(String jsonObj, String urlAndEndPoint ,String apiToken) throws URISyntaxException, IOException, InterruptedException {
 
@@ -221,15 +217,7 @@ public class KYCService {
 
         JsonNode resultsResponce = objectMapper.readTree(resultsResponse.body());
 
-        System.out.println("\n\n\n\n filtered version: "+resultsResponce.toPrettyString());
-        System.out.println("status: "+resultsResponce.get("status").asText());
-        System.out.println("id: "+kyc.getId());
-
-
-//        kycRepository.updateStatus(resultsResponce.get("status").asText(), kyc.getId() );
-
         kycRepository.updateStatus(resultsResponce.get("status").asText(),kyc.getId());
-
 
         String responceStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(resultsResponce);
         sdkResponceDTO.setData(responceStr);

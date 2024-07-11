@@ -1,4 +1,4 @@
-package com.mynt.banking.config;
+package com.mynt.banking.auth;
 
 import com.mynt.banking.token.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;

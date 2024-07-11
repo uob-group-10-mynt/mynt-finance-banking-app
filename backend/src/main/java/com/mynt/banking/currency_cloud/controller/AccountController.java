@@ -19,13 +19,11 @@ public class AccountController {
 
     @PostMapping("/create")
     public Mono<ResponseEntity<JsonNode>> createAccount(@RequestBody CreateAccountRequest request) {
-        // TODO: add account id to contact
         return accountService.createAccount(request);
     }
 
     @PostMapping("/find")
-    public FindAccountResponse findAccount(@RequestBody FindAccountRequest request) {
-        FindAccountResponse response = accountService.findAccount(request);
-        return response;
+    public Mono<ResponseEntity<JsonNode>> findAccount(@RequestBody FindAccountRequest request) {
+        return accountService.findAccount(request);
     }
 }

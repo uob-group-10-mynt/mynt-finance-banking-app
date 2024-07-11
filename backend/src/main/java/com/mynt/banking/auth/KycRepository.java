@@ -17,18 +17,10 @@ public interface KycRepository extends JpaRepository<KycEntity,Integer> {
     @Override
     List<KycEntity> findAll();
 
-    @NotNull
-    List<KycEntity> findByApplicationId(String applicationId);
-
-    List<KycEntity> findByWorkFlowRunId(String workFlowRunId);
-
-    List<KycEntity> findByStatus(String status);
-
     KycEntity findByUser(User user);
 
     @Modifying
     @Transactional
     @Query("UPDATE KycEntity e SET e.status = :status WHERE e.id = :id")
     void updateStatus(@Param("status") String status, @Param("id") Long id);
-
 }
