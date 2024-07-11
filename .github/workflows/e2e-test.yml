@@ -39,7 +39,7 @@ jobs:
         
         - name: Setup application.properties
           run: |
-            APPLICATION_PROPERTIES='./backend/src/main/resources/db/application.properties'
+            APPLICATION_PROPERTIES='./backend/src/main/resources/application.properties'
             mkdir -p $(dirname $APPLICATION_PROPERTIES)
             echo "spring.datasource.url=$1" >> $APPLICATION_PROPERTIES
             echo "spring.datasource.username=$2" >> $APPLICATION_PROPERTIES
