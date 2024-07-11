@@ -1,11 +1,11 @@
 package com.mynt.banking.currency_cloud.service;
 
 import com.mynt.banking.currency_cloud.dto.AuthenticationResponse;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Value;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -49,10 +49,17 @@ public class AuthenticationService {
                 .bodyToMono(AuthenticationResponse.class);
     }
 
-    @NotNull
     private Mono<String> refreshAuthToken() {
         return authenticate()
                 .map(AuthenticationResponse::getAuthToken)
                 .doOnNext(token -> this.authToken = token);
     }
+
+    @Bean
+    public WebClient authWebClient() {
+        return WebClient.builder()
+                .baseUrl(apiUrl)
+                .build();
+    }
+
 }
