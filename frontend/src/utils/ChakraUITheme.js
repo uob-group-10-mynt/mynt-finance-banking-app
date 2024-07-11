@@ -14,8 +14,8 @@ const ChakraUITheme = extendTheme({
   styles: {
       global: (props) => ({
           body: {
-              bg: props.colorMode === 'dark' ? 'gray.800' : 'white',
-              color: props.colorMode === 'dark' ? 'white' : 'gray.800',
+              bg: props.colorMode === 'dark' ? 'gray.800' : '#D9FFF0',
+              color: props.colorMode === 'dark' ? '#D9FFF0' : 'gray.800',
           },
       }),
   },

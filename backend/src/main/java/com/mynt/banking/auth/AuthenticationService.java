@@ -1,6 +1,5 @@
 package com.mynt.banking.auth;
 
-import com.mynt.banking.config.JWTService;
 import com.mynt.banking.token.Token;
 import com.mynt.banking.token.TokenRepository;
 import com.mynt.banking.token.TokenType;

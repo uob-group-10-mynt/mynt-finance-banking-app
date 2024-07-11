@@ -1,97 +1,61 @@
 package com.mynt.banking.currency_cloud.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mynt.banking.currency_cloud.dto.AccountRequest;
-import com.mynt.banking.currency_cloud.dto.AuthenticationResponse;
-import com.mynt.banking.currency_cloud.interceptor.AuthenticationInterceptor;
-import com.mynt.banking.currency_cloud.interceptor.ErrorHandlingInterceptor;
-import com.mynt.banking.currency_cloud.interceptor.LoggingInterceptor;
-import jakarta.annotation.PostConstruct;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mynt.banking.currency_cloud.dto.CreateAccountRequest;
+import com.mynt.banking.currency_cloud.dto.FindAccountRequest;
+import com.mynt.banking.currency_cloud.dto.FindAccountResponse;
+import com.mynt.banking.currency_cloud.utils.Utils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClient;
 
-import java.time.Duration;
-
+@RequiredArgsConstructor
 @Service
 public class AccountService {
 
-    @Value("${currency.cloud.api.url}")
-    private String apiUrl;
-
-    @Value("${currency.cloud.api.userAgent}")
-    private String USER_AGENT;
-
+    private final AuthenticationService authenticationService;
     private final WebClient webClient;
 
-    private final AuthenticationInterceptor authenticationInterceptor;
-
-    @Autowired
-    public AccountService(AuthenticationInterceptor authenticationInterceptor  ){
-
-        this.authenticationInterceptor = authenticationInterceptor;
-        this.webClient = webClient();
+    public Mono<ResponseEntity<JsonNode>> createAccount(CreateAccountRequest requestBody) {
+        return webClient
+                .post()
+                .uri("/v2/accounts/create")
+                .header("X-Auth-Token", authenticationService.getAuthToken())
+                .bodyValue(requestBody)
+                .exchangeToMono(response -> response.toEntity(JsonNode.class))
+                .flatMap(response -> {
+                    if(response.getStatusCode().is2xxSuccessful()) {
+                        JsonNode jsonNode = response.getBody();
+                        ObjectNode objectNode = ((ObjectNode) jsonNode).put("Custom Messsage","Hello World");
+                        ResponseEntity<JsonNode> newResponseEntity = new ResponseEntity<>(objectNode,response.getStatusCode());
+                        return Mono.just(newResponseEntity);
+                    }
+                    return Mono.just(response);
+                });
     }
 
-    public Mono<String> createAccount(AccountRequest requestBody) throws JsonProcessingException {
+    public FindAccountResponse findAccount(FindAccountRequest request) {
+        String authToken = authenticationService.getAuthToken();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode ogTree = objectMapper.valueToTree(requestBody);
-        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(ogTree));
+        // Build the form data dynamically using MultiValueMap
+        MultiValueMap<String, Object> formData = Utils.buildFormData(request);
 
-         Mono<String> response =  this.webClient.post()
-                 .uri(apiUrl + "/v2/accounts/create")
-                 .contentType(MediaType.APPLICATION_JSON)
-                 .body(BodyInserters.fromValue(requestBody))
-                 .retrieve()
-                 .bodyToMono(String.class);
+        // Make the POST request
+        Mono<FindAccountResponse> findAccountResponseMono = webClient.post()
+                .uri("/v2/accounts/find")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA_VALUE)
+                .header("X-Auth-Token", authToken)
+                .body(BodyInserters.fromMultipartData(formData))
+                .retrieve()
+                .bodyToMono(FindAccountResponse.class);
 
-         response.flatMap(jsonResponce -> {
-                ObjectMapper mapper = new ObjectMapper();
-                try {
-                    JsonNode tree = mapper.valueToTree(jsonResponce);
-                    String responseTree = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tree);
-                    System.out.println("\n\n\n\nResponse tree: " + responseTree);
-                    return Mono.just(responseTree);
-                } catch (Exception e) {
-                return Mono.error(new RuntimeException(e));
-                }
-            })
-            .doOnError(error -> System.err.println("\n\n\n\nError creating account: " + error.getMessage()));
-
-
-//         System.out.println("\n\n\n\nCreated account " + response);
-
-        return response;
+        return findAccountResponseMono.block();
     }
-
-
-
-
-    private WebClient webClient(){
-        return WebClient.builder()
-                .baseUrl(apiUrl)
-                .defaultHeader("User-Agent", USER_AGENT)
-                .clientConnector(new ReactorClientHttpConnector(HttpClient.create()
-                        .responseTimeout(Duration.ofSeconds(10))))
-                .filter(LoggingInterceptor.logRequest())
-                .filter(LoggingInterceptor.logResponse())
-                .filter(ErrorHandlingInterceptor.handleErrors())
-                .filter(authenticationInterceptor.applyAuthentication())
-                .build();
-    }
-
-
-
 }

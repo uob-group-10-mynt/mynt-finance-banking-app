@@ -2,32 +2,32 @@ package com.mynt.banking.currency_cloud.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mynt.banking.currency_cloud.dto.AccountRequest;
+import com.mynt.banking.currency_cloud.dto.CreateAccountRequest;
+import com.mynt.banking.currency_cloud.dto.FindAccountRequest;
 import com.mynt.banking.currency_cloud.service.AccountService;
-import com.mynt.banking.currency_cloud.service.CurrencyCloudAPI;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
+import com.mynt.banking.currency_cloud.dto.FindAccountResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("api/v1/currency-cloud/accounts")
+@RequestMapping("/api/v1/currency-cloud/accounts")
 @RequiredArgsConstructor
-@Configuration
 public class AccountController {
 
     private final AccountService accountService;
 
     @PostMapping("/create")
-    public Mono<String>  createAccount(@RequestBody AccountRequest requestBody) throws JsonProcessingException {
+    public Mono<ResponseEntity<JsonNode>> createAccount(@RequestBody CreateAccountRequest request) {
+        // TODO: add account id to contact
+        return accountService.createAccount(request);
+    }
 
-
-
-        return this.accountService.createAccount(requestBody);
-
+    @PostMapping("/find")
+    public FindAccountResponse findAccount(@RequestBody FindAccountRequest request) {
+        return accountService.findAccount(request);
     }
 }
