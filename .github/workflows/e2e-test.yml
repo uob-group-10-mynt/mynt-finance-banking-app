@@ -86,10 +86,14 @@ jobs:
         #     ./gradlew bootRun 
 
         - name: build container
-          run: docker build -t backend .
+          run: |
+            cd backend
+            docker build -t backend .
 
         - name: run container
-          run: docker run -d -p 8080:8080 backend
+          run: |
+            cd backend
+            docker run -d -p 8080:8080 backend
 
         - name: hacky wait for server to start
           run: sleep 60
