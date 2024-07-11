@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -18,7 +17,7 @@ import reactor.core.publisher.Mono;
 @Service("currencyCloudAuthenticationService")
 public class AuthenticationService {
 
-    private final WebClient authWebClient;
+    private final WebClient webClient;
 
     private String authToken;
 
@@ -40,7 +39,7 @@ public class AuthenticationService {
     }
 
     public Mono<AuthenticationResponse> authenticate() {
-        return authWebClient.post()
+        return webClient.post()
                 .uri("/v2/authenticate/api")
                 .header("User-Agent", userAgent)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -55,12 +54,5 @@ public class AuthenticationService {
         return authenticate()
                 .map(AuthenticationResponse::getAuthToken)
                 .doOnNext(token -> this.authToken = token);
-    }
-
-    @Bean
-    public WebClient authWebClient() {
-        return WebClient.builder()
-                .baseUrl(apiUrl)
-                .build();
     }
 }
