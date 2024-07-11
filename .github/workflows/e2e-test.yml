@@ -45,7 +45,7 @@ jobs:
             echo "spring.datasource.url=$DB_URL" >> $APPLICATION_PROPERTIES
             echo "spring.datasource.username=$DB_USERNAME" >> $APPLICATION_PROPERTIES
             echo "spring.datasource.password=$DB_PASSWORD" >> $APPLICATION_PROPERTIES
-            echo 'spring.datasource.driver-class-name=org.postgresql.Driver
+            echo "spring.datasource.driver-class-name=org.postgresql.Driver
             spring.jpa.hibernate.ddl-auto=create-drop
             spring.jpa.show-sql=false
             spring.jpa.properties.hibernate.format_sql=true
@@ -76,7 +76,7 @@ jobs:
             # Logback configuration
             logging.level.root=INFO
             logging.level.org.springframework.web.client.RestTemplate=DEBUG
-            logging.level.com.mynt.banking=DEBUG' >> $APPLICATION_PROPERTIES
+            logging.level.com.mynt.banking=DEBUG" >> $APPLICATION_PROPERTIES
 
         - name: Print application.properties
           run: cat ./backend/src/main/resources/application.properties
