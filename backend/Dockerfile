@@ -8,7 +8,7 @@ WORKDIR /app
 COPY --chown=gradle:gradle . .
 
 # Build the application
-RUN gradle build --no-daemon
+RUN gradle build --no-daemon --stacktrace
 
 # Use an OpenJDK runtime as a base image
 FROM openjdk:17-jdk-slim
