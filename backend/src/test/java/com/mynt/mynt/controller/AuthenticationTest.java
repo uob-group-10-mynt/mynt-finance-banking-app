@@ -35,14 +35,6 @@ public class AuthenticationTest {
     @AfterEach
     public void tearDown() {}
 
-//    @Test
-//    public void testRegisterUser() throws Exception {
-//        mockMvc.perform(post("/api/v1/auth/register"))
-//                .
-//                .andExpect(status().isOk());
-//
-//    }
-
     @Test
     public void testRegisterUser() throws Exception {
         mockMvc.perform(get("/api/v1/auth/sdk"))

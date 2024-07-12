@@ -1,4 +1,4 @@
-package com.mynt.banking.config;
+package com.mynt.banking.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

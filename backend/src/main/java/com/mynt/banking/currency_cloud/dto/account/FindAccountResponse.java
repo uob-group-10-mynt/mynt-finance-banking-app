@@ -1,4 +1,4 @@
-package com.mynt.banking.currency_cloud.dto;
+package com.mynt.banking.currency_cloud.dto.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -9,18 +9,18 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class FindAccountResponse {
 
     @JsonProperty("accounts")
     private List<Account> accounts;
 
     @Data
-    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Builder
     public static class Account {
 
         @JsonProperty("id")

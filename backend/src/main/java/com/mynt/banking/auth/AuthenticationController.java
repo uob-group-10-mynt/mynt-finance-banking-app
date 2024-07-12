@@ -1,6 +1,5 @@
 package com.mynt.banking.auth;
 
-import com.mynt.banking.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -25,7 +24,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(kycService.getOnfidoSDK(request)) ;
     }
 
-    //@Valid
     @PostMapping(value = "/validateKyc", consumes = {"application/json", "text/plain"})
     public ResponseEntity<SDKResponceDTO> validateKyc(@RequestBody ValidateKycRequest request) throws URISyntaxException, IOException, InterruptedException {
         return ResponseEntity.ok(kycService.retrieveResults(request));

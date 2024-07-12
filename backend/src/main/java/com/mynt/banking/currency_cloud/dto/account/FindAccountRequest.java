@@ -1,6 +1,5 @@
-package com.mynt.banking.currency_cloud.dto;
+package com.mynt.banking.currency_cloud.dto.account;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,10 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@Builder
 public class FindAccountRequest {
 
     @JsonProperty("account_name")
