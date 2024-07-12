@@ -1,22 +1,33 @@
-import { NavLink } from "react-router-dom";
-import { useContext } from "react";
-import { LoggedInContext } from "../App";
+import {useContext} from "react";
+import {LoggedInContext} from "../App";
+import {Link} from "@chakra-ui/react";
+
+const pages = [
+    {href: "/", text: "Home"},
+    {href: "/signup", text: "Sign Up", testId: "SignUpLink"},
+    {href: "/remittance", text: "Transfer", testId: "RemittanceLink"},
+    // Add more links as needed
+];
+
+const links = pages.map((page, index) => (
+    <Link key={index} href={page.href} mx="2" data-cy={page.testId}>
+        {page.text}
+    </Link>
+));
 
 export default function NavigationLinks() {
     const [loggedIn, setLoggedIn, logOut] = useContext(LoggedInContext)
     return (
-        <z>
-            <NavLink to='/'>Home</NavLink>
-            <NavLink to ='signup' data-cy="SignUpLink">Sign Up</NavLink>
-            <NavLink to='remittance' data-cy="RemittanceLink">Transfer</NavLink>
+        <>
+            {links}
             {
-                loggedIn ? 
-                <NavLink to={'login'} data-cy="LogOutLink" onClick={() => {
-                    logOut();
-                }}>Log Out</NavLink>
-                :
-                <NavLink to={'login'} data-cy="LoginLink">Log In</NavLink>
+                loggedIn ?
+                    <Link href={'login'} mx="2" data-cy="LogOutLink" onClick={() => {
+                        logOut();
+                    }}>Log Out</Link>
+                    :
+                    <Link href={'login'} mx="2" data-cy="LoginLink">Log In</Link>
             }
-        </z>
+        </>
     )
 }
