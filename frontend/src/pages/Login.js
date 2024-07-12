@@ -10,6 +10,7 @@ import {
 import {LoggedInContext} from "../App";
 import PageHeader from "../components/forms/PageHeader";
 import {useNavigate} from "react-router-dom";
+import { authenticateAPI } from "../utils/APIEndpoints";
 
 const Login = () => {
     const [loggedIn, setLoggedIn] = useContext(LoggedInContext)
@@ -23,7 +24,7 @@ const Login = () => {
         const credentials = {email, password};
 
         try {
-            const response = await fetch('http://localhost:8080/api/v1/auth/authenticate', {
+            const response = await fetch(authenticateAPI, {
                 method: 'POST',
                 headers: {"Content-type": "application/json"},
                 body: JSON.stringify(credentials)
