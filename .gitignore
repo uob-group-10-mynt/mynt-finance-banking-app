@@ -12,6 +12,7 @@ frontend/android/
 frontend/out/
 frontend/webApp/
 frontend/node_modules/
+frontend/cypress/downloads 
 
 # backend
 backend/bin
