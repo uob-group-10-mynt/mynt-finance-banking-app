@@ -1,9 +1,11 @@
 package services;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mynt.banking.currency_cloud.dto.beneficiaries.CreateBeneficiaryRequest;
 import com.mynt.banking.currency_cloud.dto.beneficiaries.FindBeneficiaries;
+import com.mynt.banking.currency_cloud.dto.beneficiaries.FindBeneficiaryRequest;
 import com.mynt.banking.currency_cloud.service.AccountService;
-import com.mynt.banking.currency_cloud.service.BeneficiariesService;
+import com.mynt.banking.currency_cloud.service.BeneficiaryService;
 import com.mynt.banking.main;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +18,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BeneficiariesCCTest {
 
     @Autowired
-    private BeneficiariesService beneficiariesService;
+    private BeneficiaryService beneficiariesService;
 
     @Autowired
     private AccountService accountService;
 
     @Test
-    public void testFindBenificiary(){
+    public void testCreateBeneficiary(){
 
-        FindBeneficiaries fDto = FindBeneficiaries.builder()
+        CreateBeneficiaryRequest createBeneficiaryRequest = CreateBeneficiaryRequest.builder()
                 .name("james")
                 .bankAccountHolderName("")
                 .bankCountry("")
@@ -57,7 +59,7 @@ public class BeneficiariesCCTest {
                 .beneficiaryExternalReference("")
                 .build();
 
-        ResponseEntity<JsonNode> result = this.beneficiariesService.find(fDto).block();
+        ResponseEntity<JsonNode> result = this.beneficiariesService.create(createBeneficiaryRequest).block();
 
         assert result != null;
         int responseCode = result.getStatusCode().value();
@@ -68,7 +70,5 @@ public class BeneficiariesCCTest {
         assertEquals(responseBody.get("beneficiaries").get(0).get("name").asText(), "James");
         assertEquals(responseBody.get("beneficiaries").get(0).get("bank_account_holder_name").asText(),"James Love");
         assertEquals(responseBody.get("pagination").get("total_entries").asText(),"1");
-
     }
-
 }

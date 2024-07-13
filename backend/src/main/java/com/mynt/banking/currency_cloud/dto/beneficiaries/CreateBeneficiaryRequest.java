@@ -3,6 +3,7 @@ package com.mynt.banking.currency_cloud.dto.beneficiaries;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
@@ -10,30 +11,33 @@ import lombok.Data;
 @Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@Schema(description = "Find Beneficiaries")
-public class FindBeneficiaries {
+@Schema(description = "Create Beneficiaries Request DTO")
+public class CreateBeneficiaryRequest {
 
     @JsonProperty("name")
     @Size(max = 255)
+    @NotNull
     @Schema(description = "Beneficiary's name.", example = " ")
     @Builder.Default
     private String name = "";
 
     @JsonProperty("bank_account_holder_name")
     @Size(max = 255)
+    @NotNull
     @Schema(description = "Bank account holder's name.", example = " ")
     @Builder.Default
     private String bankAccountHolderName = "";
 
     @JsonProperty("bank_country")
     @Size(max = 2)
+    @NotNull
     @Schema(description = "Two-letter country code of the bank", example = " ")
     @Builder.Default
     private String bankCountry = "";
 
-
     @JsonProperty("currency")
     @Size(max = 3)
+    @NotNull
     @Schema(description = "Currency in which money is held in the beneficiary's bank account. Three-letter currency code.", example = " ")
     @Builder.Default
     private String currency = "";
@@ -49,7 +53,6 @@ public class FindBeneficiaries {
     @Schema(description = "Unique identifier of the beneficiary", example = " ")
     @Builder.Default
     private String beneficiaryId = "";
-
 
     @JsonProperty("beneficiary_country")
     @Size(max = 2)
@@ -193,7 +196,4 @@ public class FindBeneficiaries {
     @Schema(description = "Beneficiary external reference.", example = " ")
     @Builder.Default
     private String beneficiaryExternalReference = "";
-
-
-
 }
