@@ -31,9 +31,11 @@ public class KYCService {
     @Value("${api.onfido}")
     private String onfido;
 
+    @Value("${api.onfido.workflow_id}")
+    private String workflow_ID;
+
     private final PasswordEncoder passwordEncoder;
     private String applicantId;
-    private String workflow_ID;
     private String workflowRunId;
     private String referrer;
     private String redirectURL;
@@ -51,8 +53,6 @@ public class KYCService {
         SDKResponse sdkResponceDTO = new SDKResponse();
 
         String apiToken = "Token token="+onfido;
-        workflow_ID  = "c3c68677-2a4d-44cb-8bbc-f2d4693ec7be"; //KYC
-//        workflow_ID  = "792f7968-d06b-4b6b-80cc-4e9a9a089ad2" ; //Basic Test - Versions
         referrer = "http://localhost:9001/signup/*";
         redirectURL = "http://localhost:9001/kyc";
 
@@ -140,7 +140,7 @@ public class KYCService {
         linkRequstBody.put("language","en_US");
 
         ObjectNode createWorkFlowRunRequestBody = objectMapper.createObjectNode();
-        createWorkFlowRunRequestBody.put("workflow_id",workflow_ID);
+        createWorkFlowRunRequestBody.put("workflow_id",this.workflow_ID);
         createWorkFlowRunRequestBody.put("applicant_id",applicantId);
         createWorkFlowRunRequestBody.set("link", linkRequstBody);
         String createWorkFlowRunRequestJsonBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(createWorkFlowRunRequestBody);
