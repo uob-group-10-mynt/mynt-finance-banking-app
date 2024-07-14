@@ -2,12 +2,11 @@ package com.mynt.mynt.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mynt.banking.currency_cloud.controller.BalanceController;
-import com.mynt.banking.currency_cloud.dto.balances.FindBalanceAllCurrenies;
-import com.mynt.banking.currency_cloud.service.BalanceService;
+import com.mynt.banking.currency_cloud.manage.balances.BalanceController;
+import com.mynt.banking.currency_cloud.manage.balances.BalanceService;
 
+import com.mynt.banking.currency_cloud.manage.balances.requests.FindBalanceAllCurrencies;
 import com.mynt.banking.main;
-import com.mynt.banking.util.HashMapToQuiryPrams;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -40,7 +39,7 @@ public class BalanceCCTest {
     public void testBalanceCC() throws Exception {
 
 
-        FindBalanceAllCurrenies data = FindBalanceAllCurrenies.builder().
+        FindBalanceAllCurrencies data = FindBalanceAllCurrencies.builder().
                 amountTo("")
                 .order("")
                 .amountFrom("")
@@ -62,10 +61,5 @@ public class BalanceCCTest {
 
 
         System.out.println(responseBody);
-
-
     }
-
-
-
 }

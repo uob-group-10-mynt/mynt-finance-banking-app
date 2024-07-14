@@ -3,13 +3,11 @@ package services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mynt.banking.currency_cloud.dto.balances.FindBalanceAllCurrenies;
-import com.mynt.banking.currency_cloud.dto.balances.FindBalances;
-import com.mynt.banking.currency_cloud.service.BalanceService;
+import com.mynt.banking.currency_cloud.manage.balances.requests.FindBalanceAllCurrencies;
+import com.mynt.banking.currency_cloud.manage.balances.BalanceService;
+import com.mynt.banking.currency_cloud.manage.balances.requests.FindBalancesRequest;
 import com.mynt.banking.main;
-import okhttp3.Response;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.Find;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +20,8 @@ public class BalanceCCTest {
     private BalanceService balanceService;
 
     @Test
-    public void testBalanceCC() throws JsonProcessingException {
-        FindBalanceAllCurrenies data = FindBalanceAllCurrenies.builder().
+    public void testBalanceCC() {
+        FindBalanceAllCurrencies data = FindBalanceAllCurrencies.builder().
                 amountTo("")
                 .onBehalfOf("")
                 .amountFrom("")
@@ -47,7 +45,7 @@ public class BalanceCCTest {
 
     @Test
     public void testFindBalancesForParticularCurrency() throws JsonProcessingException {
-        FindBalances data = FindBalances.builder()
+        FindBalancesRequest data = FindBalancesRequest.builder()
                 .onBehalfOf("")
                 .build();
 
@@ -62,5 +60,4 @@ public class BalanceCCTest {
         assertEquals(response.getBody().get("currency").asText(),"GBP");
 
     }
-
 }

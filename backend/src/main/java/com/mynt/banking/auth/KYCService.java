@@ -2,14 +2,15 @@ package com.mynt.banking.auth;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mynt.banking.auth.requests.SignUpRequest;
+import com.mynt.banking.auth.requests.ValidateKycRequest;
+import com.mynt.banking.auth.responses.SDKResponse;
 import com.mynt.banking.user.Role;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
-import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,9 +23,6 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -48,9 +46,9 @@ public class KYCService {
     @Autowired
     private UserRepository userRepository;
 
-    public SDKResponceDTO getOnfidoSDK(SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
+    public SDKResponse getOnfidoSDK(SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
 
-        SDKResponceDTO sdkResponceDTO = new SDKResponceDTO();
+        SDKResponse sdkResponceDTO = new SDKResponse();
 
         String apiToken = "Token token="+onfido;
         workflow_ID  = "c3c68677-2a4d-44cb-8bbc-f2d4693ec7be"; //KYC
@@ -81,9 +79,9 @@ public class KYCService {
         return sdkResponceDTO;
     }
 
-    private SDKResponceDTO apiResponseDto() throws JsonProcessingException {
+    private SDKResponse apiResponseDto() throws JsonProcessingException {
 
-        SDKResponceDTO sdkResponceDTO = new SDKResponceDTO();
+        SDKResponse sdkResponceDTO = new SDKResponse();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -195,9 +193,9 @@ public class KYCService {
         return createApplicant.body();
     }
 
-    public SDKResponceDTO retrieveResults(ValidateKycRequest request ) throws IOException, InterruptedException, URISyntaxException {
+    public SDKResponse retrieveResults(ValidateKycRequest request ) throws IOException, InterruptedException, URISyntaxException {
 
-        SDKResponceDTO sdkResponceDTO = new SDKResponceDTO();
+        SDKResponse sdkResponceDTO = new SDKResponse();
 
         String apiToken = "Token token="+onfido;
 
