@@ -6,6 +6,7 @@ import signUp from './CreateUser';
 import { useNavigate } from 'react-router-dom';
 import { Flex, Box, Heading, FormControl, FormLabel, Input, Button, Text } from "@chakra-ui/react";
 import Cookies from 'js-cookie';
+import { validateKYCAPI } from '../utils/APIEndpoints';
 
 //TODO: call validateKyc and check KYC critiria to see if the user is approved
 function kyc(){
@@ -30,7 +31,7 @@ function kyc(){
         try{
             const response = await axios({
                 method:'post',
-                url: `http://localhost:8080/api/v1/auth/validateKyc`,
+                url: validateKYCAPI,
                 data:{
                     "email": email,
                   }

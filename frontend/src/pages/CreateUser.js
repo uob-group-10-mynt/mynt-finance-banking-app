@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Flex, Box, Heading, FormControl, FormLabel, Input, Button, Text } from "@chakra-ui/react";
 import axios from 'axios';
 import {Onfido} from 'onfido-sdk-ui';
+import { onfidoIdetityCheckAPI } from '../utils/APIEndpoints';
 
 function signUp(){
     
@@ -48,7 +49,7 @@ function signUp(){
 
     async function apiCalls(){
       try {
-        let response = await axios.post('http://localhost:8080/api/v1/auth/onfidoSdk', {
+        let response = await axios.post(onfidoIdetityCheckAPI, {
           "email": email,
           "firstname": firstName,
           "lastname": surname,
