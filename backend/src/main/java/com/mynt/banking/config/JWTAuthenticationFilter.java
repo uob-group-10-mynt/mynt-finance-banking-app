@@ -1,7 +1,7 @@
 package com.mynt.banking.config;
 
 import com.mynt.banking.auth.JWTService;
-import com.mynt.banking.token.TokenRepository;
+import com.mynt.banking.user.token.TokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

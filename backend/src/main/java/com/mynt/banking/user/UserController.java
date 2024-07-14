@@ -1,9 +1,7 @@
 package com.mynt.banking.user;
 
-import com.mynt.banking.user.request.ChangePasswordRequest;
-import jakarta.validation.Valid;
+import com.mynt.banking.user.requests.ChangePasswordRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

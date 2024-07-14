@@ -1,8 +1,11 @@
 package com.mynt.banking.auth;
 
-import com.mynt.banking.token.Token;
-import com.mynt.banking.token.TokenRepository;
-import com.mynt.banking.token.TokenType;
+import com.mynt.banking.auth.requests.AuthenticationRequest;
+import com.mynt.banking.auth.requests.RegisterRequest;
+import com.mynt.banking.auth.responses.AuthenticationResponse;
+import com.mynt.banking.user.token.Token;
+import com.mynt.banking.user.token.TokenRepository;
+import com.mynt.banking.user.token.TokenType;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
 

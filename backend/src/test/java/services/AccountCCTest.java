@@ -2,12 +2,9 @@ package services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-//import com.mynt.banking.currency_cloud.dto.AccountRequest;
-//import com.mynt.banking.currency_cloud.service.AccountService;
-import com.mynt.banking.currency_cloud.dto.account.CreateAccountRequest;
-import com.mynt.banking.currency_cloud.service.AccountService;
+import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountRequest;
+import com.mynt.banking.currency_cloud.manage.accounts.AccountService;
 import com.mynt.banking.main;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +20,7 @@ public class AccountCCTest {
     private AccountService accountService;
 
     @Test
-    public void testCreateAccount() throws JsonProcessingException {
+    public void testCreateAccount() {
 
         CreateAccountRequest requestBody = CreateAccountRequest.builder()
                 .accountName("hello123")
@@ -75,7 +72,7 @@ public class AccountCCTest {
     }
 
     @Test
-    public void testCreateAccountPartialDTOFillOut() throws JsonProcessingException {
+    public void testCreateAccountPartialDTOFillOut() {
 
         CreateAccountRequest requestBody = CreateAccountRequest.builder()
                 .accountName("hello123")
@@ -97,5 +94,4 @@ public class AccountCCTest {
         assertEquals(result.getBody().get("city").asText(),"London");
         assertEquals(result.getBody().get("country").asText(),"GB");
     }
-
 }

@@ -1,6 +1,6 @@
 package com.mynt.banking.auth;
 
-import com.mynt.banking.token.TokenRepository;
+import com.mynt.banking.user.token.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
