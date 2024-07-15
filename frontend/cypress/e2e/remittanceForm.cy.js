@@ -7,6 +7,6 @@ describe('remittance page', () => {
         cy.get('[data-cy="fromInput"]').type("Vincent Xu")
         cy.get('[data-cy="toInput"]').type("Jan Philips")
         cy.get('[data-cy="amountInput"]').type("100")
-        cy.get('[data-cy="submitButton"]').click()
+        cy.get('[data-cy="submitTransfer"]').click()
     })
 })

@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { Onfido } from 'onfido-sdk-ui';
 import { useEffect, useState } from 'react';
-import signUp from './CreateUser';
+import signUp from './SignUp';
 import { useNavigate } from 'react-router-dom';
 import { Flex, Box, Heading, FormControl, FormLabel, Input, Button, Text } from "@chakra-ui/react";
 import Cookies from 'js-cookie';
