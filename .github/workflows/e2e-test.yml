@@ -77,6 +77,7 @@ jobs:
             logging.level.org.springframework.web.client.RestTemplate=DEBUG
             logging.level.com.mynt.banking=DEBUG
             api.onfido=$ONFIDO_API_KEY
+            api.onfido.workflow_id=$ONFIDO_WORKFLOW_ID
             " >> $APPLICATION_PROPERTIES
 
         - name: Print application.properties
