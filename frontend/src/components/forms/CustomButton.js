@@ -44,6 +44,29 @@ const buttonFontMapper = {
   },
 };
 
+/**
+ * CustomButton component
+ *
+ * This component renders a customizable button element.
+ *
+ * e.g. 
+ * Props:
+ * - `standard` (boolean): refers to the standard style of a button where its detail is represented above.
+ * - `confirm` (boolean): refers to the confirm style of a button where its detail is represented above. 
+ * - `side` (boolean): refers to the side style of a button where its detail is represented above. 
+ * - `children` (component): all other components wrapped by the CustomButton component.
+ * - `rest` (any): any other props defined in React e.g. onClick, color, ..etc and will be reflected automatically.  
+ *
+ * Example:
+ * <CustomButton standard onClick=() => console.log("CLICKED") >
+ *  Submit
+ * </CustomButton>
+ * 
+ * <CustomButton side>
+ *  Send
+ * </CustomButton>
+ * ```
+ */
 function CustomButton({
   standard,
   confirm,
