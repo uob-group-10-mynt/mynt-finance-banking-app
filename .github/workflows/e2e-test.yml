@@ -15,6 +15,10 @@ jobs:
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       CURRENCY_CLOUD_ID: ${{ secrets.CURRENCY_CLOUD_ID }}
       CURRENCY_CLOUD_API_KEY: ${{ secrets.CURRENCY_CLOUD_API_KEY }}
+      ONFIDO_WORKFLOW_ID: ${{ secrets.ONFIDO_WORKFLOW_ID }}
+      ONFIDO_API_KEY: ${{ secrets.ONFIDO_API_KEY }}
+      
+
     strategy:
         matrix:
           os: [ ubuntu-latest, macos-latest ]
