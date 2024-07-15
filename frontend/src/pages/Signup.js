@@ -7,8 +7,7 @@ import {onfidoIdetityCheckAPI} from '../utils/APIEndpoints';
 import PageHeader from "../components/forms/PageHeader";
 import CustomForm from "../components/forms/CustomForm";
 
-function SignUp() {
-
+function Signup() {
     const [email, setEmail] = useState('');
     const [firstName, setFirstName] = useState('');
     const [surname, setSurname] = useState('');
@@ -45,7 +44,6 @@ function SignUp() {
             setMessage('Passwords do not match!');
         }
     }
-
 
     async function apiCalls() {
         try {
@@ -162,4 +160,4 @@ function SignUp() {
     );
 }
 
-export default SignUp;
+export default Signup;

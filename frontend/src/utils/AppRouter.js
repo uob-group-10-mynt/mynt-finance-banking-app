@@ -13,7 +13,7 @@ import Loading from '../components/Loading';
 const Home = lazy(() => import('../pages/Home'));
 const Login = lazy(() => import('../pages/Login'));
 const RemittancePage = lazy(() => import('../pages/Remittance'));
-const CreateUser = lazy(() => import('../pages/SignUp'));
+const CreateUser = lazy(() => import('../pages/Signup'));
 const Kyc = lazy(() => import('../pages/KYC'));
 const DashBoard = lazy(() => import('../pages/DashboardPage'));
 const NotFound404 = lazy(() => import('../pages/ErrorPage'));
