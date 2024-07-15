@@ -13,49 +13,62 @@ import lombok.NoArgsConstructor;
 public class FindAccountRequest {
 
     @JsonProperty("account_name")
-    private String accountName;
+    @Builder.Default
+    private String accountName = "";
 
     @JsonProperty("brand")
     @Builder.Default
     private String brand = "currencycloud";
 
     @JsonProperty("your_reference")
-    private String yourReference;
+    @Builder.Default
+    private String yourReference = "";
 
     @JsonProperty("status")
     @Builder.Default
     private String status = "enabled";
 
     @JsonProperty("street")
-    private String street;
+    @Builder.Default
+    private String street = "";
 
     @JsonProperty("city")
-    private String city;
+    @Builder.Default
+    private String city = "";
 
     @JsonProperty("state_or_province")
-    private String stateOrProvince;
+    @Builder.Default
+    private String stateOrProvince = "";
 
     @JsonProperty("postal_code")
-    private String postalCode;
+    @Builder.Default
+    private String postalCode = "";
 
     @JsonProperty("country")
-    private String country;
+    @Builder.Default
+    private String country = "";
 
     @JsonProperty("spread_table")
-    private String spreadTable;
+    @Builder.Default
+    private String spreadTable = "";
 
     @JsonProperty("bank_account_verified")
-    private String bankAccountVerified;
+    @Builder.Default
+    private String bankAccountVerified = "";
 
     @JsonProperty("page")
-    private Integer page;
+    @Builder.Default
+    private Integer page = 1;
 
     @JsonProperty("per_page")
-    private Integer perPage;
+    @Builder.Default
+    private Integer perPage = 1;
 
     @JsonProperty("order")
-    private String order;
+    @Builder.Default
+    private String order = "";
 
     @JsonProperty("order_asc_desc")
-    private String orderAscDesc;
+    @Builder.Default
+    private String orderAscDesc = "";
 }

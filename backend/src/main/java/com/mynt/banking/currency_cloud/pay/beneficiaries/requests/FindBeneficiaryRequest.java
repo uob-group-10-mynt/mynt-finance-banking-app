@@ -19,31 +19,36 @@ public class FindBeneficiaryRequest {
     @Size(max = 255)
     @Schema(description = "A contact UUID for the sub-account you're acting on behalf of.",
             example = "36ed7b74-09dc-4a32-b4a6-1a4e44d90eaa")
-    private String onBehalfOf;
+    @Builder.Default
+    private String onBehalfOf = "";
 
     @JsonProperty("bank_account_holder_name")
     @Size(max = 255)
     @Schema(description = "Bank account holder's name.",
             example = "Kenyan User02")
-    private String bankAccountHolderName;
+    @Builder.Default
+    private String bankAccountHolderName = "";
 
     @JsonProperty("beneficiary_country")
     @Size(min = 2, max = 2)
     @Schema(description = "Two-letter ISO country code. If the beneficiary is a company, this is the country in which the company is registered. //" +
                         "If the beneficiary is an individual, this is the country in which the beneficiary is based.",
             example = "KE")
-    private String beneficiaryCountry;
+    @Builder.Default
+    private String beneficiaryCountry = "";
 
     @JsonProperty("currency")
     @Size(min = 3, max = 3)
     @Schema(description = "Currency in which money is held in the beneficiary's bank account. Three-letter currency code.",
             example = "KES")
-    private String currency;
+    @Builder.Default
+    private String currency = "";
 
     @JsonProperty("account_number")
     @Size(max = 255)
     @Schema(description = "Bank account number.", example = " ")
-    private String accountNumber;
+    @Builder.Default
+    private String accountNumber = "";
 
     @JsonProperty("routing_code_type[0]")
     @Schema(description = """
@@ -58,32 +63,38 @@ public class FindBeneficiaryRequest {
             \taba
             \tclabe
             \tcnaps
-            \tifsc""", example = "")
-    private String[] routingCodeType;
+            \tifsc""", example = " ")
+    @Builder.Default
+    private String[] routingCodeType = {};
 
     @JsonProperty("routing_code_value[0]")
     @Schema(description = "The value for any routing system specified in routing_code_type[0]. If supplied, " +
             "a value for routing_code_type[0] must also be supplied.", example = " ")
-    private String[] routingCodeValue;
+    @Builder.Default
+    private String[] routingCodeValue = {};
 
     @JsonProperty("bic_swift")
     @Size(max = 255)
     @Schema(description = "BIC/Swift code", example = "TCCLGB3L")
-    private String bicSwift;
+    @Builder.Default
+    private String bicSwift = "";
 
     @JsonProperty("iban")
     @Size(max = 255)
     @Schema(description = "IBAN code", example = "GB41TCCL12345673185203")
-    private String iban;
+    @Builder.Default
+    private String iban = "";
 
     @JsonProperty("default_beneficiary")
     @Schema(description = "Payments are made automatically to default beneficiaries when a beneficiary is not specified.", example = "false")
-    private boolean defaultBeneficiary;
+    @Builder.Default
+    private boolean defaultBeneficiary = false;
 
     @JsonProperty("bank_name")
     @Size(max = 255)
     @Schema(description = "Bank name", example = " ")
-    private String bankName;
+    @Builder.Default
+    private String bankName = "";
 
     @JsonProperty("bank_account_type")
     @Schema(description = """
@@ -92,11 +103,13 @@ public class FindBeneficiaryRequest {
             Enum:\
             \tchecking
             \tsavings""", example = " ")
-    private String bankAccountType;
+    @Builder.Default
+    private String bankAccountType = "";
 
     @JsonProperty("name")
     @Schema(description = "Beneficiary's name.", example = " ")
-    private String name;
+    @Builder.Default
+    private String name = "";
 
     @JsonProperty("beneficiary_entity_type")
     @Schema(description = """
@@ -106,37 +119,45 @@ public class FindBeneficiaryRequest {
             \tindividual
             \tcompany""",
         example = "individual")
-    private String beneficiaryEntityType;
+    @Builder.Default
+    private String beneficiaryEntityType = "";
 
     @JsonProperty("beneficiary_company_name")
     @Schema(description = "Required if \"beneficiary_entity_type\" is \"company\".", example = " ")
-    private String beneficiaryCompanyName;
+    @Builder.Default
+    private String beneficiaryCompanyName = "";
 
     @JsonProperty("beneficiary_first_name")
     @Schema(description = "Required if \"beneficiary_entity_type\" is \"individual\".", example = "Kenyan")
-    private String beneficiaryFirstName;
+    @Builder.Default
+    private String beneficiaryFirstName = "";
 
     @JsonProperty("beneficiary_last_name")
     @Schema(description = "Required if \"beneficiary_entity_type\" is \"individual\".", example = "User")
-    private String beneficiaryLastName;
+    @Builder.Default
+    private String beneficiaryLastName = "";
 
     @JsonProperty("beneficiary_city")
     @Schema(description = "Beneficiary city.", example = " ")
-    private String beneficiaryCity;
+    @Builder.Default
+    private String beneficiaryCity = "";
 
     @JsonProperty("beneficiary_postcode")
     @Schema(description = "Beneficiary postcode.", example = " ")
-    private String beneficiaryPostcode;
+    @Builder.Default
+    private String beneficiaryPostcode = "";
 
     @JsonProperty("beneficiary_state_or_province")
     @Schema(description = "Beneficiary state or province.", example = " ")
-    private String beneficiaryStateOrProvince;
+    @Builder.Default
+    private String beneficiaryStateOrProvince = "";
 
     @JsonProperty("beneficiary_date_of_birth")
     @Schema(description = "If \"beneficiary_entity_type\" is \"company\", date of registration. " +
             "If \"beneficiary_entity_type\" is \"individual\", date of birth. ISO 8601 format YYYY-MM-DD.",
-            example = "")
-    private Date beneficiaryDateOfBirth;
+            example = " ")
+    @Builder.Default
+    private String beneficiaryDateOfBirth = "";
 
     @JsonProperty("scope")
     @Schema(description = """
@@ -146,28 +167,31 @@ public class FindBeneficiaryRequest {
             \town
             \tclients
             \tall""", example = " ")
-    private String scope;
+    @Builder.Default
+    private String scope = "";
 
-    // FOR DISCUSSION: I think removing these will be a good idea as we are probably not going to use them
-    // an auto-filled values causes errors in the request --> 400 response
+    @JsonProperty("page")
+    @Schema(description = "Page number.", example = " ")
+    @Builder.Default
+    private int page = 1;
 
-//    @JsonProperty("page")
-//    @Schema(description = "Page number.", example = " ")
-//    private int page;
-//
-//    @JsonProperty("per_page")
-//    @Schema(description = "Number of results per page.", example = " ")
-//    private int perPage;
+    @JsonProperty("per_page")
+    @Schema(description = "Number of results per page.", example = " ")
+    @Builder.Default
+    private int perPage = 1;
 
-//    @JsonProperty("order")
-//    @Schema(description = "Any field name to change the sort order.", example = " ")
-//    private String order;
-//
-//    @JsonProperty("order_asc_desc")
-//    @Schema(description = "Order direction (asc/desc).", example = " ")
-//    private String orderAscDesc;
+    @JsonProperty("order")
+    @Schema(description = "Any field name to change the sort order.", example = " ")
+    @Builder.Default
+    private String order = "";
+
+    @JsonProperty("order_asc_desc")
+    @Schema(description = "Order direction (asc/desc).", example = " ")
+    @Builder.Default
+    private String orderAscDesc = "";
 
     @JsonProperty("beneficiary_external_reference")
     @Schema(description = "External reference for the beneficiary.", example = " ")
-    private String beneficiaryExternalReference;
+    @Builder.Default
+    private String beneficiaryExternalReference = "";
 }

@@ -59,7 +59,8 @@ public class CreateAccountRequest {
 
     @JsonProperty("state_or_province")
     @Size(max = 255)
-    private String stateOrProvince;
+    @Builder.Default
+    private String stateOrProvince = "";
 
     @JsonProperty("brand")
     @Size(max = 255)

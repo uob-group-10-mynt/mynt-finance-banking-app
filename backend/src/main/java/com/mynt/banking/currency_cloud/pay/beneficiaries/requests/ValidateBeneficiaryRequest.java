@@ -30,7 +30,7 @@ public class ValidateBeneficiaryRequest {
 
     @JsonProperty("beneficiary_address")
     @Size(max = 255)
-    @Schema(description = "Address of the beneficiary.", example = "")
+    @Schema(description = "Address of the beneficiary.", example = " ")
     private String beneficiaryAddress;
 
     @JsonProperty("beneficiary_country")
@@ -41,20 +41,20 @@ public class ValidateBeneficiaryRequest {
 
     @JsonProperty("account_number")
     @Size(max = 34)
-    @Schema(description = "Bank account number.", example = "")
+    @Schema(description = "Bank account number.", example = " ")
     private String accountNumber;
 
     @JsonProperty("routing_code_type_1")
     @Size(max = 255)
     @Schema(description = "Local payment routing system. If supplied, a value for routing_code_value_1 must also be supplied.", example = "ABA")
     @Builder.Default
-    private String routingCodeType1 = "";
+    private String routingCodeType1 = " ";
 
     @JsonProperty("routing_code_value_1")
     @Size(max = 255)
     @Schema(description = "Local payment routing system value. If supplied, a value for routing_code_type_1 must also be supplied.", example = "123456")
     @Builder.Default
-    private String routingCodeValue1 = "";
+    private String routingCodeValue1 = " ";
 
     @JsonProperty("routing_code_type_2")
     @Size(max = 255)
@@ -172,7 +172,7 @@ public class ValidateBeneficiaryRequest {
 
     @JsonProperty("beneficiary_identification_value")
     @Size(max = 255)
-    @Schema(description = "A unique reference code for the identification document, such as a passport number.", example = "")
+    @Schema(description = "A unique reference code for the identification document, such as a passport number.", example = " ")
     private String beneficiaryIdentificationValue;
 
     @JsonProperty("payment_types")
