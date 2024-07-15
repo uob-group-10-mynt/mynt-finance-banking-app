@@ -100,7 +100,7 @@ jobs:
         #     docker run -d -p 8080:8080 backend
 
         - name: hacky wait for server to start
-          run: sleep 60
+          run: sleep 45
 
         - name: Is backend running
           run: curl -I 'http://localhost:8080/api/v1/demo-controller'
