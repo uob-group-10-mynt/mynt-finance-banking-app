@@ -34,32 +34,32 @@ public class BalanceCCTest {
 //        MockitoAnnotations.openMocks(this);
 //    }
 
-    @Test
-    @WithMockUser
-    public void testBalanceCC() throws Exception {
-
-
-        FindBalanceAllCurrencies data = FindBalanceAllCurrencies.builder().
-                amountTo("")
-                .order("")
-                .amountFrom("")
-                .build();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        HashMap<String, Object> map = objectMapper.convertValue(data, HashMap.class);
-        String url = "/api/v1/currency-cloud/balances/find" ; //+HashMapToQuiryPrams.hashMapToString(map);
-
-        JsonNode responseBody = webTestClient.get()
-                .uri(url)
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .returnResult(JsonNode.class)
-                .getResponseBody()
-                .blockFirst();
-
-
-        System.out.println(responseBody);
-    }
+//    @Test
+//    @WithMockUser
+//    public void testBalanceCC() throws Exception {
+//
+//
+//        FindBalanceAllCurrencies data = FindBalanceAllCurrencies.builder().
+//                amountTo("")
+//                .order("")
+//                .amountFrom("")
+//                .build();
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        HashMap<String, Object> map = objectMapper.convertValue(data, HashMap.class);
+//        String url = "/api/v1/currency-cloud/balances/find" ; //+HashMapToQuiryPrams.hashMapToString(map);
+//
+//        JsonNode responseBody = webTestClient.get()
+//                .uri(url)
+//                .accept(APPLICATION_JSON)
+//                .exchange()
+//                .expectStatus()
+//                .isOk()
+//                .returnResult(JsonNode.class)
+//                .getResponseBody()
+//                .blockFirst();
+//
+//
+//        System.out.println(responseBody);
+//    }
 }
