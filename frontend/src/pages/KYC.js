@@ -1,8 +1,7 @@
-
 import axios from 'axios';
 import { Onfido } from 'onfido-sdk-ui';
 import { useEffect, useState } from 'react';
-import signUp from './SignUp';
+import signUp from './Signup';
 import { useNavigate } from 'react-router-dom';
 import { Flex, Box, Heading, FormControl, FormLabel, Input, Button, Text } from "@chakra-ui/react";
 import Cookies from 'js-cookie';
@@ -47,7 +46,7 @@ function kyc(){
     }
 
     const handleButtonClick = () => {
-        navigate('/Login');
+        navigate('/login');
     };
 
 
@@ -65,6 +64,6 @@ function kyc(){
                     
         </Flex>
     );
-};
+}
 
 export default kyc;
