@@ -131,7 +131,7 @@ jobs:
         - name: wait for React server then run Cypress tests
           run: |
             cd frontend
-            wait-on localhost:9001 && npm run e2e:chrome
+            wait-on http://localhost:9001/ && npm run e2e:chrome
 
         
 
