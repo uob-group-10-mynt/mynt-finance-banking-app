@@ -1,18 +1,12 @@
 import {useState, useContext} from "react";
-import {
-    Box,
-    FormControl,
-    FormLabel,
-    Input,
-    Button,
-    FormErrorMessage
-} from "@chakra-ui/react";
+import {Box} from "@chakra-ui/react";
 import {LoggedInContext} from "../App";
 import PageHeader from "../components/forms/PageHeader";
 import {useNavigate} from "react-router-dom";
-import { authenticateAPI } from "../utils/APIEndpoints";
+import {authenticateAPI} from "../utils/APIEndpoints";
+import CustomForm from "../components/forms/CustomForm";
 
-const Login = () => {
+function Login() {
     const [loggedIn, setLoggedIn] = useContext(LoggedInContext)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -45,7 +39,7 @@ const Login = () => {
             //TODO handle errors by redirecting to relevant error page
             console.error(error);
         }
-    };
+    }
 
     const loginFieldsInputList = [
         {
@@ -70,32 +64,12 @@ const Login = () => {
         },
     ]
 
-    const inputFields = loginFieldsInputList.map((inputList) => {
-        return (
-            <FormControl isInvalid={invalidCredentialsMsg} isRequired={inputList.required} key={inputList.label}>
-                <FormLabel>{inputList.label}</FormLabel>
-                <Input
-                    isRequired={inputList.required}
-                    type={inputList.type}
-                    placeholder={inputList.placeholder}
-                    value={inputList.value}
-                    onChange={inputList.onChange}
-                    data-cy={inputList.testId}
-                />
-                <FormErrorMessage data-cy="errorMessage">{inputList.errorMsg}</FormErrorMessage>
-            </FormControl>
-        );
-    });
-
     return (
         <Box className="page">
             <PageHeader>Login</PageHeader>
-            <form onSubmit={handleSubmit}>
-                {inputFields}
-                <Button data-cy="submitButton" width="full" mt={4} type="submit">
-                    Sign In
-                </Button>
-            </form>
+            <CustomForm onSubmit={handleSubmit} buttonText="Sign In" testId="submitButton">
+                {loginFieldsInputList}
+            </CustomForm>
         </Box>
     );
 }
