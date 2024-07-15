@@ -88,56 +88,51 @@ jobs:
             cd backend
             ./gradlew bootRun &
 
-        # - name: build container
-        #   run: |
-        #     cd backend
-        #     docker build -t backend .
-
-        # - name: run container
-        #   run: |
-        #     cd backend
-        #     docker run -d -p 8080:8080 backend
-
         - name: hacky wait for server to start
           run: sleep 60
 
         - name: Is backend running
           run: curl -I 'http://localhost:8080/api/v1/demo-controller'
         
-        # - name: Cache Node modules
-        #   id: cache-json
-        #   uses: actions/cache@v4
-        #   with:
-        #     path: ~/.npm
-        #     key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
-        #     restore-keys: |
-        #       ${{ runner.os }}-node-
+        - name: Cache Node modules
+          id: cache-json
+          uses: actions/cache@v4
+          with:
+            path: ~/.npm
+            key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
+            restore-keys: |
+              ${{ runner.os }}-node-
 
-        # - name: Install Node.js
-        #   if: steps.cache-json.outputs.cache-hit != 'true'
-        #   uses: actions/setup-node@v4
-        #   with:
-        #     node-version: 18
+        - name: Install Node.js
+          if: steps.cache-json.outputs.cache-hit != 'true'
+          uses: actions/setup-node@v4
+          with:
+            node-version: 18
 
-        # - name: Install dependencies
-        #   run: |
-        #     cd frontend
-        #     npm ci
+        - name: Install dependencies
+          run: |
+            cd frontend
+            npm ci
 
-        # - name: Verify Cypress installation
-        #   run: |
-        #     cd frontend
-        #     npx cypress verify
+        - name: Verify Cypress installation
+          run: |
+            cd frontend
+            npx cypress verify
 
-        # - name: Build project
-        #   run: |
-        #     cd frontend
-        #     npm run devReact &
+        - name: install "wait-on" utility
+          run: |
+              npm install -g wait-on
 
-        # - name: Cypress run
-        #   run: |
-        #     cd frontend
-        #     npm run e2e:chrome
+        - name: Build project
+          run: |
+            cd frontend
+            npm run devReact &
+
+        - name: wait for React server then run Cypress tests
+          run: |
+            cd frontend
+            wait-on localhost:9001 && npm run e2e:chrome
+
         
 
         
