@@ -1,3 +1,7 @@
+-- DROP SCHEMA IF EXISTS public CASCADE;
+
+-- CREATE SCHEMA public;
+
 BEGIN;
 
 GRANT USAGE ON SCHEMA public TO backend_user;
