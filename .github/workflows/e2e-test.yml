@@ -82,18 +82,7 @@ jobs:
 
         - name: Print application.properties
           run: cat ./backend/src/main/resources/application.properties
-        
-        - name: Run backend
-          run: |
-            cd backend
-            ./gradlew bootRun &
 
-        - name: hacky wait for server to start
-          run: sleep 60
-
-        - name: Is backend running
-          run: curl -I 'http://localhost:8080/api/v1/demo-controller'
-        
         - name: Cache Node modules
           id: cache-json
           uses: actions/cache@v4
@@ -113,21 +102,25 @@ jobs:
           run: |
             cd frontend
             npm ci
-
+          
         - name: Verify Cypress installation
           run: |
             cd frontend
             npx cypress verify
-
+  
         - name: install "wait-on" utility
           run: |
               npm install -g wait-on
-
-        - name: Build project
+        
+        - name: Run backend
           run: |
-            cd frontend
-            npm run devReact &
+            cd backend
+            ./gradlew bootRun &
 
+        - name: wait for backend before running frontend
+          run: |
+            wait-on http://localhost:8080/ && npm run devReact
+        
         - name: wait for React server then run Cypress tests
           run: |
             cd frontend
