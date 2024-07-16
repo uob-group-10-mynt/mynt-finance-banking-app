@@ -18,7 +18,7 @@ public class FindAccountRequest {
 
     @JsonProperty("brand")
     @Builder.Default
-    private String brand = "currencycloud";
+    private String brand = "";
 
     @JsonProperty("your_reference")
     @Builder.Default
@@ -58,11 +58,11 @@ public class FindAccountRequest {
 
     @JsonProperty("page")
     @Builder.Default
-    private Integer page = 1;
+    private Integer page = null;
 
     @JsonProperty("per_page")
     @Builder.Default
-    private Integer perPage = 1;
+    private Integer perPage = null;
 
     @JsonProperty("order")
     @Builder.Default

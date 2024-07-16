@@ -65,19 +65,19 @@ public class FindBeneficiaryRequest {
             \tcnaps
             \tifsc""", example = " ")
     @Builder.Default
-    private String[] routingCodeType = {};
+    private String[] routingCodeType = null;
 
     @JsonProperty("routing_code_value[0]")
     @Schema(description = "The value for any routing system specified in routing_code_type[0]. If supplied, " +
             "a value for routing_code_type[0] must also be supplied.", example = " ")
     @Builder.Default
-    private String[] routingCodeValue = {};
+    private String[] routingCodeValue = null;
 
     @JsonProperty("bic_swift")
     @Size(max = 255)
     @Schema(description = "BIC/Swift code", example = "TCCLGB3L")
     @Builder.Default
-    private String bicSwift = "";
+    private String bicSwift = null;
 
     @JsonProperty("iban")
     @Size(max = 255)
@@ -88,7 +88,7 @@ public class FindBeneficiaryRequest {
     @JsonProperty("default_beneficiary")
     @Schema(description = "Payments are made automatically to default beneficiaries when a beneficiary is not specified.", example = "false")
     @Builder.Default
-    private boolean defaultBeneficiary = false;
+    private Boolean defaultBeneficiary = null;
 
     @JsonProperty("bank_name")
     @Size(max = 255)
@@ -173,12 +173,12 @@ public class FindBeneficiaryRequest {
     @JsonProperty("page")
     @Schema(description = "Page number.", example = " ")
     @Builder.Default
-    private int page = 1;
+    private Integer page = null;
 
     @JsonProperty("per_page")
     @Schema(description = "Number of results per page.", example = " ")
     @Builder.Default
-    private int perPage = 1;
+    private Integer perPage = null;
 
     @JsonProperty("order")
     @Schema(description = "Any field name to change the sort order.", example = " ")

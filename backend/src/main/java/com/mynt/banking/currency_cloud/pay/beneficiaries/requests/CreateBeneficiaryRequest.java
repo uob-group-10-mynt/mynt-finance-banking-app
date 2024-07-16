@@ -46,13 +46,13 @@ public class CreateBeneficiaryRequest {
 
     @JsonProperty("email")
     @Size(max = 255)
-    @Schema(description = "Email address")
+    @Schema(description = "Email address", example = " ")
     @Builder.Default
     private String email = "";
 
     @JsonProperty("beneficiary_address")
     @Size(max = 255)
-    @Schema(description = "First line of address.")
+    @Schema(description = "First line of address.", example = " ")
     @Builder.Default
     private String beneficiaryAddress = "";
 
@@ -85,12 +85,12 @@ public class CreateBeneficiaryRequest {
             \tcnaps
             \tifsc""", example = " ")
     @Builder.Default
-    private String[] routingCodeType1 = {};
+    private String[] routingCodeType1 = null;
 
     @JsonProperty("routing_code_value_1")
     @Schema(description = "Routing code for routing_code_type_1. If supplied, routing_code_type_1 should also be supplied.", example = " ")
     @Builder.Default
-    private String[] routingCodeValue1 = {};
+    private String[] routingCodeValue1 = null;
 
     @JsonProperty("routing_code_type_2")
     @Schema(description = """
@@ -107,29 +107,29 @@ public class CreateBeneficiaryRequest {
             \tcnaps
             \tifsc""", example = " ")
     @Builder.Default
-    private String[] routingCodeType2 = {};
+    private String[] routingCodeType2 = null;
 
     @JsonProperty("routing_code_value_2")
     @Schema(description = "Routing code for routing_code_type_2. If supplied, routing_code_type_2 should also be supplied.", example = " ")
     @Builder.Default
-    private String[] routingCodeValue2 = {};
+    private String[] routingCodeValue2 = null;
 
     @JsonProperty("bic_swift")
     @Size(max = 255)
     @Schema(description = "BIC/Swift code", example = " ")
     @Builder.Default
-    private String bicSwift = "";
+    private String bicSwift = null;
 
     @JsonProperty("iban")
     @Size(max = 255)
     @Schema(description = "IBAN code", example = " ")
     @Builder.Default
-    private String iban = "";
+    private String iban = null;
 
     @JsonProperty("default_beneficiary")
     @Schema(description = "Payments are made automatically to default beneficiaries when a beneficiary is not specified.", example = " ")
     @Builder.Default
-    private boolean defaultBeneficiary = false;
+    private Boolean defaultBeneficiary = null;
 
     @JsonProperty("bank_address")
     @Size(max = 255)
@@ -170,12 +170,12 @@ public class CreateBeneficiaryRequest {
     private String beneficiaryCompanyName = "";
 
     @JsonProperty("beneficiary_first_name")
-    @Schema(description = "Required if \"beneficiary_entity_type\" is \"individual\".", example = "Kenyan")
+    @Schema(description = "Required if \"beneficiary_entity_type\" is \"individual\".", example = " ")
     @Builder.Default
     private String beneficiaryFirstName = "";
 
     @JsonProperty("beneficiary_last_name")
-    @Schema(description = "Required if \"beneficiary_entity_type\" is \"individual\".", example = "User")
+    @Schema(description = "Required if \"beneficiary_entity_type\" is \"individual\".", example = " ")
     @Builder.Default
     private String beneficiaryLastName = "";
 
@@ -224,12 +224,12 @@ public class CreateBeneficiaryRequest {
             "employer_identification_number\n" +
             "national_id\n" +
             "incorporation_number\n" +
-            "others")
+            "others", example = " ")
     @Builder.Default
     private String beneficiaryIdentificationType = "";
 
     @JsonProperty("beneficiary_identification_value")
-    @Schema(description = "A unique reference code for the identification document, such as a passport number.")
+    @Schema(description = "A unique reference code for the identification document, such as a passport number.", example = " ")
     @Builder.Default
     private String identificationType = "";
 
@@ -237,7 +237,7 @@ public class CreateBeneficiaryRequest {
     @Schema(description = "Currencycloud supports two types of payments: \"priority\", made using the Swift network; and \"regular\", made using the local bank network.",
             example = "[\"priority\", \"regular\"]")
     @Builder.Default
-    private String[] paymentTypes = {};
+    private String[] paymentTypes = null;
 
     @JsonProperty("on_behalf_of")
     @Size(max = 36)

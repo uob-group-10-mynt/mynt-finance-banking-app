@@ -62,18 +62,12 @@ public class AccountService {
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
                 .flatMap(response -> {
                     if(response.getStatusCode().is2xxSuccessful()) {
-                        // Exsample code
                         JsonNode jsonNode = response.getBody();
                         ObjectNode objectNode = ((ObjectNode) jsonNode).put("Custom Messsage","Hello World");
                         ResponseEntity<JsonNode> newResponseEntity = new ResponseEntity<>(objectNode,response.getStatusCode());
                         return Mono.just(newResponseEntity);
-//                        return Mono.just(response);
                     }
                     return Mono.just(response);
                 });
     }
-
-
-
-
 }
