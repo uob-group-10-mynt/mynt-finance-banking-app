@@ -6,6 +6,7 @@ import {Onfido} from 'onfido-sdk-ui';
 import {onfidoIdetityCheckAPI} from '../utils/APIEndpoints';
 import PageHeader from "../components/forms/PageHeader";
 import CustomForm from "../components/forms/CustomForm";
+import { Center, Square, Circle } from '@chakra-ui/react'
 
 function Signup() {
     const [email, setEmail] = useState('');
@@ -153,9 +154,16 @@ function Signup() {
     return (
         <Box className="page">
             <PageHeader>Sign Up</PageHeader>
-            <CustomForm onSubmit={handleSubmit} buttonText="Sign Up" testId="submitButton">
-                {fieldsInputList}
-            </CustomForm>
+
+            {iframe ? (
+                <Center>
+                    <iframe src={iframe} style={{height:"700px"}} ></iframe>
+                </Center>
+            ):(
+                <CustomForm onSubmit={handleSubmit} buttonText="Sign Up" testId="submitButton">
+                    {fieldsInputList}
+                </CustomForm>
+            )}
         </Box>
     );
 }
