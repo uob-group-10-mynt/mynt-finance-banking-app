@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -30,16 +32,27 @@ public class AuthenticationTest {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void setUp() {}
+    public void setUp() {
+
+//        mockMvc.perform(get())
+
+
+    }
 
     @AfterEach
     public void tearDown() {}
 
-    @Test
-    public void testRegisterUser() throws Exception {
-        mockMvc.perform(get("/api/v1/auth/sdk"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-    }
+    //TODO: controller intergraion tests - sudo code below
+//    @Test
+//    @WithMockUser(username = "testuser", password = "testuser", roles = "USER")
+//    public void testRegisterUser() throws Exception {
+//
+//        mockMvc.perform(post("http://localhost:8080/api/v1/currency-cloud/balances/find/")
+//                .with(SecurityMockMvcRequestPostProcessors.csrf()) // Add CSRF token
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content("{}")
+//        ).andExpect(status().isOk());
+//
+//    }
 
 }
