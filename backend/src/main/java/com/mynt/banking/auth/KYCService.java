@@ -193,7 +193,7 @@ public class KYCService {
         return createApplicant.body();
     }
 
-    public SDKResponse retrieveResults(ValidateKycRequest request ) throws IOException, InterruptedException, URISyntaxException {
+    public SDKResponse validateKyc(ValidateKycRequest request ) throws IOException, InterruptedException, URISyntaxException {
 
         SDKResponse sdkResponceDTO = new SDKResponse();
 
@@ -216,6 +216,9 @@ public class KYCService {
         JsonNode resultsResponce = objectMapper.readTree(resultsResponse.body());
 
         kycRepository.updateStatus(resultsResponce.get("status").asText(),kyc.getId());
+
+        //TODO: check resultsResponse.statusCode()
+        // if 200 create account and then create contact
 
         String responceStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(resultsResponce);
         sdkResponceDTO.setData(responceStr);
