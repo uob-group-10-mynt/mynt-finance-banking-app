@@ -48,7 +48,7 @@ public class KYCService {
     @Autowired
     private UserRepository userRepository;
 
-    public SDKResponse getOnfidoSDK(SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
+    public SDKResponse getOnfidoSDK(SignUpRequest request) {
 
         SDKResponse sdkResponceDTO = new SDKResponse();
 

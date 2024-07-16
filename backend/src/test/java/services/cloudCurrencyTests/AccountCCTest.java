@@ -1,4 +1,4 @@
-package services;
+package services.cloudCurrencyTests;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 

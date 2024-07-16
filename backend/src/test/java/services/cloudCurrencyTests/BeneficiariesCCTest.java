@@ -1,4 +1,4 @@
-package services;
+package services.cloudCurrencyTests;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.CreateBeneficiaryRequest;
