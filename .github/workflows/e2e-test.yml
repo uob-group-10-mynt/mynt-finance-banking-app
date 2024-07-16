@@ -117,9 +117,17 @@ jobs:
             cd backend
             ./gradlew bootRun &
 
-        - name: wait for backend before running frontend
+        - name: sleep whilst backend boots
+          run: sleep 60
+        
+        - name: run frontend
           run: |
-            wait-on http://localhost:8080/ && npm run devReact
+            cd frontend
+            npm run devReact &
+
+        # - name: wait for backend before running frontend
+        #   run: |
+        #     wait-on http://localhost:8080/ && npm run devReact
         
         - name: wait for React server then run Cypress tests
           run: |
