@@ -1,7 +1,10 @@
 {
-  "email": "sion@uob.ac.uk",
+  "firstname": "cypress",
+  "lastname": "test",
+  "email": "cypress@test.com",
   "password": "test",
-  "firstName": "Sion",
-  "lastname": "Hannuna",
-  "role":"USER"
+  "role": "USER",
+  "dob": "29-06-1900",
+  "address": "MVB",
+  "phoneNumber": "07123123123"
 }

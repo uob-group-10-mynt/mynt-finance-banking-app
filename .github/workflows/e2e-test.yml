@@ -1,0 +1,142 @@
+name: End-to-end tests CI
+
+on:
+  push:
+
+jobs:
+  e2e_tests:
+    environment: Testing_Environment
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      RDS_SSL_CERT_PATH: ${{ secrets.RDS_SSL_CERT_PATH }}
+      PEM_CONTENT: ${{ secrets.PEM_CONTENT }}
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      CURRENCY_CLOUD_ID: ${{ secrets.CURRENCY_CLOUD_ID }}
+      CURRENCY_CLOUD_API_KEY: ${{ secrets.CURRENCY_CLOUD_API_KEY }}
+      ONFIDO_WORKFLOW_ID: ${{ secrets.ONFIDO_WORKFLOW_ID }}
+      ONFIDO_API_KEY: ${{ secrets.ONFIDO_API_KEY }}
+      
+
+    strategy:
+        matrix:
+          os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+  
+        - name: Setup Java
+          uses: actions/setup-java@v4
+          with:
+            distribution: 'temurin'
+            java-version: '17'
+            
+          
+        - name: Grant execute permission for gradlew
+          run: chmod +x ./backend/gradlew
+ 
+        - name: Create Pem File
+          run: |
+            mkdir .env
+            cd .env
+            echo "${{ env.PEM_CONTENT }}" >> "${{ env.RDS_SSL_CERT_PATH }}"
+        
+        - name: Setup application.properties
+          run: |
+            APPLICATION_PROPERTIES='./backend/src/main/resources/application.properties'
+            mkdir -p $(dirname $APPLICATION_PROPERTIES)
+            echo "spring.datasource.url=$DB_URL" >> $APPLICATION_PROPERTIES
+            echo "spring.datasource.username=$DB_USERNAME" >> $APPLICATION_PROPERTIES
+            echo "spring.datasource.password=$DB_PASSWORD" >> $APPLICATION_PROPERTIES
+            echo "spring.datasource.driver-class-name=org.postgresql.Driver
+            spring.jpa.show-sql=false
+            spring.jpa.properties.hibernate.format_sql=true
+            spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+            spring.datasource.hikari.data-source-properties.useSSL=true
+            spring.datasource.hikari.data-source-properties.requireSSL=true
+            spring.datasource.hikari.maximum-pool-size=10
+            spring.datasource.hikari.minimum-idle=5
+            spring.datasource.hikari.idle-timeout=30000
+            spring.datasource.hikari.connection-timeout=20000
+            spring.datasource.hikari.max-lifetime=1800000
+            application.security.jwt.secret-key=$JWT_SECRET_KEY
+            application.security.jwt.expiration=600000
+            application.security.jwt.refresh-token.expiration=604800000
+            currencycloud.api.url=https://devapi.currencycloud.com
+            currencycloud.api.login_id=$CURRENCY_CLOUD_ID
+            currencycloud.api.key=$CURRENCY_CLOUD_API_KEY
+            logging.level.org.springframework.web=DEBUG
+            logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG
+            logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %msg%n
+            logging.level.org.apache.http=DEBUG
+            logging.level.org.apache.http.wire=DEBUG
+            logging.level.org.apache.http.headers=DEBUG
+            logging.level.root=INFO
+            logging.level.org.springframework.web.client.RestTemplate=DEBUG
+            logging.level.com.mynt.banking=DEBUG
+            api.onfido=$ONFIDO_API_KEY
+            api.onfido.workflow_id=$ONFIDO_WORKFLOW_ID
+            " >> $APPLICATION_PROPERTIES
+
+        - name: Print application.properties
+          run: cat ./backend/src/main/resources/application.properties
+
+        - name: Cache Node modules
+          id: cache-json
+          uses: actions/cache@v4
+          with:
+            path: ~/.npm
+            key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
+            restore-keys: |
+              ${{ runner.os }}-node-
+
+        - name: Install Node.js
+          if: steps.cache-json.outputs.cache-hit != 'true'
+          uses: actions/setup-node@v4
+          with:
+            node-version: 18
+
+        - name: Install dependencies
+          run: |
+            cd frontend
+            npm ci
+          
+        - name: Verify Cypress installation
+          run: |
+            cd frontend
+            npx cypress verify
+  
+        - name: install "wait-on" utility
+          run: |
+              npm install -g wait-on
+        
+        - name: Run backend
+          run: |
+            cd backend
+            ./gradlew bootRun &
+
+        - name: sleep whilst backend boots
+          run: sleep 60
+        
+        - name: run frontend
+          run: |
+            cd frontend
+            npm run devReact &
+
+        # - name: wait for backend before running frontend
+        #   run: |
+        #     wait-on http://localhost:8080/ && npm run devReact
+        
+        - name: wait for React server then run Cypress tests
+          run: |
+            cd frontend
+            wait-on http://localhost:9001/ && npm run e2e:chrome
+
+        
+
+        
+        
+
+    

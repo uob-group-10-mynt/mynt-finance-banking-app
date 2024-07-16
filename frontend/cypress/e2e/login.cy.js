@@ -2,7 +2,6 @@ import testUser from '../fixtures/testUser.json';
 
 describe('log in page', () => {
     it('can log a user in and out', () => {
-        cy.createTestUser()
         cy.visit('/')
         cy.get('[data-cy="navButton"]').click()
         cy.get('[data-cy="LoginLink"]').click()
