@@ -10,6 +10,11 @@ const textMapper = {
     as: 'b', 
     fontSize: { base: '0.55em', md: '0.95em', lg: '1.175em' } 
   },
+
+  xsmall: {
+    as: 'b',
+    fontSize: { base: '7.5px', md: '0.65em', lg: '0.85em' }
+  }
 }
 
 function CustomText({ 
@@ -17,10 +22,11 @@ function CustomText({
   black,
   big,
   small,
+  xsmall,
   children,
   ...rest
 }) {
-  const mapper = (small) ? 'small' : 'big';
+  const mapper = (small) ? 'small' : (xsmall) ? 'xsmall' : 'big';
 
   return (
     <Text 
