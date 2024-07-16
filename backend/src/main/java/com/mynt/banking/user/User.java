@@ -51,6 +51,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    // keep commented out as the below is not reflected in the DB
 //    @OneToMany(mappedBy = "user")
 //    private List<Token> tokens;
 
