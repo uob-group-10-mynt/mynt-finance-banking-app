@@ -218,7 +218,7 @@ public class KYCService {
         kycRepository.updateStatus(resultsResponce.get("status").asText(),kyc.getId());
 
         //TODO: check resultsResponse.statusCode()
-        // if 200 create account and then create contact
+        // if 200 create account and then create contact or check it has been done correctaly
 
         String responceStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(resultsResponce);
         sdkResponceDTO.setData(responceStr);
