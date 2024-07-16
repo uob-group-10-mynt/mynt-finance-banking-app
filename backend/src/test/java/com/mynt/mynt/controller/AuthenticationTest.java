@@ -55,4 +55,14 @@ public class AuthenticationTest {
 //
 //    }
 
+
+//    @Test
+//    @WithMockUser(username = "testuser", password = "testuser", roles = "USER")
+//    public void testRegisterUser() throws Exception {
+//        mockMvc.perform(post("/api/v1/auth/onfidoSdk"))
+//                .andExpect(MockMvcResultMatchers.status().isOk());
+//
+//    }
+
+
 }
