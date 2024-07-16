@@ -53,29 +53,4 @@ public class AccountService {
                 });
     }
 
-
-    //TODO: need to move this over to Benificiaries
-    public Mono<ResponseEntity<JsonNode>> find(FindBeneficiaryRequest requestBody) {
-        return webClient
-                .post()
-                .uri("/v2/beneficiaries/find")
-                .header("X-Auth-Token", authenticationService.getAuthToken())
-                .bodyValue(requestBody)
-                .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(response -> {
-                    if(response.getStatusCode().is2xxSuccessful()) {
-                        // Exsample code
-                        JsonNode jsonNode = response.getBody();
-                        ObjectNode objectNode = ((ObjectNode) jsonNode).put("Custom Messsage","Hello World");
-                        ResponseEntity<JsonNode> newResponseEntity = new ResponseEntity<>(objectNode,response.getStatusCode());
-                        return Mono.just(newResponseEntity);
-//                        return Mono.just(response);
-                    }
-                    return Mono.just(response);
-                });
-    }
-
-
-
-
 }
