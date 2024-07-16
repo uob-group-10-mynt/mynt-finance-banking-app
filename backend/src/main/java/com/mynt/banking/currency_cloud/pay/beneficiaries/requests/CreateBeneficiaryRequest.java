@@ -212,7 +212,8 @@ public class CreateBeneficiaryRequest {
     @JsonProperty("payment_types")
     @Schema(description = "Currencycloud supports two types of payments: \"priority\", made using the Swift network; and \"regular\", made using the local bank network.",
             example = "[\"priority\", \"regular\"]")
-    private String[] paymentTypes;
+    @Builder.Default
+    private String[] paymentTypes = null;
 
     @JsonProperty("on_behalf_of")
     @Size(max = 36)

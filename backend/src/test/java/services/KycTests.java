@@ -26,7 +26,7 @@ public class KycTests {
     @Test
     public void testKyc() {
         SignUpRequest signUpRequest = SignUpRequest.builder()
-                .email("test123adfadf2423dsfgsddasfsf@test.com")
+                .email("test123adfadf24dsfdfadf23dsfgsddasfsf@test.com")
                 .firstname("James")
                 .lastname("Love")
                 .dob("1066-08-16")
