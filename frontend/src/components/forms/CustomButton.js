@@ -28,6 +28,15 @@ const buttonStyleMapper = {
     padding: { base: '0.25em', md: '0.375em', lg: '0.5em' }, 
     height: { base: '1.75em', md: '2.125em', lg: '2.5em' },  
   },
+
+  medium: {
+    variant: 'solid',
+    color: 'white',
+    colorScheme: 'teal',
+    width: '40%',
+    padding: { base: '0.375em', md: '0.5625em', lg: '0.75em' },
+    height: { base: '1.875em', md: '2.3125em', lg: '2.75em' },
+  },
 };
 
 const buttonFontMapper = {
@@ -42,6 +51,10 @@ const buttonFontMapper = {
   side: {
     fontSize: { base: '0.875em', md: '1.125em', lg: '1.375em' }, 
   },
+
+  medium: {
+    fontSize: { base: '0.9375em', md: '1.1875em', lg: '1.4375em' }, 
+  },
 };
 
 /**
@@ -53,6 +66,7 @@ const buttonFontMapper = {
  * Props:
  * - `standard` (boolean): refers to the standard style of a button where its detail is represented above.
  * - `confirm` (boolean): refers to the confirm style of a button where its detail is represented above. 
+ * - `medium` (boolean): refers to the medium style of a button where its detail is represented above. 
  * - `side` (boolean): refers to the side style of a button where its detail is represented above. 
  * - `children` (component): all other components wrapped by the CustomButton component.
  * - `rest` (any): any other props defined in React e.g. onClick, color, ..etc and will be reflected automatically.  
@@ -70,11 +84,12 @@ const buttonFontMapper = {
 function CustomButton({
   standard,
   confirm,
+  medium,
   side,
   children,
   ...rest
 }) {
-  const mapper = (standard) ? 'standard' : (confirm) ? 'confirm' : 'side';  
+  const mapper = (standard) ? 'standard' : (confirm) ? 'confirm' : (medium) ? 'medium' : 'side';  
 
   return (
     <Button { ...buttonStyleMapper[mapper] } { ...rest }>
