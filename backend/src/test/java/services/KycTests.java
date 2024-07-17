@@ -62,16 +62,6 @@ public class KycTests {
                 .password("password")
                 .build();
 
-//        SignUpRequest signUpRequest = SignUpRequest.builder()
-//                .email("Jamefdasfdsdfafass@Jameslove.com")
-//                .firstname("James")
-//                .lastname("Love")
-//                .dob("1066-08-16")
-//                .address("Bristol")
-//                .phoneNumber("+44 7834325342")
-//                .password("Bristol2023")
-//                .build();
-
         SDKResponse response = this.kycService.getOnfidoSDK(signUpRequest);
 
         assert response != null;
@@ -79,32 +69,30 @@ public class KycTests {
 
     }
 
+    @Test
+    void testEmailThatHasNotGoneThroughKYC(){
+        //        // test what happends if user has not gone thoruhg KYC
+        ValidateKycRequest requestDtoInvalid = ValidateKycRequest.builder()
+                .Email("test34-693@test.com")
+                .build();
+        SDKResponse responseInvalid = this.kycService.validateKyc(requestDtoInvalid);
 
+        assert responseInvalid != null;
+        assertEquals(responseInvalid.getStage(),"error with email");
+        assertEquals(responseInvalid.getData(),"error invalid email please check and try again");
+    }
 
     ///This test requries that you find an email on the DB that is approved or the user has already gone
     ///  thorugh KYC checks other wise the test will fail
-
     @Test
     public void testValidateKyc() {
 
-//        // test what happends if user has not gone thoruhg KYC
-//        ValidateKycRequest requestDtoInvalid = ValidateKycRequest.builder()
-//                .Email("test34-693@test.com")
-//                .build();
-//        SDKResponse responseInvalid = this.kycService.validateKyc(requestDtoInvalid);
-//
-//        assert responseInvalid != null;
-//        assertEquals(responseInvalid.getStage(),"error with email");
-//        assertEquals(responseInvalid.getData(),"error invalid email please check and try again");
-
-//        String email = "test34-abc12345678@test.com";
-//        int id = userRepository.findByEmail(email).get().getId();
-//        if (!userRepository.findByEmail(email).isEmpty()&& !currencyCloudRepository.findByUsersId((long)id).isEmpty()){
-//            CurrencyCloudEntity currencyCloudEntity = currencyCloudRepository.findByUsersId((long)id).get(0);
-//            currencyCloudRepository.delete(currencyCloudEntity);
-//        }
-
-        String email = "asfdasfda@asdfas.bbc";
+        String email = "test34-abc12345678@test.com";
+        int id = userRepository.findByEmail(email).get().getId();
+        if (!userRepository.findByEmail(email).isEmpty()&& !currencyCloudRepository.findByUsersId((long)id).isEmpty()){
+            CurrencyCloudEntity currencyCloudEntity = currencyCloudRepository.findByUsersId((long)id).get(0);
+            currencyCloudRepository.delete(currencyCloudEntity);
+        }
 
         //need to update email  within DB before running test
         ValidateKycRequest requestDtoValid = ValidateKycRequest.builder()
@@ -115,18 +103,40 @@ public class KycTests {
         assert responseValid != null;
         assertEquals(responseValid.getStage(),"approved");
 
-//        // test running the comand twice
-//        ValidateKycRequest requestDtoDuplicateRequest = ValidateKycRequest.builder()
-//                .Email(email)
-//                .build();
-//        SDKResponse responseDuplicateRequest = this.kycService.validateKyc(requestDtoDuplicateRequest);
-//
-//        assert responseDuplicateRequest != null;
-//        assertEquals(responseDuplicateRequest.getStage(),"approved");
-//        assertEquals(responseDuplicateRequest.getData(),"user already has an account / contact");
+    }
+
+    @Test
+    void testDuplicateRequests(){
+
+        String email = "test34-abc12345678@test.com";
+        int id = userRepository.findByEmail(email).get().getId();
+        if (!userRepository.findByEmail(email).isEmpty()&& !currencyCloudRepository.findByUsersId((long)id).isEmpty()){
+            CurrencyCloudEntity currencyCloudEntity = currencyCloudRepository.findByUsersId((long)id).get(0);
+            currencyCloudRepository.delete(currencyCloudEntity);
+        }
+
+        //need to update email  within DB before running test
+        ValidateKycRequest requestDtoValid = ValidateKycRequest.builder()
+                .Email(email)
+                .build();
+        SDKResponse responseValid = this.kycService.validateKyc(requestDtoValid);
+
+        assert responseValid != null;
+        assertEquals(responseValid.getStage(),"approved");
+
+        // test running the comand twice
+        ValidateKycRequest requestDtoDuplicateRequest = ValidateKycRequest.builder()
+                .Email(email)
+                .build();
+        SDKResponse responseDuplicateRequest = this.kycService.validateKyc(requestDtoDuplicateRequest);
+
+        assert responseDuplicateRequest != null;
+        assertEquals(responseDuplicateRequest.getStage(),"approved");
+        assertEquals(responseDuplicateRequest.getData(),"user already has an account / contact");
+
+
 
 
     }
-
 
 }
