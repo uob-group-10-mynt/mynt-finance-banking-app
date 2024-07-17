@@ -112,7 +112,7 @@ public class KycTests {
 
         assert responseDuplicateRequest != null;
         assertEquals(responseDuplicateRequest.getStage(),"approved");
-        assertEquals(responseDuplicateRequest.getData(),"user already has an account");
+        assertEquals(responseDuplicateRequest.getData(),"user already has an account / contact");
 
 
     }

@@ -251,7 +251,7 @@ public class KYCService {
                 boolean hasAccount = createCurrencyCloudUser(resultsResponce, request.getEmail());
                 if(!hasAccount){
                     sdkResponceDTO.setStage("approved");
-                    sdkResponceDTO.setData("user already has an account");
+                    sdkResponceDTO.setData("user already has an account / contact");
                     return sdkResponceDTO;
                 }
             }
