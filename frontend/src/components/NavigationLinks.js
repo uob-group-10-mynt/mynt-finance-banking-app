@@ -21,7 +21,7 @@ export default function NavigationLinks() {
     ]
     const loggedOutData = [
         {href: "signup", text: "Sign Up", testId: "SignUpLink"},
-        {href: "login", text: "Log In", testId: "LogInLink"},
+        {href: "login", text: "Log In", testId: "LoginLink"},
     ]
     const pagesThatAreAlwaysVisible = [
         {href: "/", text: "Home"}

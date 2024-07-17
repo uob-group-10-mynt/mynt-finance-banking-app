@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+
 import testUser from '../fixtures/testUser.json';
 
 Cypress.Commands.add('createTestUser', () => {
@@ -19,4 +19,13 @@ Cypress.Commands.add('createTestUser', () => {
     } catch(error) {
         console.info("test user already exists")
     }
+})
+
+Cypress.Commands.add('loginTestUser', () => {
+    cy.visit('login')
+    cy.get('[data-cy="navButton"]').click()
+    cy.get('[data-cy="LoginLink"]').click()
+    cy.get('[data-cy="emailInput"]').type(testUser.email)
+    cy.get('[data-cy="passwordInput"]').type(testUser.password)
+    cy.get('[data-cy="submitButton"]').click()
 })
