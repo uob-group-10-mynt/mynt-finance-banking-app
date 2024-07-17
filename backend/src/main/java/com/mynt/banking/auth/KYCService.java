@@ -180,7 +180,7 @@ public class KYCService {
         user.setFirstname(request.getFirstname());
         user.setLastname(request.getLastname());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEmail(request.getEmail());
+        user.setEmail(request.getEmail().toLowerCase());
         user.setAddress(request.getAddress());
         user.setDob(request.getDob());
         user.setPhone_number(request.getPhoneNumber());
@@ -218,7 +218,10 @@ public class KYCService {
 
         String apiToken = "Token token="+onfido;
 
-        if(userRepository.findByEmail(request.getEmail()).isEmpty()){
+        if(userRepository.findByEmail(request.getEmail()).isEmpty() || //email is not in DB
+                Objects.equals(request.getEmail(), "") ||            // email is empty string
+                request.getEmail() == null                              // email is null
+        ){
             sdkResponceDTO.setStage("error with email");
             sdkResponceDTO.setData("error invalid email please check and try again");
             return sdkResponceDTO;

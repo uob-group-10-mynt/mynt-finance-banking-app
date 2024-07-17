@@ -6,7 +6,8 @@ import {Onfido} from 'onfido-sdk-ui';
 import {onfidoIdetityCheckAPI} from '../utils/APIEndpoints';
 import PageHeader from "../components/forms/PageHeader";
 import CustomForm from "../components/forms/CustomForm";
-import { Center, Square, Circle } from '@chakra-ui/react'
+import { Center, Square, Circle } from '@chakra-ui/react';
+import Cookies from 'js-cookie';
 
 function Signup() {
     const [email, setEmail] = useState('');
@@ -58,6 +59,8 @@ function Signup() {
                 "password": password
             })
             kycChecks(response);
+            Cookies.put("email",email);
+            
 
         } catch (error) {
             console.error('There was an error!', error);
@@ -72,7 +75,7 @@ function Signup() {
         // console.log("urlink -> "+urlink);
 
         document.cookie = `email=${email}`;
-
+        console.log(document.cookie);
         setiframe(urlink);
     }
 

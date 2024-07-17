@@ -36,11 +36,10 @@ public class KycTests {
     @Autowired
     private KYCService kycService;
 
-    @Autowired
-    private
+//    @Autowired
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
 
         this.testAccountNum = (int)userRepository.count();
         this.testAccountNum++;
@@ -62,6 +61,16 @@ public class KycTests {
                 .phoneNumber("+44 78233444534")
                 .password("password")
                 .build();
+
+//        SignUpRequest signUpRequest = SignUpRequest.builder()
+//                .email("Jamefdasfdsdfafass@Jameslove.com")
+//                .firstname("James")
+//                .lastname("Love")
+//                .dob("1066-08-16")
+//                .address("Bristol")
+//                .phoneNumber("+44 7834325342")
+//                .password("Bristol2023")
+//                .build();
 
         SDKResponse response = this.kycService.getOnfidoSDK(signUpRequest);
 
