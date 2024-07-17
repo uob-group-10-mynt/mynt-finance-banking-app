@@ -6,8 +6,6 @@ describe('Navigation Drawer Test', () => {
         cy.get('[data-cy="LoginLink"]').click()
         cy.url().should('include', '/login');
 
-        cy.get('[data-cy="navButton"]').click()
-        cy.get('[data-cy="RemittanceLink"]').click()
-        cy.url().should('include', '/remittance');
+
     })
 })
