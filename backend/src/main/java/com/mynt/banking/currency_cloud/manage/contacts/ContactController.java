@@ -2,6 +2,7 @@ package com.mynt.banking.currency_cloud.manage.contacts;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.CreateContact;
+import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.FindContact;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,10 @@ public class ContactController {
         return contactsService.createContact(requestBody);
     }
 
+    @PostMapping("/find")
+    public Mono<ResponseEntity<JsonNode>> find(@RequestBody FindContact requestBody) {
+        return contactsService.findContact(requestBody);
+    }
 
 
 }
