@@ -14,6 +14,7 @@ import com.mynt.banking.currency_cloud.manage.accounts.AccountService;
 import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountRequest;
 import com.mynt.banking.currency_cloud.manage.contacts.ContactsService;
 import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.CreateContact;
+import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.FindContact;
 import com.mynt.banking.user.Role;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
@@ -267,11 +268,9 @@ public class KYCService {
     public boolean createCurrencyCloudUser(JsonNode resultsResponce, String email){
         if(Objects.equals(resultsResponce.get("status").asText(), "approved")){
 
+            if(!preChecks(email)){return false;}
+
             User user = userRepository.findByEmail(email).get();
-
-            if(!currencyCloudRepository.findByUsersId((long)user.getId()).isEmpty()){return false;}
-
-            // TODO: go to contacts find end point and use here to check for if contact is already taken
 
             CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
                     .accountName(user.getFirstname()+" "+user.getLastname())
@@ -308,6 +307,26 @@ public class KYCService {
 
         }
 
+        return true;
+    }
+
+    private boolean preChecks(String email){
+
+        User user = userRepository.findByEmail(email).get();
+
+        if(!currencyCloudRepository.findByUsersId((long)user.getId()).isEmpty()){return false;}
+
+        FindContact findContact = FindContact.builder()
+                .emailAddress(email)
+                .build();
+
+        int statusCode = contactsService.findContact(findContact).block().getStatusCode().value();
+        if (statusCode == 200) {
+            String numEntries = contactsService.findContact(findContact).block().getBody().get("pagination").get("total_entries").asText();
+            if (numEntries.equals("1")) {
+                return false;
+            }
+        }
         return true;
     }
 
