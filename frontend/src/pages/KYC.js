@@ -13,7 +13,7 @@ function kyc(){
     const navigate = useNavigate();
 
     const [apiResponse, setApiResponse] = useState();  
-    
+
     useEffect(()=>{
         api();
     },[]);
@@ -23,14 +23,8 @@ function kyc(){
         const h1 = document.getElementById("responce");
         
         const email = Cookies.get("email");
-        console.log("email to send: "+email);
+
         // const email =  document.cookie;
-
-        console.log("document.cookie: "+Cookies.get("email")); 
-        Cookies.set("email","");
-
-        console.log("\n\n\n\n\nvalidateKYCAPI: "+validateKYCAPI);
-        console.log("email: "+email)
 
         try{
             const response = await axios({
@@ -41,8 +35,12 @@ function kyc(){
                   }
             });
             setApiResponse(response);
-            
+            console.log("\n\n\n\n\nvalidateKYCAPI: "+validateKYCAPI);
+            console.log("document.cookie: "+Cookies.get("email")); 
+            console.log("email: "+email) 
             console.log(response);
+
+            Cookies.set("email","");
 
             let data = JSON.parse(response.data.data);
             h1.innerText = `Your account is has been ${data.status} by our team.`; // JSON.stringify(, null, 4) ;

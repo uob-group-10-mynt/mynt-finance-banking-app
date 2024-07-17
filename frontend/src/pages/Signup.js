@@ -110,7 +110,7 @@ function Signup() {
         {
             label: "Date of Birth",
             testId: "DOBInput",
-            placeholder: "16-08-1996",
+            placeholder: "16 08 1996",
             type: "dob",
             value: dob,
             required: true,

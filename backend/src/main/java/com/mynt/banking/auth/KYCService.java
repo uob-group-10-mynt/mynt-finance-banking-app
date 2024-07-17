@@ -32,6 +32,9 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 @Service
@@ -269,51 +272,90 @@ public class KYCService {
     }
 
     public boolean createCurrencyCloudUser(JsonNode resultsResponce, String email){
-        if(Objects.equals(resultsResponce.get("status").asText(), "approved")){
 
-            if(!preChecks(email)){return false;}
+        if(!preChecks(email, resultsResponce)){return false;}
 
-            User user = userRepository.findByEmail(email).get();
+        ResponseEntity<JsonNode> account  = createAccount(email);;
 
-            CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
-                    .accountName(user.getFirstname()+" "+user.getLastname())
-                    .legalEntityType("individual")
-                    .street(user.getAddress())
-                    .city(user.getAddress())
-                    .country("gb") // TODO update database to modle addresses better
-                    .build();
-            ResponseEntity<JsonNode> account  = accountService.createAccount(createAccountRequest).block();
+        if(!account.getStatusCode().is2xxSuccessful()){ return false;}
 
-            if(account.getStatusCode().is2xxSuccessful()){
-                CreateContact contact = CreateContact.builder()
-                        .accountId(account.getBody().get("id").asText())
-                        .firstName(user.getFirstname())
-                        .lastName(user.getLastname())
-                        .emailAddress(user.getEmail())
-                        .phoneNumber(user.getPhone_number())
-                        .status("enabled")
-                        .dateOfBirth(user.getDob())
-                        .build();
-                ResponseEntity<JsonNode> contactResponce = contactsService.createContact(contact).block();
+        ResponseEntity<JsonNode> contactResponce = createContact(email, account);
 
-                String contactUuid = contactResponce.getBody().get("id").asText();
+        if(!contactResponce.getStatusCode().is2xxSuccessful()){return false;}
 
-                Long userID = (long) userRepository.findByEmail(email).get().getId();
+        String contactUuid = contactResponce.getBody().get("id").asText();
 
-                CurrencyCloudEntity currencyCloudEntity = new CurrencyCloudEntity();
-                currencyCloudEntity.setUuid(contactUuid);
-                currencyCloudEntity.setUsersId(userID);
-                currencyCloudRepository.save(currencyCloudEntity);
-
-
-            }
-
-        }
+        saveToCurrencyCloudRepository(email, contactUuid);
 
         return true;
     }
 
-    private boolean preChecks(String email){
+    private void saveToCurrencyCloudRepository(String email, String contactUuid){
+
+        Long userID = (long) userRepository.findByEmail(email).get().getId();
+
+        CurrencyCloudEntity currencyCloudEntity = new CurrencyCloudEntity();
+        currencyCloudEntity.setUuid(contactUuid);
+        currencyCloudEntity.setUsersId(userID);
+        currencyCloudRepository.save(currencyCloudEntity);
+    }
+
+    private ResponseEntity<JsonNode> createAccount(String email){
+
+        User user = userRepository.findByEmail(email).get();
+
+        CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
+                .accountName(user.getFirstname()+" "+user.getLastname())
+                .legalEntityType("individual")
+                .street(user.getAddress())
+                .city(user.getAddress())
+                .country("gb") // TODO update database to modle addresses better
+                .build();
+        return accountService.createAccount(createAccountRequest).block();
+    }
+
+    private ResponseEntity<JsonNode> createContact(String email, ResponseEntity<JsonNode> account){
+
+        User user = userRepository.findByEmail(email).get();
+
+        String date = formatDate(user.getDob());
+
+        CreateContact contact = CreateContact.builder()
+                .accountId(account.getBody().get("id").asText())
+                .firstName(user.getFirstname())
+                .lastName(user.getLastname())
+                .emailAddress(user.getEmail())
+                .phoneNumber(user.getPhone_number())
+                .status("enabled")
+                .dateOfBirth(date)
+                .build();
+        return contactsService.createContact(contact).block();
+    }
+
+    private String formatDate(String inputDate) {
+
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd MM yyyy");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        String outputDate = null;
+        try {
+            // Parse the input date
+            Date date = inputFormat.parse(inputDate);
+
+            // Format the date to the desired output format
+            outputDate = outputFormat.format(date);
+            return outputDate;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return outputDate;
+    }
+
+    private boolean preChecks(String email, JsonNode resultsResponce){
+
+        if(!Objects.equals(resultsResponce.get("status").asText(), "approved")){
+            return false;
+        }
 
         User user = userRepository.findByEmail(email).get();
 
