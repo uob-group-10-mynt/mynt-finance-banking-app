@@ -8,14 +8,22 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mynt.banking.auth.requests.SignUpRequest;
 import com.mynt.banking.auth.requests.ValidateKycRequest;
 import com.mynt.banking.auth.responses.SDKResponse;
+import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
+import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
+import com.mynt.banking.currency_cloud.manage.accounts.AccountService;
+import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountRequest;
+import com.mynt.banking.currency_cloud.manage.contacts.ContactsService;
+import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.CreateContact;
 import com.mynt.banking.user.Role;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,6 +31,7 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +56,15 @@ public class KYCService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private ContactsService contactsService;
+
+    @Autowired
+    private CurrencyCloudRepository currencyCloudRepository;
 
     public SDKResponse getOnfidoSDK(SignUpRequest request) {
 
@@ -193,36 +211,104 @@ public class KYCService {
         return createApplicant.body();
     }
 
-    public SDKResponse validateKyc(ValidateKycRequest request ) throws IOException, InterruptedException, URISyntaxException {
+    public SDKResponse validateKyc(ValidateKycRequest request) {
 
         SDKResponse sdkResponceDTO = new SDKResponse();
 
         String apiToken = "Token token="+onfido;
 
+        if(userRepository.findByEmail(request.getEmail()).isEmpty()){
+            sdkResponceDTO.setStage("error with email");
+            sdkResponceDTO.setData("error invalid email please check and try again");
+            return sdkResponceDTO;
+        }
+
         User user = userRepository.findByEmail(request.getEmail()).get();
         KycEntity kyc = kycRepository.findByUser(user);
 
-        HttpRequest requestResults  = (HttpRequest) HttpRequest.newBuilder()
-                .uri(new URI("https://api.eu.onfido.com/v3.6/workflow_runs/"+kyc.getWorkFlowRunId()))
-                .header("Authorization",apiToken)
-                .GET()
-                .build();
+        try {
 
-        HttpClient httpClient = HttpClient.newHttpClient();
-        HttpResponse<String> resultsResponse = httpClient.send(requestResults, HttpResponse.BodyHandlers.ofString());
+            HttpRequest requestResults  = (HttpRequest) HttpRequest.newBuilder()
+                    .uri(new URI("https://api.eu.onfido.com/v3.6/workflow_runs/"+kyc.getWorkFlowRunId()))
+                    .header("Authorization",apiToken)
+                    .GET()
+                    .build();
 
-        ObjectMapper objectMapper = new ObjectMapper();
+            HttpClient httpClient = HttpClient.newHttpClient();
+            HttpResponse<String> resultsResponse = httpClient.send(requestResults, HttpResponse.BodyHandlers.ofString());
 
-        JsonNode resultsResponce = objectMapper.readTree(resultsResponse.body());
+            ObjectMapper objectMapper = new ObjectMapper();
 
-        kycRepository.updateStatus(resultsResponce.get("status").asText(),kyc.getId());
+            if(resultsResponse.statusCode() == 200){
 
-        //TODO: check resultsResponse.statusCode()
-        // if 200 create account and then create contact or check it has been done correctaly
+                JsonNode resultsResponce = objectMapper.readTree(resultsResponse.body());
 
-        String responceStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(resultsResponce);
-        sdkResponceDTO.setData(responceStr);
+                kycRepository.updateStatus(resultsResponce.get("status").asText(),kyc.getId());
+
+                String responceStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(resultsResponce);
+                sdkResponceDTO.setData(responceStr);
+
+                boolean hasAccount = createCurrencyCloudUser(resultsResponce, request.getEmail());
+                if(!hasAccount){
+                    sdkResponceDTO.setStage("approved");
+                    sdkResponceDTO.setData("user already has an account");
+                    return sdkResponceDTO;
+                }
+            }
+
+        } catch (URISyntaxException | IOException | InterruptedException ignored){
+            System.err.println("Error: "+ignored.getMessage());
+            System.err.println("Error: "+"check to see if email is already within use");
+        }
+        sdkResponceDTO.setStage("approved");
         return sdkResponceDTO;
+    }
+
+    public boolean createCurrencyCloudUser(JsonNode resultsResponce, String email){
+        if(Objects.equals(resultsResponce.get("status").asText(), "approved")){
+
+            User user = userRepository.findByEmail(email).get();
+
+            if(!currencyCloudRepository.findByUsersId((long)user.getId()).isEmpty()){return false;}
+
+            // TODO: go to contacts find end point and use here to check for if contact is already taken
+
+            CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
+                    .accountName(user.getFirstname()+" "+user.getLastname())
+                    .legalEntityType("individual")
+                    .street(user.getAddress())
+                    .city(user.getAddress())
+                    .country("gb") // TODO update database to modle addresses better
+                    .build();
+            ResponseEntity<JsonNode> account  = accountService.createAccount(createAccountRequest).block();
+
+            if(account.getStatusCode().is2xxSuccessful()){
+                CreateContact contact = CreateContact.builder()
+                        .accountId(account.getBody().get("id").asText())
+                        .firstName(user.getFirstname())
+                        .lastName(user.getLastname())
+                        .emailAddress(user.getEmail())
+                        .phoneNumber(user.getPhone_number())
+                        .status("enabled")
+                        .dateOfBirth(user.getDob())
+                        .build();
+                ResponseEntity<JsonNode> contactResponce = contactsService.createContact(contact).block();
+
+                String contactUuid = contactResponce.getBody().get("id").asText();
+
+                Long userID = (long) userRepository.findByEmail(email).get().getId();
+
+                CurrencyCloudEntity currencyCloudEntity = new CurrencyCloudEntity();
+                currencyCloudEntity.setUuid(contactUuid);
+                currencyCloudEntity.setUsersId(userID);
+                currencyCloudRepository.save(currencyCloudEntity);
+
+
+            }
+
+        }
+
+        return true;
     }
 
 

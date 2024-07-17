@@ -78,7 +78,7 @@ public class CreateContact {
             \tnot_enabled
             """, example = " ")
     @Builder.Default
-    private String status = "";
+    private String status = "enabled";
 
     @JsonProperty("locale")
     @Size(max = 5)
