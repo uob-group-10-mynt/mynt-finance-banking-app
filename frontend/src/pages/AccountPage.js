@@ -6,6 +6,7 @@ import CustomButton from '../components/forms/CustomButton';
 import InfoBlock from '../components/InfoBlock';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box } from '@chakra-ui/react';
+import CustomBox from '../components/CustomBox';
 
 const accountDetail = {
   'id': '1',
@@ -22,12 +23,16 @@ const fetchTransactionData = [
       'id': '1',
       'payee_bank': 'mynt',
       'amount': '100',
+      'currency': '$',
+      'flow': '+',
       'created_at': '2022-09-01',
   },
   {
       'id': '2',
       'payee_bank': 'others',
       'amount': '100',
+      'currency': '₩',
+      'flow': '-',
       'created_at': '2022-09-01',
   },
 ];
@@ -45,12 +50,12 @@ function AccountPage() {
         render: () => {
             return (
                 <>
-                    <Icon bank={data.payee_bank} />
+                    <Icon name={data.payee_bank} />
                     <InfoBlock>
                         <CustomText gray small>{data.payee_bank}</CustomText>
                         <CustomText gray small>{data.created_at}</CustomText>
                     </InfoBlock>
-                    <CustomText black big>{accountDetail.currencySymbol}{data.amount}</CustomText>
+                    <CustomText black big>{data.flow}{accountDetail.currencySymbol}{parseFloat(data.amount).toFixed(2)}</CustomText>
                 </>
             );
         },
@@ -62,15 +67,7 @@ function AccountPage() {
   });
 
   const accountInfoBlock = (
-    <Box
-      display='flex' 
-      flexDirection='column'
-      gap='0.2em'
-      borderRadius='lg' 
-      width='65%'
-      padding='1em'
-      backgroundColor='white'
-    >
+    <CustomBox gap='0.2em'>
       <InfoBlock>
         <CustomText gray small style={{ textDecoration: 'underline' }}>{accountDetail.label}</CustomText>
         <CustomText gray xsmall>{accountDetail.account_reference}</CustomText>
@@ -85,7 +82,7 @@ function AccountPage() {
         <CustomButton medium style={{ flex: 1, marginRight: '0.5em' }}>Disconnect</CustomButton>
         <CustomButton medium style={{ flex: 1, marginRight: '0.5em' }}>Send</CustomButton>
       </Box>
-    </Box>
+    </CustomBox>
   );
 
   return (
