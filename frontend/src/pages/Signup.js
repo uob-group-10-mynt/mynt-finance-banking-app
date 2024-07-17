@@ -1,11 +1,11 @@
 import React from 'react';
 import {useEffect, useState, useRef} from 'react';
-import {Box} from "@chakra-ui/react";
 import axios from 'axios';
 import {Onfido} from 'onfido-sdk-ui';
 import {onfidoIdetityCheckAPI} from '../utils/APIEndpoints';
 import PageHeader from "../components/forms/PageHeader";
 import CustomForm from "../components/forms/CustomForm";
+import Page from "../components/Page";
 
 function Signup() {
     const [email, setEmail] = useState('');
@@ -151,12 +151,12 @@ function Signup() {
     ];
 
     return (
-        <Box className="page">
+        <Page>
             <PageHeader>Sign Up</PageHeader>
             <CustomForm onSubmit={handleSubmit} buttonText="Sign Up" testId="submitButton">
                 {fieldsInputList}
             </CustomForm>
-        </Box>
+        </Page>
     );
 }
 

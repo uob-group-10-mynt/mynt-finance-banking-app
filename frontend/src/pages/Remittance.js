@@ -1,7 +1,7 @@
 import {useState} from 'react';
-import {Box} from '@chakra-ui/react';
 import PageHeader from "../components/forms/PageHeader";
 import CustomForm from "../components/forms/CustomForm";
+import Page from "../components/Page";
 
 function Remittance() {
     // State for form fields
@@ -51,12 +51,12 @@ function Remittance() {
     };
 
     return (
-        <Box className="page">
+        <Page>
             <PageHeader>Transfer</PageHeader>
             <CustomForm onSubmit={handleFormSubmit} buttonText="Send Money" testId="submitTransfer">
                 {remittanceInputList}
             </CustomForm>
-        </Box>
+        </Page>
     );
 }
 

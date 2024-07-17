@@ -1,10 +1,10 @@
 import {useState, useContext} from "react";
-import {Box} from "@chakra-ui/react";
 import {LoggedInContext} from "../App";
 import PageHeader from "../components/forms/PageHeader";
 import {useNavigate} from "react-router-dom";
 import {authenticateAPI} from "../utils/APIEndpoints";
 import CustomForm from "../components/forms/CustomForm";
+import Page from "../components/Page";
 
 function Login() {
     const [loggedIn, setLoggedIn] = useContext(LoggedInContext)
@@ -65,12 +65,12 @@ function Login() {
     ]
 
     return (
-        <Box className="page">
+        <Page>
             <PageHeader>Login</PageHeader>
             <CustomForm onSubmit={handleSubmit} buttonText="Sign In" testId="submitButton">
                 {loginFieldsInputList}
             </CustomForm>
-        </Box>
+        </Page>
     );
 }
 
