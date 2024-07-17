@@ -39,7 +39,7 @@ export default function Home() {
             render: () => {
                 return (
                     <>
-                        <Icon bank={data.bank} />
+                        <Icon name={data.bank} />
                         <InfoBlock>
                             <CustomText gray small>{data.label}</CustomText>
                             <CustomText black big>{data.currencySymbol}{data.balance}</CustomText>
