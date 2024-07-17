@@ -39,7 +39,7 @@ public class ContactsService {
     public Mono<ResponseEntity<JsonNode>> findContact(FindContact requestBody) {
         return webClient
                 .post()
-                .uri("/v2/contacts/find")
+                .uri("/v2/contacts/create")
                 .header("X-Auth-Token", authenticationService.getAuthToken())
                 .bodyValue(requestBody)
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
