@@ -13,7 +13,7 @@ const textMapper = {
 
   xsmall: {
     as: 'b',
-    fontSize: { base: '7.5px', md: '0.65em', lg: '0.85em' }
+    fontSize: { base: '5.5px', md: '0.65em', lg: '0.85em' }
   }
 }
 
