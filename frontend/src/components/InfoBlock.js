@@ -4,7 +4,7 @@ function InfoBlock({ children }) {
   const [ title , content ] = children;
 
   return (
-    <Box>
+    <Box width='45%'>
       <Box>{title}</Box>
       <Box>{content}</Box>
     </Box>

@@ -4,27 +4,32 @@ import Icon from "../components/Icon";
 import Container from "../components/Container";
 import InfoBlock from "../components/InfoBlock";
 import { Box } from "@chakra-ui/react";
+import { useNavigate } from 'react-router-dom';
 
 const fetchAccountData = [
     {
         'id': '1',
+        'account_reference': '66f51c98-1ef8-4e48-97de-aac0353ba2b4',
         'bank': 'mynt',
         'label': 'Mynt Dollar Account',
-        'amount': '100',
+        'balance': '100',
         'currency': 'dollar',
         'currencySymbol': '$'
     },
     {
         'id': '2',
+        'account_reference': '66f51c98-1ef8-4e48-97de-aac0353ba2b4',
         'bank': 'others',
         'label': 'Mynt Pound Account',
-        'amount': '100',
+        'balance': '100',
         'currency': 'pound',
         'currencySymbol': '£'
     },
 ];
 
 export default function Home() {
+    const navigate = useNavigate(); 
+
     const accountKeyFn = (info) => info.id;
     const conversionKeyFn = (info) => info.id;
 
@@ -34,10 +39,10 @@ export default function Home() {
             render: () => {
                 return (
                     <>
-                        <Icon bank={data.bank} />
+                        <Icon name={data.bank} />
                         <InfoBlock>
                             <CustomText gray small>{data.label}</CustomText>
-                            <CustomText black big>{data.currencySymbol}{data.amount}</CustomText>
+                            <CustomText black big>{data.currencySymbol}{data.balance}</CustomText>
                         </InfoBlock>
                         <CustomButton side>Send</CustomButton>
                         
@@ -46,12 +51,8 @@ export default function Home() {
             },
 
             onClick: () => {
-                console.log('CLICKED');
+                navigate('/accounts/' + data.id);
             },
-
-            onMouseEnter: () => {
-                console.log('ENTERED');
-            }
         }
     });
 

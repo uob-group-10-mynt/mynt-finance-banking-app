@@ -7,10 +7,11 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 module.exports = {
-    entry: './src/index.js',
+    entry: path.resolve(__dirname, 'src','index.js'),
     output: {
-        path: path.resolve(__dirname, 'webApp'),
-        filename: 'bundle.js'
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'bundle.js',
+        publicPath: '/'
     },
     module: {
         rules: [

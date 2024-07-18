@@ -18,6 +18,7 @@ const Kyc = lazy(() => import('../pages/KYC'));
 const DashBoard = lazy(() => import('../pages/DashboardPage'));
 const NotFound404 = lazy(() => import('../pages/ErrorPage'));
 const Payee = lazy(() => import('../pages/Payee'));
+const Account = lazy(() => import('../pages/AccountPage'));
 
 // Layouts
 const RootLayout = lazy(() => import('../layouts/RootLayout'))
@@ -31,6 +32,7 @@ const AppRouter = createBrowserRouter(
           <Route path='signup' element={lazyLoad(CreateUser, <Loading />)}/>
           <Route path='KYC' element={lazyLoad(Kyc, <Loading />)}/>
           <Route path='dashboard' element={lazyLoad(DashBoard, <Loading />)}></Route>
+          <Route path='accounts/:id' element={lazyLoad(Account, <Loading />)}></Route>
           <Route path={'*'} element={lazyLoad(NotFound404, <Loading />)}></Route>
           <Route path={'payee'} element={lazyLoad(Payee, <Loading />)}></Route>
       </Route>
