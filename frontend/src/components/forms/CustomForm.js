@@ -1,9 +1,9 @@
 import {Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
 
-function CustomForm({children, onSubmit, buttonText, testId}) {
+function CustomForm({children, onSubmit, buttonText, testId, errorOccurred}) {
     return (
         <form onSubmit={onSubmit} style={{display: 'flex', flexDirection: 'column'}}>
-            {transformInputs({children})}
+            {transformInputs({children, errorOccurred})}
             <Button margin='2' type="submit" data-cy={testId}>
                 {buttonText}
             </Button>
@@ -11,11 +11,11 @@ function CustomForm({children, onSubmit, buttonText, testId}) {
     );
 }
 
-function transformInputs({children}) {
+function transformInputs({children, errorOccurred}) {
     return (
         children.map((inputList) => (
             <div key={inputList.label}>
-                <FormControl isRequired={inputList.required} margin='0.5em'>
+                <FormControl isRequired={inputList.required} margin='0.5em' isInvalid={errorOccurred}>
                     <FormLabel>{inputList.label}</FormLabel>
                     <Input
                         margin='0.5em'
@@ -26,8 +26,14 @@ function transformInputs({children}) {
                         required={inputList.required}
                         data-cy={inputList.testId}
                     />
-                    <FormErrorMessage data-cy="errorMessage">{inputList.errorMsg}</FormErrorMessage>
-                    {inputList.helperText && <FormHelperText>{inputList.helperText}</FormHelperText>}
+                    {
+                        !errorOccurred ? (
+                            <FormHelperText>{inputList.helperText}</FormHelperText>
+                        ) : (
+                            <FormErrorMessage data-cy="errorMessage">{inputList.errorMsg}</FormErrorMessage>
+                        )
+                    }
+                    {/* {inputList.helperText && <FormHelperText>{inputList.helperText}</FormHelperText>} */}
                 </FormControl>
             </div>
         ))

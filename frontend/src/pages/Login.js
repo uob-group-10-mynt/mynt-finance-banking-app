@@ -11,6 +11,7 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [invalidCredentialsMsg, setInvalidCredentialsMsg] = useState('');
+    const [errorOccurred, setErrorOccurred] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -27,9 +28,10 @@ function Login() {
             setPassword('');
             if (!response.ok) {
                 setInvalidCredentialsMsg('incorrect email or password')
+                setErrorOccurred(true)
                 throw new Error('Authentication failed');
             }
-
+            setErrorOccurred(false)
             const data = await response.json()
             sessionStorage.setItem('access', data.access_token)
             sessionStorage.setItem('refresh', data.refresh_token)
@@ -67,7 +69,7 @@ function Login() {
     return (
         <Box className="page">
             <PageHeader>Login</PageHeader>
-            <CustomForm onSubmit={handleSubmit} buttonText="Sign In" testId="submitButton">
+            <CustomForm onSubmit={handleSubmit} buttonText="Sign In" testId="submitButton" errorOccurred={errorOccurred}>
                 {loginFieldsInputList}
             </CustomForm>
         </Box>
