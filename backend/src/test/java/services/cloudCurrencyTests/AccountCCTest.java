@@ -1,4 +1,4 @@
-package services;
+package services.cloudCurrencyTests;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,10 +36,10 @@ public class AccountCCTest {
                 .spreadTable("")
                 .identificationType("none")
                 .identificationValue("")
-                .apiTrading(true)
-                .onlineTrading(true)
-                .phoneTrading(true)
-                .termsAndConditionsAccepted(true)
+                .apiTrading(null)
+                .onlineTrading(null)
+                .phoneTrading(null)
+                .termsAndConditionsAccepted(null)
                 .build();
 
         ResponseEntity<JsonNode> result = accountService.createAccount(requestBody).block();
