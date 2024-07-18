@@ -1,7 +1,5 @@
 import {useState} from 'react';
-import PageHeader from "../components/forms/PageHeader";
-import CustomForm from "../components/forms/CustomForm";
-import Page from "../components/Page";
+import CustomForm from "../../components/forms/CustomForm";
 
 function Remittance() {
     // State for form fields
@@ -51,12 +49,9 @@ function Remittance() {
     };
 
     return (
-        <Page>
-            <PageHeader>Transfer</PageHeader>
-            <CustomForm onSubmit={handleFormSubmit} buttonText="Send Money" testId="submitTransfer">
-                {remittanceInputList}
-            </CustomForm>
-        </Page>
+        <CustomForm onSubmit={handleFormSubmit} buttonText="Send Money" testId="submitTransfer">
+            {remittanceInputList}
+        </CustomForm>
     );
 }
 

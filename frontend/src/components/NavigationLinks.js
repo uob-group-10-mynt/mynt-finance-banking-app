@@ -4,7 +4,7 @@ import {Link} from "@chakra-ui/react";
 
 const pages = [
     {href: "/", text: "Home"},
-    {href: "/remittance", text: "Transfer", testId: "RemittanceLink"},
+    {href: "/remittance/payee", text: "Transfer", testId: "RemittanceLink"},
     {href: "/signup", text: "Sign Up", testId: "SignUpLink"},
     // Add more links as needed
 ];
