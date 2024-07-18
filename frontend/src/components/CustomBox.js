@@ -9,7 +9,7 @@ function CustomBox({
       display='flex' 
       flexDirection='column'
       borderRadius='lg' 
-      width='75%'
+      width='85%'
       padding='1em'
       backgroundColor='white'
       {...rest}

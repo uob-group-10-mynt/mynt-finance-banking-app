@@ -24,7 +24,7 @@ const buttonStyleMapper = {
     variant: 'solid',
     color: 'black',
     colorScheme: 'gray',
-    width: '10%',
+    width: '15%',
     padding: { base: '0.25em', md: '0.375em', lg: '0.5em' }, 
     height: { base: '1.75em', md: '2.125em', lg: '2.5em' },  
   },
