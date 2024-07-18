@@ -36,7 +36,6 @@ function kyc(){
             });
             setApiResponse(response);
             console.log("\n\n\n\n\nvalidateKYCAPI: "+validateKYCAPI);
-            console.log("document.cookie: "+Cookies.get("email")); 
             console.log("email: "+email) 
             console.log(response);
 

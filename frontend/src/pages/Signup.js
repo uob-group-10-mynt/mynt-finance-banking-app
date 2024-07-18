@@ -49,11 +49,17 @@ function Signup() {
 
     async function apiCalls() {
         try {
+
+            let dobTrim = dob.trim();
+            let splitString = dobTrim.split(" ");
+            let reverseString = splitString.reverse();
+            let newDob = reverseString.join("-");
+
             let response = await axios.post(onfidoIdetityCheckAPI, {
                 "email": email,
                 "firstname": firstName,
                 "lastname": surname,
-                "dob": dob,
+                "dob": newDob,
                 "address": address,
                 "phoneNumber": phoneNumber,
                 "password": password

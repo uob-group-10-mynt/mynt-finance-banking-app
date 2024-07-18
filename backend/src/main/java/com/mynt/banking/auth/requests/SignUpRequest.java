@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -31,8 +34,8 @@ public class SignUpRequest {
 
     @NotNull(message = "Date of Birth is required")
     @Schema(description = "DoB", example = "1066-8-16")
-    @Size(max = 100, message = "dob cannot be longer than 50 characters")
-    private String dob;
+    @DateTimeFormat(pattern = "dd MM yyyy")
+    private LocalDate dob;
 
     @NotNull(message = "Address is required")
     @Schema(description = "bristol", example = "Bristol")

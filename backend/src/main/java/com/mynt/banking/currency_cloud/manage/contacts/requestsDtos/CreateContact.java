@@ -9,6 +9,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -98,8 +101,8 @@ public class CreateContact {
     @Schema(description = """
             The contact's date of birth.
             ISO 8601 format YYYY-MM-DD.
-            Required if account type is individual.""", example = "1997-08-16")
+            Required if account type is individual.""", example = "2020-08-16")
     @Builder.Default
-    private String dateOfBirth = "1997-08-16";
+    private String dateOfBirth = "";
 
 }

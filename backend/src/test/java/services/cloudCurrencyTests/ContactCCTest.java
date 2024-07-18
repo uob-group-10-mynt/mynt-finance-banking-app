@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -72,7 +73,7 @@ public class ContactCCTest {
         assertEquals(result.getBody().get("last_name").asText(), contact.getLastName());
         assertEquals(result.getBody().get("email_address").asText(), contact.getEmailAddress());
         assertEquals(result.getBody().get("phone_number").asText(), contact.getPhoneNumber());
-        assertEquals(result.getBody().get("date_of_birth").asText(), contact.getDateOfBirth());
+        assertEquals(result.getBody().get("date_of_birth").asText(), contact.getDateOfBirth().toString());
 
     }
 
