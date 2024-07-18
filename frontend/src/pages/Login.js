@@ -10,7 +10,6 @@ function Login() {
     const [loggedIn, setLoggedIn] = useContext(LoggedInContext)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [invalidCredentialsMsg, setInvalidCredentialsMsg] = useState('');
     const [errorOccurred, setErrorOccurred] = useState('');
     const navigate = useNavigate();
 
@@ -27,7 +26,6 @@ function Login() {
             setEmail('');
             setPassword('');
             if (!response.ok) {
-                setInvalidCredentialsMsg('incorrect email or password')
                 setErrorOccurred(true)
                 throw new Error('Authentication failed');
             }
@@ -52,7 +50,8 @@ function Login() {
             value: email,
             required: true,
             onChange: (e) => setEmail(e.target.value),
-            errorMsg: "Incorrect email or password"
+            errorMsg: "Incorrect email or password",
+            helperText: "The email address associated with your account"
         },
         {
             label: "Password",
