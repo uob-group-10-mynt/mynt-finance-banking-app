@@ -50,16 +50,11 @@ function Signup() {
     async function apiCalls() {
         try {
 
-            let dobTrim = dob.trim();
-            let splitString = dobTrim.split(" ");
-            let reverseString = splitString.reverse();
-            let newDob = reverseString.join("-");
-
             let response = await axios.post(onfidoIdetityCheckAPI, {
                 "email": email,
                 "firstname": firstName,
                 "lastname": surname,
-                "dob": newDob,
+                "dob": dob,
                 "address": address,
                 "phoneNumber": phoneNumber,
                 "password": password
@@ -117,7 +112,7 @@ function Signup() {
             label: "Date of Birth",
             testId: "DOBInput",
             placeholder: "16 08 1996",
-            type: "dob",
+            type: "date",
             value: dob,
             required: true,
             onChange: (e) => setDob(e.target.value)
