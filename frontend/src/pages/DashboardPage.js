@@ -1,12 +1,16 @@
+import { Box } from '@chakra-ui/react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import useAxios from '../hooks/useAxios';
 import Container from '../components/Container';
 import Icon from '../components/Icon';
 import CustomText from '../components/CustomText';
 import InfoBlock from '../components/InfoBlock';
-import { Box } from '@chakra-ui/react';
+import ContainerRowBalanceWrapper from '../components/ContainerRowBalanceWrapper';
 import CustomBox from '../components/CustomBox';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import Calendar from '../components/calendar/Calendar';
+
 
 const MONTHS = {
   1 : 'JAN',
@@ -36,7 +40,7 @@ const fetchTransactionData = [
     'amount': '100',
     'currency': '$',
     'flow': '+',
-    'created_at': '2022-09-01',
+    'created_at': "2024-07-01T14:13:18+00:00",
   },
   {
     'id': '2',
@@ -44,7 +48,7 @@ const fetchTransactionData = [
     'amount': '100',
     'currency': '/=',
     'flow': '-',
-    'created_at': '2022-09-01',
+    'created_at': "2024-07-04T14:13:18+00:00",
   },
   {
     'id': '3',
@@ -52,7 +56,7 @@ const fetchTransactionData = [
     'amount': '200',
     'currency': '/=',
     'flow': '-',
-    'created_at': '2022-09-02',
+    'created_at': "2024-07-13T14:13:18+00:00",
   },
   {
     'id': '4',
@@ -60,7 +64,7 @@ const fetchTransactionData = [
     'amount': '150',
     'currency': '/=',
     'flow': '-',
-    'created_at': '2022-09-03',
+    'created_at': "2024-07-13T14:13:18+00:00",
   },
   {
     'id': '5',
@@ -68,14 +72,38 @@ const fetchTransactionData = [
     'amount': '2605000.3',
     'currency': '£',
     'flow': '+',
-    'created_at': '2022-09-01',
+    'created_at': "2024-07-13T14:13:18+00:00",
   },
 ];
+
+function countTransactionsByDate(transactions) {
+  const transactionCounts = {};
+
+  transactions.forEach(transaction => {
+    const date = transaction.created_at.split('T')[0].split('-')[2];
+
+    const day = parseInt(date, 10);
+
+    if (transactionCounts[day]) {
+      transactionCounts[day]++;
+    } else {
+      transactionCounts[day] = 1;
+    }
+  });
+
+  return transactionCounts;
+}
+
 
 function DashboardPage() {
   const [ year, setYear ] = useState(new Date().getFullYear());
   const [ month, setMonth ] = useState(new Date().getMonth() + 1);
+  const [day, setDay] = useState(null);
   const navigate = useNavigate();
+
+  const handleCalendarDateClick = (e) => {
+    setDay(parseInt(e.target.innerText));
+  }
 
   const handleMonthLeftClick = () => {
     if (month === 1) {
@@ -84,6 +112,8 @@ function DashboardPage() {
     } else {
       setMonth(month - 1);
     }
+
+    setDay(null);
   }
 
   const handleMonthRightClick = () => {
@@ -93,6 +123,8 @@ function DashboardPage() {
     } else {
       setMonth(month + 1);
     }
+
+    setDay(null);
   }
   
   const transactionKeyFn = (info) => info.id; 
@@ -132,19 +164,11 @@ function DashboardPage() {
                         <CustomText gray small>{data.payee_bank}</CustomText>
                         <CustomText gray small>{data.created_at}</CustomText>
                     </InfoBlock>
-                    <Box minWidth='25%'>
-                      <CustomText 
-                        black 
-                        big 
-                        fontSize={{ 
-                          base: '0.8em', 
-                          md: '1.025em',    
-                          lg: '1.725em'      
-                        }}
-                      >
+                    <ContainerRowBalanceWrapper>
+                      <CustomText black big>
                         {data.flow}{data.currency}{parseFloat(data.amount).toFixed(2)}
                       </CustomText>
-                    </Box>
+                    </ContainerRowBalanceWrapper>
                 </>
             );
         },
@@ -182,7 +206,9 @@ function DashboardPage() {
         <CustomText small black>{year}</CustomText>
         {monthBlock}
       </CustomBox>
-      <CustomBox></CustomBox>
+      <CustomBox>
+        <Calendar year={year} month={month} data={countTransactionsByDate(transactionData)} onClick={handleCalendarDateClick} />
+      </CustomBox>
       <Container name='Summary' data={summaryData} keyFn={(info) => info.currency}></Container>
       <Container name='Transactions' data={transactionData} keyFn={transactionKeyFn} />
     </Box>
