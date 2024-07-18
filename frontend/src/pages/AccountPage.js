@@ -8,6 +8,7 @@ import CustomText from '../components/CustomText';
 import CustomButton from '../components/forms/CustomButton';
 import ContainerRowBalanceWrapper from '../components/ContainerRowBalanceWrapper';
 import InfoBlock from '../components/InfoBlock';
+import DateTimeDisplay from '../components/DateTimeDisplay';
 import CustomBox from '../components/CustomBox';
 
 
@@ -28,7 +29,7 @@ const fetchTransactionData = [
       'amount': '100',
       'currency': '$',
       'flow': '+',
-      'created_at': '2022-09-01',
+      'created_at': "2024-06-25T14:13:18+00:00",
   },
   {
       'id': '2',
@@ -36,7 +37,7 @@ const fetchTransactionData = [
       'amount': '10000.0',
       'currency': '₩',
       'flow': '-',
-      'created_at': '2022-09-01',
+      'created_at': "2024-06-25T14:13:18+00:00",
   },
 ];
 
@@ -55,8 +56,8 @@ function AccountPage() {
                 <>
                     <Icon name={data.payee_bank} />
                     <InfoBlock>
-                        <CustomText gray small>{data.payee_bank}</CustomText>
-                        <CustomText gray small>{data.created_at}</CustomText>
+                        <CustomText black small>{data.payee_bank}</CustomText>
+                        <DateTimeDisplay time={data.created_at}/>
                     </InfoBlock>
                     <ContainerRowBalanceWrapper>
                       <CustomText black big>{data.flow}{accountDetail.currencySymbol}{parseFloat(data.amount).toFixed(2)}</CustomText>

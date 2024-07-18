@@ -4,9 +4,13 @@ function InfoBlock({ children }) {
   const [ title , content ] = children;
 
   return (
-    <Box width='45%'>
-      <Box>{title}</Box>
-      <Box>{content}</Box>
+    <Box
+      display='flex'
+      flexDirection='column'
+      justifyContent='flex-start' 
+      width='45%'
+    >
+      {children}
     </Box>
   );
 }

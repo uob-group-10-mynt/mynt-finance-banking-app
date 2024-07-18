@@ -7,6 +7,7 @@ import Container from '../components/Container';
 import Icon from '../components/Icon';
 import CustomText from '../components/CustomText';
 import InfoBlock from '../components/InfoBlock';
+import DateTimeDisplay from '../components/DateTimeDisplay';
 import ContainerRowBalanceWrapper from '../components/ContainerRowBalanceWrapper';
 import CustomBox from '../components/CustomBox';
 import Calendar from '../components/calendar/Calendar';
@@ -161,8 +162,8 @@ function DashboardPage() {
                 <>
                     <Icon name={data.payee_bank} />
                     <InfoBlock>
-                        <CustomText gray small>{data.payee_bank}</CustomText>
-                        <CustomText gray small>{data.created_at}</CustomText>
+                        <CustomText black small>{data.payee_bank}</CustomText>
+                        <DateTimeDisplay time={data.created_at}/>
                     </InfoBlock>
                     <ContainerRowBalanceWrapper>
                       <CustomText black big>
