@@ -1,10 +1,12 @@
 import React from 'react';
 import TabBar from "../../components/TabBar";
 import CustomHeading from "../../components/CustomHeading";
+import AddPayeePanel from "./AddPayeePanel";
 
 function Payee() {
-    const tabs = ['Recent payees', 'My payees', 'New payees']
-    const panels = ['a', 'b', 'c']
+    const tabs = ['Recent payees', 'My payees', 'New payee']
+
+    const panels = ['a', 'b', <AddPayeePanel/>];
 
     return (
         <>

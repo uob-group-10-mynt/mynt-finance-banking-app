@@ -75,10 +75,10 @@ function Signup() {
         setiframe(urlink);
     }
 
-    const fieldsInputList = [
+    const signupInputFields = [
         {
             label: "Email",
-            testId: "emailInput",
+            id: "emailInput",
             placeholder: "james@jameslove.com",
             type: "email",
             value: email,
@@ -87,7 +87,7 @@ function Signup() {
         },
         {
             label: "First Name",
-            testId: "firstNameInput",
+            id: "firstNameInput",
             placeholder: "James",
             type: "firstName",
             value: firstName,
@@ -96,7 +96,7 @@ function Signup() {
         },
         {
             label: "Surname",
-            testId: "surnameInput",
+            id: "surnameInput",
             placeholder: "Love",
             type: "surname",
             value: surname,
@@ -105,7 +105,7 @@ function Signup() {
         },
         {
             label: "Date of Birth",
-            testId: "DOBInput",
+            id: "DOBInput",
             placeholder: "16-08-1996",
             type: "dob",
             value: dob,
@@ -114,7 +114,7 @@ function Signup() {
         },
         {
             label: "Address",
-            testId: "AddressInput",
+            id: "AddressInput",
             placeholder: "BS8 1HB",
             type: "address",
             value: address,
@@ -123,7 +123,7 @@ function Signup() {
         },
         {
             label: "Phone Number",
-            testId: "PhoneNumberInput",
+            id: "PhoneNumberInput",
             placeholder: "+44 7824792473",
             type: "phoneNumber",
             value: phoneNumber,
@@ -132,7 +132,7 @@ function Signup() {
         },
         {
             label: "Password",
-            testId: "passwordInput",
+            id: "passwordInput",
             placeholder: "*******",
             type: "password",
             value: password,
@@ -141,7 +141,7 @@ function Signup() {
         },
         {
             label: "Confirm Password",
-            testId: "confirmPasswordInput",
+            id: "confirmPasswordInput",
             placeholder: "*******",
             type: "password",
             value: confirmPassword,
@@ -153,8 +153,8 @@ function Signup() {
     return (
         <Page>
             <PageHeader>Sign Up</PageHeader>
-            <CustomForm onSubmit={handleSubmit} buttonText="Sign Up" testId="submitButton">
-                {fieldsInputList}
+            <CustomForm onSubmit={handleSubmit} buttonText="Sign Up" buttonId="submitButton">
+                {signupInputFields}
             </CustomForm>
         </Page>
     );

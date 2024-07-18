@@ -41,10 +41,10 @@ function Login() {
         }
     }
 
-    const loginFieldsInputList = [
+    const loginInputFields = [
         {
             label: "Email",
-            testId: "emailInput",
+            id: "emailInput",
             placeholder: "hello@email.com",
             type: "email",
             value: email,
@@ -54,7 +54,7 @@ function Login() {
         },
         {
             label: "Password",
-            testId: "passwordInput",
+            id: "passwordInput",
             placeholder: "*******",
             type: "password",
             value: password,
@@ -67,8 +67,8 @@ function Login() {
     return (
         <Page>
             <PageHeader>Login</PageHeader>
-            <CustomForm onSubmit={handleSubmit} buttonText="Sign In" testId="submitButton">
-                {loginFieldsInputList}
+            <CustomForm onSubmit={handleSubmit} buttonText="Sign In" buttonId="submitButton">
+                {loginInputFields}
             </CustomForm>
         </Page>
     );

@@ -7,10 +7,10 @@ function Remittance() {
     const [recipientName, setRecipientName] = useState('');
     const [amount, setAmount] = useState('');
     const availableBalance = 1000; // To be replaced with logic to fetch balance dynamically from an API
-    const remittanceInputList = [
+    const remittanceInputFields = [
         {
             label: "From:",
-            testId: "fromInput",
+            id: "fromInput",
             placeholder: "Payer's name",
             type: "text",
             required: true,
@@ -19,7 +19,7 @@ function Remittance() {
         },
         {
             label: "To:",
-            testId: "toInput",
+            id: "toInput",
             placeholder: "Payee's name",
             type: "text",
             required: true,
@@ -28,7 +28,7 @@ function Remittance() {
         },
         {
             label: "Amount:",
-            testId: "amountInput",
+            id: "amountInput",
             placeholder: 0,
             type: "number",
             required: true,
@@ -49,8 +49,8 @@ function Remittance() {
     };
 
     return (
-        <CustomForm onSubmit={handleFormSubmit} buttonText="Send Money" testId="submitTransfer">
-            {remittanceInputList}
+        <CustomForm onSubmit={handleFormSubmit} buttonText="Send Money" buttonId="submitTransfer">
+            {remittanceInputFields}
         </CustomForm>
     );
 }
