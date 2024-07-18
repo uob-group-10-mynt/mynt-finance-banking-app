@@ -11,7 +11,8 @@
     "devReact": "webpack server --mode development",
     "packageMobile": "webpack --mode production && npx cap sync",
     "cy:open": "cypress open",
-    "e2e:chrome": "cypress run --browser chrome --headed"
+    "e2e:chrome": "cypress run --browser chrome --headed --spec './cypress/e2e/*.cy.js'",
+    "frontend:chrome": "cypress run --browser chrome --headed --spec './cypress/frontendOnly/*.cy.js'"
   },
   "author": "Group10",
   "license": "ISC",
@@ -55,7 +56,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
     "@electron-forge/plugin-fuses": "^7.4.0",
     "@electron/fuses": "^1.8.0",
-    "cypress": "^13.12.0",
+    "cypress": "^13.13.1",
     "electron": "^30.1.0",
     "eslint-config-react-app": "^7.0.1",
     "file-loader": "^6.2.0"
