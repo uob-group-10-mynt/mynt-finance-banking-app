@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Box } from "@chakra-ui/react";
 
-import useLongPress from '../hooks/useLongPress';
+import useLongPress from '../../hooks/useLongPress';
 
 
 function ContainerRow({ info }) {

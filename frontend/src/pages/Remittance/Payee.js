@@ -3,11 +3,11 @@ import {useNavigate} from 'react-router-dom';
 import TabBar from "../../components/TabBar";
 import CustomHeading from "../../components/CustomHeading";
 import AddPayeePanel from "./AddPayeePanel";
-import Icon from "../../components/Icon";
-import InfoBlock from "../../components/InfoBlock";
+import Icon from "../../components/util/Icon";
+import InfoBlock from "../../components/util/InfoBlock";
 import CustomText from "../../components/CustomText";
 import CustomButton from "../../components/forms/CustomButton";
-import Container from "../../components/Container";
+import Container from "../../components/container/Container";
 import {Box} from "@chakra-ui/react";
 
 function Payee() {

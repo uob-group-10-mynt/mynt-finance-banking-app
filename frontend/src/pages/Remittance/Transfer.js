@@ -1,9 +1,9 @@
-import Icon from "../../components/Icon";
-import InfoBlock from "../../components/InfoBlock";
+import Icon from "../../components/util/Icon";
+import InfoBlock from "../../components/util/InfoBlock";
 import CustomText from "../../components/CustomText";
 import {useLocation, useNavigate} from "react-router-dom";
 import CustomHeading from "../../components/CustomHeading";
-import Container from "../../components/Container";
+import Container from "../../components/container/Container";
 import CustomButton from "../../components/forms/CustomButton";
 import {Box, useToast} from "@chakra-ui/react";
 

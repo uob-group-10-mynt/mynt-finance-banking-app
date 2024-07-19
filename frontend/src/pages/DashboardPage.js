@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 
 import useAxios from '../hooks/useAxios';
 import useFormatAmount from '../hooks/useFormatAmount';
-import Container from '../components/Container';
-import Icon from '../components/Icon';
+import Container from '../components/container/Container';
+import Icon from '../components/util/Icon';
 import CustomText from '../components/CustomText';
-import InfoBlock from '../components/InfoBlock';
-import DateTimeDisplay from '../components/DateTimeDisplay';
-import ContainerRowBalanceWrapper from '../components/ContainerRowBalanceWrapper';
-import CustomBox from '../components/CustomBox';
+import InfoBlock from '../components/util/InfoBlock';
+import DateTimeDisplay from '../components/util/DateTimeDisplay';
+import ContainerRowBalanceWrapper from '../components/container/ContainerRowBalanceWrapper';
+import CustomBox from '../components/util/CustomBox';
 import Calendar from '../components/calendar/Calendar';
 
 

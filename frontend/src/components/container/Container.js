@@ -1,6 +1,6 @@
 import ContainerRow from "./ContainerRow";
-import CustomBox from "./CustomBox";
-import CustomText from "./CustomText";
+import CustomBox from "../util/CustomBox";
+import CustomText from "../CustomText";
 
 function Container({
   name='',
