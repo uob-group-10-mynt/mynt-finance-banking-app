@@ -6,6 +6,7 @@ import Icon from "../../components/Icon";
 import InfoBlock from "../../components/InfoBlock";
 import CustomText from "../../components/CustomText";
 import CustomForm from "../../components/forms/CustomForm";
+import {Box} from "@chakra-ui/react";
 
 export default function Amount() {
     const navigate = useNavigate();
@@ -58,12 +59,19 @@ export default function Amount() {
     };
 
     return (
-        <>
+        <Box
+            display="flex"
+            flexDirection='column'
+            justifyContent="center"
+            alignItems="center"
+            gap='1.3em'
+            margin='auto'
+        >
             <CustomHeading>How much would you like to send to your payee?</CustomHeading>
             <Container name='Selected Payee' data={renderSelectedPayee} keyFn={(info) => info.id}/>
             <CustomForm onSubmit={handleAmountSubmit} buttonText="Confirm" buttonId="amountButton">
                 {amountInputFields}
             </CustomForm>
-        </>
+        </Box>
     );
 }

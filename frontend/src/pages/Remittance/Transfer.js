@@ -5,7 +5,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import CustomHeading from "../../components/CustomHeading";
 import Container from "../../components/Container";
 import CustomButton from "../../components/forms/CustomButton";
-import {useToast} from "@chakra-ui/react";
+import {Box, useToast} from "@chakra-ui/react";
 
 export default function Transfer() {
     const navigate = useNavigate();
@@ -46,10 +46,17 @@ export default function Transfer() {
     };
 
     return (
-        <>
+        <Box
+            display="flex"
+            flexDirection='column'
+            justifyContent="center"
+            alignItems="center"
+            gap='1.3em'
+            margin='auto'
+        >
             <CustomHeading>Confirm your payment details:</CustomHeading>
             <Container name='Selected Payee & Transfer Amount' data={renderSelectedPayee} keyFn={(info) => info.id}/>
             <CustomButton standard onClick={handleConfirm}>Confirm Payment</CustomButton>
-        </>
+        </Box>
     );
 }

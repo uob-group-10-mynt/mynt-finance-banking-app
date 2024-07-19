@@ -8,6 +8,7 @@ import InfoBlock from "../../components/InfoBlock";
 import CustomText from "../../components/CustomText";
 import CustomButton from "../../components/forms/CustomButton";
 import Container from "../../components/Container";
+import {Box} from "@chakra-ui/react";
 
 function Payee() {
     const tabs = ['Recent payees', 'My payees', 'New payee']
@@ -63,7 +64,16 @@ function MyPayeesPanel() {
     });
 
     return (
-        <Container name='Payees' data={renderPayees} keyFn={(info) => info.id}/>
+        <Box
+            display="flex"
+            flexDirection='column'
+            justifyContent="center"
+            alignItems="center"
+            gap='1.3em'
+            margin='auto'
+        >
+            <Container name='Payees' data={renderPayees} keyFn={(info) => info.id}/>
+        </Box>
     );
 }
 
