@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import useAxios from '../hooks/useAxios';
+import useFormatAmount from '../hooks/useFormatAmount';
 import Container from '../components/Container';
 import Icon from '../components/Icon';
 import CustomText from '../components/CustomText';
@@ -102,6 +103,7 @@ function DashboardPage() {
   const [day, setDay] = useState(null);
   const navigate = useNavigate();
 
+
   const handleCalendarDateClick = (e) => {
     setDay(parseInt(e.target.innerText));
   }
@@ -145,10 +147,10 @@ function DashboardPage() {
     amount,
     render: () => (
       <>
-        <Icon name={currency} currency/>
+        <Icon name={currency} currency />
         <InfoBlock>
           <CustomText gray small>{currency} {CURRENCIES[currency]}</CustomText>
-          <CustomText black big>{amount >= 0 ? '+' : '-'}{currency} {Math.abs(amount).toFixed(2)}</CustomText>
+          <CustomText black big>{amount >= 0 ? '+' : '-'}{useFormatAmount(Math.abs(amount), currency)}</CustomText>
         </InfoBlock>
       </>
     )
@@ -167,7 +169,7 @@ function DashboardPage() {
                     </InfoBlock>
                     <ContainerRowBalanceWrapper>
                       <CustomText black big>
-                        {data.flow}{data.currency}{parseFloat(data.amount).toFixed(2)}
+                        {data.flow}{useFormatAmount(data.amount, data.currency)}
                       </CustomText>
                     </ContainerRowBalanceWrapper>
                 </>

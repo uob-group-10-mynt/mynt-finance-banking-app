@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Box } from '@chakra-ui/react';
 
 import useAxios from '../hooks/useAxios';
+import useFormatAmount from '../hooks/useFormatAmount';
 import Container from '../components/Container';
 import Icon from '../components/Icon';
 import CustomText from '../components/CustomText';
@@ -11,14 +12,13 @@ import InfoBlock from '../components/InfoBlock';
 import DateTimeDisplay from '../components/DateTimeDisplay';
 import CustomBox from '../components/CustomBox';
 
-
 const accountDetail = {
   'id': '1',
   'account_reference': '66f51c98-1ef8-4e48-97de-aac0353ba2b4',
   'bank': 'mynt',
   'label': 'Mynt Dollar Account',
   'balance': '100',
-  'currency': 'dollar',
+  'currency': 'USD',
   'currencySymbol': '$'
 };
 
@@ -27,7 +27,8 @@ const fetchTransactionData = [
       'id': '1',
       'payee_bank': 'mynt',
       'amount': '100',
-      'currency': '$',
+      'currency': 'USD',
+      'currencySymbol': '$',
       'flow': '+',
       'created_at': "2024-06-25T14:13:18+00:00",
   },
@@ -35,7 +36,8 @@ const fetchTransactionData = [
       'id': '2',
       'payee_bank': 'others',
       'amount': '10000.0',
-      'currency': '₩',
+      'currency': 'KRW',
+      'currencySymbol': '₩',
       'flow': '-',
       'created_at': "2024-06-25T14:13:18+00:00",
   },
@@ -60,7 +62,7 @@ function AccountPage() {
                         <DateTimeDisplay time={data.created_at}/>
                     </InfoBlock>
                     <ContainerRowBalanceWrapper>
-                      <CustomText black big>{data.flow}{accountDetail.currencySymbol}{parseFloat(data.amount).toFixed(2)}</CustomText>
+                      <CustomText black big>{data.flow}{useFormatAmount(data.amount, data.currencySymbol)}</CustomText>
                     </ContainerRowBalanceWrapper>
                 </>
             );
@@ -78,7 +80,7 @@ function AccountPage() {
         <CustomText gray small style={{ textDecoration: 'underline' }}>{accountDetail.label}</CustomText>
         <CustomText gray xsmall>{accountDetail.account_reference}</CustomText>
       </InfoBlock>
-      <CustomText black big>{accountDetail.currencySymbol}{accountDetail.balance}</CustomText>
+      <CustomText black big>{useFormatAmount(accountDetail.balance, accountDetail.currencySymbol)}</CustomText>
       <Box
         display='flex' 
         flexDirection='row'
