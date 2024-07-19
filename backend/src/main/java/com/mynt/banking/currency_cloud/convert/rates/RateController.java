@@ -1,7 +1,6 @@
 package com.mynt.banking.currency_cloud.convert.rates;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.convert.conversions.requests.CreateConversionRequest;
 import com.mynt.banking.currency_cloud.convert.rates.requests.GetDetailedRatesRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,7 @@ public class RateController {
 
     private final RateService rateService;
 
-    @GetMapping("/detailed")
+    @PostMapping("/detailed")
     public Mono<ResponseEntity<JsonNode>> createAccount(@RequestBody GetDetailedRatesRequest request) {
         return rateService.getDetailedRates(request);
     }

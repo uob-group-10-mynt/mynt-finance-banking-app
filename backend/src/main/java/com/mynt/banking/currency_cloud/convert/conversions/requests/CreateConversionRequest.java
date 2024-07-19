@@ -1,5 +1,6 @@
 package com.mynt.banking.currency_cloud.convert.conversions.requests;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -7,6 +8,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
+
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -51,7 +54,8 @@ public class CreateConversionRequest {
     @Size(max = 255)
     @Schema(description = "Earliest delivery date in UTC time zone. Format YYYY-MM-DD.", example = " ")
     @Builder.Default
-    private String conversionDate = "";
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate conversionDate = null;
 
     @JsonProperty("client_buy_amount")
     @Size(max = 255)
