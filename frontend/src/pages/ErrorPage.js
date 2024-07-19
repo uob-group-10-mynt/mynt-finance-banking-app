@@ -1,4 +1,4 @@
-import error_404_img from '../images/error_404.png';
+import error_404_img from '../../public/images/error_404.png';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Image, Heading, Text, Button } from '@chakra-ui/react';

@@ -1,4 +1,4 @@
-import logo from '../images/mynt_logo.png';
+import logo from '../../public/images/mynt_logo.png'
 import { Image, Spinner, Text } from '@chakra-ui/react'
 
 function SplashPage() {
