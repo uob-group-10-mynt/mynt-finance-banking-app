@@ -1,58 +1,55 @@
-import {useState} from 'react';
-import CustomForm from "../../components/forms/CustomForm";
+import Icon from "../../components/Icon";
+import InfoBlock from "../../components/InfoBlock";
+import CustomText from "../../components/CustomText";
+import {useLocation, useNavigate} from "react-router-dom";
+import CustomHeading from "../../components/CustomHeading";
+import Container from "../../components/Container";
+import CustomButton from "../../components/forms/CustomButton";
+import {useToast} from "@chakra-ui/react";
 
-function Remittance() {
-    // State for form fields
-    const [senderName, setSenderName] = useState('');
-    const [recipientName, setRecipientName] = useState('');
-    const [amount, setAmount] = useState('');
-    const availableBalance = 1000; // To be replaced with logic to fetch balance dynamically from an API
-    const remittanceInputFields = [
-        {
-            label: "From:",
-            id: "fromInput",
-            placeholder: "Payer's name",
-            type: "text",
-            required: true,
-            value: senderName,
-            onChange: (e) => setSenderName(e.target.value)
-        },
-        {
-            label: "To:",
-            id: "toInput",
-            placeholder: "Payee's name",
-            type: "text",
-            required: true,
-            value: recipientName,
-            onChange: (e) => setRecipientName(e.target.value)
-        },
-        {
-            label: "Amount:",
-            id: "amountInput",
-            placeholder: 0,
-            type: "number",
-            required: true,
-            value: amount,
-            onChange: (e) => setAmount(e.target.value),
-            helperText: `Available balance: ${availableBalance.toFixed(2)} KES`
-        },
-    ];
-    // Function to handle form submission
-    const handleFormSubmit = (event) => {
-        event.preventDefault();
-        // Logic to send remittance data to server or perform other actions
-        console.log('Form submitted:', senderName, recipientName, amount);
-        // Reset form fields after submission
-        setSenderName('');
-        setRecipientName('');
-        setAmount('');
+export default function Transfer() {
+    const navigate = useNavigate();
+    const toast = useToast();
+    const location = useLocation();
+    const selectedPayee = location.state.selectedPayee;
+    const renderSelectedPayee = [selectedPayee].map((payee) => {
+        return {
+            ...payee,
+            render: () => {
+                return (
+                    <>
+                        <Icon name={payee.bank}/>
+                        <InfoBlock>
+                            <CustomText gray
+                                        small>{payee.label + ' + £' + parseFloat(payee.transfer_amount).toFixed(2)}</CustomText>
+                            <CustomText black big>{payee.account_number}</CustomText>
+                        </InfoBlock>
+                    </>
+                );
+            },
+        }
+    });
+
+    const handleConfirm = () => {
+        // Add validation and submission logic here
+        toast({
+            title: 'Transfer made.',
+            description: "You've successfully made a transfer.",
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+        });
+
+        setTimeout(() => {
+            navigate('/');
+        }, 2000);
     };
 
     return (
-        <CustomForm onSubmit={handleFormSubmit} buttonText="Send Money" buttonId="submitTransfer">
-            {remittanceInputFields}
-        </CustomForm>
+        <>
+            <CustomHeading>Confirm your payment details:</CustomHeading>
+            <Container name='Selected Payee & Transfer Amount' data={renderSelectedPayee} keyFn={(info) => info.id}/>
+            <CustomButton standard onClick={handleConfirm}>Confirm Payment</CustomButton>
+        </>
     );
 }
-
-export default Remittance;

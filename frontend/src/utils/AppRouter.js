@@ -16,6 +16,7 @@ const Account = lazy(() => import('../pages/AccountPage'));
 const Remittance = lazy(() => import('../pages/Remittance/Remittance'));
 const Transfer = lazy(() => import('../pages/Remittance/Transfer'));
 const Payee = lazy(() => import('../pages/Remittance/Payee'));
+const Amount = lazy(() => import('../pages/Remittance/Amount'));
 
 const AppRouter = createBrowserRouter(
     createRoutesFromElements(
@@ -24,6 +25,7 @@ const AppRouter = createBrowserRouter(
             <Route path='login' element={lazyLoad(Login, <Loading/>)}/>
             <Route path='remittance' element={lazyLoad(Remittance, <Loading/>)}>
                 <Route path='payee' element={lazyLoad(Payee, <Loading/>)}></Route>
+                <Route path='amount' element={lazyLoad(Amount, <Loading/>)}></Route>
                 <Route path='transfer' element={lazyLoad(Transfer, <Loading/>)}></Route>
             </Route>
             <Route path='signup' element={lazyLoad(Signup, <Loading/>)}/>

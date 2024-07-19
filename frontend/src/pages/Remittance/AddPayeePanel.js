@@ -27,8 +27,10 @@ export default function AddPayeePanel() {
         },
     ];
 
-    const handleAddPayee = () => {
+    const handleAddPayee = (event) => {
+        event.preventDefault();
         // Add validation and submission logic here
+
         toast({
             title: 'Payee added.',
             description: "You've successfully added a new payee.",
