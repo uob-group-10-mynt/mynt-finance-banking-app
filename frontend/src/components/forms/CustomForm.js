@@ -1,9 +1,9 @@
 import {Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
 
-function CustomForm({children, onSubmit, buttonText, buttonId}) {
+function CustomForm({children, onSubmit, buttonText, buttonId, errorOccurred}) {
     return (
         <form onSubmit={onSubmit} style={{display: 'flex', flexDirection: 'column'}}>
-            {transformInputs({children})}
+            {transformInputs({children, errorOccurred})}
             <Button margin='2' type="submit" data-cy={buttonId}>
                 {buttonText}
             </Button>
@@ -11,11 +11,11 @@ function CustomForm({children, onSubmit, buttonText, buttonId}) {
     );
 }
 
-function transformInputs({children}) {
+function transformInputs({children, errorOccurred}) {
     return (
         children.map((inputFields) => (
             <div key={inputFields.label}>
-                <FormControl isRequired={inputFields.required} margin='0.5em'>
+                <FormControl isRequired={inputFields.required} margin='0.5em' isInvalid={errorOccurred}>
                     <FormLabel>{inputFields.label}</FormLabel>
                     <Input
                         margin='0.5em'
@@ -26,8 +26,13 @@ function transformInputs({children}) {
                         required={inputFields.required}
                         data-cy={inputFields.id}
                     />
-                    <FormErrorMessage data-cy="errorMessage">{inputFields.errorMsg}</FormErrorMessage>
-                    {inputFields.helperText && <FormHelperText>{inputFields.helperText}</FormHelperText>}
+                    {
+                        !errorOccurred ? (
+                            <FormHelperText>{inputFields.helperText}</FormHelperText>
+                        ) : (
+                            <FormErrorMessage data-cy="errorMessage">{inputFields.errorMsg}</FormErrorMessage>
+                        )
+                    }
                 </FormControl>
             </div>
         ))

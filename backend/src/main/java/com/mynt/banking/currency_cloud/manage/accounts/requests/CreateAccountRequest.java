@@ -99,23 +99,23 @@ public class CreateAccountRequest {
 
     @JsonProperty("api_trading")
     @Builder.Default
-    @Schema(description = "Allows the account to make trades via the Currencycloud API.", example = "true")
-    private Boolean apiTrading = true;
+    @Schema(description = "Allows the account to make trades via the Currencycloud API.", example = " ")
+    private Boolean apiTrading = null;
 
     @JsonProperty("online_trading")
     @Builder.Default
-    @Schema(description = "Allows the account to make trades via Currencycloud Direct.", example = "true")
-    private Boolean onlineTrading = true;
+    @Schema(description = "Allows the account to make trades via Currencycloud Direct.", example = " ")
+    private Boolean onlineTrading = null;
 
     @JsonProperty("phone_trading")
     @Builder.Default
-    @Schema(description = "Allows the account to make trades via phone.", example = "true")
-    private Boolean phoneTrading = true;
+    @Schema(description = "Allows the account to make trades via phone.", example = " ")
+    private Boolean phoneTrading = null;
 
     @JsonProperty("terms_and_conditions_accepted")
     @Builder.Default
-    @Schema(description = "Acceptance of the terms and conditions. Required for sub-accounts that are on our Outsourced KYC model, optional otherwise.", example = "true")
-    private Boolean termsAndConditionsAccepted = true;
+    @Schema(description = "Acceptance of the terms and conditions. Required for sub-accounts that are on our Outsourced KYC model, optional otherwise.", example = " ")
+    private Boolean termsAndConditionsAccepted = null;
 }
 
 

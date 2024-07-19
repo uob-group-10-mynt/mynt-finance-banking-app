@@ -10,10 +10,10 @@ function Login() {
     const [loggedIn, setLoggedIn] = useContext(LoggedInContext)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [invalidCredentialsMsg, setInvalidCredentialsMsg] = useState('');
+    const [errorOccurred, setErrorOccurred] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
         const credentials = {email, password};
 
@@ -26,10 +26,10 @@ function Login() {
             setEmail('');
             setPassword('');
             if (!response.ok) {
-                setInvalidCredentialsMsg('incorrect email or password')
+                setErrorOccurred(true)
                 throw new Error('Authentication failed');
             }
-
+            setErrorOccurred(false)
             const data = await response.json()
             sessionStorage.setItem('access', data.access_token)
             sessionStorage.setItem('refresh', data.refresh_token)
@@ -50,7 +50,8 @@ function Login() {
             value: email,
             required: true,
             onChange: (e) => setEmail(e.target.value),
-            errorMsg: "Incorrect email or password"
+            errorMsg: "Incorrect email or password",
+            helperText: "The email address associated with your account"
         },
         {
             label: "Password",
@@ -67,7 +68,8 @@ function Login() {
     return (
         <Page>
             <PageHeader>Login</PageHeader>
-            <CustomForm onSubmit={handleSubmit} buttonText="Sign In" buttonId="submitButton">
+            <CustomForm onSubmit={handleLoginSubmit} buttonText="Sign In" buttonId="submitButton"
+                        errorOccurred={errorOccurred}>
                 {loginInputFields}
             </CustomForm>
         </Page>

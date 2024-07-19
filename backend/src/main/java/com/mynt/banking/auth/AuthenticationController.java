@@ -32,7 +32,7 @@ public class AuthenticationController {
 
     @PostMapping(value = "/validateKyc", consumes = {"application/json", "text/plain"})
     public ResponseEntity<SDKResponse> validateKyc(@RequestBody ValidateKycRequest request) throws URISyntaxException, IOException, InterruptedException {
-        return ResponseEntity.ok(kycService.retrieveResults(request));
+        return ResponseEntity.ok(kycService.validateKyc(request));
     }
 
     @PostMapping(value = "/register", consumes = {"application/json", "text/plain"})

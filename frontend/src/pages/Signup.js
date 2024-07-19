@@ -6,6 +6,8 @@ import {onfidoIdetityCheckAPI} from '../utils/APIEndpoints';
 import PageHeader from "../components/forms/PageHeader";
 import CustomForm from "../components/forms/CustomForm";
 import Page from "../components/Page";
+import {Center, Square, Circle} from '@chakra-ui/react';
+import Cookies from 'js-cookie';
 
 function Signup() {
     const [email, setEmail] = useState('');
@@ -47,6 +49,7 @@ function Signup() {
 
     async function apiCalls() {
         try {
+
             let response = await axios.post(onfidoIdetityCheckAPI, {
                 "email": email,
                 "firstname": firstName,
@@ -57,12 +60,13 @@ function Signup() {
                 "password": password
             })
             kycChecks(response);
+            Cookies.put("email", email);
+
 
         } catch (error) {
             console.error('There was an error!', error);
             setMessage('An error occurred. Please try again later.');
         }
-        ;
     }
 
     function kycChecks(response) {
@@ -71,7 +75,7 @@ function Signup() {
         // console.log("urlink -> "+urlink);
 
         document.cookie = `email=${email}`;
-
+        console.log(document.cookie);
         setiframe(urlink);
     }
 
@@ -106,8 +110,8 @@ function Signup() {
         {
             label: "Date of Birth",
             id: "DOBInput",
-            placeholder: "16-08-1996",
-            type: "dob",
+            placeholder: "16 08 1996",
+            type: "date",
             value: dob,
             required: true,
             onChange: (e) => setDob(e.target.value)
@@ -153,9 +157,15 @@ function Signup() {
     return (
         <Page>
             <PageHeader>Sign Up</PageHeader>
-            <CustomForm onSubmit={handleSubmit} buttonText="Sign Up" buttonId="submitButton">
-                {signupInputFields}
-            </CustomForm>
+            {iframe ? (
+                <Center>
+                    <iframe src={iframe} style={{height: "700px"}}></iframe>
+                </Center>
+            ) : (
+                <CustomForm onSubmit={handleSubmit} buttonText="Sign Up" buttonId="submitButton">
+                    {signupInputFields}
+                </CustomForm>
+            )}
         </Page>
     );
 }

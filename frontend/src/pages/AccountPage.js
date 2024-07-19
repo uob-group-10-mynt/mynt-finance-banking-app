@@ -1,12 +1,16 @@
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Box } from '@chakra-ui/react';
+
 import useAxios from '../hooks/useAxios';
 import Container from '../components/Container';
 import Icon from '../components/Icon';
 import CustomText from '../components/CustomText';
 import CustomButton from '../components/forms/CustomButton';
+import ContainerRowBalanceWrapper from '../components/ContainerRowBalanceWrapper';
 import InfoBlock from '../components/InfoBlock';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Box } from '@chakra-ui/react';
+import DateTimeDisplay from '../components/DateTimeDisplay';
 import CustomBox from '../components/CustomBox';
+
 
 const accountDetail = {
   'id': '1',
@@ -25,15 +29,15 @@ const fetchTransactionData = [
       'amount': '100',
       'currency': '$',
       'flow': '+',
-      'created_at': '2022-09-01',
+      'created_at': "2024-06-25T14:13:18+00:00",
   },
   {
       'id': '2',
       'payee_bank': 'others',
-      'amount': '100',
+      'amount': '10000.0',
       'currency': '₩',
       'flow': '-',
-      'created_at': '2022-09-01',
+      'created_at': "2024-06-25T14:13:18+00:00",
   },
 ];
 
@@ -52,10 +56,12 @@ function AccountPage() {
                 <>
                     <Icon name={data.payee_bank} />
                     <InfoBlock>
-                        <CustomText gray small>{data.payee_bank}</CustomText>
-                        <CustomText gray small>{data.created_at}</CustomText>
+                        <CustomText black small>{data.payee_bank}</CustomText>
+                        <DateTimeDisplay time={data.created_at}/>
                     </InfoBlock>
-                    <CustomText black big>{data.flow}{accountDetail.currencySymbol}{parseFloat(data.amount).toFixed(2)}</CustomText>
+                    <ContainerRowBalanceWrapper>
+                      <CustomText black big>{data.flow}{accountDetail.currencySymbol}{parseFloat(data.amount).toFixed(2)}</CustomText>
+                    </ContainerRowBalanceWrapper>
                 </>
             );
         },
@@ -79,7 +85,7 @@ function AccountPage() {
         alignItems="center"
         justifyContent="space-between"
       >
-        <CustomButton medium style={{ flex: 1, marginRight: '0.5em' }}>Disconnect</CustomButton>
+        <CustomButton medium style={{ flex: 1, marginRight: '0.5em' }} colorScheme='blue'>Withdraw</CustomButton>
         <CustomButton medium style={{ flex: 1, marginRight: '0.5em' }}>Send</CustomButton>
       </Box>
     </CustomBox>

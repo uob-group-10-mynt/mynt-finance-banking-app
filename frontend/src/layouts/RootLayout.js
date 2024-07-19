@@ -23,7 +23,7 @@ export default function RootLayout() {
                     <CustomHeading size={"lg"}>
                         Mynt
                     </CustomHeading>
-                    {isTabletOrSmaller && <CustomDrawer testId="navButton">{<NavigationLinks/>}</CustomDrawer>}
+                    {isTabletOrSmaller && <CustomDrawer id="navButton">{<NavigationLinks/>}</CustomDrawer>}
                     {isDesktop && <Header>{<NavigationLinks/>}</Header>}
                 </Box>
             </header>
