@@ -50,7 +50,7 @@ jobs:
       - name: Cypress run
         run: |
           cd frontend
-          npm run e2e:chrome
+          npm run frontend:chrome
 
   report:
     needs: build-test
