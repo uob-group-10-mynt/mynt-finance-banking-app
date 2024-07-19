@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { Box } from "@chakra-ui/react";
 
+import useLongPress from '../hooks/useLongPress';
+
+
 function ContainerRow({ info }) {
   const [isHovered, setIsHovered] = useState(false);
+  const { handlers } = useLongPress(info.onClick);
 
   return (
     <Box 
@@ -14,7 +18,7 @@ function ContainerRow({ info }) {
       transition={'background-color 0.3s'}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={info.onClick}
+      {...handlers}
     >
       {info.render(info)}
     </Box>

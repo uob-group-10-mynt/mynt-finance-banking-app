@@ -3,7 +3,7 @@ import CustomBox from "./CustomBox";
 import CustomText from "./CustomText";
 
 function Container({
-  name,
+  name='',
   data=[],
   keyFn,
   ...rest
