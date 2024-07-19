@@ -42,7 +42,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './src/index.html'
+            template: path.resolve(__dirname, 'public', 'index.html')
         }),
         new webpack.DefinePlugin({
             'process.env': JSON.stringify(process.env)
