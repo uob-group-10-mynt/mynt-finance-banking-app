@@ -1,10 +1,10 @@
 import {useState, useContext} from "react";
-import {Box} from "@chakra-ui/react";
 import {LoggedInContext} from "../App";
 import PageHeader from "../components/forms/PageHeader";
 import {useNavigate} from "react-router-dom";
 import {authenticateAPI} from "../utils/APIEndpoints";
 import CustomForm from "../components/forms/CustomForm";
+import Page from "../components/Page";
 
 function Login() {
     const [loggedIn, setLoggedIn] = useContext(LoggedInContext)
@@ -13,7 +13,7 @@ function Login() {
     const [errorOccurred, setErrorOccurred] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
         const credentials = {email, password};
 
@@ -41,10 +41,10 @@ function Login() {
         }
     }
 
-    const loginFieldsInputList = [
+    const loginInputFields = [
         {
             label: "Email",
-            testId: "emailInput",
+            id: "emailInput",
             placeholder: "hello@email.com",
             type: "email",
             value: email,
@@ -55,7 +55,7 @@ function Login() {
         },
         {
             label: "Password",
-            testId: "passwordInput",
+            id: "passwordInput",
             placeholder: "*******",
             type: "password",
             value: password,
@@ -66,12 +66,13 @@ function Login() {
     ]
 
     return (
-        <Box className="page">
+        <Page>
             <PageHeader>Login</PageHeader>
-            <CustomForm onSubmit={handleSubmit} buttonText="Sign In" testId="submitButton" errorOccurred={errorOccurred}>
-                {loginFieldsInputList}
+            <CustomForm onSubmit={handleLoginSubmit} buttonText="Sign In" buttonId="submitButton"
+                        errorOccurred={errorOccurred}>
+                {loginInputFields}
             </CustomForm>
-        </Box>
+        </Page>
     );
 }
 
