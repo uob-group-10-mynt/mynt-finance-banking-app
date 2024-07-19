@@ -1,6 +1,6 @@
 import {Suspense, lazy} from 'react';
 import {Route, createBrowserRouter, createRoutesFromElements} from 'react-router-dom';
-import Loading from '../components/Loading';
+import Loading from '../components/util/Loading';
 
 // Layouts
 const RootLayout = lazy(() => import('../layouts/RootLayout'))

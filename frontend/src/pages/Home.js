@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import useFormatAmount from '../hooks/useFormatAmount';
 import CustomButton from "../components/forms/CustomButton";
 import CustomText from "../components/CustomText";
-import Icon from "../components/Icon";
-import Container from "../components/Container";
-import InfoBlock from "../components/InfoBlock";
+import Icon from "../components/util/Icon";
+import Container from "../components/container/Container";
+import InfoBlock from "../components/util/InfoBlock";
 
 
 const fetchAccountData = [

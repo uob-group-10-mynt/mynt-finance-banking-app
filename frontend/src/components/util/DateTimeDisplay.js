@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 
-import CustomText from "./CustomText";
+import CustomText from "../CustomText";
 
 
 function DateTimeDisplay({ time }) {
