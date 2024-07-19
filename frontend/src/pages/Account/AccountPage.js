@@ -1,16 +1,16 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box } from '@chakra-ui/react';
 
-import useAxios from '../hooks/useAxios';
-import useFormatAmount from '../hooks/useFormatAmount';
-import Container from '../components/container/Container';
-import Icon from '../components/util/Icon';
-import CustomText from '../components/CustomText';
-import CustomButton from '../components/forms/CustomButton';
-import ContainerRowBalanceWrapper from '../components/container/ContainerRowBalanceWrapper';
-import InfoBlock from '../components/util/InfoBlock';
-import DateTimeDisplay from '../components/util/DateTimeDisplay';
-import CustomBox from '../components/util/CustomBox';
+import useAxios from '../../hooks/useAxios';
+import useFormatAmount from '../../hooks/useFormatAmount';
+import Container from '../../components/container/Container';
+import Icon from '../../components/util/Icon';
+import CustomText from '../../components/CustomText';
+import CustomButton from '../../components/forms/CustomButton';
+import ContainerRowBalanceWrapper from '../../components/container/ContainerRowBalanceWrapper';
+import InfoBlock from '../../components/util/InfoBlock';
+import DateTimeDisplay from '../../components/util/DateTimeDisplay';
+import CustomBox from '../../components/util/CustomBox';
 
 const accountDetail = {
   'id': '1',
