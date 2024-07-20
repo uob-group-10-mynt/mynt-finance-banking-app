@@ -9,7 +9,7 @@ const Home = lazy(() => import('../pages/Home'));
 const Login = lazy(() => import('../pages/Login'));
 const Signup = lazy(() => import('../pages/Signup'));
 const Kyc = lazy(() => import('../pages/KYC'));
-const DashBoard = lazy(() => import('../pages/Dashboard/DashboardPage'));
+const DashBoard = lazy(() => import('../pages/DashBoard/DashboardPage'))
 const NotFound404 = lazy(() => import('../pages/util/ErrorPage'));
 const Account = lazy(() => import('../pages/Account/AccountPage'));
 // Remittance
