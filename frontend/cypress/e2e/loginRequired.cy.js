@@ -1,4 +1,4 @@
-describe('user must be logged in to access remittance page', () => {
+describe('user must be logged in to access a protected page', () => {
     it("redirected to '/login' when not logged in and try to go to a protected route", () => {
         let protectedRoutes = ['remittance', 'dashboard']
         protectedRoutes.forEach((route) => {
