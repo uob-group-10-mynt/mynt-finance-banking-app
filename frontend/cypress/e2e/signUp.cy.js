@@ -26,6 +26,8 @@ describe('log in page', () => {
         cy.get('[data-cy="emailInput"]').should('be.visible').type("test"+seconds+"@bristol.ac.uk")
         cy.get('[data-cy="passwordInput"]').type("abc")
         cy.get('[data-cy="submitButton"]').click()
+        cy.get('[data-cy="navButton"]').click()
+        cy.get('[data-cy="RemittanceLink"]').contains('Transfer')
 
     })
 
