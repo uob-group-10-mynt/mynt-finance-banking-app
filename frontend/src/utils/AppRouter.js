@@ -48,15 +48,15 @@ const AppRouter = createBrowserRouter(
             <Route index element={lazyLoad(Home, <Loading/>)}/>
             <Route path='login' element={lazyLoad(Login, <Loading/>)}/>
             <Route path='remittance' element={<ProtectedRoute element={Remittance} loadingComponent={<Loading/>}/>}>
-                <Route path='payee' element={lazyLoad(Payee, <Loading/>)}></Route>
-                <Route path='amount' element={lazyLoad(Amount, <Loading/>)}></Route>
-                <Route path='transfer' element={lazyLoad(Transfer, <Loading/>)}></Route>
+                <Route path='payee' element={lazyLoad(Payee, <Loading/>)}/>
+                <Route path='amount' element={lazyLoad(Amount, <Loading/>)}/>
+                <Route path='transfer' element={lazyLoad(Transfer, <Loading/>)}/>
             </Route>
             <Route path='signup' element={lazyLoad(Signup, <Loading/>)}/>
             <Route path='KYC' element={lazyLoad(Kyc, <Loading/>)}/>
-            <Route path='dashboard' element={lazyLoad(DashBoard, <Loading/>)}></Route>
-            <Route path='accounts/:id' element={lazyLoad(Account, <Loading/>)}></Route>
-            <Route path={'*'} element={lazyLoad(NotFound404, <Loading/>)}></Route>
+            <Route path='dashboard' element={<ProtectedRoute element={DashBoard} loadingComponent={<Loading/>}/>}/>
+            <Route path='accounts/:id' element={lazyLoad(Account, <Loading/>)}/>
+            <Route path={'*'} element={lazyLoad(NotFound404, <Loading/>)}/>
         </Route>
     )
 );
