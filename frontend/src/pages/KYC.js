@@ -60,7 +60,7 @@ function kyc(){
             <Box textAlign="center">
                 {message}
             </Box>
-            <Button onClick={handleButtonClick} width="full" mt={4} type="submit">
+            <Button onClick={handleButtonClick} width="full" id= "buttonKyc" mt={4} type="submit">
                 Proceed 
             </Button>
           </Box>
