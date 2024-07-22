@@ -2,14 +2,12 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const dotenv = require('dotenv');
-
 // Load environment variables from .env file
 dotenv.config();
-
 module.exports = {
     entry: path.resolve(__dirname, 'src','index.js'),
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'webApp'),
         filename: 'bundle.js',
         publicPath: '/'
     },
@@ -45,12 +43,12 @@ module.exports = {
             template: path.resolve(__dirname, 'public', 'index.html')
         }),
         new webpack.DefinePlugin({
-            'process.env': JSON.stringify(process.env)
+            'process.env': JSON.stringify(process.env)  
         })
     ],
     devServer: {
         static: {
-            directory: path.join(__dirname, 'dist'),
+            directory: path.join(__dirname, 'webApp'),
         },
         compress: true,
         port: 9001,
