@@ -103,7 +103,7 @@ function Signup() {
             value: firstName,
             required: true,
             onChange: (e) => setFirstName(e.target.value),
-            errorMsg: "alphabet characters only"
+            errorMsg: "invalid credentials"
         },
         {
             label: "Surname",
@@ -113,7 +113,7 @@ function Signup() {
             value: surname,
             required: true,
             onChange: (e) => setSurname(e.target.value),
-            errorMsg: "alphabet characters only"
+            errorMsg: "invalid credentials"
         },
         {
             label: "Date of Birth",
