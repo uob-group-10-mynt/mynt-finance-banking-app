@@ -5,19 +5,26 @@ import java.util.HashMap;
 public class HashMapToQuiryPrams {
 
     public static String hashMapToString(HashMap<String,Object> map) {
-        StringBuilder quiry = new StringBuilder();
-        quiry.append("?");
+        StringBuilder query = new StringBuilder();
+
+        if(map == null || map.keySet().isEmpty()) {
+            query.append("");
+            return query.toString();
+        }
+
+        query.append("?");
         Boolean isStartOfQuiry = true;
+
         for (String key : map.keySet()) {
             String value = map.get(key).toString();
             if (value != null && value != "") {
                 if (!isStartOfQuiry) {
-                    quiry.append("&");
+                    query.append("&");
                 }
-                quiry.append(key + "=" + value);
+                query.append(key + "=" + value);
                 isStartOfQuiry = false;
             }
         }
-        return quiry.toString();
+        return query.toString();
     }
 }

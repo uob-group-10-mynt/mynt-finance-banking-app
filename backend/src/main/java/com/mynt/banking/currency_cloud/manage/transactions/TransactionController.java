@@ -22,4 +22,10 @@ public class TransactionController {
         return this.transactionService.find(request);
     }
 
+    @GetMapping("/{id}/")
+    public Mono<ResponseEntity<JsonNode>> find(@PathVariable(name = "id",required = true) String id,
+                                               @RequestParam String onBehalfOfId) {
+        return this.transactionService.findTransactionID(id, onBehalfOfId);
+    }
+
 }
