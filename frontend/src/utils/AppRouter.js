@@ -23,6 +23,7 @@ const Kyc = lazy(() => import('../pages/KYC'));
 const DashBoard = lazy(() => import('../pages/DashBoard/DashboardPage'))
 const NotFound404 = lazy(() => import('../pages/util/ErrorPage'));
 const Account = lazy(() => import('../pages/Account/AccountPage'));
+const Transaction = lazy(() => import('../pages/Transaction/TransactionPage'));
 // Remittance
 const Remittance = lazy(() => import('../pages/Remittance/Remittance'));
 const Transfer = lazy(() => import('../pages/Remittance/Transfer'));
@@ -56,6 +57,7 @@ const AppRouter = createBrowserRouter(
             <Route path='KYC' element={lazyLoad(Kyc, <Loading/>)}/>
             <Route path='dashboard' element={<ProtectedRoute element={DashBoard} loadingComponent={<Loading/>}/>}/>
             <Route path='accounts/:id' element={<ProtectedRoute element={Account} loadingComponent={<Loading/>}/>}/>
+            <Route path='transactions/:id' element={lazyLoad(Transaction, <Loading/>)}></Route>
             <Route path={'*'} element={lazyLoad(NotFound404, <Loading/>)}/>
         </Route>
     )
