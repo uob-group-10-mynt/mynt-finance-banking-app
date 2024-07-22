@@ -10,7 +10,7 @@ const fetchTransactionData = {
   payee_bank: 'M-PESA',
   payer_bank: 'MYNT',
   amount: '1000.0',
-  currency: '$',
+  currency: 'USD',
   flow: '+',
   created_at: "2024-07-01T14:13:18+00:00",
 };
