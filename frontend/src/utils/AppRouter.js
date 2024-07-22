@@ -55,13 +55,13 @@ const AppRouter = createBrowserRouter(
             </Route>
             <Route path='signup' element={lazyLoad(Signup, <Loading/>)}/>
             <Route path='KYC' element={lazyLoad(Kyc, <Loading/>)}/>
-            {/* <Route path='dashboard' element={<ProtectedRoute element={DashBoard} loadingComponent={<Loading/>}/>}/> */}
-            {/* <Route path='accounts/:id' element={<ProtectedRoute element={Account} loadingComponent={<Loading/>}/>}/> */}
-            {/* <Route path='transactions/:id' element={<ProtectedRoute element={Transaction} loadingComponent={<Loading/>}/>}/> */}
+            <Route path='dashboard' element={<ProtectedRoute element={DashBoard} loadingComponent={<Loading/>}/>}/>
+            <Route path='accounts/:id' element={<ProtectedRoute element={Account} loadingComponent={<Loading/>}/>}/>
+            <Route path='transactions/:id' element={<ProtectedRoute element={Transaction} loadingComponent={<Loading/>}/>}/>
             
-            <Route path='dashboard' element={lazyLoad(DashBoard, <Loading/>)}></Route>
+            {/* <Route path='dashboard' element={lazyLoad(DashBoard, <Loading/>)}></Route>
             <Route path='accounts/:id' element={lazyLoad(Account, <Loading/>)}></Route>
-            <Route path='transactions/:id' element={lazyLoad(Transaction, <Loading/>)}></Route>
+            <Route path='transactions/:id' element={lazyLoad(Transaction, <Loading/>)}></Route> */}
             <Route path={'*'} element={lazyLoad(NotFound404, <Loading/>)}/>
         </Route>
     )
