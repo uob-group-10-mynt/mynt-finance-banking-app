@@ -7,7 +7,7 @@ let seconds = date.getTime();
 
 
 describe('log in page', () => {
-    it('can log a user in and out', () => {
+    it('can sign up and log a user in', () => {
         cy.visit('/signup')
         
         cy.get('[data-cy="emailInput"]').type("test"+seconds+"@bristol.ac.uk") 
@@ -19,6 +19,14 @@ describe('log in page', () => {
         cy.get('[data-cy="passwordInput"]').type("abc")
         cy.get('[data-cy="confirmPasswordInput"]').type("abc")
         cy.get('[data-cy="submitButton"]').click()
+
+        cy.visit('/kyc')
+        cy.get('#buttonKyc').should('be.visible').click()
+
+        cy.get('[data-cy="emailInput"]').should('be.visible').type("test"+seconds+"@bristol.ac.uk")
+        cy.get('[data-cy="passwordInput"]').type("abc")
+        cy.get('[data-cy="submitButton"]').click()
+
     })
 
 })
