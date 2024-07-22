@@ -71,7 +71,8 @@ function Signup() {
     }
 
     function kycChecks(response) {
-        if (!response.ok) {
+
+        if (!response.status == 200) {
             setErrorOccurred(true)
             throw new Error('Error signing up');
         }

@@ -13,53 +13,52 @@ function kyc(){
     const navigate = useNavigate();
 
     const [apiResponse, setApiResponse] = useState();  
+    const [message, setMessage] = useState();  
 
     useEffect(()=>{
+    
+        async function api(){
+                
+            const email = Cookies.get("email");
+    
+            try{
+                
+                console.log("\n\n\n\n\nvalidateKYCAPI: "+validateKYCAPI);
+                console.log("email: "+email) ;
+                
+                const response = await axios({
+                    method:'post',
+                    url: validateKYCAPI,
+                    data:{
+                        "email": email,
+                      }
+                });
+                
+                console.log(response);
+                console.log(apiResponse);
+                
+                setMessage(`Your account has been ${JSON.parse(response.data.data).status} by our team.`);
+                
+                Cookies.set("email","");
+            } catch (error){
+                setApiResponse(error);
+            }
+            
+        }
+        
         api();
     },[]);
-    
-    
-    async function api(){
-        const h1 = document.getElementById("responce");
-        
-        const email = Cookies.get("email");
-
-        // const email =  document.cookie;
-
-        try{
-            const response = await axios({
-                method:'post',
-                url: validateKYCAPI,
-                data:{
-                    "email": email,
-                  }
-            });
-            setApiResponse(response);
-            console.log("\n\n\n\n\nvalidateKYCAPI: "+validateKYCAPI);
-            console.log("email: "+email) 
-            console.log(response);
-
-            Cookies.set("email","");
-
-            let data = JSON.parse(response.data.data);
-            h1.innerText = `Your account is has been ${data.status} by our team.`; // JSON.stringify(, null, 4) ;
-        } catch (error){
-            setApiResponse(error);
-            // h1.innerText = JSON.stringify(response.data, null ,2 );
-        }
-    }
 
     const handleButtonClick = () => {
         navigate('/login');
     };
-
 
     return(
         <Flex height="100vh" width="full" align="center" justifyContent="center">
           
           <Box>
             <Box textAlign="center">
-                <h1 id="responce"></h1>
+                {message}
             </Box>
             <Button onClick={handleButtonClick} width="full" mt={4} type="submit">
                 Proceed 
