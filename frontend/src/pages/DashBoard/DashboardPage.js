@@ -39,6 +39,7 @@ const fetchTransactionData = [
   {
     'id': '1',
     'payee_bank': 'mynt',
+    'payer_bank': 'mynt',
     'amount': '100',
     'currency': '$',
     'flow': '+',
@@ -47,6 +48,7 @@ const fetchTransactionData = [
   {
     'id': '2',
     'payee_bank': 'others',
+    'payer_bank': 'mynt',
     'amount': '100',
     'currency': '/=',
     'flow': '-',
@@ -55,6 +57,7 @@ const fetchTransactionData = [
   {
     'id': '3',
     'payee_bank': 'others',
+    'payer_bank': 'mynt',
     'amount': '200',
     'currency': '/=',
     'flow': '-',
@@ -63,6 +66,7 @@ const fetchTransactionData = [
   {
     'id': '4',
     'payee_bank': 'mynt',
+    'payer_bank': 'mynt',
     'amount': '150',
     'currency': '/=',
     'flow': '-',
@@ -71,6 +75,7 @@ const fetchTransactionData = [
   {
     'id': '5',
     'payee_bank': 'mynt',
+    'payer_bank': 'mynt',
     'amount': '2605000.3',
     'currency': '£',
     'flow': '+',
