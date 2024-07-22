@@ -72,21 +72,6 @@ public class KycTests {
 
     }
 
-    // tests will only work if the full KYC is turned on within application.properties file
-    // as KYC is not auto approved in this instance
-//    @Test
-//    void testEmailThatHasNotGoneThroughKYC(){
-//
-//        ValidateKycRequest requestDtoInvalid = ValidateKycRequest.builder()
-//                .Email("test87@test.com") //
-//                .build();
-//        SDKResponse responseInvalid = this.kycService.validateKyc(requestDtoInvalid);
-//
-//        assert responseInvalid != null;
-//        assertEquals("error with email",responseInvalid.getStage());
-//        assertEquals("error invalid email please check and try again",responseInvalid.getData());
-//    }
-
     // test will only work with the basic KYC workflow ID found within the
     // Application.properties file as tke KYC will be auto approved
     @Test
