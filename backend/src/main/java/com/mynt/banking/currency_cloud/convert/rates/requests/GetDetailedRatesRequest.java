@@ -55,7 +55,7 @@ public class GetDetailedRatesRequest {
     @Size(max = 255)
     @Schema(description = "Earliest delivery date in UTC time zone. Format YYYY-MM-DD.", example = " ")
     @Builder.Default
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate conversionDate = null;
 
     @JsonProperty("conversion_date_preference")
