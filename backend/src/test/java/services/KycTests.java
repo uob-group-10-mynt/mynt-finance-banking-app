@@ -65,10 +65,11 @@ public class KycTests {
                 .password("password")
                 .build();
 
-        SDKResponse response = this.kycService.getOnfidoSDK(signUpRequest);
+        ResponseEntity<SDKResponse> response = this.kycService.getOnfidoSDK(signUpRequest);
 
         assert response != null;
-        assertEquals(response.getStage(),"SDKResponceDTO");
+        assertEquals(response.getStatusCode().value(), 200);
+        assertEquals(response.getBody().getStage(),"SDKResponceDTO");
 
     }
 
@@ -87,10 +88,10 @@ public class KycTests {
                 .password("password")
                 .build();
 
-        SDKResponse response = this.kycService.getOnfidoSDK(signUpRequest);
+        ResponseEntity<SDKResponse> response = this.kycService.getOnfidoSDK(signUpRequest);
 
         assert response != null;
-        assertEquals(response.getStage(),"SDKResponceDTO");
+        assertEquals(response.getBody().getStage(),"SDKResponceDTO");
 
 
         String email = "test"+testAccountNum+"@test.com";
