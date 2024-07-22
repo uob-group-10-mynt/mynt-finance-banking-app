@@ -83,14 +83,14 @@ public class FindAccountRequest {
     private String bankAccountVerified = "";
 
     @JsonProperty("page")
-    @Schema(description = "Page number.", example = " ")
+    @Schema(description = "Page number.", example = "1")
     @Builder.Default
-    private Integer page = null;
+    private Integer page = 1;
 
     @JsonProperty("per_page")
-    @Schema(description = "Number of results per page.", example = " ")
+    @Schema(description = "Number of results per page.", example = "1")
     @Builder.Default
-    private Integer perPage = null;
+    private Integer perPage = 1;
 
     @JsonProperty("order")
     @Schema(description = "Any field name to change the sort order.", example = " ")
