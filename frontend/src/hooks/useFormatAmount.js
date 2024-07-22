@@ -1,5 +1,8 @@
-const useFormatAmount = (amount, currencySymbol) => {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount).replace('$', currencySymbol);
+import useCurrencySymbols from '../hooks/useCurrencySymbols';
+
+const useFormatAmount = (amount, currencyCode) => {
+  const currencySymbol = useCurrencySymbols(currencyCode);
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: currencyCode }).format(amount).replace(currencyCode, currencySymbol);
 };
 
 export default useFormatAmount;

@@ -16,8 +16,7 @@ const fetchAccountData = [
         'bank': 'mynt',
         'label': 'Mynt Dollar Account',
         'balance': '1010234.0',
-        'currency': 'dollar',
-        'currencySymbol': '$'
+        'currency': 'USD',
     },
     {
         'id': '2',
@@ -25,8 +24,7 @@ const fetchAccountData = [
         'bank': 'others',
         'label': 'Mynt Pound Account',
         'balance': '1000.0',
-        'currency': 'pound',
-        'currencySymbol': '£'
+        'currency': 'GBP',
     },
 ];
 
@@ -50,7 +48,7 @@ export default function Home() {
                         <Icon name={data.bank} />
                         <InfoBlock>
                             <CustomText gray small>{data.label}</CustomText>
-                            <CustomText black big>{useFormatAmount(data.balance, data.currencySymbol)}</CustomText>
+                            <CustomText black big>{useFormatAmount(data.balance, data.currency)}</CustomText>
                         </InfoBlock>
                         <CustomButton side onClick={(e) => handleSendOnClick(e)}>Send</CustomButton>
                         
