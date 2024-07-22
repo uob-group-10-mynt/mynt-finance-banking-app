@@ -1,6 +1,17 @@
-import {Suspense, lazy} from 'react';
-import {Route, createBrowserRouter, createRoutesFromElements} from 'react-router-dom';
+import {
+    Suspense,
+    lazy,
+    useContext
+} from 'react';
+import {
+    Navigate,
+    Route, 
+    createBrowserRouter, 
+    createRoutesFromElements
+} from 'react-router-dom';
 import Loading from '../components/util/Loading';
+import {LoggedInContext} from "../App";
+
 
 // Layouts
 const RootLayout = lazy(() => import('../layouts/RootLayout'))
@@ -18,12 +29,25 @@ const Transfer = lazy(() => import('../pages/Remittance/Transfer'));
 const Payee = lazy(() => import('../pages/Remittance/Payee'));
 const Amount = lazy(() => import('../pages/Remittance/Amount'));
 
+function lazyLoad(Component, loadingComponent) {
+    return (
+        <Suspense fallback={loadingComponent}>
+            <Component/>
+        </Suspense>
+    )
+}
+
+function ProtectedRoute({element, loadingComponent}) {
+    const [loggedIn] = useContext(LoggedInContext)
+    return loggedIn ? lazyLoad(element, loadingComponent) : <Navigate to="/login"/>;
+}
+
 const AppRouter = createBrowserRouter(
     createRoutesFromElements(
         <Route path='/' element={lazyLoad(RootLayout, <Loading/>)}>
             <Route index element={lazyLoad(Home, <Loading/>)}/>
             <Route path='login' element={lazyLoad(Login, <Loading/>)}/>
-            <Route path='remittance' element={lazyLoad(Remittance, <Loading/>)}>
+            <Route path='remittance' element={<ProtectedRoute element={Remittance} loadingComponent={<Loading/>}/>}>
                 <Route path='payee' element={lazyLoad(Payee, <Loading/>)}></Route>
                 <Route path='amount' element={lazyLoad(Amount, <Loading/>)}></Route>
                 <Route path='transfer' element={lazyLoad(Transfer, <Loading/>)}></Route>
@@ -37,12 +61,6 @@ const AppRouter = createBrowserRouter(
     )
 );
 
-function lazyLoad(Component, loadingComponent) {
-    return (
-        <Suspense fallback={loadingComponent}>
-            <Component/>
-        </Suspense>
-    )
-}
+
 
 export default AppRouter;
