@@ -10,6 +10,7 @@ const Page = ({children}) => (
         alignItems="center"
         gap='1.3em'
         margin='auto'
+        bg='white'
     >
         {children}
     </Box>
