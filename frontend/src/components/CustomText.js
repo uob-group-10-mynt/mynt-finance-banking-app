@@ -1,9 +1,19 @@
 import { Text } from "@chakra-ui/react";
 
 const textMapper = {
+  xbig: {
+    as: 'b', 
+    fontSize: { base: '1.4em', md: '1.425em', lg: '2.125em'}
+  },
+
   big: {
     as: 'b', 
     fontSize: { base: '0.8em', md: '1.025em', lg: '1.725em'}
+  },
+
+  medium: {
+    as: 'b', 
+    fontSize: { base: '0.65em', md: '0.825em', lg: '1.425em'}
   },
 
   small: {
@@ -20,13 +30,15 @@ const textMapper = {
 function CustomText({ 
   gray,
   black,
+  xbig,
   big,
+  medium,
   small,
   xsmall,
   children,
   ...rest
 }) {
-  const mapper = (small) ? 'small' : (xsmall) ? 'xsmall' : 'big';
+  const mapper = (small) ? 'small' : (xsmall) ? 'xsmall' : (medium) ? 'medium' : (xbig) ? 'xbig' : 'big';
 
   return (
     <Text 
