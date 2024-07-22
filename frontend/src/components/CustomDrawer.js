@@ -12,13 +12,13 @@ import {
 } from '@chakra-ui/react'
 import { GiHamburgerMenu } from "react-icons/gi";
 
-function CustomDrawer({children, testId}) {
+function CustomDrawer({children, id}) {
     const {isOpen, onOpen, onClose} = useDisclosure()
     const btnRef = useRef()
 
     return (
         <>
-            <Button ref={btnRef} colorScheme='teal' onClick={onOpen} data-cy={testId}>
+            <Button ref={btnRef} colorScheme='teal' onClick={onOpen} data-cy={id}>
                 <GiHamburgerMenu/>
             </Button>
             <Drawer

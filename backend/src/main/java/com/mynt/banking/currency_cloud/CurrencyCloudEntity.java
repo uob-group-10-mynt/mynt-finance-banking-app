@@ -11,10 +11,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "\"Currency_Cloud\"")
+@Table(name = "currency_cloud")
 public class CurrencyCloudEntity {
     @Id
-    @Column(name = "\"UUID\"", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "uuid", nullable = false, length = Integer.MAX_VALUE)
     private String uuid;
 
     @NotNull

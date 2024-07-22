@@ -1,32 +1,45 @@
+import { Box } from "@chakra-ui/react";
+import { useNavigate } from 'react-router-dom';
+
+import useFormatAmount from '../hooks/useFormatAmount';
 import CustomButton from "../components/forms/CustomButton";
 import CustomText from "../components/CustomText";
-import Icon from "../components/Icon";
-import Container from "../components/Container";
-import InfoBlock from "../components/InfoBlock";
-import { Box } from "@chakra-ui/react";
+import Icon from "../components/util/Icon";
+import Container from "../components/container/Container";
+import InfoBlock from "../components/util/InfoBlock";
+
 
 const fetchAccountData = [
     {
         'id': '1',
+        'account_reference': '66f51c98-1ef8-4e48-97de-aac0353ba2b4',
         'bank': 'mynt',
         'label': 'Mynt Dollar Account',
-        'amount': '100',
+        'balance': '1010234.0',
         'currency': 'dollar',
         'currencySymbol': '$'
     },
     {
         'id': '2',
+        'account_reference': '66f51c98-1ef8-4e48-97de-aac0353ba2b4',
         'bank': 'others',
         'label': 'Mynt Pound Account',
-        'amount': '100',
+        'balance': '1000.0',
         'currency': 'pound',
         'currencySymbol': '£'
     },
 ];
 
 export default function Home() {
+    const navigate = useNavigate(); 
+
     const accountKeyFn = (info) => info.id;
     const conversionKeyFn = (info) => info.id;
+
+    const handleSendOnClick = (e) => {
+        e.stopPropagation();
+        console.log("SEND BUTTON CLICKED");
+    }
 
     const accountData = fetchAccountData.map((data) => {
         return {
@@ -34,24 +47,20 @@ export default function Home() {
             render: () => {
                 return (
                     <>
-                        <Icon bank={data.bank} />
+                        <Icon name={data.bank} />
                         <InfoBlock>
                             <CustomText gray small>{data.label}</CustomText>
-                            <CustomText black big>{data.currencySymbol}{data.amount}</CustomText>
+                            <CustomText black big>{useFormatAmount(data.balance, data.currencySymbol)}</CustomText>
                         </InfoBlock>
-                        <CustomButton side>Send</CustomButton>
+                        <CustomButton side onClick={(e) => handleSendOnClick(e)}>Send</CustomButton>
                         
                     </>
                 );
             },
 
             onClick: () => {
-                console.log('CLICKED');
+                navigate('/accounts/' + data.id);
             },
-
-            onMouseEnter: () => {
-                console.log('ENTERED');
-            }
         }
     });
 

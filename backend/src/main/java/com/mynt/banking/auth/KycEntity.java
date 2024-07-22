@@ -16,14 +16,14 @@ public class KycEntity {
     private Long id;
 
     @NotNull
-    @Column(name = "\"Application_ID\"", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "application_id", nullable = false, length = Integer.MAX_VALUE)
     private String applicationId;
 
     @NotNull
-    @Column(name = "\"Work_Flow_Run_ID\"", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "work_flow_run_id", nullable = false, length = Integer.MAX_VALUE)
     private String workFlowRunId;
 
-    @Column(name = "\"Status\"", length = Integer.MAX_VALUE)
+    @Column(name = "status", length = Integer.MAX_VALUE)
     private String status;
 
     @NotNull
