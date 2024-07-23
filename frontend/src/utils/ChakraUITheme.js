@@ -19,6 +19,18 @@ const ChakraUITheme = extendTheme({
           },
       }),
   },
+  components: {
+    Tabs: {
+      sizes: {
+        xlg: {
+          tab: {
+            fontSize: "1.5rem",
+            padding: "1.25rem 1.75rem",
+          },
+        },
+      },
+    },
+  },
 });
 
 export default ChakraUITheme;
