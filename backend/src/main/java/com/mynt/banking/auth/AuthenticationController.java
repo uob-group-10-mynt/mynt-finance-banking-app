@@ -6,10 +6,13 @@ import com.mynt.banking.auth.requests.SignUpRequest;
 import com.mynt.banking.auth.requests.ValidateKycRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
 import com.mynt.banking.auth.responses.SDKResponse;
+import com.mynt.banking.util.exceptions.AuthenticationCredentialsNotFoundException;
+import com.mynt.banking.util.exceptions.KycNotApprovedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +45,17 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok(service.authenticate(request));
+//        return ResponseEntity.ok(service.authenticate(request));
+        try {
+            AuthenticationResponse response = service.authenticate(request);
+            return ResponseEntity.ok(response);
+        } catch (AuthenticationCredentialsNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthenticationResponse("User not found or invalid credentials"));
+        } catch (KycNotApprovedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AuthenticationResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new AuthenticationResponse("An unexpected error occurred"));
+        }
     }
 
     @PostMapping("/refresh-token")

@@ -1,4 +1,4 @@
-package services.cloudCurrencyTests;
+package com.mynt.banking.currency_cloud.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.manage.accounts.AccountService;
@@ -13,13 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = main.class)
-public class ContactCCTest {
+public class ContactServiceTest {
 
     private String accountID;
 

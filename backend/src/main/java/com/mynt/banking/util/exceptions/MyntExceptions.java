@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class MyntExceptions extends RuntimeException {
 
-  private ErrorCode errorCode;
+  private final ErrorCode errorCode;
 
   public MyntExceptions(ErrorCode errorCode, String message) {
     super(message);

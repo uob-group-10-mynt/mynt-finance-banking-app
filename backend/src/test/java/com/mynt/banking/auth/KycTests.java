@@ -1,15 +1,10 @@
-package services;
+package com.mynt.banking.auth;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.auth.KYCService;
 import com.mynt.banking.auth.requests.SignUpRequest;
 import com.mynt.banking.auth.requests.ValidateKycRequest;
 import com.mynt.banking.auth.responses.SDKResponse;
-import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
-import com.mynt.banking.currency_cloud.manage.accounts.AccountService;
-import com.mynt.banking.currency_cloud.manage.accounts.requests.FindAccountRequest;
 import com.mynt.banking.main;
 import com.mynt.banking.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -18,10 +13,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 

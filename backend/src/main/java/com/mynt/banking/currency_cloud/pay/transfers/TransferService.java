@@ -21,7 +21,7 @@ public class TransferService {
     public Mono<ResponseEntity<JsonNode>> createTransfer(CreateTransferRequest requestBody) {
         return webClient
                 .post()
-                .uri("/v2/payments/create")
+                .uri("/v2/transfers/create")
                 .header("X-Auth-Token", authenticationService.getAuthToken())
                 .bodyValue(requestBody)
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))

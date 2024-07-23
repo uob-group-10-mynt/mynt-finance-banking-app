@@ -10,26 +10,32 @@ import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mynt.banking.util.exceptions.KycNotApprovedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final RedisTemplate<String, String> redisTemplate;
 
     public AuthenticationResponse register(@NotNull RegisterRequest request) {
 
@@ -44,11 +50,10 @@ public class AuthenticationService {
                 .role(request.getRole())
                 .build();
 
-        var savedUser = repository.save(user);
-
+        var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
-
         var refreshToken = jwtService.generateRefreshToken(user);
+        redisTemplate.opsForValue().set(user.getEmail(), refreshToken, 10, TimeUnit.MINUTES);
 
         saveUserToken(savedUser, jwtToken);
 
@@ -60,13 +65,23 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(@NotNull AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-        var user = repository.findByEmail(request.getEmail()).orElseThrow();
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+        } catch (AuthenticationException e) {
+            throw new AuthenticationCredentialsNotFoundException("User not found or invalid credentials");
+        }
+
+        var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+
+        if (!"approved".equalsIgnoreCase(String.valueOf(userRepository.getKycStatus(user.getEmail())))) {
+            throw new KycNotApprovedException("User is not approved for login");
+        }
+
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
@@ -108,7 +123,7 @@ public class AuthenticationService {
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUsername(refreshToken);
         if (userEmail != null) {
-            var user = this.repository.findByEmail(userEmail).orElseThrow();
+            var user = this.userRepository.findByEmail(userEmail).orElseThrow();
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtService.generateToken(user);
                 revokeAllUserTokens(user);

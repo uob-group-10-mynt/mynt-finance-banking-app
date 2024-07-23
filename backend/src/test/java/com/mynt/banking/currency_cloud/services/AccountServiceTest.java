@@ -1,10 +1,9 @@
-package services.cloudCurrencyTests;
+package com.mynt.banking.currency_cloud.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountRequest;
-import com.mynt.banking.currency_cloud.manage.accounts.AccountService;
 import com.mynt.banking.main;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,10 @@ import org.springframework.http.ResponseEntity;
 import java.util.Objects;
 
 @SpringBootTest(classes = main.class)
-public class AccountCCTest {
+public class AccountServiceTest {
 
     @Autowired
-    private AccountService accountService;
+    private com.mynt.banking.currency_cloud.manage.accounts.AccountService accountService;
 
     @Test
     public void testCreateAccount() {

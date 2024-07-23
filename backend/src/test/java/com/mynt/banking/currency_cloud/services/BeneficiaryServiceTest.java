@@ -1,30 +1,20 @@
-package services.cloudCurrencyTests;
+package com.mynt.banking.currency_cloud.services;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.CreateBeneficiaryRequest;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.FindBeneficiaryRequest;
 import com.mynt.banking.currency_cloud.manage.accounts.AccountService;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
 import com.mynt.banking.main;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = main.class)
-public class BeneficiariesCCTest {
+public class BeneficiaryServiceTest {
 
     @Autowired
-    private BeneficiaryService beneficiaryService;
+    private com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService beneficiaryService;
 
     @Autowired
     private AccountService accountService;
 
-    // NOTE: It will only work on my account as it relies on a beneficiary already in existence
-
-    //// NEEDS UPDATING TO ACCESS VALUES IN OTHER CC ACCOUNT
 
     @Test
     public void testCreateBeneficiary(){
