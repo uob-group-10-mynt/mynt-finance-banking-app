@@ -8,9 +8,9 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class GetUserDetailsResponse {
-    private final String firstName;
-    private final String lastName;
-    private String dob;
-    private String address;
-    private String phoneNumber;
+    private final String firstname;
+    private final String lastname;
+    private final String dob;
+    private final String address;
+    private final String phoneNumber;
 }

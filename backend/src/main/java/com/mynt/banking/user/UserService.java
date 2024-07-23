@@ -68,8 +68,8 @@ public class UserService {
 
     var user = userRepository.findByEmail(userEmail).orElseThrow();
     return GetUserDetailsResponse.builder()
-            .firstName(user.getFirstname())
-            .lastName(user.getLastname())
+            .firstname(user.getFirstname())
+            .lastname(user.getLastname())
             .dob(user.getDob())
             .phoneNumber(user.getPhone_number())
             .address(user.getAddress())
@@ -83,9 +83,10 @@ public class UserService {
     var user = userRepository.findByEmail(userEmail).orElseThrow();
     user.setFirstname(request.getFirstname());
     user.setLastname(request.getLastname());
-    user.setDob(request.getDob().toString());
+    user.setDob(request.getDob());
     user.setPhone_number(request.getPhoneNumber());
     user.setAddress(request.getAddress());
     userRepository.save(user);
+
   }
 }

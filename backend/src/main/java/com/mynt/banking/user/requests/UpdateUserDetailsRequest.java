@@ -25,8 +25,9 @@ public class UpdateUserDetailsRequest {
 
     @NotNull(message = "Date of Birth is required")
     @Schema(description = "DoB", example = "1066-8-16")
-    @DateTimeFormat(pattern = "dd MM yyyy")
-    private LocalDate dob;
+    //@DateTimeFormat(pattern = "dd MM yyyy")
+    @Size(max = 50, message = "Date of Birth cannot be longer than 50 characters")
+    private String dob;
 
     @NotNull(message = "Address is required")
     @Schema(description = "bristol", example = "Bristol")
