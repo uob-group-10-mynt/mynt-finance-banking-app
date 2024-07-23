@@ -43,9 +43,6 @@ public class main {
 			} else {
 				System.out.println("Redis connection failed.");
 			}
-
-//			// Optionally, clean up
-//			stringRedisTemplate.delete(key);
 		}
 	}
 }

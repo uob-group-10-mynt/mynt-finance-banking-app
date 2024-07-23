@@ -1,7 +1,6 @@
 package com.mynt.banking.config;
 
 import com.mynt.banking.auth.JWTService;
-import com.mynt.banking.user.token.TokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +24,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JWTService jwtService;
     private final UserDetailsService userDetailsService;
-    private final TokenRepository tokenRepository;
 
     @Override
     protected void doFilterInternal(
@@ -43,9 +41,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         username = jwtService.extractUsername(jwt);
         if (StringUtils.hasLength(username)  && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-//            var isTokenValid = tokenRepository.findByToken(jwt)
-//                    .map(t -> !t.isExpired() && !t.isRevoked())
-//                    .orElse(false);
 
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
