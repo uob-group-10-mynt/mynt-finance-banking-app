@@ -24,6 +24,8 @@ const DashBoard = lazy(() => import('../pages/DashBoard/DashboardPage'))
 const NotFound404 = lazy(() => import('../pages/util/ErrorPage'));
 const Account = lazy(() => import('../pages/Account/AccountPage'));
 const Transaction = lazy(() => import('../pages/Transaction/TransactionPage'));
+const CurrencyPage = lazy(() => import('../pages/Conversion/CurrencyPage'));
+
 // Remittance
 const Remittance = lazy(() => import('../pages/Remittance/Remittance'));
 const Transfer = lazy(() => import('../pages/Remittance/Transfer'));
@@ -55,13 +57,15 @@ const AppRouter = createBrowserRouter(
             </Route>
             <Route path='signup' element={lazyLoad(Signup, <Loading/>)}/>
             <Route path='KYC' element={lazyLoad(Kyc, <Loading/>)}/>
-            <Route path='dashboard' element={<ProtectedRoute element={DashBoard} loadingComponent={<Loading/>}/>}/>
+            {/* <Route path='dashboard' element={<ProtectedRoute element={DashBoard} loadingComponent={<Loading/>}/>}/>
             <Route path='accounts/:id' element={<ProtectedRoute element={Account} loadingComponent={<Loading/>}/>}/>
             <Route path='transactions/:id' element={<ProtectedRoute element={Transaction} loadingComponent={<Loading/>}/>}/>
-            
-            {/* <Route path='dashboard' element={lazyLoad(DashBoard, <Loading/>)}></Route>
+            <Route path='currencies/:currency' element={<ProtectedRoute element={CurrencyPage} loadingComponent={<Loading/>}/>}/> */}
+
+            <Route path='dashboard' element={lazyLoad(DashBoard, <Loading/>)}></Route>
             <Route path='accounts/:id' element={lazyLoad(Account, <Loading/>)}></Route>
-            <Route path='transactions/:id' element={lazyLoad(Transaction, <Loading/>)}></Route> */}
+            <Route path='transactions/:id' element={lazyLoad(Transaction, <Loading/>)}></Route>
+            <Route path='currencies/:currency' element={lazyLoad(CurrencyPage, <Loading/>)}></Route>
             <Route path={'*'} element={lazyLoad(NotFound404, <Loading/>)}/>
         </Route>
     )
