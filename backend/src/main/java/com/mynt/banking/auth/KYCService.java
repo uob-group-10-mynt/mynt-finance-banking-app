@@ -21,6 +21,8 @@ import com.mynt.banking.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -73,7 +75,7 @@ public class KYCService {
     @Autowired
     private CurrencyCloudRepository currencyCloudRepository;
 
-    public SDKResponse getOnfidoSDK(SignUpRequest request) {
+    public ResponseEntity<SDKResponse> getOnfidoSDK(SignUpRequest request) {
 
         SDKResponse sdkResponceDTO = new SDKResponse();
 
@@ -81,9 +83,11 @@ public class KYCService {
         referrer = "http://localhost:9001/signup/*";
         redirectURL = "http://localhost:9001/kyc";
 
+        request.setEmail(request.getEmail().toLowerCase());
+
         if(!userRepository.findByEmail(request.getEmail()).isEmpty()){
             sdkResponceDTO.setStage("duplicate ID and or Email");
-            return sdkResponceDTO;
+            return new ResponseEntity(sdkResponceDTO, HttpStatus.BAD_REQUEST);
         }
 
         try{
@@ -106,7 +110,7 @@ public class KYCService {
             throw new RuntimeException(e);
         }
 
-        return sdkResponceDTO;
+        return new ResponseEntity(sdkResponceDTO, HttpStatus.OK);
     }
 
     private SDKResponse apiResponseDto() throws JsonProcessingException {
@@ -279,6 +283,8 @@ public class KYCService {
     public SDKResponse validateKyc(ValidateKycRequest request) throws JsonProcessingException {
 
         SDKResponse sdkResponceDTO = new SDKResponse();
+
+        request.setEmail(request.getEmail().toLowerCase().trim());
 
         boolean isValidRequest = preCheck(request);
         if(!isValidRequest){

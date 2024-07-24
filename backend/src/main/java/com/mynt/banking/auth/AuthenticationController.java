@@ -27,7 +27,7 @@ public class AuthenticationController {
 
     @PostMapping(value = "/onfidoSdk", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SDKResponse> onfidoSdk(@RequestBody SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
-        return ResponseEntity.ok(kycService.getOnfidoSDK(request)) ;
+        return kycService.getOnfidoSDK(request) ;
     }
 
     @PostMapping(value = "/validateKyc", consumes = {"application/json", "text/plain"})

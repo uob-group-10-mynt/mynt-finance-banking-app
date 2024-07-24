@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import useAxios from '../../hooks/useAxios';
+import useCurrencyDescription from '../../hooks/useCurrencyDescription';
+import useCurrencySymbols from '../../hooks/useCurrencySymbols';
 import useFormatAmount from '../../hooks/useFormatAmount';
 import Container from '../../components/container/Container';
 import Icon from '../../components/util/Icon';
@@ -29,50 +31,49 @@ const MONTHS = {
   12: 'DEC',
 }
 
-const CURRENCIES = {
-  '$': 'USD DOLLAR',
-  '/=': 'KES SHILLING',
-  '£': 'GBR POUND',
-}
-
 const fetchTransactionData = [
   {
     'id': '1',
     'payee_bank': 'mynt',
+    'payer_bank': 'mynt',
     'amount': '100',
-    'currency': '$',
+    'currency': 'EUR',
     'flow': '+',
     'created_at': "2024-07-01T14:13:18+00:00",
   },
   {
     'id': '2',
     'payee_bank': 'others',
+    'payer_bank': 'mynt',
     'amount': '100',
-    'currency': '/=',
+    'currency': 'KES',
     'flow': '-',
     'created_at': "2024-07-04T14:13:18+00:00",
   },
   {
     'id': '3',
     'payee_bank': 'others',
+    'payer_bank': 'mynt',
     'amount': '200',
-    'currency': '/=',
+    'currency': 'GBP',
     'flow': '-',
     'created_at': "2024-07-13T14:13:18+00:00",
   },
   {
     'id': '4',
     'payee_bank': 'mynt',
+    'payer_bank': 'mynt',
     'amount': '150',
-    'currency': '/=',
+    'currency': 'KES',
     'flow': '-',
     'created_at': "2024-07-13T14:13:18+00:00",
   },
   {
     'id': '5',
     'payee_bank': 'mynt',
+    'payer_bank': 'mynt',
     'amount': '2605000.3',
-    'currency': '£',
+    'currency': 'USD',
     'flow': '+',
     'created_at': "2024-07-13T14:13:18+00:00",
   },
@@ -149,7 +150,7 @@ function DashboardPage() {
       <>
         <Icon name={currency} currency />
         <InfoBlock>
-          <CustomText gray small>{currency} {CURRENCIES[currency]}</CustomText>
+          <CustomText gray small>{useCurrencySymbols(currency)} {useCurrencyDescription(currency)}</CustomText>
           <CustomText black big>{amount >= 0 ? '+' : '-'}{useFormatAmount(Math.abs(amount), currency)}</CustomText>
         </InfoBlock>
       </>

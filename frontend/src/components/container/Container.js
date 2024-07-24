@@ -14,7 +14,7 @@ function Container({
 
   return (
     <CustomBox gap='0.9em' { ...rest }>
-      <CustomText small black>{name}</CustomText>
+      <CustomText big medium black>{name}</CustomText>
       {renderedRows}
     </CustomBox>
   );
