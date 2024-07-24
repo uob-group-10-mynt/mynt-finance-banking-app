@@ -4,8 +4,8 @@ import CustomText from "../../components/CustomText";
 import {useLocation, useNavigate} from "react-router-dom";
 import CustomHeading from "../../components/CustomHeading";
 import Container from "../../components/container/Container";
+import {useToast, VStack} from "@chakra-ui/react";
 import CustomButton from "../../components/forms/CustomButton";
-import {Box, useToast} from "@chakra-ui/react";
 
 export default function Transfer() {
     const navigate = useNavigate();
@@ -33,6 +33,7 @@ export default function Transfer() {
     const handleConfirm = () => {
         // Add validation and submission logic here
         toast({
+            position: 'top',
             title: 'Transfer made.',
             description: "You've successfully made a transfer.",
             status: 'success',
@@ -46,17 +47,13 @@ export default function Transfer() {
     };
 
     return (
-        <Box
-            display="flex"
-            flexDirection='column'
-            justifyContent="center"
-            alignItems="center"
-            gap='1.3em'
-            margin='auto'
-        >
+        <VStack>
             <CustomHeading>Confirm your payment details:</CustomHeading>
-            <Container name='Selected Payee & Transfer Amount' data={renderSelectedPayee} keyFn={(info) => info.id}/>
-            <CustomButton standard onClick={handleConfirm}>Confirm Payment</CustomButton>
-        </Box>
+            <Container name='Selected Payee & Transfer Amount' data={renderSelectedPayee}
+                       keyFn={(info) => info.id}/>
+            <CustomButton confirm onClick={handleConfirm} data-cy='confirmPayment'>
+                Confirm Payment
+            </CustomButton>
+        </VStack>
     );
 }
