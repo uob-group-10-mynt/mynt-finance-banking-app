@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.time.LocalDate;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -76,14 +76,14 @@ public class UserService {
             .build();
   }
 
-  public void updateUserDetails(String auth, UpdateUserDetailsRequest request) throws IOException {
+  public void updateUserDetails(String auth, UpdateUserDetailsRequest request) throws NoSuchElementException {
     String accessToken = auth.substring(7);
     String userEmail = jwtService.extractUsername(accessToken);
 
     var user = userRepository.findByEmail(userEmail).orElseThrow();
     user.setFirstname(request.getFirstname());
     user.setLastname(request.getLastname());
-    user.setDob(request.getDob());
+    user.setDob(request.getDob().toString());
     user.setPhone_number(request.getPhoneNumber());
     user.setAddress(request.getAddress());
     userRepository.save(user);

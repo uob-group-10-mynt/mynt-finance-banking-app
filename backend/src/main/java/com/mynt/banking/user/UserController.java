@@ -15,40 +15,40 @@ import java.security.Principal;
 @RequestMapping("/api/v1/users")
 public class UserController {
 
-  private final UserService userService;
+    private final UserService userService;
 
-  @PatchMapping
-  public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request, Principal connectedUser) {
-    userService.changePassword(request, connectedUser);
-    return ResponseEntity.ok().build();
-  }
+    @PatchMapping
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request, Principal connectedUser) {
+        userService.changePassword(request, connectedUser);
+        return ResponseEntity.ok().build();
+    }
 
-  @GetMapping("/getUserDetails")
-  public ResponseEntity<GetUserDetailsResponse> getUserDetails(
-          @RequestHeader(HttpHeaders.AUTHORIZATION) String auth
-  ) {
-    GetUserDetailsResponse response;
-    try {
-      response = userService.getUserDetails(auth);
+    @GetMapping("/getUserDetails")
+    public ResponseEntity<GetUserDetailsResponse> getUserDetails(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String auth
+    ) {
+        GetUserDetailsResponse response;
+        try {
+            response = userService.getUserDetails(auth);
+        }
+        catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(response);
     }
-    catch (IOException e) {
-      return ResponseEntity.badRequest().build();
-    }
-    return ResponseEntity.ok(response);
-  }
 
-  @PostMapping("/updateUserDetails")
-  public ResponseEntity<UpdateUserDetailsRequest> updateUserDetails(
-          @RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
-          @RequestBody UpdateUserDetailsRequest request
-  ) {
-    try {
-      userService.updateUserDetails(auth, request);
+    @PostMapping("/updateUserDetails")
+    public ResponseEntity<UpdateUserDetailsRequest> updateUserDetails(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
+            @RequestBody UpdateUserDetailsRequest request
+    ) {
+        try {
+            userService.updateUserDetails(auth, request);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
     }
-    catch (Exception e) {
-      return ResponseEntity.badRequest().build();
-    }
-    return ResponseEntity.ok().build();
-  }
 
 }
