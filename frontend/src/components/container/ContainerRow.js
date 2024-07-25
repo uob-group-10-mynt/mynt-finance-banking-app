@@ -18,6 +18,7 @@ function ContainerRow({ info }) {
       transition={'background-color 0.3s'}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onDoubleClickCapture={info.onDoubleClickCapture}
       {...handlers}
     >
       {info.render(info)}
