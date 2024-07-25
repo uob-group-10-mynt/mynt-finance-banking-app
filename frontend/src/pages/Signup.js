@@ -75,7 +75,7 @@ const signupInputFields = [
     },
     {
         label: "Confirm Password",
-        id: "confirmPasswordInput",
+        id: "confirmPassword",
         placeholder: "*******",
         type: "password",
         value: "",
