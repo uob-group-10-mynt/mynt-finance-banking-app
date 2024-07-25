@@ -49,7 +49,7 @@ function transformInputs({formData, setFormData, errorOccurred}) {
                         value={inputFields.value}
                         onChange={(e) => handleInputChange(index, e)}
                         required={inputFields.required}
-                        data-cy={inputFields.id}
+                        data-cy={inputFields.id+"Input"}
                         readOnly={inputFields.readonly}
                     />
                     {
