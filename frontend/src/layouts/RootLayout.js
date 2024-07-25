@@ -14,9 +14,9 @@ export default function RootLayout() {
     const isDesktop = useMediaQuery({query: '(min-width: 769px)'})
 
     return (
-        <div>
-            <Theme>Mode</Theme>
-            <header>
+        <Box id='viewport' position='relative' minHeight='100vh'>
+            <Box id="content-wrap" paddingBottom='6rem'>
+                <Theme>Mode</Theme>
                 <Box display="flex" alignItems="baseline" ml={4}>
                     <Image
                         src={iconMynt}
@@ -29,13 +29,9 @@ export default function RootLayout() {
                     {isTabletOrSmaller && <CustomDrawer id="navButton">{<NavigationLinks/>}</CustomDrawer>}
                     {isDesktop && <Header>{<NavigationLinks/>}</Header>}
                 </Box>
-            </header>
-            <main>
                 <Outlet/>
-            </main>
-            <footer>
-                <Footer>{<NavigationLinks/>}</Footer>
-            </footer>
-        </div>
+            </Box>
+            <Footer>{<NavigationLinks/>}</Footer>
+        </Box>
     );
 }
