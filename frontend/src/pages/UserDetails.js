@@ -10,35 +10,35 @@ const accountFields = [
         id: "firstname",
         required: true,
         readonly: true,
-        value: "",
+        value: ""
     },
     {
         label: "Last name",
         id: "lastname",
         required: true,
         readonly: true,
-        value: "",
+        value: ""
     },
     {
         label: "Date of birth",
         id: "dob",
         required: true,
         readonly: true,
-        value: "",
+        value: ""
     },
     {
         label: "Address",
         id: "address",
         required: true,
         readonly: true,
-        value: "",
+        value: ""
     },
     {
         label: "Phone number",
         id: "phoneNumber",
         required: true,
         readonly: true,
-        value: "",
+        value: ""
     },
 ];
 

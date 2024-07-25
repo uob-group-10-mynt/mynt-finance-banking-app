@@ -1,9 +1,12 @@
+import { useState } from "react";
 import {Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
 
 function CustomForm({children, onSubmit, buttonText, buttonId, errorOccurred, buttonDisplayed}) {
+    const [formData, setFormData] = useState(children)
+
     return (
         <form onSubmit={onSubmit} style={{display: 'flex', flexDirection: 'column'}}>
-            {transformInputs({children, errorOccurred})}
+            {transformInputs({formData, setFormData, errorOccurred})}
             <Button margin='2' type="submit" data-cy={buttonId} display={buttonDisplayed}>
                 {buttonText}
             </Button>
@@ -11,9 +14,16 @@ function CustomForm({children, onSubmit, buttonText, buttonId, errorOccurred, bu
     );
 }
 
-function transformInputs({children, errorOccurred}) {
+
+function transformInputs({formData, setFormData, errorOccurred}) {
+    const handleInputChange = (index, event) => {
+        const updatedFormData = [...formData];
+        updatedFormData[index].value = event.target.value;
+        setFormData(updatedFormData);
+    };
+    
     return (
-        children.map((inputFields) => (
+        formData.map((inputFields, index) => (
             <div key={inputFields.label}>
                 <FormControl isRequired={inputFields.required} margin='0.5em' isInvalid={errorOccurred}>
                     <FormLabel>{inputFields.label}</FormLabel>
@@ -22,7 +32,7 @@ function transformInputs({children, errorOccurred}) {
                         placeholder={inputFields.placeholder}
                         type={inputFields.type}
                         value={inputFields.value}
-                        onChange={inputFields.onChange}
+                        onChange={(e) => handleInputChange(index, e)}
                         required={inputFields.required}
                         data-cy={inputFields.id}
                         readOnly={inputFields.readonly}
