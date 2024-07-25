@@ -30,6 +30,7 @@ public class SecurityConfig {
             "/api/v1/currency-cloud/reference/**",
             "/api/v1/currency-cloud/rates/**",
             "/api/v1/currency-cloud/contact/**",
+            "/api/v1/users/**",
             "/api/v1/auth/**",
             "/api/v1/auth/sdk**",
             "/api/v1/auth/sdk",
