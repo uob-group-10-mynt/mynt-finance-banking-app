@@ -25,6 +25,7 @@ function transformInputs({children, errorOccurred}) {
                         onChange={inputFields.onChange}
                         required={inputFields.required}
                         data-cy={inputFields.id}
+                        readOnly={inputFields.readonly}
                     />
                     {
                         !errorOccurred ? (
