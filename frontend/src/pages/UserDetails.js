@@ -74,25 +74,6 @@ function editForm(detailsFields, setDetails, e, setEditButtonDisplayed, setSaveB
     setSaveButtonDisplayed(" ")
 }
 
-const updatedFormData = async (formValuesJSON) => {
-    try {
-        const response = await fetch(updateUserDetailsAPI, {
-            method: 'POST',
-            headers: {
-                "Content-type": "application/json",
-                Authorization: `bearer ${sessionStorage.getItem('access')}`
-            },
-            body: JSON.stringify(formValuesJSON)
-        });
-        if (!response.ok) {
-            //TODO clear form? or reset it to previous state
-            throw new Error('Authentication failed');
-        }
-    } catch (error) {
-        //TODO handle errors by redirecting to relevant error page
-        console.error(error);
-    }
-}
 
 export default function UserDetails() {
     const [details, setDetails] = useState("")
@@ -109,6 +90,28 @@ export default function UserDetails() {
             setSaveButtonDisplayed("none")
         })
     }, []) // empty array means useEffect() is only called on initial render of component
+    
+    const updatedFormData = async (formValuesJSON) => {
+        try {
+            const response = await fetch(updateUserDetailsAPI, {
+                method: 'POST',
+                headers: {
+                    "Content-type": "application/json",
+                    Authorization: `bearer ${sessionStorage.getItem('access')}`
+                },
+                body: JSON.stringify(formValuesJSON)
+            });
+            if (!response.ok) {
+                //TODO clear form? or reset it to previous state
+                throw new Error('Authentication failed');
+            }
+            setEditButtonDisplayed(" ")
+            setSaveButtonDisplayed("none")
+        } catch (error) {
+            //TODO handle errors by redirecting to relevant error page
+            console.error(error);
+        }
+    }
 
     return(
         <Page>
