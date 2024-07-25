@@ -1,10 +1,10 @@
 import {Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
 
-function CustomForm({children, onSubmit, buttonText, buttonId, errorOccurred}) {
+function CustomForm({children, onSubmit, buttonText, buttonId, errorOccurred, buttonDisplayed}) {
     return (
         <form onSubmit={onSubmit} style={{display: 'flex', flexDirection: 'column'}}>
             {transformInputs({children, errorOccurred})}
-            <Button margin='2' type="submit" data-cy={buttonId}>
+            <Button margin='2' type="submit" data-cy={buttonId} display={buttonDisplayed}>
                 {buttonText}
             </Button>
         </form>

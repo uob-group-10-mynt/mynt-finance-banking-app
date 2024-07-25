@@ -64,17 +64,24 @@ const getDetails = async () => {
 }
 
 //edit form changes state, readonly becomes false
-function editForm(detailsFields, setDetails, e, setEditButtonsVisibility) {
+function editForm(detailsFields, setDetails, e, setEditButtonDisplayed, setSaveButtonDisplayed) {
     e.preventDefault();
     setDetails(detailsFields.forEach((field) => {
         field.readonly = false;
     }))
-    setEditButtonsVisibility("none")
+    setEditButtonDisplayed("none")
+    setSaveButtonDisplayed(" ")
+}
+
+const updateDetails = async (e) => {
+    e.preventDefault()
+
 }
 
 export default function UserDetails() {
     const [details, setDetails] = useState("")
-    const [editButtonVisibility, setEditButtonsVisibility] = useState()
+    const [editButtonDisplayed, setEditButtonDisplayed] = useState()
+    const [saveButtonDisplayed, setSaveButtonDisplayed] = useState()
     useEffect(() => {
         getDetails()
         .then(data => {
@@ -82,16 +89,17 @@ export default function UserDetails() {
                 console.log(d)
             })
             setDetails(data)
-            setEditButtonsVisibility(" ")
+            setEditButtonDisplayed(" ")
+            setSaveButtonDisplayed("none")
             console.log(`details::: ${details}`)
         })
     }, []) // empty array means useEffect() is only called on initial render of component
     return(
         <Page>
-            <CustomForm buttonText="Save">
+            <CustomForm buttonText="Save" buttonDisplayed={saveButtonDisplayed}>
                 {accountFields}
             </CustomForm>
-            <CustomButton display={editButtonVisibility} medium onClick={(e) => {editForm(details, setDetails, e, setEditButtonsVisibility)}}>
+            <CustomButton display={editButtonDisplayed} medium onClick={(e) => {editForm(details, setDetails, e, setEditButtonDisplayed, setSaveButtonDisplayed)}}>
                 Edit
             </CustomButton>
         </Page>
