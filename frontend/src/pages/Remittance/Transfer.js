@@ -21,7 +21,7 @@ export default function Transfer() {
                         <Icon name={payee.bank}/>
                         <InfoBlock>
                             <CustomText gray
-                                        small>{payee.label + ' + £' + parseFloat(payee.transfer_amount).toFixed(2)}</CustomText>
+                                        small>{payee.label + ' + £' + parseFloat(payee.transfer_amount).toLocaleString(2)}</CustomText>
                             <CustomText black big>{payee.account_number}</CustomText>
                         </InfoBlock>
                     </>
