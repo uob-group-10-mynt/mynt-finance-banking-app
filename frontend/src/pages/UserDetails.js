@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import CustomForm from "../components/forms/CustomForm";
 import { getUserDetailsAPI } from "../utils/APIEndpoints";
+import Page from "../components/Page";
+import CustomButton from "../components/forms/CustomButton";
 
 const accountFields = [
     {
@@ -61,8 +63,18 @@ const getDetails = async () => {
     }
 }
 
+//edit form changes state, readonly becomes false
+function editForm(detailsFields, setDetails, e, setEditButtonsVisibility) {
+    e.preventDefault();
+    setDetails(detailsFields.forEach((field) => {
+        field.readonly = false;
+    }))
+    setEditButtonsVisibility("none")
+}
+
 export default function UserDetails() {
     const [details, setDetails] = useState("")
+    const [editButtonVisibility, setEditButtonsVisibility] = useState()
     useEffect(() => {
         getDetails()
         .then(data => {
@@ -70,15 +82,18 @@ export default function UserDetails() {
                 console.log(d)
             })
             setDetails(data)
+            setEditButtonsVisibility(" ")
             console.log(`details::: ${details}`)
         })
-        // .then(() => {
-
-        // })
-    })
-            return(
-                <CustomForm buttonText="Edit">
-                    {accountFields}
-                </CustomForm>
-            )
+    }, []) // empty array means useEffect() is only called on initial render of component
+    return(
+        <Page>
+            <CustomForm buttonText="Save">
+                {accountFields}
+            </CustomForm>
+            <CustomButton display={editButtonVisibility} medium onClick={(e) => {editForm(details, setDetails, e, setEditButtonsVisibility)}}>
+                Edit
+            </CustomButton>
+        </Page>
+    )
 }
