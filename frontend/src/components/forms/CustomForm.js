@@ -7,15 +7,30 @@ import {
     InputGroup,
     InputLeftElement
 } from "@chakra-ui/react";
+
+function formDataToRequestBody(credentials) {
+    // converts form data and returns JSON body  
+    // credential.id MUST match the names of the keys in the JSON schema in Swagger/for the backend 
+    // e.g. "email", or "firstname"
+    const body = {}
+    credentials.forEach(credential => {
+        body[credential.id] = credential.value
+    })
+    return body;
+}
 import CustomButton from "./CustomButton";
 
 function CustomForm({children, onSubmit, buttonText, buttonId, errorOccurred, buttonDisplayed}) {
     const [formData, setFormData] = useState(children)
 
     return (
-        <form onSubmit={onSubmit} style={{display: 'flex', flexDirection: 'column'}}>
-            {transformInputs({children, errorOccurred})}
-            <CustomButton standard width='100%' margin='2' type='submit' data-cy={buttonId}>
+        <form onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit(formDataToRequestBody(formData));
+        }
+        } style={{display: 'flex', flexDirection: 'column'}}>
+            {transformInputs({formData, setFormData, errorOccurred})}
+            <CustomButton standard width='100%' margin='2' type="submit" data-cy={buttonId} display={buttonDisplayed}>
                 {buttonText}
             </CustomButton>
         </form>

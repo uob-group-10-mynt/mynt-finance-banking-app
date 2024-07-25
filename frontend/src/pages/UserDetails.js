@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CustomForm from "../components/forms/CustomForm";
-import { getUserDetailsAPI } from "../utils/APIEndpoints";
+import { getUserDetailsAPI, updateUserDetailsAPI } from "../utils/APIEndpoints";
 import Page from "../components/Page";
 import CustomButton from "../components/forms/CustomButton";
 
@@ -24,7 +24,8 @@ const accountFields = [
         id: "dob",
         required: true,
         readonly: true,
-        value: ""
+        value: "",
+        type: "date"
     },
     {
         label: "Address",
@@ -73,9 +74,24 @@ function editForm(detailsFields, setDetails, e, setEditButtonDisplayed, setSaveB
     setSaveButtonDisplayed(" ")
 }
 
-const updateDetails = async (e) => {
-    e.preventDefault()
-
+const updatedFormData = async (formValuesJSON) => {
+    try {
+        const response = await fetch(updateUserDetailsAPI, {
+            method: 'POST',
+            headers: {
+                "Content-type": "application/json",
+                Authorization: `bearer ${sessionStorage.getItem('access')}`
+            },
+            body: JSON.stringify(formValuesJSON)
+        });
+        if (!response.ok) {
+            //TODO clear form? or reset it to previous state
+            throw new Error('Authentication failed');
+        }
+    } catch (error) {
+        //TODO handle errors by redirecting to relevant error page
+        console.error(error);
+    }
 }
 
 export default function UserDetails() {
@@ -91,12 +107,12 @@ export default function UserDetails() {
             setDetails(data)
             setEditButtonDisplayed(" ")
             setSaveButtonDisplayed("none")
-            console.log(`details::: ${details}`)
         })
     }, []) // empty array means useEffect() is only called on initial render of component
+
     return(
         <Page>
-            <CustomForm buttonText="Save" buttonDisplayed={saveButtonDisplayed}>
+            <CustomForm onSubmit={updatedFormData} buttonText="Save" buttonDisplayed={saveButtonDisplayed}>
                 {accountFields}
             </CustomForm>
             <CustomButton display={editButtonDisplayed} medium onClick={(e) => {editForm(details, setDetails, e, setEditButtonDisplayed, setSaveButtonDisplayed)}}>
