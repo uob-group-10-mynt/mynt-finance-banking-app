@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import CustomForm from "../components/forms/CustomForm";
 import { getUserDetailsAPI } from "../utils/APIEndpoints";
 
@@ -50,27 +51,34 @@ const getDetails = async () => {
         if (!response.ok) {
             throw new Error('respose not ok');
         }
-        response.json()
-        .then(data => {
-            accountFields.forEach(field => {
+        const data = await response.json()
+        accountFields.forEach(field => {
                 field.value = data[field.id]
-            })
-        })
-        .then(() => {
-            return accountFields
-        })
+        });
+        return accountFields
     } catch (error) {
         console.error(error);
     }
 }
 
 export default function UserDetails() {
+    const [details, setDetails] = useState("")
+    useEffect(() => {
         getDetails()
-        .then(() => {
+        .then(data => {
+            data.forEach(d => {
+                console.log(d)
+            })
+            setDetails(data)
+            console.log(`details::: ${details}`)
+        })
+        // .then(() => {
+
+        // })
+    })
             return(
                 <CustomForm buttonText="Edit">
                     {accountFields}
                 </CustomForm>
             )
-        })
 }
