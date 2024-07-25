@@ -1,14 +1,11 @@
 package com.mynt.banking.currency_cloud.manage.contacts;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.CreateContact;
-import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.FindContact;
+import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.*;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -28,5 +25,25 @@ public class ContactController {
         return contactsService.findContact(requestBody);
     }
 
-
+    @PostMapping("/update/{id}")
+    public Mono<ResponseEntity<JsonNode>> updateContact(
+            @Schema(description = "Contact UUID")
+            @PathVariable(name = "id") String id,
+            @RequestBody UpdateContactRequest request
+    ) {
+        return contactsService.updateContact(
+                id,
+                request
+        );
+    }
+    
+    @GetMapping("/get/{id}")
+    public Mono<ResponseEntity<JsonNode>> getContact(
+            @Schema(description = "Contact UUID")
+            @PathVariable(name = "id") String id
+    ) {
+        return contactsService.getContact(
+                id
+        );
+    }
 }
