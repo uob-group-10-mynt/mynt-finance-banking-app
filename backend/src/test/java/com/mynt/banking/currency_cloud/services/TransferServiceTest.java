@@ -3,7 +3,7 @@ package com.mynt.banking.currency_cloud.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.pay.transfers.TransferService;
 import com.mynt.banking.currency_cloud.pay.transfers.requests.CreateTransferRequest;
-import com.mynt.banking.main;
+import com.mynt.banking.Main;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(classes = main.class)
+@SpringBootTest(classes = Main.class)
 public class TransferServiceTest {
 
     @Autowired

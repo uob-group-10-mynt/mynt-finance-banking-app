@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mynt.banking.currency_cloud.manage.balances.requests.FindBalanceAllCurrencies;
 import com.mynt.banking.currency_cloud.manage.balances.requests.FindBalancesRequest;
-import com.mynt.banking.main;
+import com.mynt.banking.Main;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = main.class)
+@SpringBootTest(classes = Main.class)
 public class BalanceServiceTest {
 
     @Autowired

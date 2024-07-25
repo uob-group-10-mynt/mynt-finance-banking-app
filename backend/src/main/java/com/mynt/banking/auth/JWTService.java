@@ -56,6 +56,8 @@ public class JWTService {
     }
 
     private String buildToken(@NotNull Map<String, Object> extraClaims, @NotNull UserDetails userDetails, long expiration) {
+        long expirationMillis = expiration * 1000;
+
         extraClaims.put("authorities", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
@@ -65,7 +67,7 @@ public class JWTService {
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .expiration(new Date(System.currentTimeMillis() + expirationMillis))
                 .signWith(getSignInKey(), Jwts.SIG.HS256)
                 .compact();
     }

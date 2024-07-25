@@ -1,12 +1,12 @@
 package com.mynt.banking.currency_cloud.services;
 
 import com.mynt.banking.currency_cloud.manage.accounts.AccountService;
-import com.mynt.banking.main;
+import com.mynt.banking.Main;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = main.class)
+@SpringBootTest(classes = Main.class)
 public class BeneficiaryServiceTest {
 
     @Autowired

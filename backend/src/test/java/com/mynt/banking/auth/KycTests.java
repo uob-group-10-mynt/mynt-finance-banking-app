@@ -5,7 +5,7 @@ import com.mynt.banking.auth.requests.SignUpRequest;
 import com.mynt.banking.auth.requests.ValidateKycRequest;
 import com.mynt.banking.auth.responses.SDKResponse;
 import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
-import com.mynt.banking.main;
+import com.mynt.banking.Main;
 import com.mynt.banking.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-@SpringBootTest(classes = main.class)
+@SpringBootTest(classes = Main.class)
 public class KycTests {
 
     @Autowired

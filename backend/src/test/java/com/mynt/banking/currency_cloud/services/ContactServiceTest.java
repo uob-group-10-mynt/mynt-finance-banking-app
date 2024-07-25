@@ -6,7 +6,7 @@ import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountReq
 import com.mynt.banking.currency_cloud.manage.accounts.requests.FindAccountRequest;
 import com.mynt.banking.currency_cloud.manage.contacts.ContactsService;
 import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.CreateContact;
-import com.mynt.banking.main;
+import com.mynt.banking.Main;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = main.class)
+@SpringBootTest(classes = Main.class)
 public class ContactServiceTest {
 
     private String accountID;

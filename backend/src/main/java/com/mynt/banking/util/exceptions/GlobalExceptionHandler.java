@@ -1,5 +1,6 @@
 package com.mynt.banking.util.exceptions;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.context.request.WebRequest;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,6 +52,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGenericException(Exception ex, HttpServletRequest request) {
         return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", request);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<String> handleExpiredJwtException(ExpiredJwtException ex, WebRequest request) {
+        return new ResponseEntity<>("JWT token has expired", HttpStatus.UNAUTHORIZED);
     }
 
     @NotNull

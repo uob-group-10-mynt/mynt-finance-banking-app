@@ -59,7 +59,11 @@ public class AuthenticationService {
             var refreshToken = jwtService.generateRefreshToken(user);
 
             // Save refresh token in Redis
-            refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshToken));
+            refreshTokenRepository.save(RefreshToken
+                    .builder()
+                    .key(user.getEmail())
+                    .token(refreshToken)
+                    .build());
 
             return AuthenticationResponse.builder()
                     .accessToken(jwtToken)
@@ -84,7 +88,10 @@ public class AuthenticationService {
                     .orElseThrow(() -> new UserNotFoundException("User not found with email: " + request.getEmail()));
 
             // Check KYC status
-            if (!"approved".equalsIgnoreCase(String.valueOf(userRepository.getKycStatus(user.getEmail())))) {
+            var kycStatus = userRepository.getKycStatus(user.getEmail())
+                    .orElseThrow(() -> new UserNotFoundException("KYC status not found for email: " + request.getEmail()));
+
+            if (!"approved".equalsIgnoreCase(kycStatus)) {
                 throw new KycNotApprovedException("User is not approved for login");
             }
 
@@ -94,7 +101,11 @@ public class AuthenticationService {
 
             // Update tokens in Redis
             refreshTokenRepository.deleteById(user.getEmail());
-            refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshToken));
+            refreshTokenRepository.save(RefreshToken
+                    .builder()
+                    .key(user.getEmail())
+                    .token(refreshToken)
+                    .build());
 
             return AuthenticationResponse.builder()
                     .accessToken(jwtToken)
@@ -109,57 +120,47 @@ public class AuthenticationService {
     }
 
     @SneakyThrows
-    public void refreshToken(@NotNull HttpServletRequest request, HttpServletResponse response) {
-        try {
-            final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("Invalid or missing Authorization header");
-                return;
-            }
+    public AuthenticationResponse refreshToken(@NotNull HttpServletRequest request) {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Invalid or missing Authorization header");
+        }
 
-            final String refreshToken = authHeader.substring(7);
-            final String userEmail = jwtService.extractUsername(refreshToken);
+        final String refreshToken = authHeader.substring(7);
+        final String userEmail = jwtService.extractUsername(refreshToken);
 
-            if (userEmail != null) {
-                // Validate the refresh token by querying Redis
-                RefreshToken storedToken = refreshTokenRepository.findById(userEmail).orElse(null);
+        if (userEmail != null) {
+            // Validate the refresh token by querying Redis
+            RefreshToken storedToken = refreshTokenRepository.findById(userEmail).orElse(null);
 
-                if (storedToken != null && storedToken.getToken().equals(refreshToken)) {
-                    var user = userRepository.findByEmail(userEmail)
-                            .orElseThrow(() -> new UserNotFoundException("User not found with email: " + userEmail));
+            if (storedToken != null && storedToken.getToken().equals(refreshToken)) {
+                var user = userRepository.findByEmail(userEmail)
+                        .orElseThrow(() -> new UserNotFoundException("User not found with email: " + userEmail));
 
-                    if (jwtService.isTokenValid(refreshToken, user)) {
-                        var accessToken = jwtService.generateToken(user);
-                        var newRefreshToken = jwtService.generateRefreshToken(user);
+                if (jwtService.isTokenValid(refreshToken, user)) {
+                    var accessToken = jwtService.generateToken(user);
+                    var newRefreshToken = jwtService.generateRefreshToken(user);
 
-                        // Update tokens in Redis
-                        refreshTokenRepository.deleteById(userEmail);
-                        refreshTokenRepository.save(new RefreshToken(userEmail, newRefreshToken));
+                    // Update tokens in Redis
+                    refreshTokenRepository.deleteById(userEmail);
+                    refreshTokenRepository.save(RefreshToken
+                            .builder()
+                            .key(user.getEmail())
+                            .token(newRefreshToken)
+                            .build());
 
-                        var authResponse = AuthenticationResponse.builder()
-                                .accessToken(accessToken)
-                                .refreshToken(newRefreshToken)
-                                .build();
-
-                        response.setContentType("application/json");
-                        new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
-                    } else {
-                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                        response.getWriter().write("Invalid refresh token");
-                    }
+                    return AuthenticationResponse.builder()
+                            .accessToken(accessToken)
+                            .refreshToken(newRefreshToken)
+                            .build();
                 } else {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("Refresh token not found or mismatched");
+                    throw new AuthenticationCredentialsNotFoundException("Invalid refresh token");
                 }
             } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("Invalid refresh token");
+                throw new AuthenticationCredentialsNotFoundException("Refresh token not found or mismatched");
             }
-
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("Error occurred during token refresh");
+        } else {
+            throw new IllegalArgumentException("Invalid refresh token");
         }
     }
 }

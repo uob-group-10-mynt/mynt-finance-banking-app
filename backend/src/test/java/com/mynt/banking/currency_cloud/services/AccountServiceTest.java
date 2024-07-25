@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountRequest;
-import com.mynt.banking.main;
+import com.mynt.banking.Main;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Objects;
 
-@SpringBootTest(classes = main.class)
+@SpringBootTest(classes = Main.class)
 public class AccountServiceTest {
 
     @Autowired
