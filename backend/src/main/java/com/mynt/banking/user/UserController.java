@@ -2,6 +2,7 @@ package com.mynt.banking.user;
 
 import com.mynt.banking.user.requests.*;
 import com.mynt.banking.user.responses.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;

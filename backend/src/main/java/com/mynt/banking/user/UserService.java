@@ -24,17 +24,23 @@
 
 package com.mynt.banking.user;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.auth.JWTService;
-import com.mynt.banking.user.requests.ChangePasswordRequest;
-import com.mynt.banking.user.requests.UpdateUserDetailsRequest;
-import com.mynt.banking.user.responses.GetUserDetailsResponse;
+import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
+import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
+import com.mynt.banking.currency_cloud.manage.contacts.ContactsService;
+import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.*;
+import com.mynt.banking.user.requests.*;
+import com.mynt.banking.user.responses.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -44,6 +50,8 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
   private final JWTService jwtService;
+  private final CurrencyCloudRepository currencyCloudRepository;
+  private final ContactsService contactsService;
 
   public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
     var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -76,11 +84,11 @@ public class UserService {
             .build();
   }
 
-  public void updateUserDetails(String auth, UpdateUserDetailsRequest request) throws NoSuchElementException {
+  public void updateUserDetails(String auth, UpdateUserDetailsRequest request) throws RuntimeException {
     String accessToken = auth.substring(7);
     String userEmail = jwtService.extractUsername(accessToken);
 
-    var user = userRepository.findByEmail(userEmail).orElseThrow();
+    User user = userRepository.findByEmail(userEmail).orElseThrow();
     user.setFirstname(request.getFirstname());
     user.setLastname(request.getLastname());
     user.setDob(request.getDob().toString());
@@ -88,5 +96,22 @@ public class UserService {
     user.setAddress(request.getAddress());
     userRepository.save(user);
 
+    List<CurrencyCloudEntity> currencyCloudUserList = currencyCloudRepository.findByUsersId(user.getId());
+    if(currencyCloudUserList.isEmpty()) throw new NoSuchElementException("No currency cloud account found");
+    CurrencyCloudEntity currencyCloudUser = currencyCloudUserList.get(0);
+    String currencyCloudContactUUID = currencyCloudUser.getUuid();
+
+    UpdateContactRequest updateContactRequest = UpdateContactRequest.builder()
+            .firstname(request.getFirstname())
+            .lastname(request.getLastname())
+            .dateOfBirth(request.getDob().toString())
+            .phoneNumber(request.getPhoneNumber())
+            .build();
+
+    ResponseEntity<JsonNode> updateContactResponse = contactsService
+            .updateContact(currencyCloudContactUUID, updateContactRequest)
+            .block();
+
+    if (updateContactResponse.getStatusCode().isError()) throw new RuntimeException("");
   }
 }
