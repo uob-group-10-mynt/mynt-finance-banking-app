@@ -6,6 +6,7 @@ import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountReq
 import com.mynt.banking.currency_cloud.manage.accounts.requests.FindAccountRequest;
 import com.mynt.banking.currency_cloud.manage.contacts.ContactsService;
 import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.CreateContact;
+import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.UpdateContactRequest;
 import com.mynt.banking.main;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,4 +78,29 @@ public class ContactCCTest {
 
     }
 
+    @Test
+    public void testUpdateContact() {
+        String ContactUUID = "0b297cfc-2116-4c52-9150-680ecf55f9d5";
+        UpdateContactRequest contact = UpdateContactRequest.builder()
+                .firstname("James")
+                .lastname("Love")
+                //.emailAddress("james.love@gmail.com")
+                // A request to update a contact's email address does not immediately update the value. Instead, an email change request flow is initiated
+
+                .phoneNumber("+44 7824792135")
+                .dateOfBirth("1997-08-13")
+                .build();
+
+        ResponseEntity<JsonNode> result = contactsService.updateContact(ContactUUID, contact).block();
+
+        assert result != null;
+        assertEquals(result.getStatusCode().value(), 200);
+
+        assertEquals(result.getBody().get("first_name").asText(), contact.getFirstname());
+        assertEquals(result.getBody().get("last_name").asText(), contact.getLastname());
+        //assertEquals(result.getBody().get("email_address").asText(), contact.getEmailAddress());
+        assertEquals(result.getBody().get("phone_number").asText(), contact.getPhoneNumber());
+        assertEquals(result.getBody().get("date_of_birth").asText(), contact.getDateOfBirth().toString());
+
+    }
 }
