@@ -63,6 +63,17 @@ export default function ConversionListPage({
           setSelectedCurrency(currency);
         }
       },
+      onDoubleClickCapture: () => {
+        if (isBaseCurrency) {
+          setBaseCurrency(currency);
+          setSelectedCurrency(currency);
+        } else {
+          setCompareCurrency(currency);
+          setSelectedCurrency(currency);
+        }
+
+        onClose();
+      },
     }
   });
 
@@ -92,6 +103,17 @@ export default function ConversionListPage({
           setCompareCurrency(currency);
           setSelectedCurrency(currency);
         }
+      },
+      onDoubleClickCapture: () => {
+        if (isBaseCurrency) {
+          setBaseCurrency(currency);
+          setSelectedCurrency(currency);
+        } else {
+          setCompareCurrency(currency);
+          setSelectedCurrency(currency);
+        }
+
+        onClose();
       },
     }
   });

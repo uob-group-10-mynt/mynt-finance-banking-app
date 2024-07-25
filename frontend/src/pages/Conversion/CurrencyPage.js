@@ -1,4 +1,3 @@
-// CurrencyPage.js
 import { Box } from "@chakra-ui/react";
 import { TriangleUpIcon, TriangleDownIcon } from '@chakra-ui/icons'; 
 import { useEffect, useState } from "react";
@@ -6,7 +5,9 @@ import { useLocation } from "react-router-dom";
 
 import useCurrencyDescription from "../../hooks/useCurrencyDescription";
 import useQuery from "../../hooks/useQuery";
+import useDays from "../../hooks/useDays";
 import useQueryBuilder from '../../hooks/useQueryBuilder';
+
 import TabBar from "../../components/TabBar";
 import CustomText from "../../components/CustomText";
 import Icon from "../../components/util/Icon";
@@ -119,26 +120,26 @@ export default function CurrencyPage() {
       alignItems="center"
       gap='1.3em'
       margin='auto'
-      maxWidth='1200px'
-      padding='1em'
     >
-      <CustomBox padding='1em'>
+      <CustomBox width='65%'>
         {/* Currency Header */}
+        <CustomText black marginBottom='0.7em'>Live Exchange Rates At: 
+          <DateTimeDisplay time={data[data.length - 1].settlement_date} />
+        </CustomText>
         <Box
           display='flex'
           flexDirection='row'
           alignItems='center'
-          gap='0.6em'
-          mb='1em'
+          gap='0.3em'
         >
-          <Icon name={currency} currency />
-          <CustomText black big>{useCurrencyDescription(currency)}</CustomText>
+          <Icon name={compare} currency />
+          <CustomText black big>{useCurrencyDescription(compare)}</CustomText>
         </Box>
 
         <Liner />
 
         {/* Rate Info */}
-        <CustomText black medium>
+        <CustomText black big>
           1 {currency} = {data[data.length - 1].rates} {compare}
         </CustomText>
 
@@ -146,27 +147,17 @@ export default function CurrencyPage() {
           display='flex'
           flexDirection='row'
           alignItems='center'
-          justifyContent='space-between'
-          mb='1em'
-          width='100%'
+          justifyContent='start'
+          marginTop='0.5em'
         >
           <Box
             display='flex'
             flexDirection='row'
             alignItems='center'
-            gap='0.2em'
           >
             {rateChangeIcon}
-            <CustomText>{formattedAmount}</CustomText>
-          </Box>
-          <Box
-            display='flex'
-            flexDirection='row'
-            alignItems='center'
-            gap='0.5em'
-          >
-            <CustomText gray medium>Market Rate at: </CustomText>
-            <DateTimeDisplay time={data[data.length - 1].settlement_date} />
+            <CustomText black big>{formattedAmount}</CustomText>
+            <CustomText small marginLeft='0.5em'>than last {useDays(fetchLatestRateData.day_before_settlement_date)}</CustomText>
           </Box>
         </Box>
 
