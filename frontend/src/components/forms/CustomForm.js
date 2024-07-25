@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import CustomButton from "./CustomButton";
 
-function CustomForm({children, onSubmit, buttonText, buttonId, errorOccurred}) {
+function CustomForm({children, onSubmit, buttonText, buttonId, errorOccurred, buttonDisplayed}) {
     return (
         <form onSubmit={onSubmit} style={{display: 'flex', flexDirection: 'column'}}>
             {transformInputs({children, errorOccurred})}
