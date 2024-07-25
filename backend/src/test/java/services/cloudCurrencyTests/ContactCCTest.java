@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -103,4 +102,14 @@ public class ContactCCTest {
         assertEquals(result.getBody().get("date_of_birth").asText(), contact.getDateOfBirth().toString());
 
     }
+
+    @Test
+    public void testGetContact() {
+        ResponseEntity<JsonNode> result = this.contactsService.getContact("ec883781-41b5-476c-aa05-568cc2023756").block();
+
+        assert result != null;
+        assertEquals(result.getStatusCode().value(), 200);
+        System.out.println(result.getBody());
+    }
+
 }

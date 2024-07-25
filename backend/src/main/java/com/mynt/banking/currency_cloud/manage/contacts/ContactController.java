@@ -36,4 +36,14 @@ public class ContactController {
                 request
         );
     }
+    
+    @GetMapping("/get/{id}")
+    public Mono<ResponseEntity<JsonNode>> getContact(
+            @Schema(description = "Contact UUID")
+            @PathVariable(name = "id") String id
+    ) {
+        return contactsService.getContact(
+                id
+        );
+    }
 }
