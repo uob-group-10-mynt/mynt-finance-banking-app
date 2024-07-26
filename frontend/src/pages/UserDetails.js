@@ -100,11 +100,11 @@ export default function UserDetails() {
                 },
                 body: JSON.stringify(formValuesJSON)
             });
+            getAndSetDetails()
             if (!response.ok) {
                 //TODO clear form? or reset it to previous state
                 throw new Error('Authentication failed');
             }
-            getAndSetDetails()
             setEditButtonDisplayed(" ")
             setSaveButtonDisplayed("none")
         } catch (error) {
