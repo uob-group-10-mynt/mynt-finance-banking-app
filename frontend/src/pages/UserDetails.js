@@ -43,26 +43,7 @@ const accountFields = [
     },
 ];
 
-const getDetails = async () => {
-    try {
-        const response = await fetch(getUserDetailsAPI, {
-            method: 'GET',
-            headers: {
-                Authorization: `Bearer ${sessionStorage.getItem('access')}`
-            }
-        });
-        if (!response.ok) {
-            throw new Error('respose not ok');
-        }
-        const data = await response.json()
-        accountFields.forEach(field => {
-                field.value = data[field.id]
-        });
-        return accountFields
-    } catch (error) {
-        console.error(error);
-    }
-}
+
 
 //edit form changes state, readonly becomes false
 function editForm(detailsFields, setDetails, e, setEditButtonDisplayed, setSaveButtonDisplayed) {
@@ -79,13 +60,31 @@ export default function UserDetails() {
     const [details, setDetails] = useState("")
     const [editButtonDisplayed, setEditButtonDisplayed] = useState()
     const [saveButtonDisplayed, setSaveButtonDisplayed] = useState()
+
+    const getAndSetDetails = async () => {
+        try {
+            const response = await fetch(getUserDetailsAPI, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem('access')}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error('respose not ok');
+            }
+            const data = await response.json()
+            accountFields.forEach(field => {
+                    field.value = data[field.id]
+            });
+            setDetails(accountFields)
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     useEffect(() => {
-        getDetails()
-        .then(data => {
-            data.forEach(d => {
-                console.log(d)
-            })
-            setDetails(data)
+        getAndSetDetails()
+        .then(() => {
             setEditButtonDisplayed(" ")
             setSaveButtonDisplayed("none")
         })
@@ -105,6 +104,7 @@ export default function UserDetails() {
                 //TODO clear form? or reset it to previous state
                 throw new Error('Authentication failed');
             }
+            getAndSetDetails()
             setEditButtonDisplayed(" ")
             setSaveButtonDisplayed("none")
         } catch (error) {
