@@ -1,8 +1,6 @@
 package com.mynt.banking.auth;
 
-import com.mynt.banking.auth.JWTService;
 import com.mynt.banking.auth.RefreshToken;
-import com.mynt.banking.auth.RefreshTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

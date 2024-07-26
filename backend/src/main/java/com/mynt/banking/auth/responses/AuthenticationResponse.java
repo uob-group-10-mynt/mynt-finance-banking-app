@@ -17,6 +17,4 @@ public class AuthenticationResponse {
 
     @JsonProperty("message")
     private String message;
-
-    public AuthenticationResponse(String message) { this.message = message; }
 }
