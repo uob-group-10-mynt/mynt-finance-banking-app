@@ -115,10 +115,10 @@ export default function UserDetails() {
     return(
         <Page>
             <Heading as='h1' size='xl' mb={4}>Your personal details</Heading>
-            <CustomForm onSubmit={updatedFormData} buttonText="Save" buttonDisplayed={saveButtonDisplayed}>
+            <CustomForm onSubmit={updatedFormData} buttonText="Save" buttonDisplayed={saveButtonDisplayed} buttonId="saveDetailsButton">
                 {details}
             </CustomForm>
-            <CustomButton display={editButtonDisplayed} medium onClick={(e) => {editForm(details, setDetails, e, setEditButtonDisplayed, setSaveButtonDisplayed)}}>
+            <CustomButton data-cy="EditButton" display={editButtonDisplayed} medium onClick={(e) => {editForm(details, setDetails, e, setEditButtonDisplayed, setSaveButtonDisplayed)}}>
                 Edit
             </CustomButton>
         </Page>
