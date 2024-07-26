@@ -231,11 +231,9 @@ public class KYCService {
 
         Optional<User> user = userRepository.findByEmail(request.getEmail());
 
-        List<CurrencyCloudEntity> cloudCurrencyUser = currencyCloudRepository.findByUsersId((long)user.get().getId());
+        CurrencyCloudEntity cloudCurrencyUser = currencyCloudRepository.findByUsersId((long)user.  .get().getId());
 
-        if(user.isEmpty()){return false;}
-
-        if(!cloudCurrencyUser.isEmpty()){return false;}
+        if(cloudCurrencyUser == null){return false;}
 
         FindContact findContact = FindContact.builder()
                 .emailAddress(request.getEmail())
@@ -243,6 +241,7 @@ public class KYCService {
 
         ResponseEntity<JsonNode> contact = contactsService.findContact(findContact).block();
 
+        assert contact != null;
         int statusCode = contact.getStatusCode().value();
         if (!(statusCode == 200)) {return false;}
 

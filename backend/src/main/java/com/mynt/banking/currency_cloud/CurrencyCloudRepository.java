@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface CurrencyCloudRepository extends JpaRepository<CurrencyCloudEntity, String> {
 
-    List<CurrencyCloudEntity> findByUuid(String uuid);
+    CurrencyCloudEntity findByUuid(String uuid);
 
-    List<CurrencyCloudEntity> findByUsersId(Long usersId);
+    CurrencyCloudEntity findByUsersId(Long usersId);
 
 }
