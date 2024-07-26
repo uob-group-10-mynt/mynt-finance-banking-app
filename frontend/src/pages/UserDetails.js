@@ -3,6 +3,7 @@ import CustomForm from "../components/forms/CustomForm";
 import { getUserDetailsAPI, updateUserDetailsAPI } from "../utils/APIEndpoints";
 import Page from "../components/Page";
 import CustomButton from "../components/forms/CustomButton";
+import { Heading } from "@chakra-ui/react";
 
 const accountFields = [
     {
@@ -43,8 +44,6 @@ const accountFields = [
     },
 ];
 
-
-
 //edit form changes state, readonly becomes false
 function editForm(detailsFields, setDetails, e, setEditButtonDisplayed, setSaveButtonDisplayed) {
     e.preventDefault();
@@ -57,7 +56,7 @@ function editForm(detailsFields, setDetails, e, setEditButtonDisplayed, setSaveB
 
 
 export default function UserDetails() {
-    const [details, setDetails] = useState("")
+    const [details, setDetails] = useState(accountFields)
     const [editButtonDisplayed, setEditButtonDisplayed] = useState()
     const [saveButtonDisplayed, setSaveButtonDisplayed] = useState()
 
@@ -75,6 +74,7 @@ export default function UserDetails() {
             const data = await response.json()
             accountFields.forEach(field => {
                     field.value = data[field.id]
+                    field.readonly = true
             });
             setDetails(accountFields)
         } catch (error) {
@@ -91,6 +91,7 @@ export default function UserDetails() {
     }, []) // empty array means useEffect() is only called on initial render of component
     
     const updatedFormData = async (formValuesJSON) => {
+        console.log("CLICK")
         try {
             const response = await fetch(updateUserDetailsAPI, {
                 method: 'POST',
@@ -101,22 +102,21 @@ export default function UserDetails() {
                 body: JSON.stringify(formValuesJSON)
             });
             if (!response.ok) {
-                //TODO clear form? or reset it to previous state
                 throw new Error('Authentication failed');
             }
             getAndSetDetails()
             setEditButtonDisplayed(" ")
             setSaveButtonDisplayed("none")
         } catch (error) {
-            //TODO handle errors by redirecting to relevant error page
             console.error(error);
         }
     }
 
     return(
         <Page>
+            <Heading as='h1' size='xl' mb={4}>Your personal details</Heading>
             <CustomForm onSubmit={updatedFormData} buttonText="Save" buttonDisplayed={saveButtonDisplayed}>
-                {accountFields}
+                {details}
             </CustomForm>
             <CustomButton display={editButtonDisplayed} medium onClick={(e) => {editForm(details, setDetails, e, setEditButtonDisplayed, setSaveButtonDisplayed)}}>
                 Edit

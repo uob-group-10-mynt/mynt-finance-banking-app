@@ -37,7 +37,6 @@ function CustomForm({children, onSubmit, buttonText, buttonId, errorOccurred, bu
     );
 }
 
-
 function transformInputs({formData, setFormData, errorOccurred}) {
     const handleInputChange = (index, event) => {
         const updatedFormData = [...formData];
