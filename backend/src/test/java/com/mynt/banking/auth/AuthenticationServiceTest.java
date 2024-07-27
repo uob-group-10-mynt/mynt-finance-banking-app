@@ -6,6 +6,7 @@ import com.mynt.banking.auth.responses.AuthenticationResponse;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
 import com.mynt.banking.util.exceptions.KycNotApprovedException;
+import com.mynt.banking.util.exceptions.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -14,10 +15,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
-import java.io.PrintWriter;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,13 +37,10 @@ public class AuthenticationServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private JWTService jwtService;
+    private TokenService tokenService;
 
     @Mock
     private AuthenticationManager authenticationManager;
-
-    @Mock
-    private RefreshTokenRepository refreshTokenRepository;
 
     @InjectMocks
     private AuthenticationService authenticationService;
@@ -50,7 +51,7 @@ public class AuthenticationServiceTest {
     }
 
     @Test
-    public void testRegister() {
+    public void testRegister() throws Exception {
         // Arrange
         RegisterRequest request = new RegisterRequest();
         request.setEmail("test@example.com");
@@ -58,8 +59,8 @@ public class AuthenticationServiceTest {
 
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        when(jwtService.generateToken(any(User.class))).thenReturn("jwtToken");
-        when(jwtService.generateRefreshToken(any(User.class))).thenReturn("refreshToken");
+        when(tokenService.generateToken(any(User.class))).thenReturn("jwtToken");
+        when(tokenService.generateRefreshToken(any(User.class))).thenReturn("refreshToken");
 
         // Act
         AuthenticationResponse response = authenticationService.register(request);
@@ -69,12 +70,10 @@ public class AuthenticationServiceTest {
         assertEquals("jwtToken", response.getAccessToken());
         assertEquals("refreshToken", response.getRefreshToken());
         verify(userRepository, times(1)).save(any(User.class));
-        verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class));
     }
 
-
     @Test
-    public void testAuthenticate() {
+    public void testAuthenticate() throws Exception {
         // Arrange
         AuthenticationRequest request = new AuthenticationRequest();
         request.setEmail("test@example.com");
@@ -83,52 +82,88 @@ public class AuthenticationServiceTest {
         User user = new User();
         user.setEmail("test@example.com");
 
+        // Mock authentication process
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(mock(Authentication.class));
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
-        when(jwtService.generateToken(any(User.class))).thenReturn("jwtToken");
-        when(jwtService.generateRefreshToken(any(User.class))).thenReturn("refreshToken");
-        when(jwtService.isTokenValid(anyString(), any(User.class))).thenReturn(true);
+        when(tokenService.generateToken(any(User.class))).thenReturn("jwtToken");
+        when(tokenService.generateRefreshToken(any(User.class))).thenReturn("refreshToken");
+        when(tokenService.isTokenValid(anyString(), any(User.class))).thenReturn(true);
         when(userRepository.getKycStatus(anyString())).thenReturn(Optional.of("approved"));
 
         // Act
-        AuthenticationResponse response = authenticationService.authenticate(request);
+        AuthenticationResponse authResponse = authenticationService.authenticate(request);
 
         // Assert
-        assertNotNull(response);
-        assertEquals("jwtToken", response.getAccessToken());
-        assertEquals("refreshToken", response.getRefreshToken());
+        assertNotNull(authResponse);
+        assertEquals("jwtToken", authResponse.getAccessToken());
+        assertEquals("refreshToken", authResponse.getRefreshToken());
     }
+
 
     @Test
     public void testRefreshToken() throws Exception {
         // Arrange
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        PrintWriter writer = mock(PrintWriter.class);
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("test@example.com");
+        when(authentication.isAuthenticated()).thenReturn(true);
 
-        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer oldRefreshToken");
-        when(jwtService.extractUsername(anyString())).thenReturn("test@example.com");
-        when(jwtService.isTokenValid(anyString(), any(User.class))).thenReturn(true);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        SecurityContextHolder.setContext(securityContext);
+
+        // Log security context and authentication
+        System.out.println("SecurityContext: " + SecurityContextHolder.getContext());
+        System.out.println("Authentication: " + SecurityContextHolder.getContext().getAuthentication());
 
         User user = new User();
         user.setEmail("test@example.com");
 
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
-        when(refreshTokenRepository.findById(anyString())).thenReturn(Optional.of(RefreshToken.builder()
-                .key("test@example.com")
-                .token("oldRefreshToken")
-                .build()));
-        when(jwtService.generateToken(any(User.class))).thenReturn("newAccessToken");
-        when(jwtService.generateRefreshToken(any(User.class))).thenReturn("newRefreshToken");
-
-        when(response.getWriter()).thenReturn(writer);
+        when(tokenService.generateToken(any(User.class))).thenReturn("newAccessToken");
+        when(tokenService.generateRefreshToken(any(User.class))).thenReturn("newRefreshToken");
 
         // Act
-        authenticationService.refreshToken(request);
+        AuthenticationResponse authResponse = authenticationService.refreshToken();
 
         // Assert
-        verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class));
+        assertNotNull(authResponse, "Response should not be null");
+        assertEquals("newAccessToken", authResponse.getAccessToken(), "Access token should be 'newAccessToken'");
+        assertEquals("newRefreshToken", authResponse.getRefreshToken(), "Refresh token should be 'newRefreshToken'");
     }
 
+
+
+    @Test
+    public void testRefreshToken_UserNotFound() {
+        // Arrange
+        // Create and configure the mock Authentication object
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("test@example.com");
+        when(authentication.isAuthenticated()).thenReturn(true); // Ensure the authentication is considered valid
+
+        // Create and configure the mock SecurityContext object
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        // Set the SecurityContextHolder to use the mock SecurityContext
+        SecurityContextHolder.setContext(securityContext);
+
+        // Configure the userRepository to simulate user not being found
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+
+        // Act & Assert
+        Exception exception = assertThrows(AuthenticationException.class, () -> {
+            authenticationService.refreshToken();
+        });
+
+        // Check if the exception is caused by UserNotFoundException
+        Throwable cause = exception.getCause();
+        assertNotNull(cause); // Ensure the cause is not null
+        assertInstanceOf(UserNotFoundException.class, cause);
+        assertEquals("User not found with email: test@example.com", cause.getMessage());
+    }
 
     @Test
     public void testAuthenticate_KycNotApproved() {
@@ -144,92 +179,106 @@ public class AuthenticationServiceTest {
         when(userRepository.getKycStatus(anyString())).thenReturn(Optional.of("pending"));
 
         // Act & Assert
-        Exception exception = assertThrows(KycNotApprovedException.class, () -> {
+        Exception exception = assertThrows(AuthenticationException.class, () -> {
             authenticationService.authenticate(request);
         });
 
-        String expectedMessage = "User is not approved for login";
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
+        // Extract the cause of the AuthenticationException
+        Throwable cause = exception.getCause();
+        assertNotNull(cause);
+        assertInstanceOf(KycNotApprovedException.class, cause);
+        assertEquals("User is not approved for login", cause.getMessage());
     }
 
     @Test
-    public void testAccessTokenExpiration() {
+    public void testAccessTokenExpiration() throws Exception {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
+        // Mock the authorization header to simulate an expired token scenario
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer expiredRefreshToken");
-        when(jwtService.extractUsername(anyString())).thenReturn("test@example.com");
 
+        // Set up SecurityContext with a mocked Authentication
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("test@example.com");
+        when(authentication.isAuthenticated()).thenReturn(true); // Ensure the authentication is considered valid
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        // Create a user with the expected email
         User user = new User();
         user.setEmail("test@example.com");
 
+        // Mock user repository and token service
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
-        when(refreshTokenRepository.findById(anyString())).thenReturn(Optional.of(RefreshToken.builder()
-                .key("test@example.com")
-                .token("expiredRefreshToken")
-                .build()));
-        when(jwtService.isTokenValid(anyString(), any(User.class))).thenReturn(true);
-        when(jwtService.generateToken(any(User.class))).thenReturn("newAccessToken");
-        when(jwtService.generateRefreshToken(any(User.class))).thenReturn("newRefreshToken");
+        when(tokenService.isTokenValid(anyString(), any(User.class))).thenReturn(true); // Simulate valid token
+        when(tokenService.generateToken(any(User.class))).thenReturn("newAccessToken");
+        when(tokenService.generateRefreshToken(any(User.class))).thenReturn("newRefreshToken");
 
         // Act
-        AuthenticationResponse response = authenticationService.refreshToken(request);
+        AuthenticationResponse refreshResponse = authenticationService.refreshToken();
 
         // Assert
-        assertNotNull(response);
-        assertEquals("newAccessToken", response.getAccessToken());
-        assertEquals("newRefreshToken", response.getRefreshToken());
-        verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class));
-        verify(refreshTokenRepository, times(1)).deleteById(anyString());
+        assertNotNull(refreshResponse, "Response should not be null");
+        assertEquals("newAccessToken", refreshResponse.getAccessToken(), "Access token should be 'newAccessToken'");
+        assertEquals("newRefreshToken", refreshResponse.getRefreshToken(), "Refresh token should be 'newRefreshToken'");
     }
 
+
     @Test
-    public void testRefreshTokenExpiration() throws Exception {
+    public void testRefreshTokenExpiration() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
 
+        // Mock the authorization header
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer expiredRefreshToken");
-        when(jwtService.extractUsername(anyString())).thenReturn("test@example.com");
 
+        // Mock the security context with an authenticated user
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("test@example.com");
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        // Mock user repository and token service
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(new User()));
-        when(refreshTokenRepository.findById(anyString())).thenReturn(Optional.empty());
+        when(tokenService.isTokenValid(anyString(), any(User.class))).thenReturn(false); // Simulating expired token
 
         // Act & Assert
         Exception exception = assertThrows(AuthenticationCredentialsNotFoundException.class, () -> {
-            authenticationService.refreshToken(request);
+            authenticationService.refreshToken();
         });
 
-        String expectedMessage = "Refresh token not found or mismatched";
+        String expectedMessage = "No authentication credentials found";
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
-    public void testInvalidToken() throws Exception {
+    public void testInvalidToken() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer invalidToken");
-        when(jwtService.extractUsername(anyString())).thenReturn("test@example.com");
+        // Mock SecurityContextHolder to return an Authentication with the expected user
+        SecurityContext securityContext = mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
 
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(new User()));
-        when(refreshTokenRepository.findById(anyString())).thenReturn(Optional.of(RefreshToken.builder()
-                .key("test@example.com")
-                .token("invalidToken")
-                .build()));
+        // Simulate invalid token scenario by not finding the user
+        when(securityContext.getAuthentication()).thenReturn(null); // No authentication found
+        when(tokenService.extractUsername(anyString())).thenReturn("test@example.com");
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
         // Act & Assert
         Exception exception = assertThrows(AuthenticationCredentialsNotFoundException.class, () -> {
-            authenticationService.refreshToken(request);
+            authenticationService.refreshToken();
         });
 
-        String expectedMessage = "Invalid refresh token";
+        String expectedMessage = "No authentication credentials found";
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
     }
 }
-

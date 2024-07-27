@@ -6,8 +6,6 @@ import com.mynt.banking.auth.requests.SignUpRequest;
 import com.mynt.banking.auth.requests.ValidateKycRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
 import com.mynt.banking.auth.responses.SDKResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +19,7 @@ import java.io.IOException;
 public class AuthenticationController {
 
     private final AuthenticationService service;
-    private final KYCService kycService;
+    private final KycService kycService;
 
     @PostMapping(value = "/onfidoSdk", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SDKResponse> onfidoSdk(@RequestBody SignUpRequest request) {
@@ -46,7 +44,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthenticationResponse> refreshToken(HttpServletRequest request) {
-        return ResponseEntity.ok(service.refreshToken(request));
+    public ResponseEntity<AuthenticationResponse> refreshToken() {
+        return ResponseEntity.ok(service.refreshToken());
     }
 }

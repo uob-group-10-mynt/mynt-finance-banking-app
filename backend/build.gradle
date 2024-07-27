@@ -40,7 +40,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
 	implementation 'org.springframework.boot:spring-boot-starter-logging'
 	implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'
-
+	implementation 'com.nimbusds:nimbus-jose-jwt:9.25'
 	compileOnly 'org.projectlombok:lombok'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'com.fasterxml.jackson.core:jackson-databind'

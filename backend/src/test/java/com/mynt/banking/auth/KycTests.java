@@ -29,7 +29,7 @@ public class KycTests {
     private int testAccountNum;
 
     @Autowired
-    private KYCService kycService;
+    private KycService kycService;
 
 //    @Autowired
 

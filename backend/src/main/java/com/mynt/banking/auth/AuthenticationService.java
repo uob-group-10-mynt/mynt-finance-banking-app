@@ -1,6 +1,5 @@
 package com.mynt.banking.auth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mynt.banking.auth.requests.AuthenticationRequest;
 import com.mynt.banking.auth.requests.RegisterRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
@@ -11,15 +10,15 @@ import com.mynt.banking.util.exceptions.RegistrationException;
 import com.mynt.banking.util.exceptions.UserAlreadyExistsException;
 import com.mynt.banking.util.exceptions.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
-import jakarta.ws.rs.core.HttpHeaders;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +28,7 @@ public class AuthenticationService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JWTService jwtService;
+    private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
 
 
@@ -55,18 +54,11 @@ public class AuthenticationService {
             userRepository.save(user);
 
             // Generate tokens
-            var jwtToken = jwtService.generateToken(user);
-            var refreshToken = jwtService.generateRefreshToken(user);
-
-            // Save refresh token in Redis
-            refreshTokenRepository.save(RefreshToken
-                    .builder()
-                    .key(user.getEmail())
-                    .token(refreshToken)
-                    .build());
+            var accessToken = tokenService.generateToken(user);
+            var refreshToken = tokenService.generateRefreshToken(user);
 
             return AuthenticationResponse.builder()
-                    .accessToken(jwtToken)
+                    .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .build();
 
@@ -96,71 +88,52 @@ public class AuthenticationService {
             }
 
             // Generate tokens
-            var jwtToken = jwtService.generateToken(user);
-            var refreshToken = jwtService.generateRefreshToken(user);
-
-            // Update tokens in Redis
-            refreshTokenRepository.deleteById(user.getEmail());
-            refreshTokenRepository.save(RefreshToken
-                    .builder()
-                    .key(user.getEmail())
-                    .token(refreshToken)
-                    .build());
+            var accessToken = tokenService.generateToken(user);
+            var refreshToken = tokenService.generateRefreshToken(user);
 
             return AuthenticationResponse.builder()
-                    .accessToken(jwtToken)
+                    .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .build();
 
         } catch (AuthenticationCredentialsNotFoundException e) {
             throw new AuthenticationCredentialsNotFoundException("Invalid credentials", e);
-        } catch (AuthenticationException e) {
+        } catch (Exception e) {
             throw new AuthenticationException("Error occurred during authentication", e) {};
         }
     }
 
-    @SneakyThrows
-    public AuthenticationResponse refreshToken(@NotNull HttpServletRequest request) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Invalid or missing Authorization header");
-        }
 
-        final String refreshToken = authHeader.substring(7);
-        final String userEmail = jwtService.extractUsername(refreshToken);
+    public AuthenticationResponse refreshToken() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (userEmail != null) {
-            // Validate the refresh token by querying Redis
-            RefreshToken storedToken = refreshTokenRepository.findById(userEmail).orElse(null);
-
-            if (storedToken != null && storedToken.getToken().equals(refreshToken)) {
-                var user = userRepository.findByEmail(userEmail)
-                        .orElseThrow(() -> new UserNotFoundException("User not found with email: " + userEmail));
-
-                if (jwtService.isTokenValid(refreshToken, user)) {
-                    var accessToken = jwtService.generateToken(user);
-                    var newRefreshToken = jwtService.generateRefreshToken(user);
-
-                    // Update tokens in Redis
-                    refreshTokenRepository.deleteById(userEmail);
-                    refreshTokenRepository.save(RefreshToken
-                            .builder()
-                            .key(user.getEmail())
-                            .token(newRefreshToken)
-                            .build());
-
-                    return AuthenticationResponse.builder()
-                            .accessToken(accessToken)
-                            .refreshToken(newRefreshToken)
-                            .build();
-                } else {
-                    throw new AuthenticationCredentialsNotFoundException("Invalid refresh token");
-                }
-            } else {
-                throw new AuthenticationCredentialsNotFoundException("Refresh token not found or mismatched");
+            // Check if authentication is null or not authenticated
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new AuthenticationCredentialsNotFoundException("No authentication credentials found");
             }
-        } else {
-            throw new IllegalArgumentException("Invalid refresh token");
+
+            // Extract the username from the authenticated user context
+            String userEmail = authentication.getName();
+
+            // Fetch user details from the repository
+            var user = userRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new UserNotFoundException("User not found with email: " + userEmail));
+
+            // Generate new access and refresh tokens
+            var accessToken = tokenService.generateToken(user);
+            var newRefreshToken = tokenService.generateRefreshToken(user);
+
+            return AuthenticationResponse.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(newRefreshToken)
+                    .build();
+        } catch (UserNotFoundException e) {
+            throw new AuthenticationException("User not found during token refresh", e) {};
+        } catch (AuthenticationCredentialsNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new AuthenticationException("Error occurred during token refresh", e) {};
         }
     }
 }

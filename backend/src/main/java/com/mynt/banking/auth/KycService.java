@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.net.URI;
@@ -32,17 +31,12 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class KYCService {
+public class KycService {
 
     @Value("${api.onfido}")
     private String onfido;
@@ -231,7 +225,7 @@ public class KYCService {
 
         Optional<User> user = userRepository.findByEmail(request.getEmail());
 
-        CurrencyCloudEntity cloudCurrencyUser = currencyCloudRepository.findByUsersId((long)user.  .get().getId());
+        CurrencyCloudEntity cloudCurrencyUser = currencyCloudRepository.findByUsersId((long)user.get().getId());
 
         if(cloudCurrencyUser == null){return false;}
 
