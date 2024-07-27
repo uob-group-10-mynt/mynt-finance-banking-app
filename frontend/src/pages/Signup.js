@@ -86,6 +86,7 @@ const signupInputFields = [
 
 
 function Signup() {
+    const [formDetails, setFormDetails] = useState(signupInputFields)
     const [email, setEmail] = useState('');
     const [firstName, setFirstName] = useState('');
     const [surname, setSurname] = useState('');
@@ -145,8 +146,7 @@ function Signup() {
                     <iframe src={iframe} style={{height: "700px"}}></iframe>
                 </Center>
             ) : (
-                <CustomForm onSubmit={handleSubmit} buttonText="Sign Up" buttonId="submitButton" errorOccurred={errorOccurred}>
-                    {signupInputFields}
+                <CustomForm onSubmit={handleSubmit} buttonText="Sign Up" buttonId="submitButton" errorOccurred={errorOccurred} parentState={formDetails} setParentState={setFormDetails}>
                 </CustomForm>
             )}
         </Page>
