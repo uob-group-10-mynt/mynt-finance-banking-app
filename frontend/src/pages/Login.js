@@ -34,6 +34,7 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorOccurred, setErrorOccurred] = useState('');
+    const [formDetails, setFormDetails] = useState(loginInputFields)
     const navigate = useNavigate();
 
     const handleLoginSubmit = async (formValuesJSON) => {
@@ -65,7 +66,7 @@ function Login() {
         <Page>
             <PageHeader>Login</PageHeader>
             <CustomForm onSubmit={handleLoginSubmit} buttonText="Sign In" buttonId="submitButton"
-                        errorOccurred={errorOccurred}>
+                        errorOccurred={errorOccurred} parentState={formDetails} setParentState={setFormDetails}>
                 {loginInputFields}
             </CustomForm>
         </Page>

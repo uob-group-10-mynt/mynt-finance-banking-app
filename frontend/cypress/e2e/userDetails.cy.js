@@ -12,9 +12,10 @@ describe('user details page', ()  => {
         cy.get('[data-cy="DetailsLink"]').click()
 
         //set new details
-        cy.get('[data-cy="EditButton"]').click()
-        cy.get('[data-cy="EditButton"]').click()
-
+        cy.get('[data-cy="saveDetailsButton"]').should('not.be.visible')
+        cy.get('[data-cy="EditButton"]').should('be.visible').click({force: true})
+        cy.get('[data-cy="EditButton"]').should('be.visible').click({force: true})
+        cy.get('[data-cy="saveDetailsButton"]').should('be.visible')
         cy.get('[data-cy="firstnameInput"]').clear().type(firstname)
         cy.get('[data-cy="lastnameInput"]').clear().type(lastname)
         cy.get('[data-cy="dobInput"]').type(dob)

@@ -12,16 +12,14 @@ function formDataToRequestBody(credentials) {
     return body;
 }
 
-function CustomForm({children, onSubmit, buttonText, buttonId, errorOccurred, buttonDisplayed}) {
-    const [formData, setFormData] = useState(children)
-
+function CustomForm({parentState, setParentState, onSubmit, buttonText, buttonId, errorOccurred, buttonDisplayed}) {
     return (
         <form onSubmit={(e) => {
             e.preventDefault();
-            onSubmit(formDataToRequestBody(formData));
+            onSubmit(formDataToRequestBody(parentState));
         }
         } style={{display: 'flex', flexDirection: 'column'}}>
-            {transformInputs({formData, setFormData, errorOccurred})}
+            {transformInputs({parentState, setParentState, errorOccurred})}
             <Button margin='2' type="submit" data-cy={buttonId} display={buttonDisplayed}>
                 {buttonText}
             </Button>
@@ -29,15 +27,15 @@ function CustomForm({children, onSubmit, buttonText, buttonId, errorOccurred, bu
     );
 }
 
-function transformInputs({formData, setFormData, errorOccurred}) {
+function transformInputs({parentState, setParentState, errorOccurred}) {
     const handleInputChange = (index, event) => {
-        const updatedFormData = [...formData];
+        const updatedFormData = [...parentState];
         updatedFormData[index].value = event.target.value;
-        setFormData(updatedFormData);
+        setParentState(updatedFormData);
     };
     
     return (
-        formData.map((inputFields, index) => (
+        parentState.map((inputFields, index) => (
             <div key={inputFields.label}>
                 <FormControl isRequired={inputFields.required} margin='0.5em' isInvalid={errorOccurred}>
                     <FormLabel>{inputFields.label}</FormLabel>

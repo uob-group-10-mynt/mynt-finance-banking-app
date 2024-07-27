@@ -44,21 +44,25 @@ const accountFields = [
     },
 ];
 
-//edit form changes state, readonly becomes false
-function editForm(detailsFields, setDetails, e, setEditButtonDisplayed, setSaveButtonDisplayed) {
-    e.preventDefault();
-    setDetails(detailsFields.forEach((field) => {
-        field.readonly = false;
-    }))
-    setEditButtonDisplayed("none")
-    setSaveButtonDisplayed(" ")
-}
 
 
 export default function UserDetails() {
     const [details, setDetails] = useState(accountFields)
     const [editButtonDisplayed, setEditButtonDisplayed] = useState()
     const [saveButtonDisplayed, setSaveButtonDisplayed] = useState()
+    
+    
+    //edit form changes state, readonly becomes false
+    function editForm(e) {
+        e.preventDefault();
+        
+        setDetails(details.forEach((field) => {
+            field.readonly = false;
+        }))
+        setEditButtonDisplayed("none")
+        setSaveButtonDisplayed(" ")
+    }
+
 
     const getAndSetDetails = async () => {
         try {
@@ -82,6 +86,7 @@ export default function UserDetails() {
         }
     }
 
+
     useEffect(() => {
         getAndSetDetails()
         .then(() => {
@@ -90,8 +95,8 @@ export default function UserDetails() {
         })
     }, []) // empty array means useEffect() is only called on initial render of component
     
+
     const updatedFormData = async (formValuesJSON) => {
-        console.log("CLICK")
         try {
             const response = await fetch(updateUserDetailsAPI, {
                 method: 'POST',
@@ -115,10 +120,9 @@ export default function UserDetails() {
     return(
         <Page>
             <Heading as='h1' size='xl' mb={4}>Your personal details</Heading>
-            <CustomForm onSubmit={updatedFormData} buttonText="Save" buttonDisplayed={saveButtonDisplayed} buttonId="saveDetailsButton">
-                {details}
+            <CustomForm onSubmit={updatedFormData} buttonText="Save" buttonDisplayed={saveButtonDisplayed} buttonId="saveDetailsButton" parentState={accountFields} setParentState={setDetails}>
             </CustomForm>
-            <CustomButton data-cy="EditButton" display={editButtonDisplayed} medium onClick={(e) => {editForm(details, setDetails, e, setEditButtonDisplayed, setSaveButtonDisplayed)}}>
+            <CustomButton data-cy="EditButton" display={editButtonDisplayed} medium onClick={(e) => {editForm(e)}}>
                 Edit
             </CustomButton>
         </Page>
