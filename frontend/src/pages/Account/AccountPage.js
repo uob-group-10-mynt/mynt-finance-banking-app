@@ -19,25 +19,24 @@ const accountDetail = {
   'label': 'Mynt Dollar Account',
   'balance': '100',
   'currency': 'USD',
-  'currencySymbol': '$'
 };
 
 const fetchTransactionData = [
   {
       'id': '1',
       'payee_bank': 'mynt',
+      'payer_bank': 'M-PESA',
       'amount': '100',
       'currency': 'USD',
-      'currencySymbol': '$',
       'flow': '+',
       'created_at': "2024-06-25T14:13:18+00:00",
   },
   {
       'id': '2',
       'payee_bank': 'others',
+      'payer_bank': 'M-PESA',
       'amount': '10000.0',
-      'currency': 'KRW',
-      'currencySymbol': '₩',
+      'currency': 'USD',
       'flow': '-',
       'created_at': "2024-06-25T14:13:18+00:00",
   },
@@ -62,7 +61,7 @@ function AccountPage() {
                         <DateTimeDisplay time={data.created_at}/>
                     </InfoBlock>
                     <ContainerRowBalanceWrapper>
-                      <CustomText black big>{data.flow}{useFormatAmount(data.amount, data.currencySymbol)}</CustomText>
+                      <CustomText black big>{data.flow}{useFormatAmount(data.amount, data.currency)}</CustomText>
                     </ContainerRowBalanceWrapper>
                 </>
             );
@@ -80,7 +79,7 @@ function AccountPage() {
         <CustomText gray small style={{ textDecoration: 'underline' }}>{accountDetail.label}</CustomText>
         <CustomText gray xsmall>{accountDetail.account_reference}</CustomText>
       </InfoBlock>
-      <CustomText black big>{useFormatAmount(accountDetail.balance, accountDetail.currencySymbol)}</CustomText>
+      <CustomText black big>{useFormatAmount(accountDetail.balance, accountDetail.currency)}</CustomText>
       <Box
         display='flex' 
         flexDirection='row'

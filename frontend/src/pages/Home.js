@@ -1,4 +1,5 @@
-import { Box } from "@chakra-ui/react";
+import { Box, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from "@chakra-ui/react";
+import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import useFormatAmount from '../hooks/useFormatAmount';
@@ -6,8 +7,9 @@ import CustomButton from "../components/forms/CustomButton";
 import CustomText from "../components/CustomText";
 import Icon from "../components/util/Icon";
 import Container from "../components/container/Container";
+import ContainerRowBalanceWrapper from "../components/container/ContainerRowBalanceWrapper";
 import InfoBlock from "../components/util/InfoBlock";
-
+import ConversionListPage from "./Conversion/ConversionListPage"; 
 
 const fetchAccountData = [
     {
@@ -16,8 +18,7 @@ const fetchAccountData = [
         'bank': 'mynt',
         'label': 'Mynt Dollar Account',
         'balance': '1010234.0',
-        'currency': 'dollar',
-        'currencySymbol': '$'
+        'currency': 'USD',
     },
     {
         'id': '2',
@@ -25,35 +26,75 @@ const fetchAccountData = [
         'bank': 'others',
         'label': 'Mynt Pound Account',
         'balance': '1000.0',
-        'currency': 'pound',
-        'currencySymbol': '£'
+        'currency': 'GBP',
     },
 ];
 
+const fetchConversionData = [
+    {
+        'currency': 'GBP',
+        'rates': '1',
+    },
+    {
+        'currency': 'USD',
+        'rates': '1.4079',
+    }
+]
+
 export default function Home() {
     const navigate = useNavigate(); 
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [ selectedCurrency, setSelectedCurrency ] = useState(null);
+    const [ baseCurrency, setBaseCurrency ] = useState(fetchConversionData[0].currency);
+    const [ compareCurrency, setCompareCurrency ] = useState(fetchConversionData[1].currency);
+    const [ isBaseCurrency, setIsBaseCurrency ] = useState(false);
 
     const accountKeyFn = (info) => info.id;
-    const conversionKeyFn = (info) => info.id;
+    const conversionKeyFn = (info) => info.currency;
 
     const handleSendOnClick = (e) => {
         e.stopPropagation();
         console.log("SEND BUTTON CLICKED");
     }
 
+    const openConversionModal = (currency, isBase) => {
+        setSelectedCurrency(currency);
+        setIsBaseCurrency(isBase);
+        onOpen();
+    }
+
+    const conversionData = fetchConversionData.map((data) => {
+        const { currency, rates } = data;
+        return {
+            ...data,
+            render: () => (
+                <>
+                    <Icon name={currency} currency/>
+                    <CustomText>{currency}</CustomText>
+                    <ContainerRowBalanceWrapper>
+                        <CustomText>{rates}</CustomText>
+                    </ContainerRowBalanceWrapper>
+                </>
+            ),
+            onClick: () => {
+                openConversionModal(currency, currency === baseCurrency);
+            },
+        }
+    });
+
     const accountData = fetchAccountData.map((data) => {
+        const { bank, label, balance, currency } = data;
         return {
             ...data,
             render: () => {
                 return (
                     <>
-                        <Icon name={data.bank} />
+                        <Icon name={bank} />
                         <InfoBlock>
-                            <CustomText gray small>{data.label}</CustomText>
-                            <CustomText black big>{useFormatAmount(data.balance, data.currencySymbol)}</CustomText>
+                            <CustomText gray small>{label}</CustomText>
+                            <CustomText black big>{useFormatAmount(balance, currency)}</CustomText>
                         </InfoBlock>
                         <CustomButton side onClick={(e) => handleSendOnClick(e)}>Send</CustomButton>
-                        
                     </>
                 );
             },
@@ -73,8 +114,28 @@ export default function Home() {
             gap='1.3em'
             margin='auto'
         >
-            <Container name='Conversion' keyFn={conversionKeyFn} />
+            <Container name='Conversion' data={conversionData} keyFn={conversionKeyFn} />
             <Container name='Accounts' data={accountData} keyFn={accountKeyFn} />
+
+            <Modal isOpen={isOpen} onClose={onClose} size="full">
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Conversion List</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <ConversionListPage 
+                            onClose={onClose} 
+                            selectedCurrency={selectedCurrency} 
+                            setSelectedCurrency={setSelectedCurrency} 
+                            baseCurrency={baseCurrency}
+                            setBaseCurrency={setBaseCurrency}
+                            compareCurrency={compareCurrency}
+                            setCompareCurrency={setCompareCurrency}
+                            isBaseCurrency={isBaseCurrency}
+                        />
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </Box>
     );
 }

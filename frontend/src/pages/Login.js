@@ -67,8 +67,8 @@ function Login() {
 
     return (
         <Page>
-            <PageHeader>Login</PageHeader>
-            <CustomForm onSubmit={handleLoginSubmit} buttonText="Sign In" buttonId="submitButton"
+            <PageHeader>Log in to Mynt</PageHeader>
+            <CustomForm onSubmit={handleLoginSubmit} buttonText="Log In" buttonId="submitButton"
                         errorOccurred={errorOccurred}>
                 {loginInputFields}
             </CustomForm>

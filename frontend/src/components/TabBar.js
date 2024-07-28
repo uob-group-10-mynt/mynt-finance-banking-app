@@ -3,7 +3,7 @@ import CustomTab from "./CustomTab";
 
 function TabBar({tabNames, tabPanels, ...props}) {
     return (
-        <Tabs variant='soft-rounded' colorScheme='teal' m={2} {...props}>
+        <Tabs align='center' variant='soft-rounded' colorScheme='teal' m={2} {...props}>
             <TabList>
                 {tabNames.map((tabName, index) => (
                     <CustomTab key={index}>{tabName}</CustomTab>

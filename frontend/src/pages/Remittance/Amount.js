@@ -6,7 +6,7 @@ import Icon from "../../components/util/Icon";
 import InfoBlock from "../../components/util/InfoBlock";
 import CustomText from "../../components/CustomText";
 import CustomForm from "../../components/forms/CustomForm";
-import {Box} from "@chakra-ui/react";
+import {Center} from "@chakra-ui/react";
 
 export default function Amount() {
     const navigate = useNavigate();
@@ -37,13 +37,15 @@ export default function Amount() {
     const amountInputFields = [
         {
             id: "transfer-amount",
-            label: "Amount",
+            label: "Amount: ",
+            display: "formattedNumber",
             placeholder: "0",
             type: "number",
             required: true,
             value: amount,
             onChange: (e) => setAmount(e.target.value),
-            helperText: `Available balance: ${availableBalance.toFixed(2)} KES`
+            helperText: `Available balance: ${availableBalance.toLocaleString()} KES`,
+            inputLeftElement: "£"
         },
     ];
 
@@ -59,19 +61,14 @@ export default function Amount() {
     };
 
     return (
-        <Box
-            display="flex"
-            flexDirection='column'
-            justifyContent="center"
-            alignItems="center"
-            gap='1.3em'
-            margin='auto'
-        >
-            <CustomHeading>How much would you like to send to your payee?</CustomHeading>
-            <Container name='Selected Payee' data={renderSelectedPayee} keyFn={(info) => info.id}/>
+        <>
+            <CustomHeading align='center'>How much would you like to send to your payee?</CustomHeading>
+            <Center>
+                <Container name='Selected Payee' data={renderSelectedPayee} keyFn={(info) => info.id}/>
+            </Center>
             <CustomForm onSubmit={handleAmountSubmit} buttonText="Confirm" buttonId="amountButton">
                 {amountInputFields}
             </CustomForm>
-        </Box>
+        </>
     );
 }

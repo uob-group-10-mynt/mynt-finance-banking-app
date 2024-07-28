@@ -1,12 +1,13 @@
 package com.mynt.banking.currency_cloud.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mynt.banking.Main;
 import com.mynt.banking.currency_cloud.manage.accounts.AccountService;
 import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountRequest;
 import com.mynt.banking.currency_cloud.manage.accounts.requests.FindAccountRequest;
 import com.mynt.banking.currency_cloud.manage.contacts.ContactsService;
 import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.CreateContact;
-import com.mynt.banking.Main;
+import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.UpdateContactRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,54 @@ public class ContactServiceTest {
         assertEquals(result.getBody().get("phone_number").asText(), contact.getPhoneNumber());
         assertEquals(result.getBody().get("date_of_birth").asText(), contact.getDateOfBirth().toString());
 
+    }
+
+    @Test
+    public void testUpdateContact() {
+        String ContactUUID = "ec883781-41b5-476c-aa05-568cc2023756";
+        UpdateContactRequest contact = UpdateContactRequest.builder()
+                .firstname("Kelvin")
+                .lastname("Luuu")
+                //.emailAddress("james.love@gmail.com")
+                // A request to update a contact's email address does not immediately update the value. Instead, an email change request flow is initiated
+
+                .phoneNumber("+44 7824792135")
+                .dateOfBirth("1998-08-13")
+                .build();
+
+        ResponseEntity<JsonNode> result = contactsService.updateContact(ContactUUID, contact).block();
+
+        assert result != null;
+        assertEquals(result.getStatusCode().is2xxSuccessful(), true);
+
+        assertEquals(result.getBody().get("first_name").asText(), contact.getFirstname());
+        assertEquals(result.getBody().get("last_name").asText(), contact.getLastname());
+        //assertEquals(result.getBody().get("email_address").asText(), contact.getEmailAddress());
+        assertEquals(result.getBody().get("phone_number").asText(), contact.getPhoneNumber());
+        assertEquals(result.getBody().get("date_of_birth").asText(), contact.getDateOfBirth());
+
+        ResponseEntity<JsonNode> getContactResult = this.contactsService
+                .getContact(ContactUUID)
+                .block();
+
+
+        assert getContactResult != null;
+        assertEquals(getContactResult.getStatusCode().is2xxSuccessful(), true);
+
+        assertEquals(getContactResult.getBody().get("first_name").asText(), contact.getFirstname());
+        assertEquals(getContactResult.getBody().get("last_name").asText(), contact.getLastname());
+        //assertEquals(getContactResult.getBody().get("email_address").asText(), contact.getEmailAddress());
+        assertEquals(getContactResult.getBody().get("phone_number").asText(), contact.getPhoneNumber());
+        assertEquals(getContactResult.getBody().get("date_of_birth").asText(), contact.getDateOfBirth());
+    }
+
+    @Test
+    public void testGetContact() {
+        ResponseEntity<JsonNode> result = this.contactsService.getContact("ec883781-41b5-476c-aa05-568cc2023756").block();
+
+        assert result != null;
+        assertEquals(result.getStatusCode().is2xxSuccessful(), true);
+        System.out.println(result.getBody());
     }
 
 }

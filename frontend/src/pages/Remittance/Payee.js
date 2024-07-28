@@ -8,7 +8,6 @@ import InfoBlock from "../../components/util/InfoBlock";
 import CustomText from "../../components/CustomText";
 import CustomButton from "../../components/forms/CustomButton";
 import Container from "../../components/container/Container";
-import {Box} from "@chakra-ui/react";
 
 function Payee() {
     const tabs = ['Recent payees', 'My payees', 'New payee']
@@ -16,7 +15,7 @@ function Payee() {
 
     return (
         <>
-            <CustomHeading>Where would you like to send the money?</CustomHeading>
+            <CustomHeading align='center'>Where would you like to send the money?</CustomHeading>
             <TabBar tabNames={tabs} tabPanels={panels}></TabBar>
         </>
     );
@@ -24,6 +23,10 @@ function Payee() {
 
 function MyPayeesPanel() {
     const navigate = useNavigate();
+    // const fetchPayees = await fetch(getPayees, {
+    //     method: 'GET',
+    //     headers: {"Content-type": "application/json"},
+    // });
     const fetchPayees = [
         {
             'id': '1',
@@ -64,16 +67,7 @@ function MyPayeesPanel() {
     });
 
     return (
-        <Box
-            display="flex"
-            flexDirection='column'
-            justifyContent="center"
-            alignItems="center"
-            gap='1.3em'
-            margin='auto'
-        >
-            <Container name='Payees' data={renderPayees} keyFn={(info) => info.id}/>
-        </Box>
+        <Container data={renderPayees} keyFn={(info) => info.id}/>
     );
 }
 

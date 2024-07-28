@@ -18,6 +18,7 @@ function Signup() {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorOccurred, setErrorOccurred] = useState('');
 
     const [message, setMessage] = useState('');
     const [apiResponce, setApiResponce] = useState('');
@@ -70,9 +71,14 @@ function Signup() {
     }
 
     function kycChecks(response) {
+
+        if (!response.status == 200) {
+            setErrorOccurred(true)
+            throw new Error('Error signing up');
+        }
+        setErrorOccurred(false)
         const data = JSON.parse(response.data.data);
         let urlink = data.url;
-        // console.log("urlink -> "+urlink);
 
         document.cookie = `email=${email}`;
         console.log(document.cookie);
@@ -87,7 +93,8 @@ function Signup() {
             type: "email",
             value: email,
             required: true,
-            onChange: (e) => setEmail(e.target.value)
+            onChange: (e) => setEmail(e.target.value),
+            errorMsg: "email address must have correct format"
         },
         {
             label: "First Name",
@@ -96,7 +103,8 @@ function Signup() {
             type: "firstName",
             value: firstName,
             required: true,
-            onChange: (e) => setFirstName(e.target.value)
+            onChange: (e) => setFirstName(e.target.value),
+            errorMsg: "invalid credentials"
         },
         {
             label: "Surname",
@@ -105,7 +113,8 @@ function Signup() {
             type: "surname",
             value: surname,
             required: true,
-            onChange: (e) => setSurname(e.target.value)
+            onChange: (e) => setSurname(e.target.value),
+            errorMsg: "invalid credentials"
         },
         {
             label: "Date of Birth",
@@ -114,7 +123,8 @@ function Signup() {
             type: "date",
             value: dob,
             required: true,
-            onChange: (e) => setDob(e.target.value)
+            onChange: (e) => setDob(e.target.value),
+            errorMsg: "please select a date"
         },
         {
             label: "Address",
@@ -123,7 +133,8 @@ function Signup() {
             type: "address",
             value: address,
             required: true,
-            onChange: (e) => setAddress(e.target.value)
+            onChange: (e) => setAddress(e.target.value),
+            errorMsg: "enter your address"
         },
         {
             label: "Phone Number",
@@ -132,7 +143,8 @@ function Signup() {
             type: "phoneNumber",
             value: phoneNumber,
             required: true,
-            onChange: (e) => setPhoneNumber(e.target.value)
+            onChange: (e) => setPhoneNumber(e.target.value),
+            errorMsg: "invalid credentials"
         },
         {
             label: "Password",
@@ -141,7 +153,8 @@ function Signup() {
             type: "password",
             value: password,
             required: true,
-            onChange: (e) => setPassword(e.target.value)
+            onChange: (e) => setPassword(e.target.value),
+            errorMsg: "invalid credentials"
         },
         {
             label: "Confirm Password",
@@ -150,7 +163,8 @@ function Signup() {
             type: "password",
             value: confirmPassword,
             required: true,
-            onChange: (e) => setConfirmPassword(e.target.value)
+            onChange: (e) => setConfirmPassword(e.target.value),
+            errorMsg: "invalid credentials"
         },
     ];
 
@@ -162,7 +176,7 @@ function Signup() {
                     <iframe src={iframe} style={{height: "700px"}}></iframe>
                 </Center>
             ) : (
-                <CustomForm onSubmit={handleSubmit} buttonText="Sign Up" buttonId="submitButton">
+                <CustomForm onSubmit={handleSubmit} buttonText="Sign Up" buttonId="submitButton" errorOccurred={errorOccurred}>
                     {signupInputFields}
                 </CustomForm>
             )}

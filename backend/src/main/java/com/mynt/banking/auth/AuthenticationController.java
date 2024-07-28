@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -23,7 +24,7 @@ public class AuthenticationController {
 
     @PostMapping(value = "/onfidoSdk", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SDKResponse> onfidoSdk(@RequestBody SignUpRequest request) {
-        return ResponseEntity.ok(kycService.getOnfidoSDK(request)) ;
+        return kycService.getOnfidoSDK(request) ;
     }
 
     @PostMapping(value = "/validateKyc", consumes = {"application/json", "text/plain"})

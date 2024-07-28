@@ -1,3 +1,5 @@
+import { Box } from "@chakra-ui/react";
+
 import ContainerRow from "./ContainerRow";
 import CustomBox from "../util/CustomBox";
 import CustomText from "../CustomText";
@@ -5,6 +7,7 @@ import CustomText from "../CustomText";
 function Container({
   name='',
   data=[],
+  sub='',
   keyFn,
   ...rest
 }) {
@@ -14,7 +17,15 @@ function Container({
 
   return (
     <CustomBox gap='0.9em' { ...rest }>
-      <CustomText small black>{name}</CustomText>
+      <Box 
+        display='flex' 
+        flexDirection='row' 
+        justifyContent='space-between' 
+        alignItems='center'
+      >
+        <CustomText big medium black>{name}</CustomText>
+        {sub}
+      </Box>
       {renderedRows}
     </CustomBox>
   );

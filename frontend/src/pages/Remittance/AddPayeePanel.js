@@ -32,6 +32,7 @@ export default function AddPayeePanel() {
         // Add validation and submission logic here
 
         toast({
+            position: 'top',
             title: 'Payee added.',
             description: "You've successfully added a new payee.",
             status: 'success',
