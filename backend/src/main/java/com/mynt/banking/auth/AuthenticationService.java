@@ -5,19 +5,16 @@ import com.mynt.banking.auth.requests.RegisterRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
-import com.mynt.banking.util.exceptions.KycNotApprovedException;
-import com.mynt.banking.util.exceptions.RegistrationException;
-import com.mynt.banking.util.exceptions.UserAlreadyExistsException;
-import com.mynt.banking.util.exceptions.UserNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
+import com.mynt.banking.util.exceptions.registration.RegistrationException;
+import com.mynt.banking.util.exceptions.registration.UserAlreadyExistsException;
+import com.mynt.banking.util.exceptions.authentication.KycException;
+import com.mynt.banking.util.exceptions.authentication.TokenException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -67,60 +64,53 @@ public class AuthenticationService {
         }
     }
 
-    public AuthenticationResponse authenticate(@NotNull AuthenticationRequest request) {
-        try {
-            // Authenticate user
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    request.getEmail(),
-                    request.getPassword())
-            );
+    @SneakyThrows
+    public AuthenticationResponse authenticate(@org.jetbrains.annotations.NotNull AuthenticationRequest request) {
+        // Step 1: Authenticate user
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
 
-            // Fetch user
-            var user = userRepository.findByEmail(request.getEmail())
-                    .orElseThrow(() -> new UserNotFoundException("User not found with email: " + request.getEmail()));
+        // Step 2: Check KYC status
+        var kycStatus = userRepository.getKycStatus(request.getEmail())
+                .orElseThrow(() -> new KycException.KycStatusNotFoundException("KYC status not found for email: " + request.getEmail()));
 
-            // Check KYC status
-            var kycStatus = userRepository.getKycStatus(user.getEmail())
-                    .orElseThrow(() -> new UserNotFoundException("KYC status not found for email: " + request.getEmail()));
-
-            if (!"approved".equalsIgnoreCase(kycStatus)) {
-                throw new KycNotApprovedException("User is not approved for login");
-            }
-
-            // Generate tokens
-            var accessToken = tokenService.generateToken(user);
-            var refreshToken = tokenService.generateRefreshToken(user);
-
-            return AuthenticationResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .build();
-
-        } catch (AuthenticationCredentialsNotFoundException e) {
-            throw new AuthenticationCredentialsNotFoundException("Invalid credentials", e);
-        } catch (Exception e) {
-            throw new AuthenticationException("Error occurred during authentication", e) {};
+        if (!"approved".equalsIgnoreCase(kycStatus)) {
+            throw new KycException.KycNotApprovedException("User's status is not approved for login");
         }
+
+        // Step 3: Generate tokens
+        var user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User should exist at this point, but was not found"));
+
+        var accessToken = tokenService.generateToken(user);
+        var refreshToken = tokenService.generateRefreshToken(user);
+
+        return AuthenticationResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
-
     public AuthenticationResponse refreshToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Check if authentication is null or not authenticated
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new TokenException.TokenValidationException("No authentication credentials found");
+        }
+
+        // Extract the username from the authenticated user context
+        String userEmail = authentication.getName();
+
+        // Ensure that the username is not null or empty
+        if (userEmail == null || userEmail.isEmpty()) {
+            throw new TokenException.TokenValidationException("User email not found in authentication context");
+        }
+
+        // Generate new access and refresh tokens
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-            // Check if authentication is null or not authenticated
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new AuthenticationCredentialsNotFoundException("No authentication credentials found");
-            }
-
-            // Extract the username from the authenticated user context
-            String userEmail = authentication.getName();
-
-            // Fetch user details from the repository
-            var user = userRepository.findByEmail(userEmail)
-                    .orElseThrow(() -> new UserNotFoundException("User not found with email: " + userEmail));
-
-            // Generate new access and refresh tokens
+            var user = (User) authentication.getPrincipal();
             var accessToken = tokenService.generateToken(user);
             var newRefreshToken = tokenService.generateRefreshToken(user);
 
@@ -128,12 +118,8 @@ public class AuthenticationService {
                     .accessToken(accessToken)
                     .refreshToken(newRefreshToken)
                     .build();
-        } catch (UserNotFoundException e) {
-            throw new AuthenticationException("User not found during token refresh", e) {};
-        } catch (AuthenticationCredentialsNotFoundException e) {
-            throw e;
         } catch (Exception e) {
-            throw new AuthenticationException("Error occurred during token refresh", e) {};
+            throw new TokenException.TokenRefreshException("Error occurred during token refresh", e);
         }
     }
 }

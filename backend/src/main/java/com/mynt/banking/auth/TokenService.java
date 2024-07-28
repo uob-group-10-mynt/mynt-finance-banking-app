@@ -3,6 +3,7 @@ package com.mynt.banking.auth;
 import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
 import com.mynt.banking.user.User;
+import com.mynt.banking.util.exceptions.authentication.TokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -56,35 +57,39 @@ public class TokenService {
 
     private CurrencyCloudRepository currencyCloudRepository;
 
-    public String generateToken(@NotNull User user) throws Exception {
+    public String generateToken(@NotNull User user) {
         return generateTokenWithExpiration(user, jwtExpiration);
     }
 
-    public String generateRefreshToken(@NotNull User user) throws Exception {
+    public String generateRefreshToken(@NotNull User user) {
         return generateTokenWithExpiration(user, refreshExpiration);
     }
 
     // Generate a JWT token for UserDetails
-    private String generateTokenWithExpiration(@NotNull User user, long expiration) throws Exception {
-        // Fetch the uuid from CurrencyCloudEntity using usersId
-        Optional<CurrencyCloudEntity> currencyCloudEntityOptional = Optional.ofNullable(
-                currencyCloudRepository.findByUsersId(user.getId()));
+    private String generateTokenWithExpiration(@NotNull User user, long expiration) {
+        try {
+            // Fetch the uuid from CurrencyCloudEntity using usersId
+            Optional<CurrencyCloudEntity> currencyCloudEntityOptional = Optional.ofNullable(
+                    currencyCloudRepository.findByUsersId(user.getId()));
 
-        String userUUID;
-        if (currencyCloudEntityOptional.isPresent()) {
-            userUUID = currencyCloudEntityOptional.get().getUuid();
-        } else {
-            throw new RuntimeException("UUID not found for user ID: " + user.getId());
+            String userUUID;
+            if (currencyCloudEntityOptional.isPresent()) {
+                userUUID = currencyCloudEntityOptional.get().getUuid();
+            } else {
+                throw new TokenException.TokenGenerationException("UUID not found for user ID: " + user.getId());
+            }
+
+            // Add authorities and uuid to the JWT claims
+            Map<String, Object> extraClaims = new HashMap<>();
+            extraClaims.put("authorities", user.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList()));
+            extraClaims.put("uuid", userUUID);
+
+            return encryptToken(buildToken(extraClaims, user.getUsername(), expiration));
+        } catch (Exception e) {
+            throw new TokenException.TokenGenerationException("Failed to generate token", e);
         }
-
-        // Add authorities and uuid to the JWT claims
-        Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("authorities", user.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList()));
-        extraClaims.put("uuid", userUUID);
-
-        return encryptToken(buildToken(extraClaims, user.getUsername(), expiration));
     }
 
     // Helper method to build a JWT token
@@ -116,11 +121,10 @@ public class TokenService {
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-
         } catch (ExpiredJwtException | MalformedJwtException | SignatureException | UnsupportedJwtException | IllegalArgumentException e) {
-            throw e; // Rethrow the specific JWT exception
+            throw new TokenException.TokenValidationException("JWT: token validation failed", e);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse claims from token", e);
+            throw new TokenException.TokenValidationException("Failed to parse claims from token", e);
         }
     }
 
@@ -187,18 +191,22 @@ public class TokenService {
     }
 
     // Encrypt the JWT token
-    public String encryptToken(String token) throws Exception {
-        PublicKey publicKey = getPublicKey(publicKeyPath);
-        return encryptJWT(token, publicKey);
+    public String encryptToken(String token) {
+        try {
+            PublicKey publicKey = getPublicKey(publicKeyPath);
+            return encryptJWT(token, publicKey);
+        } catch (Exception e) {
+            throw new TokenException.TokenGenerationException("Failed to encrypt token", e);
+        }
     }
 
     // Decrypt the JWT token
-    public String decryptToken(String encryptedToken) throws Exception {
+    public String decryptToken(String encryptedToken) {
         try {
             PrivateKey privateKey = getPrivateKey(privateKeyPath);
             return decryptJWT(encryptedToken, privateKey);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to decrypt token", e);
+            throw new TokenException.TokenValidationException("Failed to decrypt token", e);
         }
     }
 

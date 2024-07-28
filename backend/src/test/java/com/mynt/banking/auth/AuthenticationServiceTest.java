@@ -5,8 +5,8 @@ import com.mynt.banking.auth.requests.RegisterRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
-import com.mynt.banking.util.exceptions.KycNotApprovedException;
-import com.mynt.banking.util.exceptions.UserNotFoundException;
+import com.mynt.banking.util.exceptions.authentication.KycException;
+import com.mynt.banking.util.exceptions.authentication.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -186,7 +186,7 @@ public class AuthenticationServiceTest {
         // Extract the cause of the AuthenticationException
         Throwable cause = exception.getCause();
         assertNotNull(cause);
-        assertInstanceOf(KycNotApprovedException.class, cause);
+        assertInstanceOf(KycException.KycNotApprovedException.class, cause);
         assertEquals("User is not approved for login", cause.getMessage());
     }
 
