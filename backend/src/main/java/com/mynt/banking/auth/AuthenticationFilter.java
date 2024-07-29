@@ -66,11 +66,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                     );
                     context.setAuthentication(authentication);
                     SecurityContextHolder.setContext(context);
+
                     log.info("Authentication set in SecurityContext.");
-                } else {
-                    log.warn("Invalid token.");
-                    authenticationFailureHandler.commence(request, response, new AuthenticationException("Invalid token") {});
-                    return;
                 }
             }
         } catch (TokenException | KycException ex) {
