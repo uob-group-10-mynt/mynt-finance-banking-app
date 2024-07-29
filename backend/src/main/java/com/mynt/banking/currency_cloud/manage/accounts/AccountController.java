@@ -17,6 +17,11 @@ public class AccountController {
 
     private final AccountService accountService;
 
+    @PostMapping("/webhook")
+    public void createAccount(@RequestBody String request) {
+        System.out.println("\n\n\n\n\nrequest: "+request);
+    }
+
     @PostMapping("/create")
     public Mono<ResponseEntity<JsonNode>> createAccount(@RequestBody CreateAccountRequest request) {
         return accountService.createAccount(request);
