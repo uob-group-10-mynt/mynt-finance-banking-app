@@ -3,6 +3,8 @@ package com.mynt.banking.auth;
 import com.mynt.banking.auth.requests.AuthenticationRequest;
 import com.mynt.banking.auth.requests.RegisterRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
+import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
+import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
 import com.mynt.banking.util.exceptions.registration.RegistrationException;
@@ -20,6 +22,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -28,6 +32,8 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
+
+    private final CurrencyCloudRepository currencyCloudRepository;
 
 
     public void register(@NotNull RegisterRequest request) {
@@ -78,9 +84,21 @@ public class AuthenticationService {
         var accessToken = tokenService.generateToken(user);
         var refreshToken = tokenService.generateRefreshToken(user);
 
+        // JERRY RIGED THIS FOR NOW WILL REMOVE:
+        Long userId = userRepository.findByEmail(user.getUsername()).orElseThrow().getId();
+        Optional<CurrencyCloudEntity> currencyCloudEntityOptional = Optional.ofNullable(
+                currencyCloudRepository.findByUsersId(userId));
+        String userUUID;
+        if (currencyCloudEntityOptional.isPresent()) {
+            userUUID = currencyCloudEntityOptional.get().getUuid();
+        } else {
+            throw new TokenException.TokenGenerationException("UUID not found for user ID: " + userId);
+        }
+
         return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .uuid(userUUID)
                 .build();
     }
 
