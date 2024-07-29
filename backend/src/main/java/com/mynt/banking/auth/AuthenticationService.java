@@ -9,9 +9,10 @@ import com.mynt.banking.util.exceptions.registration.RegistrationException;
 import com.mynt.banking.util.exceptions.registration.UserAlreadyExistsException;
 import com.mynt.banking.util.exceptions.authentication.KycException;
 import com.mynt.banking.util.exceptions.authentication.TokenException;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,14 +30,14 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
 
-    public AuthenticationResponse register(@NotNull RegisterRequest request) {
-        try {
-            // Check if user already exists
-            if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-                throw new UserAlreadyExistsException("User with this email already exists.");
-            }
+    public void register(@NotNull RegisterRequest request) {
+        // Check if user already exists
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new UserAlreadyExistsException("User with this email already exists.");
+        }
 
-            // Create and save new user
+        // Create and save new user
+        try {
             var user = User.builder()
                     .firstname(request.getFirstname())
                     .lastname(request.getLastname())
@@ -49,15 +50,6 @@ public class AuthenticationService {
                     .build();
 
             userRepository.save(user);
-
-            // Generate tokens
-            var accessToken = tokenService.generateToken(user);
-            var refreshToken = tokenService.generateRefreshToken(user);
-
-            return AuthenticationResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .build();
 
         } catch (Exception e) {
             throw new RegistrationException("Error occurred during registration", e);

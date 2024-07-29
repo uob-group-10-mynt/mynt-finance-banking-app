@@ -1,17 +1,19 @@
 package com.mynt.banking.user;
 
+import com.mynt.banking.auth.JwtUserDetails;
 import com.mynt.banking.auth.TokenService;
 import com.mynt.banking.user.requests.ChangePasswordRequest;
 import com.mynt.banking.user.requests.UpdateUserDetailsRequest;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
-import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
 import com.mynt.banking.currency_cloud.manage.contacts.ContactsService;
 import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.*;
 import com.mynt.banking.user.responses.*;
@@ -23,7 +25,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +33,8 @@ public class UserService implements UserDetailsService {
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
   private final TokenService tokenService;
-  private final CurrencyCloudRepository currencyCloudRepository;
   private final ContactsService contactsService;
+
 
   public void changePassword(@NotNull ChangePasswordRequest request, Principal connectedUser) {
     var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -69,10 +70,13 @@ public class UserService implements UserDetailsService {
             .build();
   }
 
-  public void updateUserDetails(@NotNull String auth, @NotNull UpdateUserDetailsRequest request) throws RuntimeException {
-    String accessToken = auth.substring(7);
-    String userEmail = tokenService.extractUsername(accessToken);
+  public void updateUserDetails(@NotNull UpdateUserDetailsRequest request) throws RuntimeException {
 
+    SecurityContext context = SecurityContextHolder.getContext();
+    Authentication authentication = context.getAuthentication();
+    JwtUserDetails principal = (JwtUserDetails) authentication.getPrincipal();
+
+    String userEmail = principal.getUsername();
     User user = userRepository.findByEmail(userEmail).orElseThrow();
     user.setFirstname(request.getFirstname());
     user.setLastname(request.getLastname());
@@ -81,9 +85,7 @@ public class UserService implements UserDetailsService {
     user.setAddress(request.getAddress());
     userRepository.save(user);
 
-    CurrencyCloudEntity currencyCloudUser = currencyCloudRepository.findByUsersId(user.getId());
-    if(currencyCloudUser == null) throw new NoSuchElementException("No currency cloud account found");
-    String currencyCloudContactUUID = currencyCloudUser.getUuid();
+    String currencyCloudContactUUID = principal.getUuid();
 
     UpdateContactRequest updateContactRequest = UpdateContactRequest.builder()
             .firstname(request.getFirstname())

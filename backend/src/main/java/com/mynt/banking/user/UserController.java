@@ -44,12 +44,11 @@ public class UserController {
             @RequestBody UpdateUserDetailsRequest request
     ) {
         try {
-            userService.updateUserDetails(auth, request);
+            userService.updateUserDetails(request);
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
     }
-
 }

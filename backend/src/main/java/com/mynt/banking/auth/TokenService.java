@@ -3,23 +3,24 @@ package com.mynt.banking.auth;
 import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
 import com.mynt.banking.user.User;
+import com.mynt.banking.user.UserRepository;
 import com.mynt.banking.util.exceptions.authentication.TokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import lombok.AllArgsConstructor;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -30,13 +31,13 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.time.Clock;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
 
 @Service
-@AllArgsConstructor
 @RequiredArgsConstructor
 public class TokenService {
 
@@ -49,13 +50,32 @@ public class TokenService {
     @Value("${application.security.jwt.refresh-token.expiration}")
     private long refreshExpiration;
 
-    @Value("${application.security.jwt.private-key-path}")
-    private String privateKeyPath;
-
     @Value("${application.security.jwt.public-key-path}")
-    private String publicKeyPath;
+    private String PUBLIC_KEY_PATH;
 
-    private CurrencyCloudRepository currencyCloudRepository;
+    @Value("${application.security.jwt.private-key-path}")
+    private String PRIVATE_KEY_PATH;
+
+    private PublicKey publicKey;
+
+    private PrivateKey privateKey;
+
+    private final CurrencyCloudRepository currencyCloudRepository;
+
+    private final UserRepository userRepository;
+
+    @Setter
+    private Clock clock = Clock.systemDefaultZone();
+
+    @PostConstruct
+    public void init() {
+        try {
+            publicKey = loadPublicKey();
+            privateKey = loadPrivateKey();
+        } catch (Exception e) {
+            throw new TokenException.TokenGenerationException("Failed to load public key", e);
+        }
+    }
 
     public String generateToken(@NotNull User user) {
         return generateTokenWithExpiration(user, jwtExpiration);
@@ -68,15 +88,16 @@ public class TokenService {
     // Generate a JWT token for UserDetails
     private String generateTokenWithExpiration(@NotNull User user, long expiration) {
         try {
-            // Fetch the uuid from CurrencyCloudEntity using usersId
+            // Fetch the uuid from CurrencyCloudEntity using userId
+            Long userId = userRepository.findByEmail(user.getUsername()).orElseThrow().getId();
             Optional<CurrencyCloudEntity> currencyCloudEntityOptional = Optional.ofNullable(
-                    currencyCloudRepository.findByUsersId(user.getId()));
+                    currencyCloudRepository.findByUsersId(userId));
 
             String userUUID;
             if (currencyCloudEntityOptional.isPresent()) {
                 userUUID = currencyCloudEntityOptional.get().getUuid();
             } else {
-                throw new TokenException.TokenGenerationException("UUID not found for user ID: " + user.getId());
+                throw new TokenException.TokenGenerationException("UUID not found for user ID: " + userId);
             }
 
             // Add authorities and uuid to the JWT claims
@@ -99,8 +120,8 @@ public class TokenService {
                 .builder()
                 .claims(extraClaims)
                 .subject(username)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expirationMillis))
+                .issuedAt(new Date(clock.millis()))
+                .expiration(new Date(clock.millis() + expirationMillis))
                 .signWith(getSignInKey(), Jwts.SIG.HS256)
                 .compact();
     }
@@ -139,6 +160,9 @@ public class TokenService {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    //Extract id from token
+
+
     // Extract username from token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -151,49 +175,47 @@ public class TokenService {
 
     // Extract authorities from token
     @SuppressWarnings("unchecked")
-    public List<String> extractAuthorities(String token) {
+    public List<GrantedAuthority> extractAuthorities(String token) {
         Claims claims = extractAllClaims(token);
-        return (List<String>) claims.get("authorities");
+        List<String> authorities = (List<String>) claims.get("authorities");
+        return authorities.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+
+    public JwtUserDetails extractUserDetails(String token) {
+        Claims claims = extractAllClaims(token);
+        String username = extractUsername(token);
+        List<GrantedAuthority> authorities = extractAuthorities(token);
+        String uuid = claims.get("uuid", String.class);
+
+        return new JwtUserDetails(username, authorities, uuid);
     }
 
     // Check if the token is expired
     private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        return extractExpiration(token).before(Date.from(clock.instant()));
     }
 
-    // Check if the token is valid
-    public boolean isTokenValid(String token, @NotNull UserDetails userDetails) {
+    public boolean isTokenValid(String token, @NotNull JwtUserDetails userDetails) {
         final String username = extractUsername(token);
         final String uuid = extractUUID(token);
-        final List<String> authorities = extractAuthorities(token);
+        final List<GrantedAuthority> authoritiesFromToken = extractAuthorities(token);
+
+        // Convert to Set for comparison
+        Set<GrantedAuthority> authoritiesSetFromToken = new HashSet<>(authoritiesFromToken);
+        Set<GrantedAuthority> authoritiesSetFromUserDetails = new HashSet<>(userDetails.getAuthorities());
 
         return (username.equals(userDetails.getUsername()) &&
                 !isTokenExpired(token) &&
-                isUUIDValid(uuid, userDetails) &&
-                areAuthoritiesValid(authorities, userDetails));
-    }
-
-    // Check if the UUID is valid
-    private boolean isUUIDValid(String uuid, @NotNull UserDetails userDetails) {
-        if (userDetails instanceof User user) {
-            CurrencyCloudEntity currencyCloudEntity = currencyCloudRepository.findByUsersId(user.getId());
-            return currencyCloudEntity != null && currencyCloudEntity.getUuid().equals(uuid);
-        }
-        return false;
-    }
-
-    // Check if the authorities are valid
-    private boolean areAuthoritiesValid(List<String> tokenAuthorities, @NotNull UserDetails userDetails) {
-        List<String> userAuthorities = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
-        return new HashSet<>(tokenAuthorities).containsAll(userAuthorities) && new HashSet<>(userAuthorities).containsAll(tokenAuthorities);
+                uuid.equals(userDetails.getUuid()) &&
+                authoritiesSetFromToken.equals(authoritiesSetFromUserDetails));
     }
 
     // Encrypt the JWT token
     public String encryptToken(String token) {
         try {
-            PublicKey publicKey = getPublicKey(publicKeyPath);
             return encryptJWT(token, publicKey);
         } catch (Exception e) {
             throw new TokenException.TokenGenerationException("Failed to encrypt token", e);
@@ -203,7 +225,6 @@ public class TokenService {
     // Decrypt the JWT token
     public String decryptToken(String encryptedToken) {
         try {
-            PrivateKey privateKey = getPrivateKey(privateKeyPath);
             return decryptJWT(encryptedToken, privateKey);
         } catch (Exception e) {
             throw new TokenException.TokenValidationException("Failed to decrypt token", e);
@@ -230,9 +251,21 @@ public class TokenService {
         return jweObject.getPayload().toSignedJWT().serialize();
     }
 
-    // Read the private key from a file
-    private PrivateKey getPrivateKey(String filename) throws Exception {
-        String key = new String(Files.readAllBytes(Paths.get(filename)));
+    private PublicKey loadPublicKey() throws Exception {
+        String key = loadKey(PUBLIC_KEY_PATH);
+        String publicKeyPEM = key
+                .replace("-----BEGIN PUBLIC KEY-----", "")
+                .replaceAll(System.lineSeparator(), "")
+                .replace("-----END PUBLIC KEY-----", "");
+
+        byte[] encoded = Base64.getDecoder().decode(publicKeyPEM);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+        return keyFactory.generatePublic(keySpec);
+    }
+
+    private PrivateKey loadPrivateKey() throws Exception {
+        String key = loadKey(PRIVATE_KEY_PATH);
         String privateKeyPEM = key
                 .replace("-----BEGIN PRIVATE KEY-----", "")
                 .replaceAll(System.lineSeparator(), "")
@@ -244,17 +277,13 @@ public class TokenService {
         return keyFactory.generatePrivate(keySpec);
     }
 
-    // Read the public key from a file
-    private PublicKey getPublicKey(String filename) throws Exception {
-        String key = new String(Files.readAllBytes(Paths.get(filename)));
-        String publicKeyPEM = key
-                .replace("-----BEGIN PUBLIC KEY-----", "")
-                .replaceAll(System.lineSeparator(), "")
-                .replace("-----END PUBLIC KEY-----", "");
-
-        byte[] encoded = Base64.getDecoder().decode(publicKeyPEM);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
-        return keyFactory.generatePublic(keySpec);
+    @NotNull
+    @Contract("_ -> new")
+    private String loadKey(String resourcePath) throws Exception {
+        InputStream inputStream = getClass().getResourceAsStream(resourcePath);
+        if (inputStream == null) {
+            throw new TokenException.TokenGenerationException("Key resource not found: " + resourcePath);
+        }
+        return new String(inputStream.readAllBytes());
     }
 }

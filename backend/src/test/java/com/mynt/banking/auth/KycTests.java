@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -23,15 +24,10 @@ public class KycTests {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private CurrencyCloudRepository currencyCloudRepository;
-
     private int testAccountNum;
 
     @Autowired
     private KycService kycService;
-
-//    @Autowired
 
     @BeforeEach
     public void setUp() {

@@ -231,7 +231,7 @@ public class KycService {
 
         CurrencyCloudEntity cloudCurrencyUser = currencyCloudRepository.findByUsersId((long)user.get().getId());
 
-        if(cloudCurrencyUser == null){return false;}
+        if(cloudCurrencyUser != null){return false;}
 
         FindContact findContact = FindContact.builder()
                 .emailAddress(request.getEmail())
@@ -388,9 +388,4 @@ public class KycService {
                 .build();
         return contactsService.createContact(contact).block();
     }
-
-
-
-
-
 }

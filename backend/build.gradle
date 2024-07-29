@@ -40,7 +40,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
 	implementation 'org.springframework.boot:spring-boot-starter-logging'
 	implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'
-	implementation 'com.nimbusds:nimbus-jose-jwt:9.25'
+	implementation 'com.nimbusds:nimbus-jose-jwt:9.37.2'
 	compileOnly 'org.projectlombok:lombok'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
@@ -54,6 +54,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+	testImplementation 'org.mockito:mockito-core:5.5.0'
 	testImplementation 'junit:junit:4.13.2'
 }
 

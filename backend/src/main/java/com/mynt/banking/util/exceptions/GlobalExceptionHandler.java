@@ -2,7 +2,6 @@ package com.mynt.banking.util.exceptions;
 
 import com.mynt.banking.util.exceptions.authentication.KycException;
 import com.mynt.banking.util.exceptions.authentication.TokenException;
-import com.mynt.banking.util.exceptions.authentication.UserNotFoundException;
 import com.mynt.banking.util.exceptions.registration.RegistrationException;
 import com.mynt.banking.util.exceptions.registration.UserAlreadyExistsException;
 import org.jetbrains.annotations.Contract;
@@ -34,10 +33,6 @@ public class GlobalExceptionHandler {
 
 
     /// Authentication Exceptions:
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleUserNotFoundException(@NotNull UserNotFoundException ex, HttpServletRequest request) {
-        return buildResponseEntity(HttpStatus.NOT_FOUND, ex.getMessage(), request);
-    }
     @ExceptionHandler(KycException.class)
     public ResponseEntity<Map<String, String>> handleKycException(@NotNull KycException ex, HttpServletRequest request) {
         HttpStatus status = ex instanceof KycException.KycStatusNotFoundException ? HttpStatus.NOT_FOUND : HttpStatus.FORBIDDEN;
