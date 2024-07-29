@@ -1,11 +1,15 @@
 package com.mynt.banking.currency_cloud.manage.authenticate;
 
+import com.mynt.banking.auth.JwtUserDetails;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -38,6 +42,9 @@ public class AuthenticationService {
     }
 
     public Mono<AuthenticationResponse> authenticate() {
+
+
+
         return webClient.post()
                 .uri("/v2/authenticate/api")
                 .header("User-Agent", userAgent)

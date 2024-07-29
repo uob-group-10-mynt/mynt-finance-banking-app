@@ -45,8 +45,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         }
 
         accessToken = authHeader.substring(7);
-        // TODO check the security details/context is set correctly and then access through utils JWE - how to store token detais
-        // maybe make a jwtuserdetails service
         // SecurityContextHolder.MODE_GLOBAL
         try {
             // Decrypt and extract username from token
@@ -67,8 +65,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                     );
                     context.setAuthentication(authentication);
                     SecurityContextHolder.setContext(context);
-//                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//                    SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
         } finally {

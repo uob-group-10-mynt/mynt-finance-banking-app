@@ -19,7 +19,6 @@ public class BeneficiaryController {
 
     @PostMapping("/find")
     public Mono<ResponseEntity<JsonNode>> find(@RequestBody FindBeneficiaryRequest requestBody){
-        return beneficiariesService.find(requestBody) ;
+        return beneficiariesService.find(requestBody);
     }
-
 }
