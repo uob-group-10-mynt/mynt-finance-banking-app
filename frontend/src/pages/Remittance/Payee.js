@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import TabBar from "../../components/TabBar";
 import CustomHeading from "../../components/CustomHeading";
@@ -8,6 +8,7 @@ import InfoBlock from "../../components/util/InfoBlock";
 import CustomText from "../../components/CustomText";
 import CustomButton from "../../components/forms/CustomButton";
 import Container from "../../components/container/Container";
+import {getBeneficiaries} from "../../utils/APIEndpoints";
 
 function Payee() {
     const tabs = ['Recent payees', 'My payees', 'New payee']
@@ -23,28 +24,67 @@ function Payee() {
 
 function MyPayeesPanel() {
     const navigate = useNavigate();
-    // const fetchPayees = await fetch(getPayees, {
-    //     method: 'GET',
-    //     headers: {"Content-type": "application/json"},
-    // });
-    const fetchPayees = [
-        {
-            'id': '1',
-            'payee_reference': '66f51c98-1ef8-4e48-97de-aac0353ba2b4',
-            'bank': 'HSBC',
-            'account_number': '00000000',
-            'label': 'Jan Phillips',
-        },
-        {
-            'id': '2',
-            'payee_reference': '66f51c98-1ef8-4e48-97de-aac0353ba2b4',
-            'bank': 'Citi',
-            'account_number': '01010101',
-            'label': 'Gunho Ryu',
-        },
-    ];
+    const [payees, setPayees] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const renderPayees = fetchPayees.map((payee) => {
+    async function fetchPayees() {
+        try {
+            // GET request to fetch payees for the specific payer
+            const response = await fetch(getBeneficiaries, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem('access')}`
+                }
+            });
+
+            if (!response.ok) {
+                const error = new Error(response.status + " : Can't retrieve your payees info!");
+                setError(error);
+                setLoading(false);
+                return;
+            }
+
+            // Parse the JSON from the response
+            const payees = await response.json();
+
+            setPayees(payees);
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchPayees();
+    }, []);
+
+    if (loading) {
+        return <CustomText>Loading...</CustomText>;
+    }
+
+    if (error) {
+        return <CustomText>Error {error.message}</CustomText>;
+    }
+
+    // placeholder received payees data
+    // const fetchPayees = [
+    //     {
+    //         'id': '1',
+    //         'bank': 'HSBC',
+    //         'account_number': '00000000',
+    //         'label': 'Jan Phillips',
+    //     },
+    //     {
+    //         'id': '2',
+    //         'bank': 'Citi',
+    //         'account_number': '01010101',
+    //         'label': 'Gunho Ryu',
+    //     },
+    // ];
+
+    const renderPayees = payees.map((payee) => {
         return {
             ...payee,
             render: () => {
