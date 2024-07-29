@@ -10,7 +10,7 @@ import CustomButton from "../../components/forms/CustomButton";
 import Container from "../../components/container/Container";
 import {getBeneficiaries} from "../../utils/APIEndpoints";
 
-function Payee() {
+export default function Payee() {
     const tabs = ['Recent payees', 'My payees', 'New payee']
     const panels = [<MyPayeesPanel/>, <MyPayeesPanel/>, <AddPayeePanel/>];
 
@@ -23,10 +23,34 @@ function Payee() {
 }
 
 function MyPayeesPanel() {
-    const navigate = useNavigate();
     const [payees, setPayees] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    // placeholder received payees data
+    // const fetchPayees = [
+    //     {
+    //         'id': '1',
+    //         'bank': 'HSBC',
+    //         'account_number': '00000000',
+    //         'label': 'Jan Phillips',
+    //     },
+    //     {
+    //         'id': '2',
+    //         'bank': 'Citi',
+    //         'account_number': '01010101',
+    //         'label': 'Gunho Ryu',
+    //     },
+    // ];
+
+    useEffect(() => {
+        fetchPayees();
+    }, []);
+    if (loading) return <CustomText>Loading...</CustomText>;
+    if (error) return <CustomText>Error {error.message}</CustomText>;
+
+    return (
+        <Container data={renderPayees(payees)} keyFn={(info) => info.id}/>
+    );
 
     async function fetchPayees() {
         try {
@@ -56,59 +80,28 @@ function MyPayeesPanel() {
         }
     }
 
-    useEffect(() => {
-        fetchPayees();
-    }, []);
+    function renderPayees(payees) {
+        const navigate = useNavigate();
 
-    if (loading) {
-        return <CustomText>Loading...</CustomText>;
+        return payees.map(payee => {
+            return {
+                ...payee,
+                render: () => {
+                    return (
+                        <>
+                            <Icon name={payee.bank} />
+                            <InfoBlock>
+                                <CustomText gray small>{payee.label}</CustomText>
+                                <CustomText black big>{payee.account_number}</CustomText>
+                            </InfoBlock>
+                            <CustomButton side>Send</CustomButton>
+                        </>
+                    );
+                },
+                onClick: () => {
+                    navigate('/remittance/amount', { state: { selectedPayee: payee } });
+                },
+            };
+        });
     }
-
-    if (error) {
-        return <CustomText>Error {error.message}</CustomText>;
-    }
-
-    // placeholder received payees data
-    // const fetchPayees = [
-    //     {
-    //         'id': '1',
-    //         'bank': 'HSBC',
-    //         'account_number': '00000000',
-    //         'label': 'Jan Phillips',
-    //     },
-    //     {
-    //         'id': '2',
-    //         'bank': 'Citi',
-    //         'account_number': '01010101',
-    //         'label': 'Gunho Ryu',
-    //     },
-    // ];
-
-    const renderPayees = payees.map((payee) => {
-        return {
-            ...payee,
-            render: () => {
-                return (
-                    <>
-                        <Icon name={payee.bank}/>
-                        <InfoBlock>
-                            <CustomText gray small>{payee.label}</CustomText>
-                            <CustomText black big>{payee.account_number}</CustomText>
-                        </InfoBlock>
-                        <CustomButton side>Send</CustomButton>
-                    </>
-                );
-            },
-
-            onClick: () => {
-                navigate('/remittance/amount', {state: {selectedPayee: payee}});
-            },
-        }
-    });
-
-    return (
-        <Container data={renderPayees} keyFn={(info) => info.id}/>
-    );
 }
-
-export default Payee;
