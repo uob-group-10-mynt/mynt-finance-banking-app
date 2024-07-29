@@ -30,65 +30,67 @@ public class ValidateBeneficiaryRequest {
 
     @JsonProperty("beneficiary_address")
     @Size(max = 255)
-    @Schema(description = "Address of the beneficiary.", example = "")
+    @Schema(description = "Address of the beneficiary.", example = " ")
     private String beneficiaryAddress;
 
     @JsonProperty("beneficiary_country")
     @Size(max = 2)
     @Schema(description = "Two-letter ISO country code. If the beneficiary is a company, this is the country in which the company is registered. " +
             "If the beneficiary is an individual, this is the country in which the beneficiary is based.", example = "KE")
-    private String beneficiaryCountry;
+    @Builder.Default
+    private String beneficiaryCountry = "";
 
     @JsonProperty("account_number")
     @Size(max = 34)
-    @Schema(description = "Bank account number.", example = "")
-    private String accountNumber;
+    @Schema(description = "Bank account number.", example = " ")
+    @Builder.Default
+    private String accountNumber = "";
 
     @JsonProperty("routing_code_type_1")
     @Size(max = 255)
-    @Schema(description = "Local payment routing system. If supplied, a value for routing_code_value_1 must also be supplied.", example = "ABA")
+    @Schema(description = "Local payment routing system. If supplied, a value for routing_code_value_1 must also be supplied.", example = " ")
     @Builder.Default
     private String routingCodeType1 = "";
 
     @JsonProperty("routing_code_value_1")
     @Size(max = 255)
-    @Schema(description = "Local payment routing system value. If supplied, a value for routing_code_type_1 must also be supplied.", example = "123456")
+    @Schema(description = "Local payment routing system value. If supplied, a value for routing_code_type_1 must also be supplied.", example = " ")
     @Builder.Default
     private String routingCodeValue1 = "";
 
     @JsonProperty("routing_code_type_2")
     @Size(max = 255)
-    @Schema(description = "Secondary local payment routing system. If supplied, a value for routing_code_value_2 must also be supplied.", example = "SORT")
+    @Schema(description = "Secondary local payment routing system. If supplied, a value for routing_code_value_2 must also be supplied.", example = " ")
     @Builder.Default
     private String routingCodeType2 = "";
 
     @JsonProperty("routing_code_value_2")
     @Size(max = 255)
-    @Schema(description = "Secondary local payment routing system value. If supplied, a value for routing_code_type_2 must also be supplied.", example = "654321")
+    @Schema(description = "Secondary local payment routing system value. If supplied, a value for routing_code_type_2 must also be supplied.", example = " ")
     @Builder.Default
     private String routingCodeValue2 = "";
 
     @JsonProperty("bic_swift")
     @Size(max = 11)
-    @Schema(description = "BIC/Swift code.", example = "TCCLGB3L")
+    @Schema(description = "BIC/Swift code.", example = " ")
     @Builder.Default
     private String bicSwift = "";
 
     @JsonProperty("iban")
     @Size(max = 34)
-    @Schema(description = "International Bank Account Number.", example = "GB41TCCL12345673185203")
+    @Schema(description = "International Bank Account Number.", example = " ")
     @Builder.Default
     private String iban = "";
 
     @JsonProperty("bank_address")
     @Size(max = 255)
-    @Schema(description = "Address of the bank.", example = "TEST BANK ADDRESS")
+    @Schema(description = "Address of the bank.", example = " ")
     @Builder.Default
     private String bankAddress = "";
 
     @JsonProperty("bank_name")
     @Size(max = 255)
-    @Schema(description = "Bank name.", example = "TEST BANK NAME")
+    @Schema(description = "Bank name.", example = " ")
     @Builder.Default
     private String bankName = "";
 
@@ -98,8 +100,9 @@ public class ValidateBeneficiaryRequest {
 
             Enum:\
             \tchecking
-            \tsavings""", example = "")
-    private String bankAccountType;
+            \tsavings""", example = " ")
+    @Builder.Default
+    private String bankAccountType = "";
 
     @JsonProperty("beneficiary_entity_type")
     @Size(max = 255)
@@ -110,38 +113,45 @@ public class ValidateBeneficiaryRequest {
     @JsonProperty("beneficiary_company_name")
     @Size(max = 255)
     @Schema(description = "Required if \"beneficiary_entity_type\" is \"company\".", example = " ")
-    private String beneficiaryCompanyName;
+    @Builder.Default
+    private String beneficiaryCompanyName = "";
 
     @JsonProperty("beneficiary_first_name")
     @Size(max = 255)
-    @Schema(description = "Beneficiary first name.", example = "Kenyan")
-    private String beneficiaryFirstName;
+    @Schema(description = "Beneficiary first name.", example = " ")
+    @Builder.Default
+    private String beneficiaryFirstName = "";
 
     @JsonProperty("beneficiary_last_name")
     @Size(max = 255)
-    @Schema(description = "Required if \"beneficiary_entity_type\" is \"individual\".", example = "User")
-    private String beneficiaryLastName;
+    @Schema(description = "Required if \"beneficiary_entity_type\" is \"individual\".", example = " ")
+    @Builder.Default
+    private String beneficiaryLastName = "";
 
     @JsonProperty("beneficiary_city")
     @Size(max = 255)
     @Schema(description = "City.", example = " ")
-    private String beneficiaryCity;
+    @Builder.Default
+    private String beneficiaryCity = "";
 
     @JsonProperty("beneficiary_postcode")
     @Size(max = 255)
     @Schema(description = "Post code.", example = " ")
-    private String beneficiaryPostcode;
+    @Builder.Default
+    private String beneficiaryPostcode = "";
 
     @JsonProperty("beneficiary_state_or_province")
     @Size(max = 255)
     @Schema(description = "State or province.", example = " ")
-    private String beneficiaryStateOrProvince;
+    @Builder.Default
+    private String beneficiaryStateOrProvince = "";
 
     @JsonProperty("beneficiary_date_of_birth")
     @Size(max = 255)
     @Schema(description = "If \"beneficiary_entity_type\" is \"company\", " +
             "date of registration. If \"beneficiary_entity_type\" is \"individual\", date of birth. ISO 8601 format YYYY-MM-DD.", example = " ")
-    private String beneficiaryDateOfBirth;
+    @Builder.Default
+    private String beneficiaryDateOfBirth = "";
 
     @JsonProperty("beneficiary_identification_type")
     @Size(max = 255)
@@ -167,22 +177,25 @@ public class ValidateBeneficiaryRequest {
             employer_identification_number
             national_id
             incorporation_number
-            others""")
-    private String beneficiaryIdentificationType;
+            others""", example = " ")
+    @Builder.Default
+    private String beneficiaryIdentificationType = "";
 
     @JsonProperty("beneficiary_identification_value")
     @Size(max = 255)
-    @Schema(description = "A unique reference code for the identification document, such as a passport number.", example = "")
-    private String beneficiaryIdentificationValue;
+    @Schema(description = "A unique reference code for the identification document, such as a passport number.", example = " ")
+    @Builder.Default
+    private String beneficiaryIdentificationValue = "";
 
     @JsonProperty("payment_types")
     @Schema(description = "Currencycloud supports two types of payments: \"priority\", made using the Swift network; and \"regular\", made using the local bank network.",
             example = "[\"priority\", \"regular\"]")
     @Builder.Default
-    private String[] paymentTypes = {};
+    private String[] paymentTypes = null;
 
     @JsonProperty("on_behalf_of")
     @Size(max = 36)
     @Schema(description = "A contact UUID for the sub-account you're acting on behalf of.", example = " ")
-    private String onBehalfOf;
+    @Builder.Default
+    private String onBehalfOf = "";
 }

@@ -6,9 +6,6 @@ import com.mynt.banking.auth.requests.SignUpRequest;
 import com.mynt.banking.auth.requests.ValidateKycRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
 import com.mynt.banking.auth.responses.SDKResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,30 +20,32 @@ import java.net.URISyntaxException;
 public class AuthenticationController {
 
     private final AuthenticationService service;
-    private final KYCService kycService;
+    private final KycService kycService;
 
     @PostMapping(value = "/onfidoSdk", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SDKResponse> onfidoSdk(@RequestBody SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
+    public ResponseEntity<SDKResponse> onfidoSdk(@RequestBody SignUpRequest request) {
         return kycService.getOnfidoSDK(request) ;
     }
 
     @PostMapping(value = "/validateKyc", consumes = {"application/json", "text/plain"})
-    public ResponseEntity<SDKResponse> validateKyc(@RequestBody ValidateKycRequest request) throws URISyntaxException, IOException, InterruptedException {
+    public ResponseEntity<SDKResponse> validateKyc(@RequestBody ValidateKycRequest request) throws IOException {
         return ResponseEntity.ok(kycService.validateKyc(request));
     }
 
-    @PostMapping(value = "/register", consumes = {"application/json", "text/plain"})
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody @Valid RegisterRequest request) throws URISyntaxException, IOException, InterruptedException {
-        return ResponseEntity.ok(service.register(request));
+    @PostMapping("/register")
+    public ResponseEntity<Void> register(@RequestBody RegisterRequest request) {
+        service.register(request);
+        return ResponseEntity.ok().build(); // Returns an empty 200 OK response
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok(service.authenticate(request));
+        AuthenticationResponse response = service.authenticate(request);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/refresh-token")
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        service.refreshToken(request, response);
+    public ResponseEntity<AuthenticationResponse> refreshToken() {
+        return ResponseEntity.ok(service.refreshToken());
     }
 }

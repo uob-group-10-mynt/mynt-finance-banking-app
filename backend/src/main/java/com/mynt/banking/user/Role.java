@@ -2,6 +2,8 @@ package com.mynt.banking.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collections;
@@ -49,6 +51,7 @@ public enum Role {
 
     private final Set<Permission> permissions;
 
+    @NotNull
     public List<SimpleGrantedAuthority> getAuthorities() {
         var authorities = getPermissions()
                 .stream()

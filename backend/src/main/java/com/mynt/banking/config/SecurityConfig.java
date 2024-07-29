@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,12 +22,13 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
+
     private static final String[] WHITE_LIST_URL = {
             "/api/v1/currency-cloud/accounts/**",
-            "/api/v1/currency-cloud/balances/**",
             "/api/v1/currency-cloud/beneficiaries/**",
             "/api/v1/currency-cloud/payments/**",
             "/api/v1/currency-cloud/reference/**",
+            "/api/v1/currency-cloud/rates/**",
             "/api/v1/currency-cloud/contact/**",
             "/api/v1/auth/**",
             "/api/v1/auth/sdk**",
@@ -41,30 +41,32 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/webjars/**",
             "/api/v1/auth/sdk",
-            "/swagger-ui.html,"};
-    private final JWTAuthenticationFilter jwtAuthFilter;
+            "/swagger-ui.html,"
+    };
+
+    private final AuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(withDefaults())
-                .authorizeHttpRequests(req ->
-                        req.requestMatchers(WHITE_LIST_URL)
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
-                )
-                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout(logout ->
-                        logout.logoutUrl("/api/v1/auth/logout")
-                                .addLogoutHandler(logoutHandler)
-                                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
-                )
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(withDefaults())
+            .authorizeHttpRequests(req ->
+                req.requestMatchers(WHITE_LIST_URL)
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated()
+            )
+            .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .logout(logout ->
+                    logout.logoutUrl("/api/v1/auth/logout")
+                            .addLogoutHandler(logoutHandler)
+                            .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+            )
         ;
 
         return http.build();

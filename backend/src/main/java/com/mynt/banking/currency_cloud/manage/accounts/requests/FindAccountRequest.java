@@ -92,7 +92,6 @@ public class FindAccountRequest {
     @Builder.Default
     private Integer perPage = 1;
 
-    @JsonProperty("order")
     @Schema(description = "Any field name to change the sort order.", example = " ")
     @Builder.Default
     private String order ="";
