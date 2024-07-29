@@ -24,13 +24,12 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+
     @GetMapping("/getUserDetails")
-    public ResponseEntity<GetUserDetailsResponse> getUserDetails(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String auth
-    ) {
+    public ResponseEntity<GetUserDetailsResponse> getUserDetails() {
         GetUserDetailsResponse response;
         try {
-            response = userService.getUserDetails(auth);
+            response = userService.getUserDetails();
         }
         catch (IOException e) {
             return ResponseEntity.badRequest().build();
@@ -39,10 +38,7 @@ public class UserController {
     }
 
     @PostMapping("/updateUserDetails")
-    public ResponseEntity<UpdateUserDetailsRequest> updateUserDetails(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
-            @RequestBody UpdateUserDetailsRequest request
-    ) {
+    public ResponseEntity<UpdateUserDetailsRequest> updateUserDetails(@RequestBody UpdateUserDetailsRequest request) {
         try {
             userService.updateUserDetails(request);
         }

@@ -1,5 +1,7 @@
 package com.mynt.banking.auth;
 
+import com.mynt.banking.user.UserContextService;
+import com.mynt.banking.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class LogoutHandlerImpl implements LogoutHandler {
+public class UserLogoutHandler implements LogoutHandler {
 
-    private final TokenService tokenService;
+    private final UserContextService userContextService;
 
     @Override
     @RequestMapping(value = "/api/v1/auth/logout", method = RequestMethod.POST)
@@ -24,11 +26,9 @@ public class LogoutHandlerImpl implements LogoutHandler {
 
         // Check if the header is present and starts with "Bearer "
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            // Extract the JWT token from the header
-            String jwt = authHeader.substring(7);
 
             // Extract username from JWT (not strictly necessary for logout)
-            String userEmail = tokenService.extractUsername(jwt);
+            String userEmail = userContextService.getCurrentUsername();
 
             // Clear the security context
             if (userEmail != null) {

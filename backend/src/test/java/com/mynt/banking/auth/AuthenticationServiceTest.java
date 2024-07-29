@@ -93,8 +93,8 @@ public class AuthenticationServiceTest {
 
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(userRepository.getKycStatus(anyString())).thenReturn(Optional.of("approved"));
-        when(tokenService.generateToken(any(User.class))).thenReturn("jwtToken");
-        when(tokenService.generateRefreshToken(any(User.class))).thenReturn("refreshToken");
+        when(tokenService.generateToken(any(JwtUserDetails.class))).thenReturn("jwtToken");
+        when(tokenService.generateRefreshToken(any(JwtUserDetails.class))).thenReturn("refreshToken");
 
         // Act
         AuthenticationResponse response = authenticationService.authenticate(request);

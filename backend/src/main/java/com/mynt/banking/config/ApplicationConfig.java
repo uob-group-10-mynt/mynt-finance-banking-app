@@ -22,25 +22,6 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter;
 @Getter
 public class ApplicationConfig {
 
-    private final UserRepository repository;
-
-    @Value("${application.security.jwt.refresh-token.expiration}")
-    private long refreshExpiration;
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> repository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
-
     @Bean
     public CommonsRequestLoggingFilter logFilter() {
         CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
@@ -50,16 +31,6 @@ public class ApplicationConfig {
         filter.setIncludeHeaders(true);
         filter.setAfterMessagePrefix("REQUEST DATA : ");
         return filter;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }
 

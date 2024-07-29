@@ -3,6 +3,7 @@ package com.mynt.banking.auth;
 import com.mynt.banking.auth.requests.AuthenticationRequest;
 import com.mynt.banking.auth.requests.RegisterRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
+import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
 import com.mynt.banking.util.exceptions.registration.RegistrationException;
@@ -12,7 +13,6 @@ import com.mynt.banking.util.exceptions.authentication.TokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +27,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final CurrencyCloudRepository currencyCloudRepository;
     private final AuthenticationManager authenticationManager;
 
 
@@ -57,7 +58,7 @@ public class AuthenticationService {
     }
 
     @SneakyThrows
-    public AuthenticationResponse authenticate(@org.jetbrains.annotations.NotNull AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(@NotNull AuthenticationRequest request) {
         // Step 1: Authenticate user
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
@@ -71,12 +72,15 @@ public class AuthenticationService {
             throw new KycException.KycNotApprovedException("User's status is not approved for login");
         }
 
-        // Step 3: Generate tokens
-        var user = userRepository.findByEmail(request.getEmail())
+        // Step 3: Fetch user and create JwtUserDetails
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User should exist at this point, but was not found"));
 
-        var accessToken = tokenService.generateToken(user);
-        var refreshToken = tokenService.generateRefreshToken(user);
+        JwtUserDetails jwtUserDetails = new JwtUserDetails(user, currencyCloudRepository);
+
+        // Step 4: Generate tokens
+        String accessToken = tokenService.generateToken(jwtUserDetails);
+        String refreshToken = tokenService.generateRefreshToken(jwtUserDetails);
 
         return AuthenticationResponse.builder()
                 .accessToken(accessToken)
@@ -102,7 +106,7 @@ public class AuthenticationService {
 
         // Generate new access and refresh tokens
         try {
-            var user = (User) authentication.getPrincipal();
+            var user = (JwtUserDetails) authentication.getPrincipal();
             var accessToken = tokenService.generateToken(user);
             var newRefreshToken = tokenService.generateRefreshToken(user);
 
