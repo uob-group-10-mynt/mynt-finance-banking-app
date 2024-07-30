@@ -2,14 +2,13 @@ package com.mynt.banking.user;
 
 import com.mynt.banking.user.requests.*;
 import com.mynt.banking.user.responses.*;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -23,7 +22,6 @@ public class UserController {
         userService.changePassword(request, connectedUser);
         return ResponseEntity.ok().build();
     }
-
 
     @GetMapping("/getUserDetails")
     public ResponseEntity<GetUserDetailsResponse> getUserDetails() {

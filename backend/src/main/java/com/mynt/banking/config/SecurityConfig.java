@@ -50,6 +50,7 @@ public class SecurityConfig {
 
     private final AuthenticationFilter jwtAuthFilter;
     private final AuthenticationFailureHandler authenticationFailureHandler;
+    private final ForbiddenAccessHandler forbiddenAccessHandler;
     private final UserRepository userRepository;
 
 
@@ -72,14 +73,14 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, ForbiddenAccessHandler forbiddenAccessHandler) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(withDefaults())
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(WHITE_LIST_URL)
                         .permitAll()
-                        .requestMatchers("/api/v1/currency-cloud/**").hasRole("USER")
+                        .requestMatchers("/api/v1/currency-cloud/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/demo-controller/**").hasRole("USER")
                         .anyRequest()
                         .authenticated()
