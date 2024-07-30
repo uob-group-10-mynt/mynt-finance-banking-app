@@ -15,8 +15,12 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/v1/currency-cloud/reference")
 @RequiredArgsConstructor
 public class ReferenceController {
-
     private final ReferenceService referenceService;
+
+    @PostMapping("/getPayerRequirements")
+    public Mono<ResponseEntity<JsonNode>> getPayerRequirements(@RequestBody GetPayerRequirementsRequest request) {
+        return referenceService.getPayerRequirements(request);
+    }
 
     @PostMapping("/getBeneficiaryRequirements")
     public Mono<ResponseEntity<JsonNode>> getBeneficiaryRequirements(@RequestBody GetBeneficiaryRequirementsRequest request) {
