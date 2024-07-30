@@ -44,7 +44,16 @@ public class TestTransactions {
         assertEquals(id1,responce1.getBody().get("data").get("id").asText());
     }
 
+    @Test
+    void testTransactionCheck(){
 
+        //TODO: run transaction and pass id to methord bellow
+
+//        ResponseEntity<JsonNode> response = flutterwaveService.transactionCheck().block();
+//
+//        assert response != null;
+//        assertEquals(200,response.getStatusCode().value());
+    }
 
 
 }
