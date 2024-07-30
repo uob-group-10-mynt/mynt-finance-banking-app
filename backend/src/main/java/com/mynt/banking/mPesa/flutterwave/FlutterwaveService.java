@@ -30,9 +30,6 @@ public class FlutterwaveService {
     @Value("${flutterwave.api.secretKey}")
     private String secretKey;
 
-    //TODO: POST and GET Requests
-
-
     public Mono<ResponseEntity<JsonNode>> mPesaToFlutterWear(MPesaToFlutterWearDto mPesaToFlutterWearDto) {
 
         ObjectMapper mapper = new ObjectMapper();
