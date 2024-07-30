@@ -45,7 +45,10 @@ public class SecurityConfig {
             "/configuration/ui",
             "/configuration/security",
             "/swagger-ui/**",
-            "/webjars/**"
+            "/webjars/**",
+            "/api/v1/flutterwave/**",
+            "/api/v1/auth/onfidoSdk",
+            "/api/v1/auth/validateKyc",
     };
 
     private final AuthenticationFilter jwtAuthFilter;
@@ -82,6 +85,7 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers("/api/v1/currency-cloud/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/demo-controller/**").hasRole("USER")
+                        .requestMatchers("/api/v1/flutterwave/**").hasRole("USER")
                         .anyRequest()
                         .authenticated()
                 )

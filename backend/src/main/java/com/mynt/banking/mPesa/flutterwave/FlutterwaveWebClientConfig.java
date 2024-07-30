@@ -8,11 +8,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class FlutterwaveWebClientConfig {
 
-    @Value("${}")
+    @Value("${flutterwave.api.url}")
     private String apiUrl;
 
     @Bean
-    public WebClient webClient() {
+    public WebClient webClientFW() {
         return WebClient.builder()
                 .baseUrl(apiUrl)
                 .build();

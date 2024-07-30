@@ -1,8 +1,14 @@
 package com.mynt.banking.mPesa.flutterwave;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.mynt.banking.currency_cloud.collect.funding.requests.FindAccountDetails;
+import com.mynt.banking.mPesa.flutterwave.requests.MPesaToFlutterWearDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @RestController
 @RequestMapping("/api/v1/flutterwave/")
@@ -11,14 +17,30 @@ public class FlutterwaveController {
 
     private final FlutterwaveService flutterwaveService;
 
-    //TODO: add enpoints
-
-    //TODO: /v3/charges?type=mpesa
 
     //TODO: /v3/transactions/${ID}/verify
+    @GetMapping("/transactions/{id}/verify")
+    public Mono<ResponseEntity<JsonNode>> depoistTransactionCheck(@PathVariable(name = "id", required = true) String id) { //@RequestBody FindAccountDetails request
+        return flutterwaveService.depoistTransactionCheck(id) ;
+    }
 
-    //TODO: api end point to wrap mPesa depoist monies
 
-    //TODO: api end point to send money to an mpesa account
+    //TODO: deposit - Mpesa -> cc
+    @PostMapping("/mPesaToFlutterWear")
+    public Mono<ResponseEntity<JsonNode>> mPesaToFlutterWear(@RequestBody MPesaToFlutterWearDto request) {
+        return flutterwaveService.mPesaToFlutterWear(request) ;
+    }
+
+    //TODO: wallet to wallet transfers
+    //TODO: transfer - cc -> Mpesa
+    //TODO: https://api.flutterwave.com/v3/charges?type=mpesa
+
+    //TODO: https://api.flutterwave.com/v3/transfers/${ID}
+
+
+
+
+
+
 
 }
