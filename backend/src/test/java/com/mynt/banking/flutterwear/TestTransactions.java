@@ -32,6 +32,16 @@ public class TestTransactions {
     @Test
     void testDepoistTransactionCheck(){
 
+        MPesaToFlutterWearDto mPesaToFlutterWearDto = MPesaToFlutterWearDto.builder().build();
+        ResponseEntity<JsonNode> responce = flutterwaveService.mPesaToFlutterWear(mPesaToFlutterWearDto).block();
+
+        String id = responce.getBody().get("data").get("id").asText();
+        ResponseEntity<JsonNode> responce1 = flutterwaveService.depoistTransactionCheck(id).block();
+
+        assert responce1 != null;
+        assertEquals(200,responce1.getStatusCode().value());
+        String id1 = responce.getBody().get("data").get("id").asText();
+        assertEquals(id1,responce1.getBody().get("data").get("id").asText());
     }
 
 
