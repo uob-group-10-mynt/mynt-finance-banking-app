@@ -3,7 +3,7 @@ package com.mynt.banking.currency_cloud.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.Main;
 import com.mynt.banking.currency_cloud.manage.reference.ReferenceService;
-import com.mynt.banking.currency_cloud.manage.reference.requests.GetBeneficiaryRequirementsRequest;
+import com.mynt.banking.currency_cloud.manage.reference.requests.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,7 +47,8 @@ public class ReferenceCCTest {
         assertThat(details.get("required_fields")!=null);
 
     }
-    
+
+    @Test
     public void testGetBeneficiaryRequirements(){
         GetBeneficiaryRequirementsRequest getBeneficiaryRequirementsRequest = GetBeneficiaryRequirementsRequest.builder()
                 .currency("cny")

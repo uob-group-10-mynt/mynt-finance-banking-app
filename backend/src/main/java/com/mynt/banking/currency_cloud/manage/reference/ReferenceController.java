@@ -2,7 +2,6 @@ package com.mynt.banking.currency_cloud.manage.reference;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountRequest;
 import com.mynt.banking.currency_cloud.manage.reference.requests.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
