@@ -47,7 +47,7 @@ public class FlutterwaveService {
                 .header("Authorization", secretKey)
                 .bodyValue(jsonNode)
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(Mono::just);
+                .flatMap(request -> { return Mono.just(request); });
     }
 
 
@@ -57,7 +57,7 @@ public class FlutterwaveService {
         return webClient.webClientFW()
                 .get()
                 .uri(url)
-                .header("X-Auth-Token", secretKey)
+                .header("Authorization", secretKey)
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
                 .flatMap(request -> { return Mono.just(request); });
 
