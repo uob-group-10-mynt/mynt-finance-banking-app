@@ -229,9 +229,9 @@ public class KycService {
 
         Optional<User> user = userRepository.findByEmail(request.getEmail());
 
-        CurrencyCloudEntity cloudCurrencyUser = currencyCloudRepository.findByUsersId((long)user.get().getId());
+        Optional<CurrencyCloudEntity> cloudCurrencyUser = currencyCloudRepository.findByUsersId((long)user.get().getId());
 
-        if(cloudCurrencyUser != null){return false;}
+        if(cloudCurrencyUser.isPresent()){return false;}
 
         FindContact findContact = FindContact.builder()
                 .emailAddress(request.getEmail())

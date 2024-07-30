@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,10 +43,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleAuthenticationCredentialsNotFoundException(@NotNull AuthenticationCredentialsNotFoundException ex, HttpServletRequest request) {
         return buildResponseEntity(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
     }
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Map<String, String>> handleAuthenticationException(@NotNull AuthenticationException ex, HttpServletRequest request) {
-        return buildResponseEntity(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
-    }
+    @ExceptionHandler({AuthenticationException.class, AccessDeniedException.class})
+    public void throwSecurityException(Exception e) throws Exception { throw e; }
 
 
     /// Token Exceptions:

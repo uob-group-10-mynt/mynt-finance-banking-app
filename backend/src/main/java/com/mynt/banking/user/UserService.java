@@ -1,14 +1,9 @@
 package com.mynt.banking.user;
 
-import com.mynt.banking.auth.JwtUserDetails;
 import com.mynt.banking.auth.TokenService;
 import com.mynt.banking.user.requests.ChangePasswordRequest;
 import com.mynt.banking.user.requests.UpdateUserDetailsRequest;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -20,20 +15,19 @@ import com.mynt.banking.user.responses.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
 
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
   private final TokenService tokenService;
   private final ContactsService contactsService;
+  private final UserContextService userContextService;
 
 
   public void changePassword(@NotNull ChangePasswordRequest request, Principal connectedUser) {
@@ -50,16 +44,9 @@ public class UserService implements UserDetailsService {
     userRepository.save(user);
   }
 
-  @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    return userRepository.findByEmail(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-  }
+  public GetUserDetailsResponse getUserDetails() throws IOException {
 
-  public GetUserDetailsResponse getUserDetails(@NotNull String auth) throws IOException {
-    String accessToken = auth.substring(7);
-    String userEmail = tokenService.extractUsername(accessToken);
-
+    String userEmail = userContextService.getCurrentUsername();
     var user = userRepository.findByEmail(userEmail).orElseThrow();
     return GetUserDetailsResponse.builder()
             .firstname(user.getFirstname())
@@ -72,11 +59,7 @@ public class UserService implements UserDetailsService {
 
   public void updateUserDetails(@NotNull UpdateUserDetailsRequest request) throws RuntimeException {
 
-    SecurityContext context = SecurityContextHolder.getContext();
-    Authentication authentication = context.getAuthentication();
-    JwtUserDetails principal = (JwtUserDetails) authentication.getPrincipal();
-
-    String userEmail = principal.getUsername();
+    String userEmail = userContextService.getCurrentUsername();
     User user = userRepository.findByEmail(userEmail).orElseThrow();
     user.setFirstname(request.getFirstname());
     user.setLastname(request.getLastname());
@@ -85,7 +68,7 @@ public class UserService implements UserDetailsService {
     user.setAddress(request.getAddress());
     userRepository.save(user);
 
-    String currencyCloudContactUUID = principal.getUuid();
+    String currencyCloudContactUUID = userContextService.getCurrentUserUuid();
 
     UpdateContactRequest updateContactRequest = UpdateContactRequest.builder()
             .firstname(request.getFirstname())
