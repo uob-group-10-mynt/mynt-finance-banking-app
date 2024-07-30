@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class demoFundingDto {
+public class DemoFundingDto {
 
     @JsonProperty("id")
     @NotNull

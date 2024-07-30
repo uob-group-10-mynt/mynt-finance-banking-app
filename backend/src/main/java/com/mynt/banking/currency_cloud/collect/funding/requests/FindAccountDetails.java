@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class findAccountDetails {
+public class FindAccountDetails {
 
     @JsonProperty("payment_type")
     @Schema(description = "Type of payment method used", example = " ")
