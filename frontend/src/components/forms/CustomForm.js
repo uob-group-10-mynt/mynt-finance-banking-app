@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
     FormControl,
     FormErrorMessage,
@@ -9,20 +10,40 @@ import {
 } from "@chakra-ui/react";
 import CustomButton from "./CustomButton";
 
-function CustomForm({children, onSubmit, buttonText, buttonId, errorOccurred}) {
+function formDataToRequestBody(credentials) {
+    // converts form data and returns JSON body  
+    // credential.id MUST match the names of the keys in the JSON schema in Swagger/for the backend 
+    // e.g. "email", or "firstname"
+    const body = {}
+    credentials.forEach(credential => {
+        body[credential.id] = credential.value
+    })
+    return body;
+}
+
+function CustomForm({parentState, setParentState, onSubmit, buttonText, buttonId, errorOccurred, buttonDisplayed}) {
     return (
-        <form onSubmit={onSubmit} style={{display: 'flex', flexDirection: 'column'}}>
-            {transformInputs({children, errorOccurred})}
-            <CustomButton standard width='100%' margin='2' type='submit' data-cy={buttonId}>
+        <form onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit(formDataToRequestBody(parentState));
+        }
+        } style={{display: 'flex', flexDirection: 'column'}}>
+            {transformInputs({parentState, setParentState, errorOccurred})}
+            <CustomButton standard width='100%' margin='2' type='submit' data-cy={buttonId} display={buttonDisplayed}>
                 {buttonText}
             </CustomButton>
         </form>
     );
 }
 
-function transformInputs({children, errorOccurred}) {
+function transformInputs({parentState, setParentState, errorOccurred}) {
+    const handleInputChange = (index, event) => {
+        const updatedFormData = [...parentState];
+        updatedFormData[index].value = event.target.value;
+        setParentState(updatedFormData);
+    };    
     return (
-        children.map((inputFields) => (
+        parentState.map((inputFields, index) => (
             <div key={inputFields.label}>
                 <FormControl isRequired={inputFields.required} margin='0.5em' isInvalid={errorOccurred}>
                     {
@@ -40,9 +61,10 @@ function transformInputs({children, errorOccurred}) {
                             placeholder={inputFields.placeholder}
                             type={inputFields.type}
                             value={inputFields.value}
-                            onChange={inputFields.onChange}
+                            onChange={(e) => handleInputChange(index, e)}
                             required={inputFields.required}
-                            data-cy={inputFields.id}
+                            data-cy={inputFields.id+"Input"}
+                            readOnly={inputFields.readonly}
                         />
                     </InputGroup>
                     {

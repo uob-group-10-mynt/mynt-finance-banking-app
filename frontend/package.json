@@ -12,7 +12,8 @@
     "packageMobile": "webpack --mode production && npx cap sync",
     "cy:open": "cypress open",
     "e2e:chrome": "cypress run --browser chrome --headed --spec './cypress/e2e/*.cy.js'",
-    "frontend:chrome": "cypress run --browser chrome --headed --spec './cypress/frontendOnly/*.cy.js'"
+    "frontend:chrome": "cypress run --browser chrome --headed --spec './cypress/frontendOnly/*.cy.js'",
+    "cy:all": "cypress run --browser chrome"
   },
   "author": "Group10",
   "license": "ISC",
