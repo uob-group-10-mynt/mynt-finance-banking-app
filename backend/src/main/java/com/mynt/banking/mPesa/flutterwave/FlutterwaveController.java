@@ -17,13 +17,11 @@ public class FlutterwaveController {
 
     private final FlutterwaveService flutterwaveService;
 
-
     //TODO: /v3/transactions/${ID}/verify
     @GetMapping("/transactions/{id}/verify")
     public Mono<ResponseEntity<JsonNode>> depoistTransactionCheck(@PathVariable(name = "id", required = true) String id) { //@RequestBody FindAccountDetails request
         return flutterwaveService.depoistTransactionCheck(id) ;
     }
-
 
     //TODO: deposit - Mpesa -> cc
     @PostMapping("/mPesaToFlutterWear")
@@ -31,16 +29,14 @@ public class FlutterwaveController {
         return flutterwaveService.mPesaToFlutterWear(request) ;
     }
 
+    //TODO: https://api.flutterwave.com/v3/charges?type=mpesa
     //TODO: wallet to wallet transfers
     //TODO: transfer - cc -> Mpesa
-    //TODO: https://api.flutterwave.com/v3/charges?type=mpesa
 
     //TODO: https://api.flutterwave.com/v3/transfers/${ID}
 
 
-
-
-
-
+    //TODO: Intergrate - mpesa to CC including CC methrods
+    //TODO: Intergrate - CC to mpesa including CC methrods
 
 }
