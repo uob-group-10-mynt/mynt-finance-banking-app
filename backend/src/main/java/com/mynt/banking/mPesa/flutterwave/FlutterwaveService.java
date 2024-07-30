@@ -60,6 +60,16 @@ public class FlutterwaveService {
 
     }
 
+    public Mono<ResponseEntity<JsonNode>> transactionCheck(String id) {
 
+        String url = "/v3/transfers/"+id;
+        return webClient.webClientFW()
+                .get()
+                .uri(url)
+                .header("Authorization", secretKey)
+                .exchangeToMono(response -> response.toEntity(JsonNode.class))
+                .flatMap(request -> { return Mono.just(request); });
+
+    }
 
 }
