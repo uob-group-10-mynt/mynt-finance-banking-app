@@ -5,14 +5,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+@Data
 @Getter
 @Setter
 @Entity
 @Table(name = "currency_cloud")
 public class CurrencyCloudEntity {
+
     @Id
     @Column(name = "uuid", nullable = false, length = Integer.MAX_VALUE)
     private String uuid;

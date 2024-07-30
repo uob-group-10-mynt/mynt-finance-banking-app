@@ -3,7 +3,6 @@ package com.mynt.banking.user;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
@@ -13,7 +12,7 @@ import java.util.Collection;
 @AllArgsConstructor
 @Entity
 @Table(name = "_users", schema = "public")
-public class User implements UserDetails {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -44,11 +43,4 @@ public class User implements UserDetails {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    public String getUsername() { return email; }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.getAuthorities();
-    }
 }
