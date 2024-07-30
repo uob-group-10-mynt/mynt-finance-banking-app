@@ -8,10 +8,8 @@ import lombok.Setter;
 public class SDKResponse {
     String stage;
     String data;
-//    HashMap<String,Object> data;
 
     public SDKResponse() {
-//        data = new HashMap<>();
         data= "";
     }
 

@@ -3,15 +3,15 @@ import CustomTab from "./CustomTab";
 
 function TabBar({tabNames, tabPanels, ...props}) {
     return (
-        <Tabs variant='soft-rounded' colorScheme='teal' m={2} {...props}>
+        <Tabs align='center' variant='soft-rounded' colorScheme='teal' m={2} {...props}>
             <TabList>
-                {tabNames.map((tabName) => (
-                    <CustomTab>{tabName}</CustomTab>
+                {tabNames.map((tabName, index) => (
+                    <CustomTab key={index}>{tabName}</CustomTab>
                 ))}
             </TabList>
             <TabPanels>
-                {tabPanels.map((tabPanel) => (
-                    <TabPanel>{tabPanel}</TabPanel>
+                {tabPanels.map((tabPanel, index) => (
+                    <TabPanel key={index}>{tabPanel}</TabPanel>
                 ))}
             </TabPanels>
         </Tabs>

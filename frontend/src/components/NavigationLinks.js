@@ -2,32 +2,36 @@ import {useContext} from "react";
 import {LoggedInContext} from "../App";
 import {Link} from "@chakra-ui/react";
 
-const pages = [
-    {href: "/", text: "Home"},
-    {href: "/signup", text: "Sign Up", testId: "SignUpLink"},
-    {href: "/remittance", text: "Transfer", testId: "RemittanceLink"},
-    // Add more links as needed
-];
-
-const links = pages.map((page, index) => (
-    <Link key={index} href={page.href} mx="2" data-cy={page.testId}>
-        {page.text}
-    </Link>
-));
+function createLinks(dataAboutPages) {
+    return (
+        dataAboutPages.map((page, index) => (
+            <Link key={index} href={page.href} mx="2" data-cy={page.id} onClick={page.onClick}>
+            {page.text}
+        </Link>  
+        ))
+    )
+}
 
 export default function NavigationLinks() {
     const [loggedIn, setLoggedIn, logOut] = useContext(LoggedInContext)
-    return (
-        <>
-            {links}
-            {
-                loggedIn ?
-                    <Link href={'login'} mx="2" data-cy="LogOutLink" onClick={() => {
-                        logOut();
-                    }}>Log Out</Link>
-                    :
-                    <Link href={'login'} mx="2" data-cy="LoginLink">Log In</Link>
-            }
-        </>
-    )
+    const loggedInData = [
+        {href: "/remittance/payee", text: "Transfer", id: "RemittanceLink"},
+        {href: "/login", text: "Log Out", id: "LogOutLink", onClick: logOut}
+    ]
+    const loggedOutData = [
+        {href: "/signup", text: "Sign Up", id: "SignUpLink"},
+        {href: "/login", text: "Log In", id: "LoginLink"},
+    ]
+    const pagesThatAreAlwaysVisible = [
+        {href: "/", text: "Home"}
+    ];
+
+    let links = createLinks(pagesThatAreAlwaysVisible)
+    if (loggedIn) {
+        links.push(createLinks(loggedInData))
+    } else {
+        links.push(createLinks(loggedOutData))
+    }
+
+    return links;
 }

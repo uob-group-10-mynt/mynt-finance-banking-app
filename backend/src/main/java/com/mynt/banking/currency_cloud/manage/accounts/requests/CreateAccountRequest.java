@@ -59,19 +59,20 @@ public class CreateAccountRequest {
 
     @JsonProperty("state_or_province")
     @Size(max = 255)
-    private String stateOrProvince;
+    @Builder.Default
+    private String stateOrProvince = "";
 
     @JsonProperty("brand")
     @Size(max = 255)
     @Builder.Default
-    @Schema(description = "brand used internally to white lable accounts", example = "currencycloud")
-    private String brand = "currencycloud";
+    @Schema(description = "brand used internally to white label accounts", example = " ")
+    private String brand = "";
 
     @JsonProperty("your_reference")
     @Size(max = 255)
     @Builder.Default
-    @Schema(description = "User-generated reference code", example = "MyntFinance")
-    private String yourReference = "MyntFinance";
+    @Schema(description = "User-generated reference code", example = " ")
+    private String yourReference = "";
 
     @JsonProperty("status")
     @Size(max = 255)
@@ -88,8 +89,8 @@ public class CreateAccountRequest {
     @JsonProperty("identification_type")
     @Size(max = 255)
     @Builder.Default
-    @Schema(description = "A legal document that verifies the identity of the account owner. Required for individual sub-accounts on our outsourced KYC model, optional otherwise. uses enums that can be found on cloud currency", example = "none")
-    private String identificationType = "none";
+    @Schema(description = "A legal document that verifies the identity of the account owner. Required for individual sub-accounts on our outsourced KYC model, optional otherwise. uses enums that can be found on cloud currency", example = " ")
+    private String identificationType = "";
 
     @JsonProperty("identification_value")
     @Size(max = 255)
@@ -99,23 +100,23 @@ public class CreateAccountRequest {
 
     @JsonProperty("api_trading")
     @Builder.Default
-    @Schema(description = "Allows the account to make trades via the Currencycloud API.", example = "true")
-    private Boolean apiTrading = true;
+    @Schema(description = "Allows the account to make trades via the Currencycloud API.", example = " ")
+    private Boolean apiTrading = null;
 
     @JsonProperty("online_trading")
     @Builder.Default
-    @Schema(description = "Allows the account to make trades via Currencycloud Direct.", example = "true")
-    private Boolean onlineTrading = true;
+    @Schema(description = "Allows the account to make trades via Currencycloud Direct.", example = " ")
+    private Boolean onlineTrading = null;
 
     @JsonProperty("phone_trading")
     @Builder.Default
-    @Schema(description = "Allows the account to make trades via phone.", example = "true")
-    private Boolean phoneTrading = true;
+    @Schema(description = "Allows the account to make trades via phone.", example = " ")
+    private Boolean phoneTrading = null;
 
     @JsonProperty("terms_and_conditions_accepted")
     @Builder.Default
-    @Schema(description = "Acceptance of the terms and conditions. Required for sub-accounts that are on our Outsourced KYC model, optional otherwise.", example = "true")
-    private Boolean termsAndConditionsAccepted = true;
+    @Schema(description = "Acceptance of the terms and conditions. Required for sub-accounts that are on our Outsourced KYC model, optional otherwise.", example = " ")
+    private Boolean termsAndConditionsAccepted = null;
 }
 
 

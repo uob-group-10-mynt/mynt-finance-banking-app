@@ -1,25 +1,19 @@
 import {useState, useContext} from "react";
-import {
-    Box,
-    FormControl,
-    FormLabel,
-    Input,
-    Button,
-    FormErrorMessage
-} from "@chakra-ui/react";
 import {LoggedInContext} from "../App";
 import PageHeader from "../components/forms/PageHeader";
 import {useNavigate} from "react-router-dom";
-import { authenticateAPI } from "../utils/APIEndpoints";
+import {authenticateAPI} from "../utils/APIEndpoints";
+import CustomForm from "../components/forms/CustomForm";
+import Page from "../components/Page";
 
-const Login = () => {
+function Login() {
     const [loggedIn, setLoggedIn] = useContext(LoggedInContext)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [invalidCredentialsMsg, setInvalidCredentialsMsg] = useState('');
+    const [errorOccurred, setErrorOccurred] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
         const credentials = {email, password};
 
@@ -32,10 +26,10 @@ const Login = () => {
             setEmail('');
             setPassword('');
             if (!response.ok) {
-                setInvalidCredentialsMsg('incorrect email or password')
+                setErrorOccurred(true)
                 throw new Error('Authentication failed');
             }
-
+            setErrorOccurred(false)
             const data = await response.json()
             sessionStorage.setItem('access', data.access_token)
             sessionStorage.setItem('refresh', data.refresh_token)
@@ -45,22 +39,23 @@ const Login = () => {
             //TODO handle errors by redirecting to relevant error page
             console.error(error);
         }
-    };
+    }
 
-    const loginFieldsInputList = [
+    const loginInputFields = [
         {
             label: "Email",
-            testId: "emailInput",
+            id: "emailInput",
             placeholder: "hello@email.com",
             type: "email",
             value: email,
             required: true,
             onChange: (e) => setEmail(e.target.value),
-            errorMsg: "Incorrect email or password"
+            errorMsg: "Incorrect email or password",
+            helperText: "The email address associated with your account"
         },
         {
             label: "Password",
-            testId: "passwordInput",
+            id: "passwordInput",
             placeholder: "*******",
             type: "password",
             value: password,
@@ -70,33 +65,14 @@ const Login = () => {
         },
     ]
 
-    const inputFields = loginFieldsInputList.map((inputList) => {
-        return (
-            <FormControl isInvalid={invalidCredentialsMsg} isRequired={inputList.required} key={inputList.label}>
-                <FormLabel>{inputList.label}</FormLabel>
-                <Input
-                    isRequired={inputList.required}
-                    type={inputList.type}
-                    placeholder={inputList.placeholder}
-                    value={inputList.value}
-                    onChange={inputList.onChange}
-                    data-cy={inputList.testId}
-                />
-                <FormErrorMessage data-cy="errorMessage">{inputList.errorMsg}</FormErrorMessage>
-            </FormControl>
-        );
-    });
-
     return (
-        <Box className="page">
-            <PageHeader>Login</PageHeader>
-            <form onSubmit={handleSubmit}>
-                {inputFields}
-                <Button data-cy="submitButton" width="full" mt={4} type="submit">
-                    Sign In
-                </Button>
-            </form>
-        </Box>
+        <Page>
+            <PageHeader>Log in to Mynt</PageHeader>
+            <CustomForm onSubmit={handleLoginSubmit} buttonText="Log In" buttonId="submitButton"
+                        errorOccurred={errorOccurred}>
+                {loginInputFields}
+            </CustomForm>
+        </Page>
     );
 }
 

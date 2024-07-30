@@ -3,7 +3,7 @@ package com.mynt.banking.currency_cloud.manage.reference;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountRequest;
-import com.mynt.banking.currency_cloud.manage.reference.requests.GetPayerRequirementsRequest;
+import com.mynt.banking.currency_cloud.manage.reference.requests.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,5 +21,10 @@ public class ReferenceController {
     @PostMapping("/getPayerRequirements")
     public Mono<ResponseEntity<JsonNode>> getPayerRequirements(@RequestBody GetPayerRequirementsRequest request) {
         return referenceService.getPayerRequirements(request);
+    }
+
+    @PostMapping("/getBeneficiaryRequirements")
+    public Mono<ResponseEntity<JsonNode>> getBeneficiaryRequirements(@RequestBody GetBeneficiaryRequirementsRequest request) {
+        return referenceService.getBeneficiaryRequirements(request);
     }
 }

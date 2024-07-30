@@ -5,6 +5,9 @@ import reactor.core.publisher.Mono;
 
 public class ErrorHandlingInterceptor {
 
+    // TODO add a 401 refresh auth
+
+
     public static ExchangeFilterFunction handleErrors() {
         return ExchangeFilterFunction.ofResponseProcessor(clientResponse -> {
             if (clientResponse.statusCode().isError()) {

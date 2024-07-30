@@ -1,10 +1,7 @@
 package com.mynt.banking.auth.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
@@ -14,6 +11,13 @@ public class AuthenticationResponse {
 
     @JsonProperty("access_token")
     private String accessToken;
+
     @JsonProperty("refresh_token")
     private String refreshToken;
+
+    @JsonProperty("uuid")
+    private String uuid;
+
+    @JsonProperty("message")
+    private String message;
 }
