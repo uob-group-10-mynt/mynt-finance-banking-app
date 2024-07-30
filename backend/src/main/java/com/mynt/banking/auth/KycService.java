@@ -244,9 +244,7 @@ public class KycService {
         if (!(statusCode == 200)) {return false;}
 
         String numEntries = contact.getBody().get("pagination").get("total_entries").asText();
-        if (numEntries.equals("1")) {return false;}
-
-        return true;
+        return !numEntries.equals("1");
     }
 
 
