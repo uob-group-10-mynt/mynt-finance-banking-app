@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  postgres:
+    container_name: postgres_test_container
+    image: 'postgres:16.0'
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=backend_user
+      - POSTGRES_PASSWORD=iambackenduser
+    ports:
+      - '5432:5432'

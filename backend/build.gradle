@@ -27,7 +27,7 @@ repositories {
 dependencies {
 	implementation 'com.google.code.gson:gson:2.8.9'
 	implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-	implementation 'com.squareup.retrofit2:converter-gson:2.9.0' // for JSON parsing
+	implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -42,9 +42,9 @@ dependencies {
 	implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'
 	implementation 'com.nimbusds:nimbus-jose-jwt:9.37.2'
 	compileOnly 'org.projectlombok:lombok'
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'io.projectreactor:reactor-core'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'io.projectreactor:reactor-core'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
@@ -55,13 +55,17 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 	testImplementation 'org.mockito:mockito-core:5.5.0'
 	testImplementation 'junit:junit:4.13.2'
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	// Add Testcontainers dependencies
+	testImplementation 'org.testcontainers:testcontainers:1.18.3'
+	testImplementation 'org.testcontainers:junit-jupiter:1.18.3'
+	testImplementation 'org.testcontainers:postgresql:1.18.3'
 }
 
-
-tasks.named('test') {
+tasks.named('test').configure {
 	useJUnitPlatform()
 }
