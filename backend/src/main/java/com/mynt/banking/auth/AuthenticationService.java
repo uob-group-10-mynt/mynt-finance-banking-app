@@ -3,7 +3,6 @@ package com.mynt.banking.auth;
 import com.mynt.banking.auth.requests.AuthenticationRequest;
 import com.mynt.banking.auth.requests.RegisterRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
-import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
@@ -14,7 +13,6 @@ import com.mynt.banking.util.exceptions.authentication.TokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +28,8 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
-    private final AuthenticationManager authenticationManager;
-
     private final CurrencyCloudRepository currencyCloudRepository;
+    private final AuthenticationManager authenticationManager;
 
 
     public void register(@NotNull RegisterRequest request) {
@@ -63,7 +59,7 @@ public class AuthenticationService {
     }
 
     @SneakyThrows
-    public AuthenticationResponse authenticate(@org.jetbrains.annotations.NotNull AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(@NotNull AuthenticationRequest request) {
         // Step 1: Authenticate user
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
@@ -77,28 +73,20 @@ public class AuthenticationService {
             throw new KycException.KycNotApprovedException("User's status is not approved for login");
         }
 
-        // Step 3: Generate tokens
-        var user = userRepository.findByEmail(request.getEmail())
+        // Step 3: Fetch user and create JwtUserDetails
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User should exist at this point, but was not found"));
 
-        var accessToken = tokenService.generateToken(user);
-        var refreshToken = tokenService.generateRefreshToken(user);
+        JwtUserDetails jwtUserDetails = new JwtUserDetails(user, currencyCloudRepository);
 
-        // JERRY RIGED THIS FOR NOW WILL REMOVE:
-        Long userId = userRepository.findByEmail(user.getUsername()).orElseThrow().getId();
-        Optional<CurrencyCloudEntity> currencyCloudEntityOptional = Optional.ofNullable(
-                currencyCloudRepository.findByUsersId(userId));
-        String userUUID;
-        if (currencyCloudEntityOptional.isPresent()) {
-            userUUID = currencyCloudEntityOptional.get().getUuid();
-        } else {
-            throw new TokenException.TokenGenerationException("UUID not found for user ID: " + userId);
-        }
+        // Step 4: Generate tokens
+        String accessToken = tokenService.generateToken(jwtUserDetails);
+        String refreshToken = tokenService.generateRefreshToken(jwtUserDetails);
 
         return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .uuid(userUUID)
+                .uuid(jwtUserDetails.getUuid())
                 .build();
     }
 
@@ -120,7 +108,7 @@ public class AuthenticationService {
 
         // Generate new access and refresh tokens
         try {
-            var user = (User) authentication.getPrincipal();
+            var user = (JwtUserDetails) authentication.getPrincipal();
             var accessToken = tokenService.generateToken(user);
             var newRefreshToken = tokenService.generateRefreshToken(user);
 

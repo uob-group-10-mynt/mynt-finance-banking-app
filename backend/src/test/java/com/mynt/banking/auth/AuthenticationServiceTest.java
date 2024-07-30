@@ -6,6 +6,8 @@ import static org.mockito.Mockito.*;
 import com.mynt.banking.auth.requests.AuthenticationRequest;
 import com.mynt.banking.auth.requests.RegisterRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
+import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
+import com.mynt.banking.user.Role;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
 import com.mynt.banking.util.exceptions.authentication.KycException;
@@ -37,6 +39,9 @@ public class AuthenticationServiceTest {
 
     @Mock
     private AuthenticationManager authenticationManager;
+
+    @Mock
+    private CurrencyCloudRepository cloudCurrencyRepository;
 
     @InjectMocks
     private AuthenticationService authenticationService;
@@ -90,11 +95,12 @@ public class AuthenticationServiceTest {
 
         User user = new User();
         user.setEmail("test@example.com");
+        user.setRole(Role.USER);
 
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(userRepository.getKycStatus(anyString())).thenReturn(Optional.of("approved"));
-        when(tokenService.generateToken(any(User.class))).thenReturn("jwtToken");
-        when(tokenService.generateRefreshToken(any(User.class))).thenReturn("refreshToken");
+        when(tokenService.generateToken(any(JwtUserDetails.class))).thenReturn("jwtToken");
+        when(tokenService.generateRefreshToken(any(JwtUserDetails.class))).thenReturn("refreshToken");
 
         // Act
         AuthenticationResponse response = authenticationService.authenticate(request);

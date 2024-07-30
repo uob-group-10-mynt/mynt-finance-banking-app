@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/demo-controller")
-@PreAuthorize("hasRole('USER')")
 @Tag(name = "User (Demo)")
 public class DemoController {
 
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> sayHello() {
         return ResponseEntity.ok("Hello from secured endpoint");
     }

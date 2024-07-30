@@ -1,6 +1,5 @@
 package com.mynt.banking.auth;
 
-import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.io.InputStream;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -77,37 +77,27 @@ public class TokenService {
         }
     }
 
-    public String generateToken(@NotNull User user) {
-        return generateTokenWithExpiration(user, jwtExpiration);
+    public String generateToken(@NotNull JwtUserDetails userDetails) {
+        return generateTokenWithExpiration(userDetails, jwtExpiration);
     }
 
-    public String generateRefreshToken(@NotNull User user) {
-        return generateTokenWithExpiration(user, refreshExpiration);
+    public String generateRefreshToken(@NotNull JwtUserDetails userDetails) {
+        return generateTokenWithExpiration(userDetails, refreshExpiration);
     }
 
     // Generate a JWT token for UserDetails
-    private String generateTokenWithExpiration(@NotNull User user, long expiration) {
+    private String generateTokenWithExpiration(@NotNull JwtUserDetails userDetails, long expiration) {
         try {
-            // Fetch the uuid from CurrencyCloudEntity using userId
-            Long userId = userRepository.findByEmail(user.getUsername()).orElseThrow().getId();
-            Optional<CurrencyCloudEntity> currencyCloudEntityOptional = Optional.ofNullable(
-                    currencyCloudRepository.findByUsersId(userId));
-
-            String userUUID;
-            if (currencyCloudEntityOptional.isPresent()) {
-                userUUID = currencyCloudEntityOptional.get().getUuid();
-            } else {
-                throw new TokenException.TokenGenerationException("UUID not found for user ID: " + userId);
-            }
+            String userUUID = userDetails.getUuid();
 
             // Add authorities and uuid to the JWT claims
             Map<String, Object> extraClaims = new HashMap<>();
-            extraClaims.put("authorities", user.getAuthorities().stream()
+            extraClaims.put("authorities", userDetails.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList()));
             extraClaims.put("uuid", userUUID);
 
-            return encryptToken(buildToken(extraClaims, user.getUsername(), expiration));
+            return encryptToken(buildToken(extraClaims, userDetails.getUsername(), expiration));
         } catch (Exception e) {
             throw new TokenException.TokenGenerationException("Failed to generate token", e);
         }
@@ -160,9 +150,6 @@ public class TokenService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    //Extract id from token
-
-
     // Extract username from token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -183,14 +170,13 @@ public class TokenService {
                 .collect(Collectors.toList());
     }
 
-
+    // Extract JwtUserDetails
     public JwtUserDetails extractUserDetails(String token) {
-        Claims claims = extractAllClaims(token);
         String username = extractUsername(token);
-        List<GrantedAuthority> authorities = extractAuthorities(token);
-        String uuid = claims.get("uuid", String.class);
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return new JwtUserDetails(username, authorities, uuid);
+        return new JwtUserDetails(user, currencyCloudRepository);
     }
 
     // Check if the token is expired
@@ -198,6 +184,7 @@ public class TokenService {
         return extractExpiration(token).before(Date.from(clock.instant()));
     }
 
+    // Check if the token is valid
     public boolean isTokenValid(String token, @NotNull JwtUserDetails userDetails) {
         final String username = extractUsername(token);
         final String uuid = extractUUID(token);
