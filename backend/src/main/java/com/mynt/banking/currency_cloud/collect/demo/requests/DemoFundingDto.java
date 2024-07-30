@@ -75,7 +75,7 @@ public class DemoFundingDto {
     @NotNull
     @Schema(description = "Amount to be funded", example = "1000.00")
     @Builder.Default
-    private BigDecimal amount = BigDecimal.ZERO;
+    private int amount = 0;
 
     @JsonProperty("currency")
     @NotNull

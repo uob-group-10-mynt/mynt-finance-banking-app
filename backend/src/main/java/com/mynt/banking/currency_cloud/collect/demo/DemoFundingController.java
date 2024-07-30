@@ -2,8 +2,6 @@ package com.mynt.banking.currency_cloud.collect.demo;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.collect.demo.requests.DemoFundingDto;
-import com.mynt.banking.currency_cloud.convert.conversions.ConversionService;
-import com.mynt.banking.currency_cloud.convert.conversions.requests.CreateConversionRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +13,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/api/v1/currency-cloud/demo/funding/")
 @RequiredArgsConstructor
-public class DemoController {
+public class DemoFundingController {
 
     private final DemoService demoService;
 

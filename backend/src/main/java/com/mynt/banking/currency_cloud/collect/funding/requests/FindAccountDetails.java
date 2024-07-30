@@ -23,6 +23,7 @@ public class FindAccountDetails {
     @NotNull
     @Schema(description = "The currency of the account details required, ISO 4217 standard", example = "GBP")
     @Size(max = 3)
+    @Builder.Default
     private String currency = "GBP";
 
     @JsonProperty("account_id")
