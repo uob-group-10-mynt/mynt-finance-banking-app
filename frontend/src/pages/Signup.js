@@ -87,30 +87,12 @@ const signupInputFields = [
 function Signup() {
     const [formData, setFormData] = useState(signupInputFields)
     const [errorOccurred, setErrorOccurred] = useState('');
-    const [message, setMessage] = useState('');
     const [iframe, setiframe] = useState('');
 
 
     const handleSubmit = (formValuesJSON) => {
-        console.log("handle submit::: ",formValuesJSON)
         apiCalls(formValuesJSON);
-        // clearHooks();
     };
-
-    // function clearHooks() {
-    //     if (password === confirmPassword) {
-    //         const credentials = {firstName, surname, email, password, confirmPassword};
-    //         setEmail('');
-    //         setFirstName('');
-    //         setSurname('');
-    //         setPassword('');
-    //         setConfirmPassword('');
-    //     } else {
-    //         setPassword('');
-    //         setConfirmPassword('');
-    //         setMessage('Passwords do not match!');
-    //     }
-    // }
 
     async function apiCalls(formValuesJSON) {
         try {
@@ -118,26 +100,22 @@ function Signup() {
             let response = await axios.post(onfidoIdetityCheckAPI, {
                 ...formValuesJSON
             })
-            console.log("response:::", response)
-            console.log("email:::", formData[0].value)
-            kycChecks(response);
-            Cookies.put("email", formData[0].value);
+            kycChecks(response, formValuesJSON.email);
+            Cookies.put("email", formValuesJSON.email);
         } catch (error) {
-            setMessage('An error occurred. Please try again later.');
-            // console.error('There was an error!', error);
+            setErrorOccurred(true)
         }
     }
 
-    function kycChecks(response) {
+    function kycChecks(response, email) {
         if (response.status != 200) {
-            // setErrorOccurred(true)
+            setErrorOccurred(true)
             throw new Error('Error signing up');
         }
-        // setErrorOccurred(false)
         const data = JSON.parse(response.data.data);
         let urlink = data.url;
-        document.cookie = `email=${formData[0].value}`;
-        console.log(document.cookie);
+        document.cookie = `email=${email}`;
+        console.log("cookie", document.cookie);
         setiframe(urlink);
     }
 

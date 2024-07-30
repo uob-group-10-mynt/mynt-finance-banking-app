@@ -1,7 +1,7 @@
 {
   "firstname": "cypress",
   "lastname": "test",
-  "email": "cypress@test.com",
+  "email": "cypress@ci.com",
   "password": "test",
   "role": "USER",
   "dob": "29-06-1900",
