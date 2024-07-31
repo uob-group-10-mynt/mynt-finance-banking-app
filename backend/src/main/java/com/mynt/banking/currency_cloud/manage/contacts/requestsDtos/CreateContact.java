@@ -104,5 +104,4 @@ public class CreateContact {
             Required if account type is individual.""", example = "2020-08-16")
     @Builder.Default
     private String dateOfBirth = "";
-
 }
