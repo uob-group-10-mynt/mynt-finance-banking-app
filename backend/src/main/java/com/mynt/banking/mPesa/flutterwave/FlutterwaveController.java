@@ -3,6 +3,7 @@ package com.mynt.banking.mPesa.flutterwave;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.collect.funding.requests.FindAccountDetails;
 import com.mynt.banking.mPesa.flutterwave.requests.MPesaToFlutterWearDto;
+import com.mynt.banking.mPesa.flutterwave.requests.SendMpesaDto;
 import com.mynt.banking.mPesa.flutterwave.requests.Wallet2WalletDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class FlutterwaveController {
     //TODO: deposit - Mpesa -> cc
     @PostMapping("/mPesaToFlutterWear")
     public Mono<ResponseEntity<JsonNode>> mPesaToFlutterWear(@RequestBody MPesaToFlutterWearDto request) {
-        return flutterwaveService.mPesaToFlutterWear(request) ;
+        return flutterwaveService.mPesaToFlutterwave(request) ;
     }
 
     //TODO: wallet to wallet transfers
@@ -42,9 +43,11 @@ public class FlutterwaveController {
         return flutterwaveService.wallet2Wallet(request);
     }
 
-    //TODO: https://api.flutterwave.com/v3/charges?type=mpesa
-    //TODO: transfer - cc -> Mpesa
-
+    //TODO: transfer - flutterwave -> Mpesa
+    @PostMapping("/sendMpesa")
+    public Mono<ResponseEntity<JsonNode>> sendMpesa(@RequestBody SendMpesaDto request) {
+        return flutterwaveService.sendMPesa(request);
+    }
 
     //TODO: Intergrate - mpesa to CC including CC methrods
     //TODO: Intergrate - CC to mpesa including CC methrods
