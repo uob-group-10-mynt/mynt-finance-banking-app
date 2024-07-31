@@ -61,6 +61,23 @@ public class KycTests {
 
     }
 
+    @Test
+    public void testVaidate() throws JsonProcessingException {
+
+        String email = "blahblah@Jameslove.com";
+
+        //need to update email  within DB before running test
+        ValidateKycRequest requestDtoValid = ValidateKycRequest.builder()
+                .Email(email)
+                .build();
+        SDKResponse responseValid = this.kycService.validateKyc(requestDtoValid);
+
+        assert responseValid != null;
+        assertEquals(responseValid.getStage(),"approved");
+
+
+    }
+
     // test will only work with the basic KYC workflow ID found within the
     // Application.properties file as tke KYC will be auto approved
     @Test
