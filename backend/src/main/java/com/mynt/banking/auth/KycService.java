@@ -194,7 +194,7 @@ public class KycService {
 
         KycEntity kycEntity = new KycEntity();
         long num = kycRepository.count();
-        kycEntity.setId(num++);
+        kycEntity.setId(++num);
         kycEntity.setApplicationId(this.applicantId);
         kycEntity.setWorkFlowRunId(this.workflowRunId);
         kycEntity.setStatus("TBD");
