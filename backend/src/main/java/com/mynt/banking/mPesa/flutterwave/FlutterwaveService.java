@@ -9,6 +9,7 @@ import com.mynt.banking.currency_cloud.collect.demo.requests.DemoFundingDto;
 import com.mynt.banking.currency_cloud.collect.funding.requests.FindAccountDetails;
 import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
 import com.mynt.banking.mPesa.flutterwave.requests.MPesaToFlutterWearDto;
+import com.mynt.banking.mPesa.flutterwave.requests.SendMpesaDto;
 import com.mynt.banking.mPesa.flutterwave.requests.Wallet2WalletDto;
 import com.mynt.banking.util.HashMapToQuiryPrams;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class FlutterwaveService {
     @Value("${flutterwave.api.secretKey}")
     private String secretKey;
 
-    public Mono<ResponseEntity<JsonNode>> mPesaToFlutterWear(MPesaToFlutterWearDto mPesaToFlutterWearDto) {
+    public Mono<ResponseEntity<JsonNode>> mPesaToFlutterwave(MPesaToFlutterWearDto mPesaToFlutterWearDto) {
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -69,6 +70,45 @@ public class FlutterwaveService {
                 .bodyValue(jsonNode)
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
                 .flatMap(request -> { return Mono.just(request); });
+    }
+
+    public Mono<ResponseEntity<JsonNode>> sendMPesa(SendMpesaDto dto) {
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        ObjectNode meta = mapper.createObjectNode();
+        meta.put("sender", dto.getSender());
+        meta.put("sender_country", dto.getSenderCountry());
+        meta.put("mobile_number", dto.getMobileNumber());
+
+        ObjectNode jsonNode = mapper.createObjectNode();
+        jsonNode.put("amount", dto.getAmount());
+        jsonNode.put("account_bank","MPS");
+        jsonNode.put("account_number","2540700000000");
+        jsonNode.put("currency","KES");
+        jsonNode.put("beneficiary_name", dto.getBeneficiaryName());
+        jsonNode.put("debit_currency",dto.getDebitCurrency());
+        jsonNode.set("meta",meta);
+
+        String tx_ref = this.genTx_ref(dto.getEmail());
+        jsonNode.put("reference", tx_ref);
+
+        return webClient.webClientFW()
+                .post()
+                .uri("/v3/transfers")
+                .header("Authorization", secretKey)
+                .bodyValue(jsonNode)
+                .exchangeToMono(response -> response.toEntity(JsonNode.class))
+                .flatMap(request -> { return Mono.just(request); });
+    }
+
+    public String genTx_ref(String email){
+        return email
+                .replace(".", "_")
+                .replace("@","_")
+                +LocalDateTime.now().toString()
+                .replace(":","_")
+                .replace(".","_");
     }
 
     public Mono<ResponseEntity<JsonNode>> depoistTransactionCheck(String id) {

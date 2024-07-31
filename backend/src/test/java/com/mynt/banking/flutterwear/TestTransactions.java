@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.Main;
 import com.mynt.banking.mPesa.flutterwave.FlutterwaveService;
 import com.mynt.banking.mPesa.flutterwave.requests.MPesaToFlutterWearDto;
+import com.mynt.banking.mPesa.flutterwave.requests.SendMpesaDto;
 import com.mynt.banking.mPesa.flutterwave.requests.Wallet2WalletDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class TestTransactions {
 
         MPesaToFlutterWearDto mPesaToFlutterWearDto = MPesaToFlutterWearDto.builder().build();
 
-        ResponseEntity<JsonNode> responce = flutterwaveService.mPesaToFlutterWear(mPesaToFlutterWearDto).block();
+        ResponseEntity<JsonNode> responce = flutterwaveService.mPesaToFlutterwave(mPesaToFlutterWearDto).block();
 
         assert responce != null;
         assertEquals(200,responce.getStatusCode().value());
@@ -34,7 +35,7 @@ public class TestTransactions {
     void testDepoistTransactionCheck(){
 
         MPesaToFlutterWearDto mPesaToFlutterWearDto = MPesaToFlutterWearDto.builder().build();
-        ResponseEntity<JsonNode> responce = flutterwaveService.mPesaToFlutterWear(mPesaToFlutterWearDto).block();
+        ResponseEntity<JsonNode> responce = flutterwaveService.mPesaToFlutterwave(mPesaToFlutterWearDto).block();
 
         String id = responce.getBody().get("data").get("id").asText();
         ResponseEntity<JsonNode> responce1 = flutterwaveService.depoistTransactionCheck(id).block();
@@ -54,6 +55,19 @@ public class TestTransactions {
         assert responce != null;
         assertEquals(200,responce.getStatusCode().value());
         assertEquals("KES",responce.getBody().get("data").get("currency").asText());
+
+    }
+
+    @Test
+    void testSendMpesa(){
+
+        SendMpesaDto dto = SendMpesaDto.builder().build();
+        ResponseEntity<JsonNode> responce = flutterwaveService.sendMPesa(dto).block();
+
+        assert responce != null;
+        assertEquals(200,responce.getStatusCode().value());
+        assertEquals("KES",responce.getBody().get("data").get("currency").asText());
+        assertEquals("success",responce.getBody().get("status").asText());
 
     }
 
