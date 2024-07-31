@@ -24,31 +24,31 @@ public class FlutterwaveController {
 
     private final UserContextService userContextService;
 
-    //TODO: /v3/transactions/${ID}/verify
+    // /v3/transactions/${ID}/verify
     @GetMapping("/transactions/{id}/verify")
     public Mono<ResponseEntity<JsonNode>> depoistTransactionCheck(@PathVariable(name = "id", required = true) String id) { //@RequestBody FindAccountDetails request
         return flutterwaveService.depoistTransactionCheck(id) ;
     }
 
-    //TODO: https://api.flutterwave.com/v3/transfers/${ID}
+    // https://api.flutterwave.com/v3/transfers/${ID}
     @GetMapping("/transfers/{id}")
     public Mono<ResponseEntity<JsonNode>> transactionCheck(@PathVariable(name = "id", required = true) String id) { //@RequestBody FindAccountDetails request
         return flutterwaveService.transactionCheck(id) ;
     }
 
-    //TODO: deposit - Mpesa -> cc
+    // deposit - Mpesa -> cc
     @PostMapping("/mPesaToFlutterWear")
     public Mono<ResponseEntity<JsonNode>> mPesaToFlutterWear(@RequestBody MPesaToFlutterWearDto request) {
         return flutterwaveService.mPesaToFlutterwave(request) ;
     }
 
-    //TODO: wallet to wallet transfers
+    // wallet to wallet transfers
     @PostMapping("/walletNgn2Kes")
     public Mono<ResponseEntity<JsonNode>> walletNgn2Kes(@RequestBody Wallet2WalletDto request) {
         return flutterwaveService.wallet2Wallet(request);
     }
 
-    //TODO: transfer - flutterwave -> Mpesa
+    // transfer - flutterwave -> Mpesa
     @PostMapping("/sendMpesa")
     public Mono<ResponseEntity<JsonNode>> sendMpesa(@RequestBody SendMpesaDto request) {
         return flutterwaveService.sendMPesa(request);
