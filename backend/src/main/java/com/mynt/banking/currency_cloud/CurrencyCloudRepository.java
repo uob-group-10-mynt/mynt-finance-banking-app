@@ -1,5 +1,7 @@
 package com.mynt.banking.currency_cloud;
 
+import com.mynt.banking.user.User;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -9,5 +11,5 @@ public interface CurrencyCloudRepository extends JpaRepository<CurrencyCloudEnti
 
     Optional<CurrencyCloudEntity> findByUuid(String uuid);
 
-    Optional<CurrencyCloudEntity> findByUsersId(Long usersId);
+    Optional<CurrencyCloudEntity> findByUser(@NotNull User user);
 }

@@ -20,7 +20,22 @@ public class ReferenceService {
     private final AuthenticationService authenticationService;
     private final WebClient webClient;
 
-    public Mono<ResponseEntity<JsonNode>> getBeneficiaryRequirements(GetBeneficiaryRequirementsRequest request) {{
+    public Mono<ResponseEntity<JsonNode>> getPayerRequirements(GetPayerRequirementsRequest request) {
+        
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        HashMap<String, Object> prams = objectMapper.convertValue(request, HashMap.class);
+        String url = "/v2/reference/payer_required_details" + HashMapToQuiryPrams.hashMapToString(prams);
+
+        return webClient
+                .get()
+                .uri(url)
+                .header("X-Auth-Token", authenticationService.getAuthToken())
+                .exchangeToMono(response -> response.toEntity(JsonNode.class))
+                .flatMap(response -> Mono.just(response));
+    }
+
+    public Mono<ResponseEntity<JsonNode>> getBeneficiaryRequirements(GetBeneficiaryRequirementsRequest request) {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -34,5 +49,5 @@ public class ReferenceService {
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
                 .flatMap(response -> Mono.just(response));
 
-    }}
+    }
 }
