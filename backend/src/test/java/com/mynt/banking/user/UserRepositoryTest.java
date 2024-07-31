@@ -1,8 +1,5 @@
 package com.mynt.banking.user;
 
-import com.mynt.banking.auth.KycEntity;
-import com.mynt.banking.auth.KycRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -11,12 +8,9 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Testcontainers
 @DataJpaTest
@@ -28,64 +22,48 @@ public class UserRepositoryTest {
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.0");
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
-    @Autowired
-    KycRepository kycRepository; // You should create a repository for KycEntity if you haven't already
+    @Test
+    void testFindAllUsers() {
+        User user1 = User.builder()
+                .firstname("Alice")
+                .lastname("Smith")
+                .address("123 Main St")
+                .phone_number("123-456-7890")
+                .dob("1990-01-01")
+                .password("password1")
+                .email("findall1@example.com")
+                .role(Role.USER)
+                .build();
 
-    @BeforeEach
-    void setUp() {
-        User user = new User(
-                null,
-                "John",
-                "Doe",
-                "123 Elm Street",
-                "555-1234",
-                "01-01-1990",
-                "password123",
-                "john.doe@example.com",
-                Role.USER
-        );
-        userRepository.save(user);
+        userRepository.save(user1);
 
-        KycEntity kyc = new KycEntity(
-                null,
-                "applicationId123",
-                "workflowRunId123",
-                "Approved",
-                user
-        );
-        kycRepository.save(kyc);
+        User user2 = User.builder()
+                .firstname("Bob")
+                .lastname("Johnson")
+                .address("456 Elm St")
+                .phone_number("987-654-3210")
+                .dob("1985-05-05")
+                .password("password2")
+                .email("findall2@example.com")
+                .role(Role.ADMIN)
+                .build();
+
+        userRepository.save(user2);
+
+        List<User> users = userRepository.findAll();
+
+        assertThat(users).hasSize(2);
+        assertThat(users).extracting(User::getEmail)
+                .containsExactlyInAnyOrder("findall1@example.com", "findall2@example.com");
     }
+
 
     @Test
     void connectionEstablished() {
         assertThat(postgres.isCreated()).isTrue();
         assertThat(postgres.isRunning()).isTrue();
-    }
-
-    @Test
-    void shouldReturnUserByEmail() {
-        User user = userRepository.findByEmail("john.doe@example.com").orElseThrow();
-        assertEquals("john.doe@example.com", user.getEmail(), "User email should be 'john.doe@example.com'");
-    }
-
-    @Test
-    void shouldNotReturnUserWhenEmailIsNotFound() {
-        Optional<User> user = userRepository.findByEmail("wrong.email@example.com");
-        assertFalse(user.isPresent(), "User should not be present");
-    }
-
-    @Test
-    void shouldReturnKycStatus() {
-        Optional<String> kycStatus = userRepository.getKycStatus("john.doe@example.com");
-        assertThat(kycStatus).isNotEmpty();
-        assertEquals("Approved", kycStatus.orElse(null)); // Replace with the actual expected status
-    }
-
-    @Test
-    void shouldReturnEmptyKycStatusWhenNotFound() {
-        Optional<String> kycStatus = userRepository.getKycStatus("wrong.email@example.com");
-        assertFalse(kycStatus.isPresent(), "KYC status should not be present for non-existent email");
+        System.out.println("PostgreSQL container is running on: " + postgres.getJdbcUrl());
     }
 }

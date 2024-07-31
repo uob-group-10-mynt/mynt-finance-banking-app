@@ -80,8 +80,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(WHITE_LIST_URL)
                         .permitAll()
-                        .requestMatchers("/api/v1/currency-cloud/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/currency-cloud/**").hasRole("USER")
                         .requestMatchers("/api/v1/demo-controller/**").hasRole("USER")
+                        .requestMatchers("/api/v1/users/**").hasRole("USER")
                         .anyRequest()
                         .authenticated()
                 )
