@@ -2,6 +2,7 @@ package com.mynt.banking.mPesa.flutterwave;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.collect.funding.requests.FindAccountDetails;
+import com.mynt.banking.mPesa.flutterwave.requests.MPesaToCurrencyCloudDto;
 import com.mynt.banking.mPesa.flutterwave.requests.MPesaToFlutterWearDto;
 import com.mynt.banking.mPesa.flutterwave.requests.SendMpesaDto;
 import com.mynt.banking.mPesa.flutterwave.requests.Wallet2WalletDto;
@@ -50,6 +51,11 @@ public class FlutterwaveController {
     }
 
     //TODO: Intergrate - mpesa to CC including CC methrods
+    @PostMapping("/sendMpesaToCurrencyCloud")
+    public ResponseEntity<JsonNode> mpesaToCloudCurrency(@RequestBody MPesaToCurrencyCloudDto request) {
+        return flutterwaveService.mpesaToCloudCurrency(request);
+    }
+
     //TODO: Intergrate - CC to mpesa including CC methrods
 
 }
