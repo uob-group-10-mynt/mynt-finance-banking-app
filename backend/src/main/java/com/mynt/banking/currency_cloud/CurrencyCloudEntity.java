@@ -1,9 +1,7 @@
 package com.mynt.banking.currency_cloud;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.mynt.banking.user.User;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
@@ -17,11 +15,14 @@ import lombok.Setter;
 public class CurrencyCloudEntity {
 
     @Id
-    @Column(name = "uuid", nullable = false, length = Integer.MAX_VALUE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "uuid", nullable = false, unique = true, length = Integer.MAX_VALUE)
     private String uuid;
 
     @NotNull
-    @Column(name = "users_id", nullable = false)
-    private Long usersId;
-
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

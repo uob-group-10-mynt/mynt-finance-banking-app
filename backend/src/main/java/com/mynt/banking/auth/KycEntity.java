@@ -12,7 +12,8 @@ import lombok.Setter;
 @Table(name = "kyc")
 public class KycEntity {
     @Id
-    @Column(name = "key", nullable = false)
+    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -27,7 +28,7 @@ public class KycEntity {
     private String status;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

@@ -19,10 +19,9 @@ import com.mynt.banking.user.Role;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,10 +32,12 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@Configuration
 @RequiredArgsConstructor
 public class KycService {
 
@@ -54,20 +55,15 @@ public class KycService {
     private String url;
     private String sdkToken;
 
-    @Autowired
-    private KycRepository kycRepository;
+    private final KycRepository kycRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private AccountService accountService;
+    private final AccountService accountService;
 
-    @Autowired
-    private ContactsService contactsService;
+    private final ContactsService contactsService;
 
-    @Autowired
-    private CurrencyCloudRepository currencyCloudRepository;
+    private final CurrencyCloudRepository currencyCloudRepository;
 
     public ResponseEntity<SDKResponse> getOnfidoSDK(SignUpRequest request) {
 
@@ -79,9 +75,9 @@ public class KycService {
 
         request.setEmail(request.getEmail().toLowerCase());
 
-        if(!userRepository.findByEmail(request.getEmail()).isEmpty()){
+        if(userRepository.findByEmail(request.getEmail()).isPresent()){
             sdkResponceDTO.setStage("duplicate ID and or Email");
-            return new ResponseEntity(sdkResponceDTO, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(sdkResponceDTO, HttpStatus.BAD_REQUEST);
         }
 
         try{
@@ -104,7 +100,7 @@ public class KycService {
             throw new RuntimeException(e);
         }
 
-        return new ResponseEntity(sdkResponceDTO, HttpStatus.OK);
+        return new ResponseEntity<>(sdkResponceDTO, HttpStatus.OK);
     }
 
     private SDKResponse apiResponseDto() throws JsonProcessingException {
@@ -227,9 +223,9 @@ public class KycService {
 
         if(Objects.equals(request.getEmail(), "")){ return false;}
 
-        Optional<User> user = userRepository.findByEmail(request.getEmail());
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("No User"));
 
-        Optional<CurrencyCloudEntity> cloudCurrencyUser = currencyCloudRepository.findByUsersId((long)user.get().getId());
+        Optional<CurrencyCloudEntity> cloudCurrencyUser = currencyCloudRepository.findByUser(user);
 
         if(cloudCurrencyUser.isPresent()){return false;}
 
@@ -243,10 +239,8 @@ public class KycService {
         int statusCode = contact.getStatusCode().value();
         if (!(statusCode == 200)) {return false;}
 
-        String numEntries = contact.getBody().get("pagination").get("total_entries").asText();
-        if (numEntries.equals("1")) {return false;}
-
-        return true;
+        String numEntries = Objects.requireNonNull(contact.getBody()).get("pagination").get("total_entries").asText();
+        return !numEntries.equals("1");
     }
 
 
@@ -264,10 +258,9 @@ public class KycService {
                     .build();
 
             HttpClient httpClient = HttpClient.newHttpClient();
-            HttpResponse<String> resultsResponse = httpClient.send(requestResults, HttpResponse.BodyHandlers.ofString());
-            return resultsResponse;
-        } catch (URISyntaxException | IOException | InterruptedException ignored){
-            System.err.println("Error: "+ignored.getMessage());
+            return httpClient.send(requestResults, HttpResponse.BodyHandlers.ofString());
+        } catch (URISyntaxException | IOException | InterruptedException e){
+            System.err.println("Error: "+e.getMessage());
             System.err.println("Error: "+"check to see if email is already within use");
         }
         return null;
@@ -275,53 +268,56 @@ public class KycService {
 
     public SDKResponse validateKyc(ValidateKycRequest request) throws JsonProcessingException {
 
-        SDKResponse sdkResponceDTO = new SDKResponse();
+        SDKResponse sdkResponseDTO = new SDKResponse();
 
         request.setEmail(request.getEmail().toLowerCase().trim());
 
         boolean isValidRequest = preCheck(request);
         if(!isValidRequest){
-            sdkResponceDTO.setStage("error with email");
-            sdkResponceDTO.setData("error invalid email please check and try again");
-            return sdkResponceDTO;
+            sdkResponseDTO.setStage("error with email");
+            sdkResponseDTO.setData("error invalid email please check and try again");
+            return sdkResponseDTO;
         }
 
-        Optional<User> user = userRepository.findByEmail(request.getEmail());
-        KycEntity kyc = kycRepository.findByUser(user.get());
+
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("No User"));
+
+        KycEntity kyc = kycRepository.findByUser(user);
 
         HttpResponse<String> resultsResponse = getSDKValidation(kyc);
 
+        assert resultsResponse != null;
         if(resultsResponse.statusCode() != 200){
-            sdkResponceDTO.setStage("get status");
-            sdkResponceDTO.setData("error cant retrivie status");
-            return sdkResponceDTO;
+            sdkResponseDTO.setStage("get status");
+            sdkResponseDTO.setData("error cant retrivie status");
+            return sdkResponseDTO;
         }
 
-        checkResult(resultsResponse, sdkResponceDTO, request, kyc);
+        checkResult(resultsResponse, sdkResponseDTO, request, kyc);
 
         boolean hasAccount = createCurrencyCloudUser(resultsResponse, request.getEmail());
         if(!hasAccount){
-            sdkResponceDTO.setStage("approved");
-            sdkResponceDTO.setData("user already has an account / contact");
+            sdkResponseDTO.setStage("approved");
+            sdkResponseDTO.setData("user already has an account / contact");
         }
 
-        sdkResponceDTO.setStage("approved");
+        sdkResponseDTO.setStage("approved");
 
-        return sdkResponceDTO;
+        return sdkResponseDTO;
     }
 
     public void checkResult(HttpResponse<String> resultsResponse,
-                            SDKResponse sdkResponceDTO,
+                            SDKResponse sdkResponseDTO,
                             ValidateKycRequest request,
                             KycEntity kyc) throws JsonProcessingException {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode resultsResponce = objectMapper.readTree(resultsResponse.body());
+        JsonNode resultResponse = objectMapper.readTree(resultsResponse.body());
 
-        kycRepository.updateStatus(resultsResponce.get("status").asText(),kyc.getId());
+        kycRepository.updateStatus(resultResponse.get("status").asText(),kyc.getId());
 
-        String responceStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(resultsResponce);
-        sdkResponceDTO.setData(responceStr);
+        String responseStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(resultResponse);
+        sdkResponseDTO.setData(responseStr);
 
     }
 
@@ -342,7 +338,7 @@ public class KycService {
 
         if(!contactResponce.getStatusCode().is2xxSuccessful()){return false;}
 
-        String contactUuid = contactResponce.getBody().get("id").asText();
+        String contactUuid = Objects.requireNonNull(contactResponce.getBody()).get("id").asText();
 
         saveToCurrencyCloudRepository(email, contactUuid);
 
@@ -351,11 +347,12 @@ public class KycService {
 
     private void saveToCurrencyCloudRepository(String email, String contactUuid){
 
-        Long userID = (long) userRepository.findByEmail(email).get().getId();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User Not found"));
+
 
         CurrencyCloudEntity currencyCloudEntity = new CurrencyCloudEntity();
         currencyCloudEntity.setUuid(contactUuid);
-        currencyCloudEntity.setUsersId(userID);
+        currencyCloudEntity.setUser(user);
         currencyCloudRepository.save(currencyCloudEntity);
     }
 
@@ -378,7 +375,7 @@ public class KycService {
         User user = userRepository.findByEmail(email).get();
 
         CreateContact contact = CreateContact.builder()
-                .accountId(account.getBody().get("id").asText())
+                .accountId(Objects.requireNonNull(account.getBody()).get("id").asText())
                 .firstName(user.getFirstname())
                 .lastName(user.getLastname())
                 .emailAddress(user.getEmail())

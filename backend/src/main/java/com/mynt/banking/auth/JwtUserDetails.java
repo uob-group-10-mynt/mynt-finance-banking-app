@@ -30,11 +30,11 @@ public class JwtUserDetails implements UserDetails {
                 .collect(Collectors.toList());
 
         // Fetch UUID from CurrencyCloudRepository
-        this.uuid = getUuidFromCurrencyCloud(user.getId(), currencyCloudRepository);
+        this.uuid = getUuidFromCurrencyCloud(user, currencyCloudRepository);
     }
 
-    private String getUuidFromCurrencyCloud(Long userId, @NotNull CurrencyCloudRepository currencyCloudRepository) {
-        return currencyCloudRepository.findByUsersId(userId)
+    private String getUuidFromCurrencyCloud(User user, @NotNull CurrencyCloudRepository currencyCloudRepository) {
+        return currencyCloudRepository.findByUser(user)
                 .map(CurrencyCloudEntity::getUuid)
                 .orElse(null); // Handle case where UUID is not found
     }
