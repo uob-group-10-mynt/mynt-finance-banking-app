@@ -57,117 +57,140 @@ public class CreatePaymentRequest {
 
     @JsonProperty("payment_date")
     @Size(max = 255)
-    @Schema(description = "Date of the payment", example = "2024-07-11")
-    private String paymentDate;
+    @Schema(description = "Date of the payment", example = " ")
+    @Builder.Default
+    private String paymentDate = "";
 
     @JsonProperty("payment_type")
     @Size(max = 255)
-    @Schema(description = "Type of the payment", example = "priority")
-    private String paymentType;
+    @Schema(description = "Type of the payment", example = " ")
+    @Builder.Default
+    private String paymentType  = "";
 
     @JsonProperty("conversion_id")
     @Size(max = 255)
-    @Schema(description = "ID of the conversion", example = "c12345")
-    private String conversionId;
+    @Schema(description = "ID of the conversion", example = " ")
+    @Builder.Default
+    private String conversionId = "";
 
     @JsonProperty("payer_entity_type")
     @Size(max = 255)
-    @Schema(description = "Entity type of the payer", example = "individual")
-    private String payerEntityType;
+    @Schema(description = "Entity type of the payer", example = " ")
+    @Builder.Default
+    private String payerEntityType = "";
 
     @JsonProperty("payer_company_name")
     @Size(max = 255)
-    @Schema(description = "Company name of the payer", example = "Mynt Inc.")
-    private String payerCompanyName;
+    @Schema(description = "Company name of the payer", example = " ")
+    @Builder.Default
+    private String payerCompanyName = "";
 
     @JsonProperty("payer_first_name")
     @Size(max = 255)
-    @Schema(description = "First name of the payer", example = "John")
-    private String payerFirstName;
+    @Schema(description = "First name of the payer", example = " ")
+    @Builder.Default
+    private String payerFirstName = "";
 
     @JsonProperty("payer_last_name")
     @Size(max = 255)
-    @Schema(description = "Last name of the payer", example = "Doe")
-    private String payerLastName;
+    @Schema(description = "Last name of the payer", example = " ")
+    @Builder.Default
+    private String payerLastName = "";
 
     @JsonProperty("payer_city")
     @Size(max = 255)
-    @Schema(description = "City of the payer", example = "New York")
-    private String payerCity;
+    @Schema(description = "City of the payer", example = " ")
+    @Builder.Default
+    private String payerCity = "";
 
     @JsonProperty("payer_address")
     @Size(max = 255)
-    @Schema(description = "Address of the payer", example = "123 Main St")
-    private String payerAddress;
+    @Schema(description = "Address of the payer", example = " ")
+    @Builder.Default
+    private String payerAddress = "";
 
     @JsonProperty("payer_postcode")
     @Size(max = 255)
-    @Schema(description = "Postcode of the payer", example = "10001")
-    private String payerPostcode;
+    @Schema(description = "Postcode of the payer", example = " ")
+    @Builder.Default
+    private String payerPostcode = "";
 
     @JsonProperty("payer_state_or_province")
     @Size(max = 255)
-    @Schema(description = "State or province of the payer", example = "NY")
-    private String payerStateOrProvince;
+    @Schema(description = "State or province of the payer", example = " ")
+    @Builder.Default
+    private String payerStateOrProvince = "";
 
     @JsonProperty("payer_country")
     @Size(max = 2)
-    @Schema(description = "Country of the payer", example = "US")
-    private String payerCountry;
+    @Schema(description = "Country of the payer", example = " ")
+    @Builder.Default
+    private String payerCountry = "";
 
     @JsonProperty("payer_date_of_birth")
     @Size(max = 255)
-    @Schema(description = "Date of birth of the payer", example = "1980-01-01")
-    private String payerDateOfBirth;
+    @Schema(description = "Date of birth of the payer", example = " ")
+    @Builder.Default
+    private String payerDateOfBirth = "";
 
     @JsonProperty("payer_identification_type")
     @Size(max = 255)
-    @Schema(description = "Identification type of the payer", example = "passport")
-    private String payerIdentificationType;
+    @Schema(description = "Identification type of the payer", example = " ")
+    @Builder.Default
+    private String payerIdentificationType = "";
 
     @JsonProperty("payer_identification_value")
     @Size(max = 255)
-    @Schema(description = "Identification value of the payer", example = "A12345678")
-    private String payerIdentificationValue;
+    @Schema(description = "Identification value of the payer", example = " ")
+    @Builder.Default
+    private String payerIdentificationValue = "";
 
     @JsonProperty("ultimate_beneficiary_name")
     @Size(max = 255)
-    @Schema(description = "Ultimate beneficiary name", example = "Jane Smith")
-    private String ultimateBeneficiaryName;
+    @Schema(description = "Ultimate beneficiary name", example = " ")
+    @Builder.Default
+    private String ultimateBeneficiaryName = "";
 
     @JsonProperty("purpose_code")
     @Size(max = 255)
-    @Schema(description = "Purpose code for the payment", example = "P123")
-    private String purposeCode;
+    @Schema(description = "Purpose code for the payment", example = " ")
+    @Builder.Default
+    private String purposeCode = "";
 
     @JsonProperty("on_behalf_of")
     @Size(max = 255)
-    @Schema(description = "On behalf of information", example = "Another Company")
-    private String onBehalfOf;
+    @Schema(description = "On behalf of information", example = " ")
+    @Builder.Default
+    private String onBehalfOf = "";
 
     @JsonProperty("charge_type")
     @Size(max = 255)
-    @Schema(description = "Type of charge", example = "shared")
-    private String chargeType;
+    @Schema(description = "Type of charge", example = " ")
+    @Builder.Default
+    private String chargeType = "";
 
     @JsonProperty("fee_amount")
     @Size(max = 255)
-    @Schema(description = "Fee amount for the payment", example = "10.00")
-    private String feeAmount;
+    @Schema(description = "Fee amount for the payment", example = " ")
+    @Builder.Default
+    private String feeAmount = "";
 
     @JsonProperty("fee_currency")
     @Size(max = 3)
-    @Schema(description = "Currency of the fee", example = "USD")
-    private String feeCurrency;
+    @Schema(description = "Currency of the fee", example = " ")
+    @Builder.Default
+    private String feeCurrency = "";
 
     @JsonProperty("invoice_number")
     @Size(max = 255)
-    @Schema(description = "Invoice number", example = "INV-2024-01")
-    private String invoiceNumber;
+    @Schema(description = "Invoice number", example = " ")
+    @Builder.Default
+    private String invoiceNumber = "";
 
     @JsonProperty("invoice_date")
     @Size(max = 255)
-    @Schema(description = "Invoice date", example = "2024-06-30")
-    private String invoiceDate;
+    @Schema(description = "Invoice date", example = " ")
+    @Builder.Default
+    private String invoiceDate = "";
 }
 

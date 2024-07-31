@@ -1,12 +1,10 @@
 package com.mynt.banking.currency_cloud.manage.accounts;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountRequest;
 import com.mynt.banking.currency_cloud.manage.accounts.requests.FindAccountRequest;
 import com.mynt.banking.currency_cloud.manage.accounts.requests.UpdateAccountRequest;
 import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.FindBeneficiaryRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -66,5 +64,4 @@ public class AccountService {
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
                 .flatMap(response -> Mono.just(response));
     }
-
 }
