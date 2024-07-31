@@ -1,9 +1,11 @@
 package com.mynt.banking.flutterwear;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.Main;
 import com.mynt.banking.auth.KycService;
 import com.mynt.banking.auth.requests.SignUpRequest;
+import com.mynt.banking.auth.requests.ValidateKycRequest;
 import com.mynt.banking.auth.responses.SDKResponse;
 import com.mynt.banking.mPesa.flutterwave.FlutterwaveService;
 import com.mynt.banking.mPesa.flutterwave.requests.MPesaToCurrencyCloudDto;
@@ -97,8 +99,9 @@ public class TestTransactions {
     }
 
     @Test
-    void testMpesaToCloudCurrency(){
+    void testMpesaToCloudCurrency() throws JsonProcessingException {
 
+        //TODO: double check in the morning
         String email = "test-a"+String.valueOf(userRepository.count()+1)+"@test.com";
 
         SignUpRequest dto = SignUpRequest.builder()
@@ -106,12 +109,12 @@ public class TestTransactions {
                 .build();
         ResponseEntity<SDKResponse>  getOnfidoSDK = kycService.getOnfidoSDK(dto);
 
-
         MPesaToCurrencyCloudDto dto1 = MPesaToCurrencyCloudDto.builder().build();
         ResponseEntity<JsonNode> response = flutterwaveService.mpesaToCloudCurrency(dto1,email);
 
         assert response != null;
         assertEquals(200,response.getStatusCode().value());
+        //TODO: create tests
 
     }
 

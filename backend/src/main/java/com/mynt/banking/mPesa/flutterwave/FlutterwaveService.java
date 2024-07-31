@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
+import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
 import com.mynt.banking.currency_cloud.collect.demo.DemoService;
 import com.mynt.banking.currency_cloud.collect.demo.requests.DemoFundingDto;
 import com.mynt.banking.currency_cloud.collect.funding.FundingService;
@@ -45,6 +47,8 @@ public class FlutterwaveService {
     private String secretKey;
 
     private final UserRepository userRepository;
+
+    private final CurrencyCloudRepository currencyCloudRepository;
 
     public Mono<ResponseEntity<JsonNode>> mPesaToFlutterwave(MPesaToFlutterWearDto mPesaToFlutterWearDto) {
 
@@ -163,21 +167,24 @@ public class FlutterwaveService {
 
         User userExsists = user.get();
 
-        //TODO: mPesaToFlutterwave()
+        // mPesaToFlutterwave()
         ResponseEntity<JsonNode> response = mPesaToFlutterwaveCall(dto, email, userExsists);
         if(!response.getStatusCode().is2xxSuccessful()) { return response; }
 
-        //TODO: depoistTransactionCheck()
+        // depoistTransactionCheck()
         response = depoistTransactionCheckCall(response.getBody());
         if(!response.getStatusCode().is2xxSuccessful()) { return response; }
 
-        //TODO: cc get account details end point
-        ResponseEntity<JsonNode> response = ccFundAccountDetails();
+        // cc get account details end point
+        response = ccFundAccountDetails(userExsists);
         if(!response.getStatusCode().is2xxSuccessful()) { return response; }
 
-        //TODO: cc demo fund account
+        //cc demo fund account
+        response =  demoFundAccount(userExsists, response.getBody(),dto);
+        if(!response.getStatusCode().is2xxSuccessful()) { return response; }
+        //TODO: create cutome responce
 
-        return ResponseEntity.ok(finalResponse);
+        return response;
     }
 
     private ResponseEntity<JsonNode> mPesaToFlutterwaveCall(MPesaToCurrencyCloudDto dto, String email, User userExsists){
@@ -224,13 +231,30 @@ public class FlutterwaveService {
 
     }
 
-    private ResponseEntity<JsonNode> ccFundAccountDetails(){
-
-        FindAccountDetails data = FindAccountDetails.builder().currency("KES").onBehalfOf("").build();
-        ResponseEntity<JsonNode> response = fundingService.find(data).block();
+    private ResponseEntity<JsonNode> ccFundAccountDetails(User user){
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode errorResponse = mapper.createObjectNode();
+
+        // get UUID
+        Optional<CurrencyCloudEntity> currencyCloudData = currencyCloudRepository.findByUser(user);
+        String uuid = "";
+        if(currencyCloudData.isPresent()) {
+            uuid = currencyCloudData.get().getUuid();
+        }
+
+        FindAccountDetails data = FindAccountDetails.builder()
+                .currency("KES")
+                .onBehalfOf(uuid)
+                .build();
+
+        ResponseEntity<JsonNode> response = fundingService.find(data).block();
+
+        // check for more then one account if so fail the test
+        if(!Objects.equals(response.getBody().get("pagination").get("total_entries").toString(), "1")) {
+            errorResponse.put("Error", " with ccFundAccountDetails()");
+            return ResponseEntity.status(400).body(errorResponse);
+        }
 
         if(!response.getStatusCode().is2xxSuccessful()) {
             errorResponse.put("Error", " with ccFundAccountDetails()");
@@ -238,6 +262,36 @@ public class FlutterwaveService {
         }
 
         return response;
+    }
+
+    private ResponseEntity<JsonNode> demoFundAccount(User user, JsonNode ccFundAccountDetails, MPesaToCurrencyCloudDto dto){
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode errorResponse = mapper.createObjectNode();
+
+        // get UUID
+        Optional<CurrencyCloudEntity> currencyCloudData = currencyCloudRepository.findByUser(user);
+        String uuid = "";
+        if(currencyCloudData.isPresent()) {
+            uuid = currencyCloudData.get().getUuid();
+        }
+
+        DemoFundingDto demoFundingDto = DemoFundingDto.builder()
+                .id(ccFundAccountDetails.get("funding_accounts").get(0).get("id").asText())
+                .receiverAccountNumber(ccFundAccountDetails.get("funding_accounts").get(0).get("account_number").asText())
+                .currency("KES")
+                .amount(Integer.valueOf(dto.getAmount()))
+                .onBehalfOf(uuid)
+                .build();
+        ResponseEntity<JsonNode> response =  demoService.create(demoFundingDto).block();
+
+        if(!response.getStatusCode().is2xxSuccessful()) {
+            errorResponse.put("Error", " with ccFundAccountDetails()");
+            return ResponseEntity.status(400).body(errorResponse);
+        }
+
+        return response;
+
     }
 
 }
