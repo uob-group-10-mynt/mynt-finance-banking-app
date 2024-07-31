@@ -67,7 +67,7 @@ public class KycTests {
     public void testValidateKyc() throws JsonProcessingException {
 
         SignUpRequest signUpRequest = SignUpRequest.builder()
-                .email("test"+testAccountNum+"@test.com")
+                .email("test"+testAccountNum+"Z"+"@test.com")
                 .firstname("James")
                 .lastname("Love")
                 .dob(LocalDate.parse("16 08 2020", DateTimeFormatter.ofPattern("dd MM yyyy")))
@@ -82,7 +82,7 @@ public class KycTests {
         assertEquals(response.getBody().getStage(),"SDKResponceDTO");
 
 
-        String email = "test"+testAccountNum+"@test.com";
+        String email = "test"+testAccountNum+"Z"+"@test.com";
 
         //need to update email  within DB before running test
         ValidateKycRequest requestDtoValid = ValidateKycRequest.builder()

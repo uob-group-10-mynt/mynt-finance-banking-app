@@ -19,10 +19,9 @@ import com.mynt.banking.user.Role;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,6 +37,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Configuration
 public class KycService {
 
     @Value("${api.onfido}")
@@ -54,20 +54,15 @@ public class KycService {
     private String url;
     private String sdkToken;
 
-    @Autowired
-    private KycRepository kycRepository;
+    private final KycRepository kycRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private AccountService accountService;
+    private final AccountService accountService;
 
-    @Autowired
-    private ContactsService contactsService;
+    private final ContactsService contactsService;
 
-    @Autowired
-    private CurrencyCloudRepository currencyCloudRepository;
+    private final CurrencyCloudRepository currencyCloudRepository;
 
     public ResponseEntity<SDKResponse> getOnfidoSDK(SignUpRequest request) {
 
@@ -79,9 +74,9 @@ public class KycService {
 
         request.setEmail(request.getEmail().toLowerCase());
 
-        if(!userRepository.findByEmail(request.getEmail()).isEmpty()){
+        if(userRepository.findByEmail(request.getEmail()).isPresent()){
             sdkResponceDTO.setStage("duplicate ID and or Email");
-            return new ResponseEntity(sdkResponceDTO, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(sdkResponceDTO, HttpStatus.BAD_REQUEST);
         }
 
         try{
@@ -98,13 +93,11 @@ public class KycService {
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        return new ResponseEntity(sdkResponceDTO, HttpStatus.OK);
+        return new ResponseEntity<>(sdkResponceDTO, HttpStatus.OK);
     }
 
     private SDKResponse apiResponseDto() throws JsonProcessingException {
@@ -184,25 +177,24 @@ public class KycService {
     }
 
     private void addDataToDB (SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
-        User user = new User();
-        user.setId(null);
-        user.setFirstname(request.getFirstname());
-        user.setLastname(request.getLastname());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEmail(request.getEmail().toLowerCase());
-        user.setAddress(request.getAddress());
-        user.setDob(request.getDob().toString());
-        user.setPhone_number(request.getPhoneNumber());
-        user.setRole(Role.USER);
+        User user = User.builder()
+                .firstname(request.getFirstname())
+                .lastname(request.getLastname())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .email(request.getEmail().toLowerCase())
+                .address(request.getAddress())
+                .dob(request.getDob().toString())
+                .phone_number(request.getPhoneNumber())
+                .role(Role.USER)
+                .build();
         userRepository.save(user);
 
-        KycEntity kycEntity = new KycEntity();
-        long num = kycRepository.count();
-        kycEntity.setId(num++);
-        kycEntity.setApplicationId(this.applicantId);
-        kycEntity.setWorkFlowRunId(this.workflowRunId);
-        kycEntity.setStatus("TBD");
-        kycEntity.setUser( userRepository.findByEmail(request.getEmail()).get());
+        KycEntity kycEntity = KycEntity.builder()
+                .applicationId(this.applicantId)
+                .workFlowRunId(this.workflowRunId)
+                .status("TBD")
+                .user(userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("User not found")))
+                .build();
         kycRepository.save(kycEntity);
     }
 
@@ -262,8 +254,7 @@ public class KycService {
                     .build();
 
             HttpClient httpClient = HttpClient.newHttpClient();
-            HttpResponse<String> resultsResponse = httpClient.send(requestResults, HttpResponse.BodyHandlers.ofString());
-            return resultsResponse;
+            return httpClient.send(requestResults, HttpResponse.BodyHandlers.ofString());
         } catch (URISyntaxException | IOException | InterruptedException ignored){
             System.err.println("Error: "+ignored.getMessage());
             System.err.println("Error: "+"check to see if email is already within use");

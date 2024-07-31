@@ -9,15 +9,20 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface KycRepository extends JpaRepository<KycEntity,Integer> {
+public interface KycRepository extends JpaRepository<KycEntity, Long> {
 
     @NotNull
     @Override
     List<KycEntity> findAll();
 
     KycEntity findByUser(User user);
+
+//    @Modifying
+//    @Transactional
+//    @Query("SELECT * FROM _users WHERE _users.id = :id")
+//    void selectKycUser(@Param("id") Long id);
+
 
     @Modifying
     @Transactional

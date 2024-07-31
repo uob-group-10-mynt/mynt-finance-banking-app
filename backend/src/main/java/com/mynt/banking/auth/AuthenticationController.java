@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -29,7 +28,9 @@ public class AuthenticationController {
 
     @PostMapping(value = "/validateKyc", consumes = {"application/json", "text/plain"})
     public ResponseEntity<SDKResponse> validateKyc(@RequestBody ValidateKycRequest request) throws IOException {
-        return ResponseEntity.ok(kycService.validateKyc(request));
+        ResponseEntity<SDKResponse> response =  ResponseEntity.ok(kycService.validateKyc(request));
+
+        return response;
     }
 
     @PostMapping("/register")

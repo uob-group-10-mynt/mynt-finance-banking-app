@@ -12,7 +12,9 @@ import lombok.*;
 @Entity
 @Table(name = "kyc")
 public class KycEntity {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "key", nullable = false)
     private Long id;
 
