@@ -6,6 +6,8 @@ import com.mynt.banking.mPesa.flutterwave.requests.MPesaToCurrencyCloudDto;
 import com.mynt.banking.mPesa.flutterwave.requests.MPesaToFlutterWearDto;
 import com.mynt.banking.mPesa.flutterwave.requests.SendMpesaDto;
 import com.mynt.banking.mPesa.flutterwave.requests.Wallet2WalletDto;
+import com.mynt.banking.user.UserContextService;
+import com.mynt.banking.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,8 @@ import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 public class FlutterwaveController {
 
     private final FlutterwaveService flutterwaveService;
+
+    private final UserContextService userContextService;
 
     //TODO: /v3/transactions/${ID}/verify
     @GetMapping("/transactions/{id}/verify")
@@ -53,7 +57,7 @@ public class FlutterwaveController {
     //TODO: Intergrate - mpesa to CC including CC methrods
     @PostMapping("/sendMpesaToCurrencyCloud")
     public ResponseEntity<JsonNode> mpesaToCloudCurrency(@RequestBody MPesaToCurrencyCloudDto request) {
-        return flutterwaveService.mpesaToCloudCurrency(request);
+        return flutterwaveService.mpesaToCloudCurrency(request,userContextService.getCurrentUsername());
     }
 
     //TODO: Intergrate - CC to mpesa including CC methrods

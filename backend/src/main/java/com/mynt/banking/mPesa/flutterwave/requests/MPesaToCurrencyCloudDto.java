@@ -19,13 +19,6 @@ public class MPesaToCurrencyCloudDto {
     @Size(max = 255)
     @Schema(description = "Amount", example = "1")
     @Builder.Default
-    private Integer amount = 1 ;
-
-    @NotNull
-    @JsonProperty("email")
-    @Size(max = 255)
-    @Schema(description = "email", example = "james@jameslove.com")
-    @Builder.Default
-    private String email = "james@jameslove.com" ;
+    private String amount = "1";
 
 }
