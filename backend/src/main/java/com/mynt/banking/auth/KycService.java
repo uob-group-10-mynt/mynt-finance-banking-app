@@ -194,7 +194,7 @@ public class KycService {
 
         KycEntity kycEntity = new KycEntity();
         long num = kycRepository.count();
-        kycEntity.setId(num++);
+        kycEntity.setId(++num);
         kycEntity.setApplicationId(this.applicantId);
         kycEntity.setWorkFlowRunId(this.workflowRunId);
         kycEntity.setStatus("TBD");
@@ -375,7 +375,7 @@ public class KycService {
         User user = userRepository.findByEmail(email).get();
 
         CreateContact contact = CreateContact.builder()
-                .accountId(Objects.requireNonNull(account.getBody()).get("id").asText())
+                .accountId(Objects.requireNonNull(account.getBody().get("id").asText()))
                 .firstName(user.getFirstname())
                 .lastName(user.getLastname())
                 .emailAddress(user.getEmail())
