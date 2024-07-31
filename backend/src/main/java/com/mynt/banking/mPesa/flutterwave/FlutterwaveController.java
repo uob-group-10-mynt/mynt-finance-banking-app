@@ -3,6 +3,7 @@ package com.mynt.banking.mPesa.flutterwave;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.collect.funding.requests.FindAccountDetails;
 import com.mynt.banking.mPesa.flutterwave.requests.MPesaToFlutterWearDto;
+import com.mynt.banking.mPesa.flutterwave.requests.Wallet2WalletDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +36,13 @@ public class FlutterwaveController {
         return flutterwaveService.mPesaToFlutterWear(request) ;
     }
 
-    //TODO: https://api.flutterwave.com/v3/charges?type=mpesa
     //TODO: wallet to wallet transfers
+    @PostMapping("/walletNgn2Kes")
+    public Mono<ResponseEntity<JsonNode>> walletNgn2Kes(@RequestBody Wallet2WalletDto request) {
+        return flutterwaveService.wallet2Wallet(request);
+    }
+
+    //TODO: https://api.flutterwave.com/v3/charges?type=mpesa
     //TODO: transfer - cc -> Mpesa
 
 
