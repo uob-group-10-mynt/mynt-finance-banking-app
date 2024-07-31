@@ -14,10 +14,10 @@ import lombok.Data;
 public class FindAccountDetails {
 
     @JsonProperty("payment_type")
-    @Schema(description = "Type of payment method used", example = " ")
+    @Schema(description = "Type of payment method used", example = "priority")
     @Size(max = 255)
     @Builder.Default
-    private String paymentType = "";
+    private String paymentType = "priority";
 
     @JsonProperty("currency")
     @NotNull
