@@ -8,9 +8,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mynt.banking.currency_cloud.collect.demo.requests.DemoFundingDto;
 import com.mynt.banking.currency_cloud.collect.funding.requests.FindAccountDetails;
 import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
+import com.mynt.banking.mPesa.flutterwave.requests.MPesaToCurrencyCloudDto;
 import com.mynt.banking.mPesa.flutterwave.requests.MPesaToFlutterWearDto;
 import com.mynt.banking.mPesa.flutterwave.requests.SendMpesaDto;
 import com.mynt.banking.mPesa.flutterwave.requests.Wallet2WalletDto;
+import com.mynt.banking.user.UserContextService;
+import com.mynt.banking.user.UserRepository;
 import com.mynt.banking.util.HashMapToQuiryPrams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,9 +31,12 @@ import java.util.HashMap;
 public class FlutterwaveService {
 
     private final FlutterwaveWebClientConfig webClient;
+    private final UserRepository userRepository;
 
     @Value("${flutterwave.api.secretKey}")
     private String secretKey;
+
+    private final UserContextService userContextService;
 
     public Mono<ResponseEntity<JsonNode>> mPesaToFlutterwave(MPesaToFlutterWearDto mPesaToFlutterWearDto) {
 
@@ -135,6 +141,33 @@ public class FlutterwaveService {
 
     }
 
+    //TODO: Intergrate - mpesa to CC including CC methrods
+    public ResponseEntity<JsonNode> mpesaToCloudCurrency(MPesaToCurrencyCloudDto dto) {
 
+        userContextService.getCurrentUsername();
+
+        userRepository.findByEmail(userContextService.getCurrentUsername());
+
+
+        //TODO: mPesaToFlutterwave()
+        MPesaToFlutterWearDto mPesaToFlutterWearDto = MPesaToFlutterWearDto.builder()
+                .amount()
+                .email()
+                .phone_number()
+                .fullname()
+                .build();
+        ResponseEntity<JsonNode> response = this.mPesaToFlutterwave(mPesaToFlutterWearDto).block();
+
+        //TODO: depoistTransactionCheck()
+//        this.depoistTransactionCheck()
+
+        //TODO: if sucessfull else return a 400
+
+        //TODO: cc get account details end point
+
+        //TODO: cc demo fund account
+
+        return;
+    }
 
 }
