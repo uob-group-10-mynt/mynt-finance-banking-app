@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.Main;
 import com.mynt.banking.mPesa.flutterwave.FlutterwaveService;
 import com.mynt.banking.mPesa.flutterwave.requests.MPesaToFlutterWearDto;
+import com.mynt.banking.mPesa.flutterwave.requests.Wallet2WalletDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,14 +46,29 @@ public class TestTransactions {
     }
 
     @Test
+    void testWallet2Wallet(){
+
+        Wallet2WalletDto dto = Wallet2WalletDto.builder().build();
+        ResponseEntity<JsonNode> responce = flutterwaveService.wallet2Wallet(dto).block();
+
+        assert responce != null;
+        assertEquals(200,responce.getStatusCode().value());
+        assertEquals("KES",responce.getBody().get("data").get("currency").asText());
+
+    }
+
+    @Test
     void testTransactionCheck(){
 
-        //TODO: run transaction and pass id to methord bellow
+        Wallet2WalletDto dto = Wallet2WalletDto.builder().build();
+        ResponseEntity<JsonNode> responce = flutterwaveService.wallet2Wallet(dto).block();
 
-//        ResponseEntity<JsonNode> response = flutterwaveService.transactionCheck().block();
-//
-//        assert response != null;
-//        assertEquals(200,response.getStatusCode().value());
+        String id = responce.getBody().get("data").get("id").asText();
+        ResponseEntity<JsonNode> response1 = flutterwaveService.transactionCheck(id).block();
+
+        assert response1 != null;
+        assertEquals(200,response1.getStatusCode().value());
+        assertEquals("KES",response1.getBody().get("data").get("currency").asText());
     }
 
 
