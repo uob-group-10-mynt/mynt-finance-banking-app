@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mynt.banking.auth.requests.SignUpRequest;
 import com.mynt.banking.auth.requests.ValidateKycRequest;
 import com.mynt.banking.auth.responses.SDKResponse;
-import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
 import com.mynt.banking.Main;
 import com.mynt.banking.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -57,7 +56,7 @@ public class KycTests {
 
         assert response != null;
         assertEquals(response.getStatusCode().value(), 200);
-        assertEquals(response.getBody().getStage(),"SDKResponceDTO");
+        assertEquals(response.getBody().getStage(),"SDKResponseDTO");
 
     }
 
@@ -96,7 +95,7 @@ public class KycTests {
         ResponseEntity<SDKResponse> response = this.kycService.getOnfidoSDK(signUpRequest);
 
         assert response != null;
-        assertEquals(response.getBody().getStage(),"SDKResponceDTO");
+        assertEquals(response.getBody().getStage(),"SDKResponseDTO");
 
 
         String email = "test"+testAccountNum+"@test.com";

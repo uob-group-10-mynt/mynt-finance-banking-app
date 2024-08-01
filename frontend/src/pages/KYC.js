@@ -15,42 +15,38 @@ function kyc(){
     const [apiResponse, setApiResponse] = useState();  
     const [message, setMessage] = useState();  
 
-    useEffect(()=>{
-    
-        async function api(){
-                
-            const email = Cookies.get("email");
-    
-            try{
-                
-                console.log("\n\n\n\n\nvalidateKYCAPI: "+validateKYCAPI);
-                console.log("email: "+email) ;
-                
-                const response = await axios({
-                    method:'post',
-                    url: validateKYCAPI,
-                    data:{
-                        "email": email,
-                      }
-                });
-                
-                console.log(response);
-                console.log(apiResponse);
-                
-                setMessage(`Your account has been ${JSON.parse(response.data.data).status} by our team.`);
-                
-                Cookies.set("email","");
-            } catch (error){
-                setApiResponse(error);
-            }
+    async function api(){
             
+        const email = Cookies.get("email");
+
+        try{
+            
+            console.log("\n\n\n\n\nvalidateKYCAPI: "+validateKYCAPI);
+            console.log("email: "+email) ;
+            
+            const response = await axios({
+                method:'post',
+                url: validateKYCAPI,
+                data:{
+                    "email": email,
+                  }
+            });
+            
+            console.log(response);
+            console.log(apiResponse);
+            
+            setMessage(`Your account has been ${JSON.parse(response.data.data).status} by our team.`);
+            
+            Cookies.set("email","");
+        } catch (error){
+            setApiResponse(error);
         }
         
-        api();
-    },[]);
-
+    }
+    
     const handleButtonClick = () => {
-        navigate('/login');
+        api()
+        .then(navigate('/login'))
     };
 
     return(
