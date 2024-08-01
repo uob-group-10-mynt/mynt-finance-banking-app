@@ -1,19 +1,15 @@
-package com.mynt.banking.mPesa.flutterwave;
+package com.mynt.banking.mPesa;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.collect.funding.requests.FindAccountDetails;
-import com.mynt.banking.mPesa.flutterwave.requests.MPesaToCurrencyCloudDto;
-import com.mynt.banking.mPesa.flutterwave.requests.MPesaToFlutterWearDto;
-import com.mynt.banking.mPesa.flutterwave.requests.SendMpesaDto;
-import com.mynt.banking.mPesa.flutterwave.requests.Wallet2WalletDto;
+import com.mynt.banking.mPesa.requests.MPesaToCurrencyCloudDto;
+import com.mynt.banking.mPesa.requests.MPesaToFlutterWearDto;
+import com.mynt.banking.mPesa.requests.SendMpesaDto;
+import com.mynt.banking.mPesa.requests.Wallet2WalletDto;
 import com.mynt.banking.user.UserContextService;
-import com.mynt.banking.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @RestController
 @RequestMapping("/api/v1/flutterwave/")

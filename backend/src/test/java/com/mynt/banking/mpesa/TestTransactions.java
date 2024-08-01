@@ -1,17 +1,16 @@
-package com.mynt.banking.flutterwear;
+package com.mynt.banking.mpesa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.Main;
 import com.mynt.banking.auth.KycService;
 import com.mynt.banking.auth.requests.SignUpRequest;
-import com.mynt.banking.auth.requests.ValidateKycRequest;
 import com.mynt.banking.auth.responses.SDKResponse;
-import com.mynt.banking.mPesa.flutterwave.FlutterwaveService;
-import com.mynt.banking.mPesa.flutterwave.requests.MPesaToCurrencyCloudDto;
-import com.mynt.banking.mPesa.flutterwave.requests.MPesaToFlutterWearDto;
-import com.mynt.banking.mPesa.flutterwave.requests.SendMpesaDto;
-import com.mynt.banking.mPesa.flutterwave.requests.Wallet2WalletDto;
+import com.mynt.banking.mPesa.FlutterwaveService;
+import com.mynt.banking.mPesa.requests.MPesaToCurrencyCloudDto;
+import com.mynt.banking.mPesa.requests.MPesaToFlutterWearDto;
+import com.mynt.banking.mPesa.requests.SendMpesaDto;
+import com.mynt.banking.mPesa.requests.Wallet2WalletDto;
 import com.mynt.banking.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +100,6 @@ public class TestTransactions {
     @Test
     void testMpesaToCloudCurrency() throws JsonProcessingException {
 
-        //TODO: double check in the morning
         String email = "test-a"+String.valueOf(userRepository.count()+1)+"@test.com";
 
         SignUpRequest dto = SignUpRequest.builder()
@@ -114,7 +112,7 @@ public class TestTransactions {
 
         assert response != null;
         assertEquals(200,response.getStatusCode().value());
-        //TODO: create tests
+        assertEquals("successful",response.getBody().get("transaction status").asText());
 
     }
 
