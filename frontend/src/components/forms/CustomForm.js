@@ -22,7 +22,6 @@ function formDataToRequestBody(credentials) {
 }
 
 function CustomForm({parentState, setParentState, onSubmit, buttonText, buttonId, errorOccurred, buttonDisplayed}) {
-    console.log("RERENDERED!")
     return (
         <form onSubmit={(e) => {
             e.preventDefault();
