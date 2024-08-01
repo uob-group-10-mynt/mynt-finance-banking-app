@@ -229,18 +229,7 @@ public class KycService {
 
         if(cloudCurrencyUser.isPresent()){return false;}
 
-        FindContact findContact = FindContact.builder()
-                .emailAddress(request.getEmail())
-                .build();
-
-        ResponseEntity<JsonNode> contact = contactsService.findContact(findContact).block();
-
-        assert contact != null;
-        int statusCode = contact.getStatusCode().value();
-        if (!(statusCode == 200)) {return false;}
-
-        String numEntries = Objects.requireNonNull(contact.getBody()).get("pagination").get("total_entries").asText();
-        return !numEntries.equals("1");
+        return true;
     }
 
 
@@ -279,6 +268,30 @@ public class KycService {
             return sdkResponseDTO;
         }
 
+        FindContact findContact = FindContact.builder()
+                .emailAddress(request.getEmail())
+                .build();
+
+        ResponseEntity<JsonNode> contact = contactsService.findContact(findContact).block();
+
+        assert contact != null;
+        int statusCode = contact.getStatusCode().value();
+        if (!(statusCode == 200)) {
+            sdkResponseDTO.setStage("error with checking contact on currencycloud");
+            sdkResponseDTO.setData("error please contact backend");
+            return sdkResponseDTO;
+        }
+        String numEntries = Objects.requireNonNull(contact.getBody()).get("pagination").get("total_entries").asText();
+
+        if (numEntries.equals("1")) {
+            saveToCurrencyCloudRepository(request.getEmail(), contact.getBody().get("contacts").get(0).get("id").asText());
+            User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("No User"));
+            KycEntity kyc = kycRepository.findByUser(user);
+            kycRepository.updateStatus("approved",kyc.getId());
+            sdkResponseDTO.setStage("approved");
+            sdkResponseDTO.setData("user already has an account / contact");
+            return sdkResponseDTO;
+        }
 
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("No User"));
 
