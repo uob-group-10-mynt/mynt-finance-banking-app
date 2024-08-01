@@ -7,10 +7,7 @@ import com.mynt.banking.auth.KycService;
 import com.mynt.banking.auth.requests.SignUpRequest;
 import com.mynt.banking.auth.responses.SDKResponse;
 import com.mynt.banking.mPesa.FlutterwaveService;
-import com.mynt.banking.mPesa.requests.MPesaToCurrencyCloudDto;
-import com.mynt.banking.mPesa.requests.MPesaToFlutterWearDto;
-import com.mynt.banking.mPesa.requests.SendMpesaDto;
-import com.mynt.banking.mPesa.requests.Wallet2WalletDto;
+import com.mynt.banking.mPesa.requests.*;
 import com.mynt.banking.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,5 +113,23 @@ public class TestTransactions {
 
     }
 
+    @Test
+    void testCloudCurrency2Mpesa(){
+
+        String email = "test-a"+String.valueOf(userRepository.count()+1)+"@test.com";
+
+        SignUpRequest dto = SignUpRequest.builder()
+                .email(email)
+                .build();
+        ResponseEntity<SDKResponse>  getOnfidoSDK = kycService.getOnfidoSDK(dto);
+
+        CloudCurrency2MpesaDto request = CloudCurrency2MpesaDto.builder().build();
+        ResponseEntity<JsonNode> response = flutterwaveService.cloudCurrency2Mpesa(request,email);
+
+        assert response != null;
+        assertEquals(200,response.getStatusCode().value());
+        assertEquals("success",response.getBody().get("status").asText());
+
+    }
 
 }
