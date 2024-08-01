@@ -50,7 +50,7 @@ public class FlutterwaveController {
         return flutterwaveService.sendMPesa(request);
     }
 
-    //TODO: Intergrate - mpesa to CC including CC methrods
+    // mpesa to CC including CC methrods
     @PostMapping("/sendMpesaToCurrencyCloud")
     public ResponseEntity<JsonNode> mpesaToCloudCurrency(@RequestBody MPesaToCurrencyCloudDto request) {
         return flutterwaveService.mpesaToCloudCurrency(request,userContextService.getCurrentUsername());
