@@ -13,8 +13,8 @@ describe('user details page', ()  => {
 
         //set new details
         cy.get('[data-cy="saveDetailsButton"]').should('not.be.visible')
-        cy.get('[data-cy="EditButton"]').should('be.visible').click({force: true})
-        cy.get('[data-cy="EditButton"]').should('be.visible').click({force: true})
+        cy.get('[data-cy="EditButton"]').click({force: true})
+        cy.get('[data-cy="EditButton"]').click({force: true})
         cy.get('[data-cy="saveDetailsButton"]').should('be.visible')
         cy.get('[data-cy="firstnameInput"]').clear().type(firstname)
         cy.get('[data-cy="lastnameInput"]').clear().type(lastname)
@@ -22,6 +22,8 @@ describe('user details page', ()  => {
         cy.get('[data-cy="addressInput"]').clear().type(address)
         cy.get('[data-cy="phoneNumberInput"]').clear().type(phoneNumber)
         cy.get('[data-cy="saveDetailsButton"]').click()
+        cy.get('[data-cy="EditButton"]').should('be.visible')
+        cy.get('[data-cy="saveDetailsButton"]').should('not.be.visible')
 
         //navigate away and back to page
         cy.get('[data-cy="navButton"]').click()

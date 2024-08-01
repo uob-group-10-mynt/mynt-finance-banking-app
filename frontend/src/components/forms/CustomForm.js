@@ -22,6 +22,7 @@ function formDataToRequestBody(credentials) {
 }
 
 function CustomForm({parentState, setParentState, onSubmit, buttonText, buttonId, errorOccurred, buttonDisplayed}) {
+    console.log("RERENDERED!")
     return (
         <form onSubmit={(e) => {
             e.preventDefault();
@@ -52,20 +53,20 @@ function transformInputs({parentState, setParentState, errorOccurred}) {
                         ) : <FormLabel>{inputFields.label}</FormLabel>
                     }
                     <InputGroup>
-                        {
-                            inputFields.inputLeftElement ? (
-                                <InputLeftElement color='gray.300' fontSize='1.2rem'>{inputFields.inputLeftElement}</InputLeftElement>
-                            ) : null
-                        }
-                        <Input
-                            placeholder={inputFields.placeholder}
-                            type={inputFields.type}
-                            value={inputFields.value}
-                            onChange={(e) => handleInputChange(index, e)}
-                            required={inputFields.required}
-                            data-cy={inputFields.id+"Input"}
-                            readOnly={inputFields.readonly}
-                        />
+                    {
+                        inputFields.inputLeftElement ? (
+                            <InputLeftElement color='gray.300' fontSize='1.2rem'>{inputFields.inputLeftElement}</InputLeftElement>
+                        ) : null
+                    }
+                    <Input
+                        placeholder={inputFields.placeholder}
+                        type={inputFields.type}
+                        value={inputFields.value}
+                        onChange={(e) => handleInputChange(index, e)}
+                        required={inputFields.required}
+                        data-cy={inputFields.id+"Input"}
+                        readOnly={inputFields.readonly}
+                    />
                     </InputGroup>
                     {
                         !errorOccurred ? (

@@ -15,9 +15,9 @@ function createLinks(dataAboutPages) {
 export default function NavigationLinks() {
     const [loggedIn, setLoggedIn, logOut] = useContext(LoggedInContext)
     const loggedInData = [
-        {href: "remittance/payee", text: "Transfer", id: "RemittanceLink"},
-        {href: "userDetails", text: "Account details", id: "DetailsLink"},
-        {href: "login", text: "Log Out", id: "LogOutLink", onClick: logOut}
+        {href: "/remittance/payee", text: "Transfer", id: "RemittanceLink"},
+        {href: "/userDetails", text: "Account details", id: "DetailsLink"},
+        {href: "/login", text: "Log Out", id: "LogOutLink", onClick: logOut}
     ]
     const loggedOutData = [
         {href: "/signup", text: "Sign Up", id: "SignUpLink"},
