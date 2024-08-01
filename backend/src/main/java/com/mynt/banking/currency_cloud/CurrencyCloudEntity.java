@@ -3,11 +3,13 @@ package com.mynt.banking.currency_cloud;
 import com.mynt.banking.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "currency_cloud")
 public class CurrencyCloudEntity {
