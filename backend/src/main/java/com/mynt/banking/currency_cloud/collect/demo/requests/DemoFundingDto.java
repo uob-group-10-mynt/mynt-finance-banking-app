@@ -75,7 +75,7 @@ public class DemoFundingDto {
     @NotNull
     @Schema(description = "Amount to be funded", example = "1000.00")
     @Builder.Default
-    private int amount = 0;
+    private Integer amount = 1;
 
     @JsonProperty("currency")
     @NotNull
@@ -86,9 +86,9 @@ public class DemoFundingDto {
 
     @JsonProperty("action")
     @Size(max = 255)
-    @Schema(description = "Action type for the funding request", example = " ")
+    @Schema(description = "Action type for the funding request", example = "approve")
     @Builder.Default
-    private String action = "";
+    private String action = "approve";
 
     @JsonProperty("on_behalf_of")
     @Size(max = 255)
