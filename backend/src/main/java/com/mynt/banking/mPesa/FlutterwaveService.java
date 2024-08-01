@@ -5,14 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.TimeBasedGenerator;
-import com.google.gson.JsonObject;
 import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
 import com.mynt.banking.currency_cloud.collect.demo.DemoService;
 import com.mynt.banking.currency_cloud.collect.demo.requests.DemoFundingDto;
 import com.mynt.banking.currency_cloud.collect.funding.FundingService;
 import com.mynt.banking.currency_cloud.collect.funding.requests.FindAccountDetails;
-import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.CreateContact;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.FindBeneficiaryRequest;
 import com.mynt.banking.currency_cloud.pay.payments.PaymentService;
@@ -80,7 +78,7 @@ public class FlutterwaveService {
         jsonNode.put("currency","KES");
         jsonNode.put("debit_currency","NGN");
 
-        String tx_ref = dto.getEmail().toString()+LocalDateTime.now().toString();
+        String tx_ref = dto.getEmail()+LocalDateTime.now().toString();
         jsonNode.put("tx_ref", tx_ref);
 
         return webClient.webClientFW()
@@ -313,21 +311,21 @@ public class FlutterwaveService {
 
         User userExsists = user.get();
 
-        //TODO: send funds - from CC to Flutterwave (name == Flutterwave_KES_MPesa_Account)
+        // send funds - from CC to Flutterwave (name == Flutterwave_KES_MPesa_Account)
         // /v2/beneficiaries/find
         ResponseEntity<JsonNode> response = this.findBenificiary();
         if(!response.getStatusCode().is2xxSuccessful()) { return response; }
         String benificiaryUUID = response.getBody().get("beneficiaries").get(0).get("id").asText() ;
 
-        //TODO: /v2/payments/create
+        // /v2/payments/create
         response = this.payBenificiary(benificiaryUUID, userExsists, request);
         if(!response.getStatusCode().is2xxSuccessful()) { return response; }
 
-        //TODO: send funds - from flutterwave to Mpesa
+        // send funds - from flutterwave to Mpesa
         response = callSendMpesa(userExsists, request);
         if(!response.getStatusCode().is2xxSuccessful()) { return response; }
 
-        //TODO: check transaction status
+        // check transaction status
         String id = response.getBody().get("data").get("id").asText();
         response = transactionCheck(id).block();
         if(!response.getStatusCode().is2xxSuccessful()) { return response; }
@@ -337,9 +335,9 @@ public class FlutterwaveService {
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
-        //TODO: sucesfull methord return message
+        // sucesfull methord return message
         ObjectNode finalResponce = mapper.createObjectNode();
-        finalResponce.put("status", "success");
+        finalResponce.put("status", "successful transfer of funds to Benificaries MPesa Account");
 
         return ResponseEntity.ok(finalResponce);
     }

@@ -128,7 +128,8 @@ public class TestTransactions {
 
         assert response != null;
         assertEquals(200,response.getStatusCode().value());
-        assertEquals("success",response.getBody().get("status").asText());
+        String sucessMessage = "successful transfer of funds to Benificaries MPesa Account";
+        assertEquals(sucessMessage,response.getBody().get("status").asText());
 
     }
 

@@ -39,7 +39,7 @@ public class SignUpRequest {
     @Schema(description = "DoB", example = "2020-8-16")
     @DateTimeFormat(pattern = "YYYY-MM-DD")
     @Builder.Default
-    private LocalDate dob = LocalDate.of(1066,8,16);
+    private LocalDate dob = LocalDate.of(2020,8,16);
 
     @NotNull(message = "Address is required")
     @Schema(description = "bristol", example = "Bristol")
