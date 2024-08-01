@@ -86,7 +86,6 @@ export default function UserDetails() {
         }
     }
 
-
     useEffect(() => {
         getAndSetDetails()
         .then(() => {
@@ -96,13 +95,13 @@ export default function UserDetails() {
     }, []) // empty array means useEffect() is only called on initial render of component
     
 
-    const updatedFormData = async (formValuesJSON) => {
+    const updateDetails = async (formValuesJSON) => {
         try {
             const response = await fetch(updateUserDetailsAPI, {
                 method: 'POST',
                 headers: {
                     "Content-type": "application/json",
-                    Authorization: `bearer ${sessionStorage.getItem('access')}`
+                    Authorization: `Bearer ${sessionStorage.getItem('access')}`
                 },
                 body: JSON.stringify(formValuesJSON)
             });
@@ -120,9 +119,9 @@ export default function UserDetails() {
     return(
         <Page>
             <Heading as='h1' size='xl' mb={4}>Your personal details</Heading>
-            <CustomForm onSubmit={updatedFormData} buttonText="Save" buttonDisplayed={saveButtonDisplayed} buttonId="saveDetailsButton" parentState={accountFields} setParentState={setDetails}>
+            <CustomForm onSubmit={updateDetails} buttonText="Save" buttonDisplayed={saveButtonDisplayed} buttonId="saveDetailsButton" parentState={accountFields} setParentState={setDetails}>
             </CustomForm>
-            <CustomButton data-cy="EditButton" display={editButtonDisplayed} medium onClick={(e) => {editForm(e)}}>
+            <CustomButton data-cy="EditButton" display={editButtonDisplayed} onClick={(e) => {editForm(e)}}>
                 Edit
             </CustomButton>
         </Page>
