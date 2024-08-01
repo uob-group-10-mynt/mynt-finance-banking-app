@@ -36,10 +36,10 @@ public class SignUpRequest {
     private String lastname = "Love";
 
     @NotNull(message = "Date of Birth is required")
-    @Schema(description = "DoB", example = "1066-8-16")
+    @Schema(description = "DoB", example = "2020-8-16")
     @DateTimeFormat(pattern = "YYYY-MM-DD")
     @Builder.Default
-    private LocalDate dob = LocalDate.of(1066,8,16);
+    private LocalDate dob = LocalDate.of(2020,8,16);
 
     @NotNull(message = "Address is required")
     @Schema(description = "bristol", example = "Bristol")
