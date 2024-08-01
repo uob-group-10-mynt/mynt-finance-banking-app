@@ -1,4 +1,4 @@
-package com.mynt.banking.mPesa.flutterwave.requests;
+package com.mynt.banking.mPesa.requests;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,3 +22,8 @@ public class MPesaToCurrencyCloudDto {
     private String amount = "1";
 
 }
+
+//797a3318-18a6-4867-82b0-6c0c001baaac
+//GB61TCCL12345634244096
+//TCCLGB3L
+//approve

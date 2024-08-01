@@ -1,4 +1,4 @@
-package com.mynt.banking.mPesa.flutterwave.requests;
+package com.mynt.banking.mPesa.requests;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,4 +1,4 @@
-package com.mynt.banking.mPesa.flutterwave;
+package com.mynt.banking.mPesa;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -1,37 +1,32 @@
-package com.mynt.banking.mPesa.flutterwave;
+package com.mynt.banking.mPesa;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.uuid.Generators;
+import com.fasterxml.uuid.impl.TimeBasedGenerator;
 import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
 import com.mynt.banking.currency_cloud.collect.demo.DemoService;
 import com.mynt.banking.currency_cloud.collect.demo.requests.DemoFundingDto;
 import com.mynt.banking.currency_cloud.collect.funding.FundingService;
 import com.mynt.banking.currency_cloud.collect.funding.requests.FindAccountDetails;
-import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
-import com.mynt.banking.mPesa.flutterwave.requests.MPesaToCurrencyCloudDto;
-import com.mynt.banking.mPesa.flutterwave.requests.MPesaToFlutterWearDto;
-import com.mynt.banking.mPesa.flutterwave.requests.SendMpesaDto;
-import com.mynt.banking.mPesa.flutterwave.requests.Wallet2WalletDto;
+import com.mynt.banking.mPesa.requests.MPesaToCurrencyCloudDto;
+import com.mynt.banking.mPesa.requests.MPesaToFlutterWearDto;
+import com.mynt.banking.mPesa.requests.SendMpesaDto;
+import com.mynt.banking.mPesa.requests.Wallet2WalletDto;
 import com.mynt.banking.user.User;
-import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.user.UserRepository;
-import com.mynt.banking.util.HashMapToQuiryPrams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -153,13 +148,12 @@ public class FlutterwaveService {
 
     }
 
-    //TODO: Intergrate - mpesa to CC including CC methrods
+    // mpesa to CC including CC methrods
     public ResponseEntity<JsonNode> mpesaToCloudCurrency(MPesaToCurrencyCloudDto dto,
                                                         String email
                                                         ) {
 
         ObjectMapper mapper = new ObjectMapper();
-        ObjectNode finalResponse = mapper.createObjectNode();
 
         Optional<User> user = userRepository.findByEmail(email);
 
@@ -182,7 +176,11 @@ public class FlutterwaveService {
         //cc demo fund account
         response =  demoFundAccount(userExsists, response.getBody(),dto);
         if(!response.getStatusCode().is2xxSuccessful()) { return response; }
-        //TODO: create cutome responce
+
+        // create custom response
+        ObjectNode finalResponce = mapper.createObjectNode();
+        finalResponce.put("transaction status","successful");
+        response = ResponseEntity.ok(finalResponce);
 
         return response;
     }
@@ -276,8 +274,11 @@ public class FlutterwaveService {
             uuid = currencyCloudData.get().getUuid();
         }
 
+        TimeBasedGenerator timeBasedGenerator = Generators.timeBasedGenerator();
+        UUID idUUID = timeBasedGenerator.generate();
+
         DemoFundingDto demoFundingDto = DemoFundingDto.builder()
-                .id(ccFundAccountDetails.get("funding_accounts").get(0).get("id").asText())
+                .id(idUUID.toString()) // ccFundAccountDetails.get("funding_accounts").get(0).get("account_id").asText()
                 .receiverAccountNumber(ccFundAccountDetails.get("funding_accounts").get(0).get("account_number").asText())
                 .currency("KES")
                 .amount(Integer.valueOf(dto.getAmount()))
