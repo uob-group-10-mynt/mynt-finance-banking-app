@@ -3,16 +3,16 @@ package com.mynt.banking.auth;
 import com.mynt.banking.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
+@Builder
 @Entity
 @Table(name = "kyc")
+@NoArgsConstructor
+@AllArgsConstructor
 public class KycEntity {
     @Id
-    @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
