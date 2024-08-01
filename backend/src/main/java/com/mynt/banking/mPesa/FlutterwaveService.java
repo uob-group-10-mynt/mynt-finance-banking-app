@@ -5,16 +5,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.TimeBasedGenerator;
+import com.google.gson.JsonObject;
 import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
 import com.mynt.banking.currency_cloud.collect.demo.DemoService;
 import com.mynt.banking.currency_cloud.collect.demo.requests.DemoFundingDto;
 import com.mynt.banking.currency_cloud.collect.funding.FundingService;
 import com.mynt.banking.currency_cloud.collect.funding.requests.FindAccountDetails;
-import com.mynt.banking.mPesa.requests.MPesaToCurrencyCloudDto;
-import com.mynt.banking.mPesa.requests.MPesaToFlutterWearDto;
-import com.mynt.banking.mPesa.requests.SendMpesaDto;
-import com.mynt.banking.mPesa.requests.Wallet2WalletDto;
+import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.CreateContact;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.FindBeneficiaryRequest;
+import com.mynt.banking.currency_cloud.pay.payments.PaymentService;
+import com.mynt.banking.currency_cloud.pay.payments.requests.CreatePaymentRequest;
+import com.mynt.banking.mPesa.requests.*;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,12 +41,16 @@ public class FlutterwaveService {
 
     private final DemoService demoService;
 
+    private final BeneficiaryService beneficiariesService;
+
     @Value("${flutterwave.api.secretKey}")
     private String secretKey;
 
     private final UserRepository userRepository;
 
     private final CurrencyCloudRepository currencyCloudRepository;
+
+    private final PaymentService paymentService;
 
     public Mono<ResponseEntity<JsonNode>> mPesaToFlutterwave(MPesaToFlutterWearDto mPesaToFlutterWearDto) {
 
@@ -116,6 +123,7 @@ public class FlutterwaveService {
     }
 
     public String genTx_ref(String email){
+
         return email
                 .replace(".", "_")
                 .replace("@","_")
@@ -186,6 +194,7 @@ public class FlutterwaveService {
     }
 
     private ResponseEntity<JsonNode> mPesaToFlutterwaveCall(MPesaToCurrencyCloudDto dto, String email, User userExsists){
+
         MPesaToFlutterWearDto mPesaToFlutterWearDto = MPesaToFlutterWearDto.builder()
                 .amount(dto.getAmount())
                 .email(userExsists.getEmail())
@@ -206,7 +215,6 @@ public class FlutterwaveService {
     }
 
     private ResponseEntity<JsonNode> depoistTransactionCheckCall(JsonNode response){
-
 
         ResponseEntity<JsonNode> response1 =  this.depoistTransactionCheck(response
                         .get("data")
@@ -288,6 +296,120 @@ public class FlutterwaveService {
 
         if(!response.getStatusCode().is2xxSuccessful()) {
             errorResponse.put("Error", " with ccFundAccountDetails()");
+            return ResponseEntity.status(400).body(errorResponse);
+        }
+
+        return response;
+
+    }
+
+    public ResponseEntity<JsonNode> cloudCurrency2Mpesa(CloudCurrency2MpesaDto request, String userEmail){
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        Optional<User> user = userRepository.findByEmail(userEmail);
+
+        if(!user.isPresent()) {return null;}
+
+        User userExsists = user.get();
+
+        //TODO: send funds - from CC to Flutterwave (name == Flutterwave_KES_MPesa_Account)
+        // /v2/beneficiaries/find
+        ResponseEntity<JsonNode> response = this.findBenificiary();
+        if(!response.getStatusCode().is2xxSuccessful()) { return response; }
+        String benificiaryUUID = response.getBody().get("beneficiaries").get(0).get("id").asText() ;
+
+        //TODO: /v2/payments/create
+        response = this.payBenificiary(benificiaryUUID, userExsists, request);
+        if(!response.getStatusCode().is2xxSuccessful()) { return response; }
+
+        //TODO: send funds - from flutterwave to Mpesa
+        response = callSendMpesa(userExsists, request);
+        if(!response.getStatusCode().is2xxSuccessful()) { return response; }
+
+        //TODO: check transaction status
+        String id = response.getBody().get("data").get("id").asText();
+        response = transactionCheck(id).block();
+        if(!response.getStatusCode().is2xxSuccessful()) { return response; }
+        if(!Objects.equals(response.getBody().get("status").asText(), "success")){
+            ObjectNode errorResponse = mapper.createObjectNode();
+            errorResponse.put("Error", " with sendMpesa()");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        //TODO: sucesfull methord return message
+        ObjectNode finalResponce = mapper.createObjectNode();
+        finalResponce.put("status", "success");
+
+        return ResponseEntity.ok(finalResponce);
+    }
+
+    private ResponseEntity<JsonNode> findBenificiary(){
+        FindBeneficiaryRequest dto = FindBeneficiaryRequest.builder()
+                .name("Flutterwave_KES_MPesa_Account")
+                .build();
+        ResponseEntity<JsonNode> response = beneficiariesService.find(dto).block();
+
+        if(!response.getStatusCode().is2xxSuccessful()) {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode errorResponse = mapper.createObjectNode();
+
+            errorResponse.put("Error", " with ccFundAccountDetails()");
+
+            return ResponseEntity.status(400).body(errorResponse);
+        }
+
+        return response;
+    }
+
+    private ResponseEntity<JsonNode> payBenificiary(String benificiaryUUID,
+                                                    User userExsists,
+                                                    CloudCurrency2MpesaDto request
+                                                    ){
+
+        String ref = userExsists.getEmail()+LocalDateTime.now().toString();
+
+        CreatePaymentRequest dto = CreatePaymentRequest.builder()
+                .currency("KES")
+                .beneficiaryId(benificiaryUUID)
+                .amount(request.getAmount().toString())
+                .reason("Pay with M-Pesa")
+                .reference(ref)
+                .uniqueRequestId(ref)
+                .build();
+
+        ResponseEntity<JsonNode> response = paymentService.createPayment(dto).block();
+
+        if(!response.getStatusCode().is2xxSuccessful()) {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode errorResponse = mapper.createObjectNode();
+
+            errorResponse.put("Error", " with ccFundAccountDetails()");
+
+            return ResponseEntity.status(400).body(errorResponse);
+        }
+
+        return response;
+    }
+
+    private ResponseEntity<JsonNode> callSendMpesa(User userExsists,
+                                                   CloudCurrency2MpesaDto request){
+
+        SendMpesaDto dto = SendMpesaDto.builder()
+                .amount(request.getAmount())
+                .email(userExsists.getEmail())
+                .mobileNumber(request.getMobileNumber())
+                .sender(userExsists.getFirstname()+" "+userExsists.getLastname())
+                .beneficiaryName(request.getBeneficiaryName())
+                .build();
+        ResponseEntity<JsonNode> response = sendMPesa(dto).block();
+
+        if(!response.getStatusCode().is2xxSuccessful()) {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode errorResponse = mapper.createObjectNode();
+
+            errorResponse.put("Error", " with ccFundAccountDetails()");
+
             return ResponseEntity.status(400).body(errorResponse);
         }
 

@@ -1,10 +1,7 @@
 package com.mynt.banking.mPesa;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.mPesa.requests.MPesaToCurrencyCloudDto;
-import com.mynt.banking.mPesa.requests.MPesaToFlutterWearDto;
-import com.mynt.banking.mPesa.requests.SendMpesaDto;
-import com.mynt.banking.mPesa.requests.Wallet2WalletDto;
+import com.mynt.banking.mPesa.requests.*;
 import com.mynt.banking.user.UserContextService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -57,5 +54,8 @@ public class FlutterwaveController {
     }
 
     //TODO: Intergrate - CC to mpesa including CC methrods
-
+    @PostMapping("/cloudCurrency2Mpesa")
+    public ResponseEntity<JsonNode> cloudCurrency2Mpesa(@RequestBody CloudCurrency2MpesaDto request) {
+        return flutterwaveService.cloudCurrency2Mpesa(request,userContextService.getCurrentUsername());
+    }
 }

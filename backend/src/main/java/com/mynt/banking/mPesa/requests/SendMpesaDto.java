@@ -55,12 +55,11 @@ public class SendMpesaDto {
     @Builder.Default
     private String beneficiaryName = "James Love";
 
-    @NotNull
     @JsonProperty("sender_country")
     @Size(max = 255)
-    @Schema(description = "sender_country", example = "GB")
+    @Schema(description = "sender_country", example = "KE")
     @Builder.Default
-    private String senderCountry = "GB";
+    private String senderCountry = "KE";
 
 }
 
