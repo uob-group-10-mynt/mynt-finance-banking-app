@@ -33,8 +33,8 @@ public class SignUpRequest {
     private String lastname;
 
     @NotNull(message = "Date of Birth is required")
-    @Schema(description = "DoB", example = "1066-8-16")
-    @DateTimeFormat(pattern = "dd MM yyyy")
+    @Schema(description = "DoB", example = "2020-8-16")
+    @DateTimeFormat(pattern = "YYYY-MM-DD")
     private LocalDate dob;
 
     @NotNull(message = "Address is required")
