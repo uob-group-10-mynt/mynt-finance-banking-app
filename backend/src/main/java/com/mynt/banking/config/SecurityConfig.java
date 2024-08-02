@@ -49,6 +49,7 @@ public class SecurityConfig {
             "/api/v1/flutterwave/**",
             "/api/v1/auth/onfidoSdk",
             "/api/v1/auth/validateKyc",
+            "/api/v1/rates/*"
     };
 
     private final AuthenticationFilter jwtAuthFilter;

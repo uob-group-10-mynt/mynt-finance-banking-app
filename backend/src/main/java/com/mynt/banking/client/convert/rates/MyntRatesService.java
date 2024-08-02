@@ -1,18 +1,27 @@
 package com.mynt.banking.client.convert.rates;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.mynt.banking.client.convert.rates.requests.*;
+import com.mynt.banking.client.convert.rates.responses.MyntGetBasicRatesResponse;
 import com.mynt.banking.currency_cloud.convert.rates.RateService;
+import com.mynt.banking.currency_cloud.convert.rates.requests.GetBasicRatesRequest;
+import com.mynt.banking.user.UserContextService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
+
+
 @Service
 @RequiredArgsConstructor
 public class MyntRatesService {
 
+    private final UserContextService userContextService;
     private final RateService rateService;
     private final String[] SUPPORTED_CURRENCIES = {
             "AUD",
@@ -51,12 +60,13 @@ public class MyntRatesService {
     };
 
 
-    public Mono<ResponseEntity<JsonNode>> getBasicRates(
+    public ResponseEntity<JsonNode> getBasicRates (
             @NotNull MyntGetBasicRatesRequest request
     ) {
         String currencyPair;
-        String baseCurrency = request.getBaseCurrency();
-        String otherCurrencies = request.getOtherCurrencies();
+        String contactUUID = userContextService.getCurrentUserUuid();
+        String baseCurrency = request.getBaseCurrency().toUpperCase();
+        String otherCurrencies = request.getOtherCurrencies().toUpperCase();
 
         if (otherCurrencies.isBlank()) {
             currencyPair = currencyPairBuilder(baseCurrency, SUPPORTED_CURRENCIES);
@@ -65,7 +75,31 @@ public class MyntRatesService {
             String[] arrOfCurrencies = otherCurrencies.split(",");
             currencyPair = currencyPairBuilder(baseCurrency, arrOfCurrencies);
         }
-        
+
+        GetBasicRatesRequest getBasicRatesRequest = GetBasicRatesRequest.builder()
+                .currencyPair(currencyPair)
+                .onBehalfOf(contactUUID)
+                .build();
+
+        ResponseEntity<JsonNode> ccResponse =  rateService.getBasicRates(getBasicRatesRequest).block();
+
+        assert ccResponse != null;
+        if (ccResponse.getStatusCode().isError()) return ccResponse;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode response = objectMapper.createArrayNode();
+
+        JsonNode ccRates = Objects.requireNonNull(ccResponse.getBody()).get("rates");
+        ccRates.fieldNames().forEachRemaining( key -> {
+            MyntGetBasicRatesResponse responseElement = MyntGetBasicRatesResponse.builder()
+                    .currency(key.toUpperCase().replace(baseCurrency, ""))
+                    .rate(ccRates.get(key).get(0).asText())
+                    .build();
+            JsonNode rate = objectMapper.convertValue(responseElement, JsonNode.class);
+            response.add(rate);
+        });
+        return ResponseEntity.ok(response);
+
     }
 
     private String currencyPairBuilder(String baseCurrency, String[] otherCurrencies) {

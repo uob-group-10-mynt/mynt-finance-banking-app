@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.client.convert.rates.requests.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -18,13 +15,11 @@ public class MyntRatesController {
 
     private final MyntRatesService myntRatesService;
 
-    @PostMapping("/getBasicRates")
+    @GetMapping("/getBasicRates")
     public Mono<ResponseEntity<JsonNode>> getBasicRates(
             @RequestBody MyntGetBasicRatesRequest request
     ) {
-        return myntRatesService.getBasicRates(
-                request
-        );
+        return Mono.just(myntRatesService.getBasicRates(request));
     }
 
 }

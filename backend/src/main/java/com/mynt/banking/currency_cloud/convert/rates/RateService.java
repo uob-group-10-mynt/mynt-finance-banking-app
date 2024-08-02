@@ -1,7 +1,7 @@
 package com.mynt.banking.currency_cloud.convert.rates;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.convert.rates.requests.GetDetailedRatesRequest;
+import com.mynt.banking.currency_cloud.convert.rates.requests.*;
 import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
 import com.mynt.banking.util.UriBuilderUtil;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +33,16 @@ public class RateService {
                     }
                     return Mono.just(response);
                 });
+    }
+
+    public Mono<ResponseEntity<JsonNode>> getBasicRates(
+            GetBasicRatesRequest request
+    ) {
+        String uri = UriBuilderUtil.buildUriWithQueryParams("/v2/rates/find", request);
+        return webClient
+                .get()
+                .uri(uri)
+                .header("X-Auth-Token", authenticationService.getAuthToken())
+                .exchangeToMono(response -> response.toEntity(JsonNode.class));
     }
 }
