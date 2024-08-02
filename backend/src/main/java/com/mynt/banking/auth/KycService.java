@@ -32,7 +32,6 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -81,22 +80,15 @@ public class KycService {
         }
 
         try{
-
             applicant(request, apiToken);
-
-            createWorkFlow(request, apiToken);
-
-            createSDK(request, apiToken);
-
+            createWorkFlow(apiToken);
+            createSDK(apiToken);
             sdkResponceDTO = apiResponseDto();
-
             addDataToDB(request);
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
@@ -105,37 +97,33 @@ public class KycService {
 
     private SDKResponse apiResponseDto() throws JsonProcessingException {
 
-        SDKResponse sdkResponceDTO = new SDKResponse();
-
+        SDKResponse sdkResponseDTO = new SDKResponse();
         ObjectMapper objectMapper = new ObjectMapper();
-
         ObjectNode dtoData = objectMapper.createObjectNode();
         dtoData.put("sdkToken",sdkToken);
         dtoData.put("YOUR_WORKFLOW_RUN_ID",workflowRunId);
         dtoData.put("url",url);
         String dtoDataJsonBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dtoData);
-        sdkResponceDTO.setStage("SDKResponceDTO");
-        sdkResponceDTO.setData(dtoDataJsonBody);
+        sdkResponseDTO.setStage("SDKResponseDTO");
+        sdkResponseDTO.setData(dtoDataJsonBody);
 
-        return sdkResponceDTO;
+        return sdkResponseDTO;
     }
 
 
-    private void createSDK(SignUpRequest request, String apiToken) throws URISyntaxException, IOException, InterruptedException {
+    private void createSDK(String apiToken) throws URISyntaxException, IOException, InterruptedException {
 
         ObjectMapper objectMapper = new ObjectMapper();
-
         ObjectNode sdkRequest = objectMapper.createObjectNode();
         sdkRequest.put("applicant_id",applicantId);
         sdkRequest.put("referrer",referrer);
         String createSDKRequestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(sdkRequest);
 
         String endPoint =  "https://api.eu.onfido.com/v3.6/sdk_token";
-        String createSDKResponce = postRequest(createSDKRequestBody, endPoint, apiToken);
+        String createSDKResponse = postRequest(createSDKRequestBody, endPoint, apiToken);
 
-        JsonNode createSDKResponceBody = objectMapper.readTree(createSDKResponce);
-        sdkToken = createSDKResponceBody.get("token").asText();
-
+        JsonNode createSDKResponseBody = objectMapper.readTree(createSDKResponse);
+        sdkToken = createSDKResponseBody.get("token").asText();
     }
 
     private void applicant(SignUpRequest request, String apiToken) throws URISyntaxException, IOException, InterruptedException {
@@ -147,58 +135,57 @@ public class KycService {
         String createApplicantBody = objectMapper.writeValueAsString(applicantBody);
 
         String endPoint =  "https://api.eu.onfido.com/v3.6/applicants/";
-        String createApplicantResponce = postRequest(createApplicantBody, endPoint, apiToken);
+        String createApplicantResponse = postRequest(createApplicantBody, endPoint, apiToken);
 
-        JsonNode createApplicantResponceBody = objectMapper.readTree(createApplicantResponce);
-        applicantId = createApplicantResponceBody.get("id").asText();
+        JsonNode createApplicantResponseBody = objectMapper.readTree(createApplicantResponse);
+        applicantId = createApplicantResponseBody.get("id").asText();
 
     }
 
-    private void createWorkFlow(SignUpRequest request, String apiToken) throws URISyntaxException, IOException, InterruptedException {
+    private void createWorkFlow(String apiToken) throws URISyntaxException, IOException, InterruptedException {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        ObjectNode linkRequstBody = objectMapper.createObjectNode();
-        linkRequstBody.put("completed_redirect_url",redirectURL);
-        linkRequstBody.put("expired_redirect_url",redirectURL);
-        linkRequstBody.put("language","en_US");
+        ObjectNode linkRequestBody = objectMapper.createObjectNode();
+        linkRequestBody.put("completed_redirect_url",redirectURL);
+        linkRequestBody.put("expired_redirect_url",redirectURL);
+        linkRequestBody.put("language","en_US");
 
         ObjectNode createWorkFlowRunRequestBody = objectMapper.createObjectNode();
         createWorkFlowRunRequestBody.put("workflow_id",this.workflow_ID);
         createWorkFlowRunRequestBody.put("applicant_id",applicantId);
-        createWorkFlowRunRequestBody.set("link", linkRequstBody);
+        createWorkFlowRunRequestBody.set("link", linkRequestBody);
         String createWorkFlowRunRequestJsonBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(createWorkFlowRunRequestBody);
 
         String endPoint =  "https://api.eu.onfido.com/v3.6/workflow_runs";
-        String createWorkFlowResponce = postRequest(createWorkFlowRunRequestJsonBody, endPoint, apiToken);
+        String createWorkFlowResponseString = postRequest(createWorkFlowRunRequestJsonBody, endPoint, apiToken);
 
-        JsonNode createWorkFlowResponceBody = objectMapper.readTree(createWorkFlowResponce);
-        workflowRunId = createWorkFlowResponceBody.get("id").asText();
-        url = createWorkFlowResponceBody.get("link").get("url").asText();
+        JsonNode createWorkFlowResponseBody = objectMapper.readTree(createWorkFlowResponseString);
+        workflowRunId = createWorkFlowResponseBody.get("id").asText();
+        url = createWorkFlowResponseBody.get("link").get("url").asText();
 
 
     }
 
     private void addDataToDB (SignUpRequest request) throws URISyntaxException, IOException, InterruptedException {
-        User user = new User();
-        user.setId(null);
-        user.setFirstname(request.getFirstname());
-        user.setLastname(request.getLastname());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEmail(request.getEmail().toLowerCase());
-        user.setAddress(request.getAddress());
-        user.setDob(request.getDob().toString());
-        user.setPhone_number(request.getPhoneNumber());
-        user.setRole(Role.USER);
+        User user = User.builder()
+                .firstname(request.getFirstname())
+                .lastname(request.getLastname())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .email(request.getEmail().toLowerCase())
+                .address(request.getAddress())
+                .dob(request.getDob().toString())
+                .phone_number(request.getPhoneNumber())
+                .role(Role.USER)
+                .build();
         userRepository.save(user);
 
-        KycEntity kycEntity = new KycEntity();
-        long num = kycRepository.count();
-        kycEntity.setId(++num);
-        kycEntity.setApplicationId(this.applicantId);
-        kycEntity.setWorkFlowRunId(this.workflowRunId);
-        kycEntity.setStatus("TBD");
-        kycEntity.setUser( userRepository.findByEmail(request.getEmail()).get());
+        KycEntity kycEntity = KycEntity.builder()
+                .applicationId(this.applicantId)
+                .workFlowRunId(this.workflowRunId)
+                .status("TBD")
+                .user(user)
+                .build();
         kycRepository.save(kycEntity);
     }
 
@@ -229,18 +216,7 @@ public class KycService {
 
         if(cloudCurrencyUser.isPresent()){return false;}
 
-        FindContact findContact = FindContact.builder()
-                .emailAddress(request.getEmail())
-                .build();
-
-        ResponseEntity<JsonNode> contact = contactsService.findContact(findContact).block();
-
-        assert contact != null;
-        int statusCode = contact.getStatusCode().value();
-        if (!(statusCode == 200)) {return false;}
-
-        String numEntries = Objects.requireNonNull(contact.getBody()).get("pagination").get("total_entries").asText();
-        return !numEntries.equals("1");
+        return true;
     }
 
 
@@ -250,13 +226,11 @@ public class KycService {
         String apiToken = "Token token="+onfido;
 
         try {
-
-            HttpRequest requestResults = (HttpRequest) HttpRequest.newBuilder()
+            HttpRequest requestResults = HttpRequest.newBuilder()
                     .uri(new URI("https://api.eu.onfido.com/v3.6/workflow_runs/" + kyc.getWorkFlowRunId()))
                     .header("Authorization", apiToken)
                     .GET()
                     .build();
-
             HttpClient httpClient = HttpClient.newHttpClient();
             return httpClient.send(requestResults, HttpResponse.BodyHandlers.ofString());
         } catch (URISyntaxException | IOException | InterruptedException e){
@@ -269,9 +243,7 @@ public class KycService {
     public SDKResponse validateKyc(ValidateKycRequest request) throws JsonProcessingException {
 
         SDKResponse sdkResponseDTO = new SDKResponse();
-
         request.setEmail(request.getEmail().toLowerCase().trim());
-
         boolean isValidRequest = preCheck(request);
         if(!isValidRequest){
             sdkResponseDTO.setStage("error with email");
@@ -279,13 +251,34 @@ public class KycService {
             return sdkResponseDTO;
         }
 
+        FindContact findContact = FindContact.builder()
+                .emailAddress(request.getEmail())
+                .build();
+
+        ResponseEntity<JsonNode> contact = contactsService.findContact(findContact).block();
+
+        assert contact != null;
+        int statusCode = contact.getStatusCode().value();
+        if (!(statusCode == 200)) {
+            sdkResponseDTO.setStage("error with checking contact on currencycloud");
+            sdkResponseDTO.setData("error please contact backend");
+            return sdkResponseDTO;
+        }
+        String numEntries = Objects.requireNonNull(contact.getBody()).get("pagination").get("total_entries").asText();
+
+        if (numEntries.equals("1")) {
+            saveToCurrencyCloudRepository(request.getEmail(), contact.getBody().get("contacts").get(0).get("id").asText());
+            User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("No User"));
+            KycEntity kyc = kycRepository.findByUser(user);
+            kycRepository.updateStatus("approved",kyc.getId());
+            sdkResponseDTO.setStage("approved");
+            sdkResponseDTO.setData("user already has an account / contact");
+            return sdkResponseDTO;
+        }
 
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("No User"));
-
         KycEntity kyc = kycRepository.findByUser(user);
-
         HttpResponse<String> resultsResponse = getSDKValidation(kyc);
-
         assert resultsResponse != null;
         if(resultsResponse.statusCode() != 200){
             sdkResponseDTO.setStage("get status");
@@ -293,14 +286,10 @@ public class KycService {
             return sdkResponseDTO;
         }
 
-        checkResult(resultsResponse, sdkResponseDTO, request, kyc);
+        checkResult(resultsResponse, sdkResponseDTO, kyc);
 
         boolean hasAccount = createCurrencyCloudUser(resultsResponse, request.getEmail());
-        if(!hasAccount){
-            sdkResponseDTO.setStage("approved");
-            sdkResponseDTO.setData("user already has an account / contact");
-        }
-
+        if(!hasAccount){ sdkResponseDTO.setData("user already has an account / contact"); }
         sdkResponseDTO.setStage("approved");
 
         return sdkResponseDTO;
@@ -308,7 +297,6 @@ public class KycService {
 
     public void checkResult(HttpResponse<String> resultsResponse,
                             SDKResponse sdkResponseDTO,
-                            ValidateKycRequest request,
                             KycEntity kyc) throws JsonProcessingException {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -321,25 +309,22 @@ public class KycService {
 
     }
 
-    public boolean createCurrencyCloudUser(HttpResponse<String> resultsResponce, String email) throws JsonProcessingException {
+    public boolean createCurrencyCloudUser(HttpResponse<String> resultsResponse, String email) throws JsonProcessingException {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode responce = objectMapper.readTree(resultsResponce.body());
+        JsonNode response = objectMapper.readTree(resultsResponse.body());
 
-        if(!Objects.equals(responce.get("status").asText(), "approved")){
-            return false;
-        }
+        if(!Objects.equals(response.get("status").asText(), "approved")){ return false; }
 
         ResponseEntity<JsonNode> account  = createAccount(email);;
 
         if(!account.getStatusCode().is2xxSuccessful()){ return false;}
 
-        ResponseEntity<JsonNode> contactResponce = createContact(email, account);
+        ResponseEntity<JsonNode> contactResponse = createContact(email, account);
 
-        if(!contactResponce.getStatusCode().is2xxSuccessful()){return false;}
+        if(!contactResponse.getStatusCode().is2xxSuccessful()){return false;}
 
-        String contactUuid = Objects.requireNonNull(contactResponce.getBody()).get("id").asText();
-
+        String contactUuid = Objects.requireNonNull(contactResponse.getBody()).get("id").asText();
         saveToCurrencyCloudRepository(email, contactUuid);
 
         return true;
@@ -348,8 +333,6 @@ public class KycService {
     private void saveToCurrencyCloudRepository(String email, String contactUuid){
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User Not found"));
-
-
         CurrencyCloudEntity currencyCloudEntity = new CurrencyCloudEntity();
         currencyCloudEntity.setUuid(contactUuid);
         currencyCloudEntity.setUser(user);
@@ -358,21 +341,21 @@ public class KycService {
 
     private ResponseEntity<JsonNode> createAccount(String email){
 
-        User user = userRepository.findByEmail(email).get();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("No User"));
 
         CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
                 .accountName(user.getFirstname()+" "+user.getLastname())
                 .legalEntityType("individual")
                 .street(user.getAddress())
                 .city(user.getAddress())
-                .country("gb") // TODO update database to modle addresses better
+                .country("gb")
                 .build();
         return accountService.createAccount(createAccountRequest).block();
     }
 
     private ResponseEntity<JsonNode> createContact(String email, ResponseEntity<JsonNode> account){
 
-        User user = userRepository.findByEmail(email).get();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("No User"));
 
         CreateContact contact = CreateContact.builder()
                 .accountId(Objects.requireNonNull(account.getBody().get("id").asText()))
