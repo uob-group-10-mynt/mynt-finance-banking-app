@@ -54,16 +54,16 @@ function MyPayeesPanel() {
 
     async function fetchPayees() {
         try {
-            // GET request to fetch payees for the specific payer
+            // GET request to fetch payees
             const response = await fetch(getBeneficiaries, {
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     Authorization: `Bearer ${sessionStorage.getItem('access')}`
                 }
             });
 
             if (!response.ok) {
-                const error = new Error(response.status + " : Can't retrieve your payees info!");
+                const error = new Error(await response.text());
                 setError(error);
                 setLoading(false);
                 return;
@@ -71,7 +71,6 @@ function MyPayeesPanel() {
 
             // Parse the JSON from the response
             const payees = await response.json();
-
             setPayees(payees);
         } catch (error) {
             setError(error);

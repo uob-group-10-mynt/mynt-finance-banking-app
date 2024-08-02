@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import CustomHeading from "../../components/CustomHeading";
 import Container from "../../components/container/Container";
@@ -7,11 +7,14 @@ import InfoBlock from "../../components/util/InfoBlock";
 import CustomText from "../../components/CustomText";
 import CustomForm from "../../components/forms/CustomForm";
 import {Center} from "@chakra-ui/react";
+import {getBalance} from "../../utils/APIEndpoints";
 
 export default function Amount() {
     const navigate = useNavigate();
     const [amount, setAmount] = useState('');
-    const availableBalance = 1000; // To be replaced with logic to fetch balance dynamically from an API
+    const [balance, setBalance] = useState('')
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const location = useLocation();
     const selectedPayee = location.state.selectedPayee;
@@ -34,6 +37,12 @@ export default function Amount() {
         }
     });
 
+    useEffect(() => {
+        fetchBalance();
+    }, []);
+    if (loading) return <CustomText>Loading...</CustomText>;
+    if (error) return <CustomText>Error {error.message}</CustomText>;
+
     const amountInputFields = [
         {
             id: "transfer-amount",
@@ -44,7 +53,7 @@ export default function Amount() {
             required: true,
             value: amount,
             onChange: (e) => setAmount(e.target.value),
-            helperText: `Available balance: ${availableBalance.toLocaleString()} KES`,
+            helperText: `Available balance: ${balance.toLocaleString()} KES`,
             inputLeftElement: "£"
         },
     ];
@@ -71,4 +80,31 @@ export default function Amount() {
             </CustomForm>
         </>
     );
+
+    async function fetchBalance() {
+        try {
+            const response = await fetch(getBalance, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem('access')}`
+                }
+            });
+
+            if (!response.ok) {
+                const error = new Error(await response.text());
+                setError(error);
+                setLoading(false);
+                return;
+            }
+
+            // Parse the JSON from the response
+            const balance = await response.json();
+            setBalance(balance);
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
 }
