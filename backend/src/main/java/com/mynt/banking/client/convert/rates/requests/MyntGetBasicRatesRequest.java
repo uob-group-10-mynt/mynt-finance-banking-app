@@ -14,15 +14,6 @@ import lombok.Data;
 @Schema(description = "Gets indicative rates for selling a base currency for other currencies.")
 public class MyntGetBasicRatesRequest {
 
-    @NotNull
-    @JsonProperty("base_currency")
-    @Size(max = 255)
-    @Schema(description = "The base currency.",
-            example = "GBP")
-    @Builder.Default
-    private String baseCurrency = "";
-
-
     @JsonProperty("other_currencies")
     @Size(max = 255)
     @Schema(description = "The other currencies. " +

@@ -7,13 +7,17 @@ import com.mynt.banking.client.convert.rates.requests.*;
 import com.mynt.banking.client.convert.rates.responses.MyntGetBasicRatesResponse;
 import com.mynt.banking.currency_cloud.convert.rates.RateService;
 import com.mynt.banking.currency_cloud.convert.rates.requests.GetBasicRatesRequest;
+import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserContextService;
+import com.mynt.banking.user.UserRepository;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 
@@ -22,6 +26,7 @@ import java.util.Objects;
 public class MyntRatesService {
 
     private final UserContextService userContextService;
+    private final UserRepository userRepository;
     private final RateService rateService;
     private final String[] SUPPORTED_CURRENCIES = {
             "AUD",
@@ -62,10 +67,11 @@ public class MyntRatesService {
 
     public ResponseEntity<JsonNode> getBasicRates (
             @NotNull MyntGetBasicRatesRequest request
-    ) {
+    ) throws NoSuchElementException {
         String currencyPair;
+        User user = userRepository.findByEmail(userContextService.getCurrentUsername()).orElseThrow();
+        String baseCurrency = user.getBaseCurrency().toUpperCase();
         String contactUUID = userContextService.getCurrentUserUuid();
-        String baseCurrency = request.getBaseCurrency().toUpperCase();
         String otherCurrencies = request.getOtherCurrencies().toUpperCase();
 
         if (otherCurrencies.isBlank()) {
@@ -88,6 +94,13 @@ public class MyntRatesService {
 
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode response = objectMapper.createArrayNode();
+
+        MyntGetBasicRatesResponse firstElement = MyntGetBasicRatesResponse.builder()
+                .currency(baseCurrency)
+                .rate("1")
+                .build();
+        JsonNode firstRate = objectMapper.convertValue(firstElement, JsonNode.class);
+        response.add(firstRate);
 
         JsonNode ccRates = Objects.requireNonNull(ccResponse.getBody()).get("rates");
         ccRates.fieldNames().forEachRemaining( key -> {

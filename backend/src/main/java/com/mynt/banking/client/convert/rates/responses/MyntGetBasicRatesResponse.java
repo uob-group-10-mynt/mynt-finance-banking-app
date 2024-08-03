@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class MyntGetBasicRatesResponse {
-    private String currency;
-    private String rate;
+    private final String currency;
+
+    private final String rate;
 }
