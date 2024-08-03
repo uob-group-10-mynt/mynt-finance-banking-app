@@ -4,6 +4,7 @@ import com.mynt.banking.util.exceptions.authentication.KycException;
 import com.mynt.banking.util.exceptions.authentication.TokenException;
 import com.mynt.banking.util.exceptions.registration.RegistrationException;
 import com.mynt.banking.util.exceptions.registration.UserAlreadyExistsException;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -69,7 +71,9 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, String>> handleRuntimeException(@NotNull RuntimeException ex, HttpServletRequest request) {
-        return buildResponseEntity(HttpStatus.UNAUTHORIZED, "JWT: token processing error", request);
+        log.info("REQUEST URI: {}", request.getRequestURI());
+        log.info("EXCEPTION MESSAGE: {}", ex.getMessage());
+        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", request);
     }
 
 

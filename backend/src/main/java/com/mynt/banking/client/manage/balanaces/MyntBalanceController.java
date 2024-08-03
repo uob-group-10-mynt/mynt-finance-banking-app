@@ -21,7 +21,6 @@ public class MyntBalanceController {
     // find all balances associated with sub-account:
     @GetMapping("/find")
     public List<FindBalanceResponse> findBalances() {
-
         return balanceService.findBalances();
     }
 }

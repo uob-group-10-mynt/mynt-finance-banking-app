@@ -38,6 +38,7 @@ public class MyntBalanceService {
                 .accountId(accountId)
                 .onBehalfOf(userContextService.getCurrentUserUuid())
                 .currency(currencyCode)
+                .paymentType("priority")
                 .build();
         ResponseEntity<JsonNode> accountDetailsResponse = fundingService.findAccountDetails(accountDetailsRequest);
 
@@ -95,6 +96,7 @@ public class MyntBalanceService {
                     .accountId(accountId)
                     .onBehalfOf(userContextService.getCurrentUserUuid())
                     .currency(findBalanceResponse.getCurrency())
+                    .paymentType("priority")
                     .build();
             ResponseEntity<JsonNode> accountDetailsResponse = fundingService.findAccountDetails(accountDetailsRequest);
 

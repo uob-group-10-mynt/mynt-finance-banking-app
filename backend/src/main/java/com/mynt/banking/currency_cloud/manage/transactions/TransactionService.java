@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
@@ -22,6 +23,36 @@ public class TransactionService {
 
     private final AuthenticationService authenticationService;
     private final WebClient webClient;
+
+    public ResponseEntity<JsonNode> find(
+            String currencyCode,
+            String relatedEntityType,
+            String onBehalfOf,
+            Integer perPage,
+            Integer page) {
+
+        // Initialize UriComponentsBuilder
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromPath("/v2/transactions/find");
+
+        // Add query parameters only if they are non-null
+        if (onBehalfOf != null)  uriBuilder.queryParam("on_behalf_of", onBehalfOf);
+        if (currencyCode != null) uriBuilder.queryParam("currency", currencyCode);
+        if (relatedEntityType != null) uriBuilder.queryParam("related_entity_type", relatedEntityType);
+        if (perPage != null) uriBuilder.queryParam("per_page", perPage);
+        if (page != null) uriBuilder.queryParam("page", page);
+
+        String uri = uriBuilder.toUriString();
+
+        // Execute the GET request and retrieve the response
+        return webClient.get()
+                .uri(uri)
+                .header("X-Auth-Token", authenticationService.getAuthToken())
+                .retrieve()
+                .toEntity(JsonNode.class)
+                .block();
+    }
+
+
 
     public Mono<ResponseEntity<JsonNode>> find(FindTransaction requestBody) {
 
