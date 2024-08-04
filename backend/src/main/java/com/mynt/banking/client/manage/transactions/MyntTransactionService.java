@@ -17,28 +17,28 @@ public class MyntTransactionService {
     private final UserContextService userContextService;
     private final TransactionService transactionService;
 
-    public TransactionResponse findTransaction(String currency, String relatedEntityType, Integer perPage, Integer page) {
+    public TransactionDetailResponse findTransaction(String currency, String relatedEntityType, Integer perPage, Integer page) {
 
         // Fetch Transactions
         ResponseEntity<JsonNode> currencyCloudTransactionResponse = transactionService.find(
                 currency, relatedEntityType, userContextService.getCurrentUserUuid(), perPage, page);
 
-        // Form TransactionResponse:
+        // Form TransactionDetailResponse:
         JsonNode responseBody = currencyCloudTransactionResponse.getBody();
-        List<TransactionResponse.Transaction> transactions = new ArrayList<>();
+        List<TransactionDetailResponse.Transaction> transactions = new ArrayList<>();
         if (responseBody == null) {
-            TransactionResponse transactionResponse = new TransactionResponse();
-            transactionResponse.setTransactions(transactions);
-            transactionResponse.setPagination(TransactionResponse.PaginationDTO.builder().build());
-            return transactionResponse;
+            TransactionDetailResponse transactionDetailResponse = new TransactionDetailResponse();
+            transactionDetailResponse.setTransactions(transactions);
+            transactionDetailResponse.setPagination(TransactionDetailResponse.Pagination.builder().build());
+            return transactionDetailResponse;
         }
 
         // Parse transactions
         JsonNode transactionsNode = responseBody.get("transactions");
         if (transactionsNode != null && transactionsNode.isArray()) {
             for (JsonNode transactionNode : transactionsNode) {
-                TransactionResponse.Transaction transaction =
-                    TransactionResponse.Transaction.builder()
+                TransactionDetailResponse.Transaction transaction =
+                    TransactionDetailResponse.Transaction.builder()
                         .id(transactionNode.get("id").asText())
                         .accountId(transactionNode.get("account_id").asText())
                         .currency(transactionNode.get("currency").asText())
@@ -59,9 +59,9 @@ public class MyntTransactionService {
 
         // Parse pagination
         JsonNode paginationNode = responseBody.get("pagination");
-        TransactionResponse.PaginationDTO pagination;
+        TransactionDetailResponse.Pagination pagination;
         if (paginationNode != null) {
-            pagination = TransactionResponse.PaginationDTO.builder()
+            pagination = TransactionDetailResponse.Pagination.builder()
                     .totalEntries(paginationNode.get("total_entries").asInt())
                     .totalPages(paginationNode.get("total_pages").asInt())
                     .currentPage(paginationNode.get("current_page").asInt())
@@ -72,34 +72,34 @@ public class MyntTransactionService {
                     .orderAscDesc(paginationNode.get("order_asc_desc").asText())
                     .build();
         } else {
-            pagination = TransactionResponse.PaginationDTO.builder().build();
+            pagination = TransactionDetailResponse.Pagination.builder().build();
         }
 
-        // Form TransactionResponse
-        TransactionResponse transactionResponseDTO = new TransactionResponse();
-        transactionResponseDTO.setTransactions(transactions);
-        transactionResponseDTO.setPagination(pagination);
+        // Form TransactionDetailResponse
+        TransactionDetailResponse transactionDetailResponseDTO = new TransactionDetailResponse();
+        transactionDetailResponseDTO.setTransactions(transactions);
+        transactionDetailResponseDTO.setPagination(pagination);
 
-        return transactionResponseDTO;
+        return transactionDetailResponseDTO;
     }
 
-    public TransactionResponse.Transaction getTransaction(String transactionId) {
+    private TransactionDetailResponse.Transaction getTransaction(String transactionId) {
         // Fetch Transactions
         ResponseEntity<JsonNode> currencyCloudTransactionResponse = transactionService.get(
                 transactionId,
                 userContextService.getCurrentUserUuid());
 
-        // Form TransactionResponse:
+        // Form TransactionDetailResponse:
         JsonNode responseBody = currencyCloudTransactionResponse.getBody();
 
         // if body is empty --> return empty transaction:
-        if (responseBody == null || responseBody.isEmpty()) { return TransactionResponse.Transaction.builder().build(); }
+        if (responseBody == null || responseBody.isEmpty()) { return TransactionDetailResponse.Transaction.builder().build(); }
 
         // Extract transaction node
         JsonNode transactionNode = responseBody.get("transaction");
 
         // Build the transaction using the Builder pattern
-        return TransactionResponse.Transaction.builder()
+        return TransactionDetailResponse.Transaction.builder()
                 .id(transactionNode.get("id").asText())
                 .accountId(transactionNode.get("account_id").asText())
                 .currency(transactionNode.get("currency").asText())
@@ -114,5 +114,27 @@ public class MyntTransactionService {
                 .createdAt(transactionNode.get("created_at").asText())
                 .action(transactionNode.get("action").asText())
                 .build();
+    }
+
+    public PaymentDetailResponse getPaymentDetail(String transactionId) {
+
+        // Fetch transaction:
+        TransactionDetailResponse.Transaction transactionDetail = getTransaction(transactionId);
+
+        // Ensure Transaction Detail is not empty:
+        if (transactionDetail == null) {
+            return new PaymentDetailResponse();
+        }
+
+
+
+
+        // Populate PaymentDetailResponse with available data:
+
+
+
+
+        return null;
+
     }
 }

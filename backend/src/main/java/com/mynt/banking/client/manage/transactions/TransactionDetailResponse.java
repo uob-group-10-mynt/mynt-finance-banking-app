@@ -5,9 +5,9 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class TransactionResponse {
+public class TransactionDetailResponse {
     private List<Transaction> transactions;
-    private PaginationDTO pagination;
+    private Pagination pagination;
 
     // Static inner class for TransactionDTO
     @Data
@@ -28,10 +28,10 @@ public class TransactionResponse {
         private String action;
     }
 
-    // Static inner class for PaginationDTO
+    // Static inner class for Pagination
     @Data
     @Builder
-    public static class PaginationDTO {
+    public static class Pagination {
         private int totalEntries;
         private int totalPages;
         private int currentPage;
