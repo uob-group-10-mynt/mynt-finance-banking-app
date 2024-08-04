@@ -1,6 +1,8 @@
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
 import { RouterProvider } from 'react-router-dom';
 import { useEffect, useState, createContext } from 'react';
+
+import { ConversionProvider } from './contexts/Conversion';
 import AppRouter from './utils/AppRouter';
 import ChakraUITheme from './utils/ChakraUITheme';
 import SplashPage from './pages/SplashPage';
@@ -53,10 +55,12 @@ const App = () => {
         ? <SplashPage /> 
         :
         <LoggedInContext.Provider value={[loggedIn, setLoggedInAndStorage, logOut]}>
-            <ChakraProvider theme={ChakraUITheme}>
-                <ColorModeScript initialColorMode={ChakraUITheme.config.initialColorMode}/>
-                    <RouterProvider router={AppRouter}/>
-            </ChakraProvider>
+            <ConversionProvider>
+                <ChakraProvider theme={ChakraUITheme}>
+                    <ColorModeScript initialColorMode={ChakraUITheme.config.initialColorMode}/>
+                        <RouterProvider router={AppRouter}/>
+                </ChakraProvider>
+            </ConversionProvider>
         </LoggedInContext.Provider>        
     );
 };
