@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+    border,
     FormControl,
     FormErrorMessage,
     FormHelperText,
@@ -65,6 +66,7 @@ function transformInputs({parentState, setParentState, errorOccurred}) {
                         required={inputFields.required}
                         data-cy={inputFields.id+"Input"}
                         readOnly={inputFields.readonly}
+                        border={inputFields.border}
                     />
                     </InputGroup>
                     {

@@ -3,9 +3,25 @@ import CustomForm from "../components/forms/CustomForm";
 import { getUserDetailsAPI, updateUserDetailsAPI } from "../utils/APIEndpoints";
 import Page from "../components/Page";
 import CustomButton from "../components/forms/CustomButton";
-import { Heading } from "@chakra-ui/react";
+import { border, Heading } from "@chakra-ui/react";
 
 const accountFields = [
+    {
+        label: "Email",
+        id: "email",
+        readonly: true,
+        value: "",
+        type: "text",
+        border: "none"
+    },
+    {
+        label: "Date of birth",
+        id: "dob",
+        readonly: true,
+        value: "",
+        type: "date",
+        border: "none"
+    },
     {
         label: "First name",
         id: "firstname",
@@ -19,13 +35,6 @@ const accountFields = [
         required: true,
         readonly: true,
         value: ""
-    },
-    {
-        label: "Date of birth (read-only)",
-        id: "dob",
-        readonly: true,
-        value: "",
-        type: "date"
     },
     {
         label: "Address",
@@ -56,8 +65,9 @@ export default function UserDetails() {
         e.preventDefault();
         
         setDetails(details.forEach((field) => {
-            if (field.id !== 'dob')
-            field.readonly = false;
+            if (field.id === 'dob' || field.id === 'email') {
+                field.readonly = true;
+            } else field.readonly = false;
         }))
         setEditButtonDisplayed("none")
         setSaveButtonDisplayed(" ")
