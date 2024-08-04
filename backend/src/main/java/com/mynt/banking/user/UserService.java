@@ -49,6 +49,7 @@ public class UserService {
     String userEmail = userContextService.getCurrentUsername();
     var user = userRepository.findByEmail(userEmail).orElseThrow();
     return GetUserDetailsResponse.builder()
+            .email(user.getEmail())
             .firstname(user.getFirstname())
             .lastname(user.getLastname())
             .dob(user.getDob())
@@ -63,7 +64,6 @@ public class UserService {
     User user = userRepository.findByEmail(userEmail).orElseThrow();
     user.setFirstname(request.getFirstname());
     user.setLastname(request.getLastname());
-    user.setDob(request.getDob().toString());
     user.setPhone_number(request.getPhoneNumber());
     user.setAddress(request.getAddress());
     userRepository.save(user);
@@ -73,7 +73,6 @@ public class UserService {
     UpdateContactRequest updateContactRequest = UpdateContactRequest.builder()
             .firstname(request.getFirstname())
             .lastname(request.getLastname())
-            .dateOfBirth(request.getDob().toString())
             .phoneNumber(request.getPhoneNumber())
             .build();
 

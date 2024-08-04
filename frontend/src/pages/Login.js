@@ -6,22 +6,43 @@ import {authenticateAPI} from "../utils/APIEndpoints";
 import CustomForm from "../components/forms/CustomForm";
 import Page from "../components/Page";
 
+const loginInputFields = [
+    {
+        label: "email",
+        id: "email",
+        placeholder: "hello@email.com",
+        type: "email",
+        value: "",
+        required: true,
+        errorMsg: "Incorrect email or password",
+        helperText: "The email address associated with your account"
+    },
+    {
+        label: "password",
+        id: "password",
+        placeholder: "*******",
+        type: "password",
+        value: "",
+        required: true,
+        errorMsg: "Incorrect email or password"
+    },
+]
+
+
 function Login() {
     const [loggedIn, setLoggedIn] = useContext(LoggedInContext)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorOccurred, setErrorOccurred] = useState('');
+    const [formDetails, setFormDetails] = useState(loginInputFields)
     const navigate = useNavigate();
 
-    const handleLoginSubmit = async (e) => {
-        e.preventDefault();
-        const credentials = {email, password};
-
+    const handleLoginSubmit = async (formValuesJSON) => {
         try {
             const response = await fetch(authenticateAPI, {
                 method: 'POST',
                 headers: {"Content-type": "application/json"},
-                body: JSON.stringify(credentials)
+                body: JSON.stringify(formValuesJSON)
             });
             setEmail('');
             setPassword('');
@@ -41,36 +62,11 @@ function Login() {
         }
     }
 
-    const loginInputFields = [
-        {
-            label: "Email",
-            id: "emailInput",
-            placeholder: "hello@email.com",
-            type: "email",
-            value: email,
-            required: true,
-            onChange: (e) => setEmail(e.target.value),
-            errorMsg: "Incorrect email or password",
-            helperText: "The email address associated with your account"
-        },
-        {
-            label: "Password",
-            id: "passwordInput",
-            placeholder: "*******",
-            type: "password",
-            value: password,
-            required: true,
-            onChange: (e) => setPassword(e.target.value),
-            errorMsg: "Incorrect email or password"
-        },
-    ]
-
     return (
         <Page>
-            <PageHeader>Log in to Mynt</PageHeader>
-            <CustomForm onSubmit={handleLoginSubmit} buttonText="Log In" buttonId="submitButton"
-                        errorOccurred={errorOccurred}>
-                {loginInputFields}
+            <PageHeader>Login</PageHeader>
+            <CustomForm onSubmit={handleLoginSubmit} buttonText="Sign In" buttonId="submitButton"
+                        errorOccurred={errorOccurred} parentState={formDetails} setParentState={setFormDetails}>
             </CustomForm>
         </Page>
     );

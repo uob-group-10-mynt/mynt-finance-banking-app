@@ -2,33 +2,30 @@ import React, {useState} from 'react';
 import {useToast} from '@chakra-ui/react';
 import CustomForm from "../../components/forms/CustomForm";
 
-export default function AddPayeePanel() {
-    const [payeeName, setPayeeName] = useState('');
-    const [accountNumber, setAccountNumber] = useState('');
-    const toast = useToast();
-    const newPayeeInputFields = [
-        {
-            id: "account-number",
-            label: "Account Number",
-            placeholder: "Enter account number",
-            type: "number",
-            required: true,
-            value: accountNumber,
-            onChange: (e) => setAccountNumber(e.target.value)
-        },
-        {
-            id: "payee-name",
-            label: "Payee Name",
-            placeholder: "Enter payee name",
-            type: "text",
-            required: true,
-            value: payeeName,
-            onChange: (e) => setPayeeName(e.target.value)
-        },
-    ];
+const newPayeeInputFields = [
+    {
+        id: "account-number",
+        label: "Account Number",
+        placeholder: "Enter account number",
+        type: "number",
+        required: true,
+        value: ""
+    },
+    {
+        id: "payee-name",
+        label: "Payee Name",
+        placeholder: "Enter payee name",
+        type: "text",
+        required: true,
+        value: ""
+    },
+];
 
-    const handleAddPayee = (event) => {
-        event.preventDefault();
+export default function AddPayeePanel() {
+    const [formData, setFormData] = useState(newPayeeInputFields)
+    const toast = useToast();
+
+    const handleAddPayee = () => {
         // Add validation and submission logic here
 
         toast({
@@ -41,13 +38,14 @@ export default function AddPayeePanel() {
         });
 
         // Clear form and close panel
-        setPayeeName('');
-        setAccountNumber('');
+        newPayeeInputFields.forEach(inputField => {
+            inputField.value = ""
+        })
+        setFormData(newPayeeInputFields)
     };
 
     return (
-        <CustomForm onSubmit={handleAddPayee} buttonText="Add Payee" buttonId="addPayeeButton">
-            {newPayeeInputFields}
+        <CustomForm onSubmit={handleAddPayee} buttonText="Add Payee" buttonId="addPayeeButton" parentState={formData} setParentState={setFormData}>
         </CustomForm>
     );
 }

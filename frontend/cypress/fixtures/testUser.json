@@ -1,10 +1,10 @@
 {
   "firstname": "cypress",
   "lastname": "test",
-  "email": "cypress@test.com",
+  "email": "testaccount@cypress.com",
   "password": "test",
   "role": "USER",
-  "dob": "29-06-1900",
+  "dob": "01-01-2000",
   "address": "MVB",
   "phoneNumber": "07123123123"
 }

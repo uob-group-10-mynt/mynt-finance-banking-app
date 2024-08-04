@@ -5,6 +5,7 @@ import com.mynt.banking.user.responses.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -24,25 +25,25 @@ public class UserController {
     }
 
     @GetMapping("/getUserDetails")
-    public ResponseEntity<GetUserDetailsResponse> getUserDetails() {
+    public Mono<ResponseEntity<GetUserDetailsResponse>> getUserDetails() {
         GetUserDetailsResponse response;
         try {
             response = userService.getUserDetails();
         }
         catch (IOException e) {
-            return ResponseEntity.badRequest().build();
+            return Mono.just(ResponseEntity.badRequest().build());
         }
-        return ResponseEntity.ok(response);
+        return Mono.just(ResponseEntity.ok(response));
     }
 
     @PostMapping("/updateUserDetails")
-    public ResponseEntity<UpdateUserDetailsRequest> updateUserDetails(@RequestBody UpdateUserDetailsRequest request) {
+    public Mono<ResponseEntity<UpdateUserDetailsRequest>> updateUserDetails(@RequestBody UpdateUserDetailsRequest request) {
         try {
             userService.updateUserDetails(request);
         }
         catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return Mono.just(ResponseEntity.badRequest().build());
         }
-        return ResponseEntity.ok().build();
+        return Mono.just(ResponseEntity.ok().build());
     }
 }
