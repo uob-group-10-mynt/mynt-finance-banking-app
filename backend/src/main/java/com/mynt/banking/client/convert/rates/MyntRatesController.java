@@ -2,7 +2,9 @@ package com.mynt.banking.client.convert.rates;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.client.convert.rates.requests.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +19,13 @@ public class MyntRatesController {
 
     @GetMapping("/getBasicRates")
     public Mono<ResponseEntity<JsonNode>> getBasicRates(
-            @RequestBody MyntGetBasicRatesRequest request
+            @Valid
+            @Size(max = 100, message = "size exceeded limit")
+            @Pattern(regexp = "[A-z]{3}(,[A-z]{3})*", message = "please follow the pattern \"\" or \"abc\" or \"abc,abc,abc\"")
+            @RequestParam("other_currencies")
+            String otherCurrencies
     ) {
-        return Mono.just(myntRatesService.getBasicRates(request));
+        return Mono.just(myntRatesService.getBasicRates(otherCurrencies));
     }
 
 }

@@ -3,7 +3,6 @@ package com.mynt.banking.client.convert.rates;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.mynt.banking.client.convert.rates.requests.*;
 import com.mynt.banking.client.convert.rates.responses.MyntGetBasicRatesResponse;
 import com.mynt.banking.currency_cloud.convert.rates.RateService;
 import com.mynt.banking.currency_cloud.convert.rates.requests.GetBasicRatesRequest;
@@ -13,9 +12,7 @@ import com.mynt.banking.user.UserRepository;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -66,13 +63,12 @@ public class MyntRatesService {
 
 
     public ResponseEntity<JsonNode> getBasicRates (
-            @NotNull MyntGetBasicRatesRequest request
+            @NotNull String otherCurrencies
     ) throws NoSuchElementException {
         String currencyPair;
         User user = userRepository.findByEmail(userContextService.getCurrentUsername()).orElseThrow();
         String baseCurrency = user.getBaseCurrency().toUpperCase();
         String contactUUID = userContextService.getCurrentUserUuid();
-        String otherCurrencies = request.getOtherCurrencies().toUpperCase();
 
         if (otherCurrencies.isBlank()) {
             currencyPair = currencyPairBuilder(baseCurrency, SUPPORTED_CURRENCIES);
