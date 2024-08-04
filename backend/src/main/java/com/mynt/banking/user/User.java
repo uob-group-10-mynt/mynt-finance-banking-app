@@ -43,4 +43,8 @@ public class User {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "base_currency", nullable = false, length = 100)
+    @Builder.Default
+    private String baseCurrency = "KES";
 }
