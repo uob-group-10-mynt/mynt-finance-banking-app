@@ -14,7 +14,7 @@ public class MyntBalanceController {
 
     // find a single balance by currency code:
     @GetMapping("/find/{currency_code}")
-    public List<FindBalanceResponse> findBalance(@PathVariable("currency_code") String currency) {
+    public FindBalanceResponse findBalance(@PathVariable("currency_code") String currency) {
         return balanceService.findBalance(currency);
     }
 

@@ -1,5 +1,6 @@
 package com.mynt.banking.client.manage.transactions;
 
+import lombok.Builder;
 import lombok.Data;
 import java.util.List;
 
@@ -10,6 +11,7 @@ public class TransactionResponse {
 
     // Static inner class for TransactionDTO
     @Data
+    @Builder
     public static class Transaction {
         private String id;
         private String accountId;
@@ -28,6 +30,7 @@ public class TransactionResponse {
 
     // Static inner class for PaginationDTO
     @Data
+    @Builder
     public static class PaginationDTO {
         private int totalEntries;
         private int totalPages;

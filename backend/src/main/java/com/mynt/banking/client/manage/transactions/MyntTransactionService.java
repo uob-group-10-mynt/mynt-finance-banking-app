@@ -4,9 +4,11 @@ package com.mynt.banking.client.manage.transactions;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.manage.transactions.TransactionService;
 import com.mynt.banking.user.UserContextService;
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +28,11 @@ public class MyntTransactionService {
 
         // Form TransactionResponse:
         JsonNode responseBody = currencyCloudTransactionResponse.getBody();
-
-
         List<TransactionResponse.Transaction> transactions = new ArrayList<>();
-        TransactionResponse.PaginationDTO pagination = new TransactionResponse.PaginationDTO();
         if (responseBody == null) {
             TransactionResponse transactionResponse = new TransactionResponse();
             transactionResponse.setTransactions(transactions);
-            transactionResponse.setPagination(pagination);
+            transactionResponse.setPagination(TransactionResponse.PaginationDTO.builder().build());
             return transactionResponse;
         }
 
@@ -41,35 +40,42 @@ public class MyntTransactionService {
         JsonNode transactionsNode = responseBody.get("transactions");
         if (transactionsNode != null && transactionsNode.isArray()) {
             for (JsonNode transactionNode : transactionsNode) {
-                TransactionResponse.Transaction transaction = new TransactionResponse.Transaction();
-                transaction.setId(transactionNode.get("id").asText());
-                transaction.setAccountId(transactionNode.get("account_id").asText());
-                transaction.setCurrency(transactionNode.get("currency").asText());
-                transaction.setAmount(transactionNode.get("amount").asText());
-                transaction.setBalanceAmount(transactionNode.get("balance_amount").asText());
-                transaction.setType(transactionNode.get("type").asText());
-                transaction.setRelatedEntityType(transactionNode.get("related_entity_type").asText());
-                transaction.setRelatedEntityId(transactionNode.get("related_entity_id").asText());
-                transaction.setRelatedEntityShortReference(transactionNode.get("related_entity_short_reference").asText());
-                transaction.setStatus(transactionNode.get("status").asText());
-                transaction.setReason(transactionNode.has("reason") ? transactionNode.get("reason").asText() : null);
-                transaction.setCreatedAt(transactionNode.get("created_at").asText());
-                transaction.setAction(transactionNode.get("action").asText());
+                TransactionResponse.Transaction transaction =
+                    TransactionResponse.Transaction.builder()
+                        .id(transactionNode.get("id").asText())
+                        .accountId(transactionNode.get("account_id").asText())
+                        .currency(transactionNode.get("currency").asText())
+                        .amount(transactionNode.get("amount").asText())
+                        .balanceAmount(transactionNode.get("balance_amount").asText())
+                        .type(transactionNode.get("type").asText())
+                        .relatedEntityType(transactionNode.get("related_entity_type").asText())
+                        .relatedEntityId(transactionNode.get("related_entity_id").asText())
+                        .relatedEntityShortReference(transactionNode.get("related_entity_short_reference").asText())
+                        .status(transactionNode.get("status").asText())
+                        .reason(transactionNode.has("reason") ? transactionNode.get("reason").asText() : null)
+                        .createdAt(transactionNode.get("created_at").asText())
+                        .action(transactionNode.get("action").asText())
+                        .build();
                 transactions.add(transaction);
             }
         }
 
         // Parse pagination
         JsonNode paginationNode = responseBody.get("pagination");
+        TransactionResponse.PaginationDTO pagination;
         if (paginationNode != null) {
-            pagination.setTotalEntries(paginationNode.get("total_entries").asInt());
-            pagination.setTotalPages(paginationNode.get("total_pages").asInt());
-            pagination.setCurrentPage(paginationNode.get("current_page").asInt());
-            pagination.setPerPage(paginationNode.get("per_page").asInt());
-            pagination.setPreviousPage(paginationNode.get("previous_page").asInt());
-            pagination.setNextPage(paginationNode.get("next_page").asInt());
-            pagination.setOrder(paginationNode.get("order").asText());
-            pagination.setOrderAscDesc(paginationNode.get("order_asc_desc").asText());
+            pagination = TransactionResponse.PaginationDTO.builder()
+                    .totalEntries(paginationNode.get("total_entries").asInt())
+                    .totalPages(paginationNode.get("total_pages").asInt())
+                    .currentPage(paginationNode.get("current_page").asInt())
+                    .perPage(paginationNode.get("per_page").asInt())
+                    .previousPage(paginationNode.get("previous_page").asInt())
+                    .nextPage(paginationNode.get("next_page").asInt())
+                    .order(paginationNode.get("order").asText())
+                    .orderAscDesc(paginationNode.get("order_asc_desc").asText())
+                    .build();
+        } else {
+            pagination = TransactionResponse.PaginationDTO.builder().build();
         }
 
         // Form TransactionResponse
@@ -78,5 +84,38 @@ public class MyntTransactionService {
         transactionResponseDTO.setPagination(pagination);
 
         return transactionResponseDTO;
+    }
+
+    public TransactionResponse.Transaction getTransaction(String transactionId) {
+        // Fetch Transactions
+        ResponseEntity<JsonNode> currencyCloudTransactionResponse = transactionService.get(
+                transactionId,
+                userContextService.getCurrentUserUuid());
+
+        // Form TransactionResponse:
+        JsonNode responseBody = currencyCloudTransactionResponse.getBody();
+
+        // if body is empty --> return empty transaction:
+        if (responseBody == null || responseBody.isEmpty()) { return TransactionResponse.Transaction.builder().build(); }
+
+        // Extract transaction node
+        JsonNode transactionNode = responseBody.get("transaction");
+
+        // Build the transaction using the Builder pattern
+        return TransactionResponse.Transaction.builder()
+                .id(transactionNode.get("id").asText())
+                .accountId(transactionNode.get("account_id").asText())
+                .currency(transactionNode.get("currency").asText())
+                .amount(transactionNode.get("amount").asText())
+                .balanceAmount(transactionNode.get("balance_amount").asText())
+                .type(transactionNode.get("type").asText())
+                .relatedEntityType(transactionNode.get("related_entity_type").asText())
+                .relatedEntityId(transactionNode.get("related_entity_id").asText())
+                .relatedEntityShortReference(transactionNode.get("related_entity_short_reference").asText())
+                .status(transactionNode.get("status").asText())
+                .reason(transactionNode.has("reason") ? transactionNode.get("reason").asText() : null)
+                .createdAt(transactionNode.get("created_at").asText())
+                .action(transactionNode.get("action").asText())
+                .build();
     }
 }

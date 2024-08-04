@@ -2,6 +2,7 @@ package com.mynt.banking.util.exceptions;
 
 import com.mynt.banking.util.exceptions.authentication.KycException;
 import com.mynt.banking.util.exceptions.authentication.TokenException;
+import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
 import com.mynt.banking.util.exceptions.registration.RegistrationException;
 import com.mynt.banking.util.exceptions.registration.UserAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
@@ -76,6 +77,13 @@ public class GlobalExceptionHandler {
         return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", request);
     }
 
+
+    // Currency Cloud Exceptions
+    @ExceptionHandler(CurrencyCloudException.class)
+    public ResponseEntity<String> handleCloudCurrencyException(CurrencyCloudException ex) {
+        return ResponseEntity.status(ex.getStatus())
+                .body(ex.getMessage());
+    }
 
     /// Response
     @NotNull

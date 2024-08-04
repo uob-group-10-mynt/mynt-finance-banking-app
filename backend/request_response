@@ -1,0 +1,319 @@
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// Find Balances:
+
+// get-request returns list<balance>: api/v1/balance/find/ 
+// get-request returns list<balance>: api/v1/balance?currency_code=value   *note list will be length == 1:
+const findBalancesResponse = [
+    {
+        'bank': 'mynt',
+        'label': 'USD Current Account',
+        "account_number_type": "iban",
+        "account_number": "GB88TCCL12345674642170",
+        "routing_code": "TCCLGB3L",
+        "routing_code_type": "bic_swift",
+        'balance': '1010234.0',
+        'currency': 'USD',
+    },
+    {
+        'bank': 'mynt',
+        'label': 'KES Current Account',
+        "account_number_type": "iban",
+        "account_number": "GB88TCCL12345674642170",
+        "routing_code": "TCCLGB3L",
+        "routing_code_type": "bic_swift",
+        'balance': '1000',
+        'currency': 'USD',
+    },
+];
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Find Account Deatils 
+const findAccountDetailsRequest = {
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Find transactions:
+const findTransactionsRequest = [
+    {
+        "currency": "KES",
+        "related_entity_type": "payment",
+        "per_page" 1,
+        "page", 1
+    }
+]
+
+Enum - The related entity that created the transaction:
+conversion
+payment
+inbound_funds
+deposit
+transfer
+
+* All optional paramas. If none provided them returns all transacations for that subaccount:
+
+const findTransactinosResponse = [
+    {
+        "transactions": [
+            {
+            "id": "889330a4-5c21-487c-a24d-7026d31d9b49",
+            "account_id": "d0528032-d1f4-4cab-97b6-65133a811abe",
+            "currency": "KES",
+            "amount": "1000.00",
+            "balance_amount": "14000.00",
+            "type": "debit",
+            "related_entity_type": "payment",
+            "related_entity_id": "81d2047f-466d-4eba-a509-5333517cf83d",
+            "related_entity_short_reference": "240706-LXCQ3L584",
+            "status": "completed",
+            "reason": "",
+            "created_at": "2024-07-06T11:58:50+00:00",
+            "action": "payment"
+            }
+        ],
+        "pagination": {
+            "total_entries": 3,
+            "total_pages": 3,
+            "current_page": 2,
+            "per_page": 1,
+            "previous_page": 1,
+            "next_page": 3,
+            "order": "default",
+            "order_asc_desc": "asc"
+        }
+    }
+]
+
+GUI DISPLAY LIST OF TRANSACTIONS:
+
+Reference           Created Completed           Type        Status          Amount          Balance
+IF-20240803-FAOXV9	03 Aug 2024	03 Aug 2024	    Funding	    Completed	    + 30,000.00	    30,000.00
+IF-20240803-FAOXV9	03 Aug 2024	03 Aug 2024	    Funding	    Completed	    + 30,000.00	    30,000.00
+IF-20240803-FAOXV9	03 Aug 2024	03 Aug 2024	    Funding	    Completed	    + 30,000.00	    30,000.00
+IF-20240803-FAOXV9	03 Aug 2024	03 Aug 2024	    Funding	    Completed	    + 30,000.00	    30,000.00
+IF-20240803-FAOXV9	03 Aug 2024	03 Aug 2024	    Funding	    Completed	    + 30,000.00	    30,000.00
+IF-20240803-FAOXV9	03 Aug 2024	03 Aug 2024	    Funding	    Completed	    + 30,000.00	    30,000.00
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Transaction Details:
+
+EntityType = Payment:
+
+
+
+Request:
+
+{
+    "transaction_id"
+}
+
+
+Response:
+
+1. use account_id to fetch payer account details 
+        [
+            "account_name": "My Example Account",
+            "brand": "currencycloud",
+            "country": "GB"
+        ]
+2. use related_entity_id --> get_payment_details:
+    
+        3. use payer_id --> get payer_details 
+        [
+            "id": "79a8e858-4610-4ac7-a8a6-4bb4aa6a7b66",
+                "legal_entity_type": "individual",
+                "company_name": "Currency Cloud Dev Centre", // or null if individual
+                "country": "GB",
+                "first_name": null,
+                "last_name": null,
+        ]
+        
+        
+        4. use beneficiary_id --> get beneficiary_details
+        [
+            "id": "7fb35c55-976d-4e77-8f9d-7a152c314222",
+            "bank_account_holder_name": "My Test Account Holder",
+            "name": "My Test Beneficiary 5bf2a41946ff5",
+            "bic_swift": null,
+            "iban": null,
+        ]
+
+Final Response Body:
+
+{
+            "id": "889330a4-5c21-487c-a24d-7026d31d9b49",
+            "currency": "KES",
+            "amount": "1000.00",
+            "balance_amount": "14000.00",
+            "type": "debit",
+            "related_entity_type": "payment",
+            "related_entity_short_reference": "240706-LXCQ3L584",
+            "status": "completed",
+            "reason": "",
+            "created_at": "2024-07-06T11:58:50+00:00",
+            "action": "payment",
+            "payer_details": [
+                "id": "79a8e858-4610-4ac7-a8a6-4bb4aa6a7b66",
+                "legal_entity_type": "individual",
+                "company_name": "Currency Cloud Dev Centre", // or null if individual
+                "country": "GB",
+                "first_name": null,
+                "last_name": null,
+                "account_name": "My Example Account",
+                "brand": "currencycloud",
+                "country": "GB"
+            ]
+            "beneficiary_details":
+            [
+                "id": "7fb35c55-976d-4e77-8f9d-7a152c314222",
+                "bank_account_holder_name": "My Test Account Holder",
+                "name": "My Test Beneficiary 5bf2a41946ff5",
+                "bic_swift": null,
+                "iban": null,
+            ]
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Transaction Details:
+
+EntityType = Conversion:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+return webClient.get()
+                .uri(uri)
+                .header("X-Auth-Token", authenticationService.getAuthToken())
+                .retrieve()
+                .toEntity(JsonNode.class)
+                .onErrorResume(WebClientResponseException.class, e -> {
+                    if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                        // Handle 400 Bad Request responses
+                        return Mono.just(ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAs(JsonNode.class)));
+                    } else {
+                        // Rethrow other exceptions to be handled by global exception handler
+                        return Mono.error(new CurrencyCloudException("Currency Cloud Error: " + e.getStatusCode() + " - " + e.getResponseBodyAsString(), e.getStatusCode()));
+                    }
+                });
+
+
+
+
+specific detail on transaction using related_entity_id
+
+
+
+
+
+
+list of beneficiaries 
+specific detail on beneficiary 
+create_beneficiary
+
+
+
+
+
+
+
+
+
+{
+  "id": "6dc7be02-c063-44b9-8cdc-e08f0215325c",
+  "bank_account_holder_name": "Alexander Fisher",
+  "name": "Alex M Fisher",
+  "email": null,
+  "payment_types": [
+    "regular"
+  ],
+  "beneficiary_address": [
+    "GBP"
+  ],
+  "beneficiary_country": "GB",
+  "beneficiary_entity_type": "individual",
+  "beneficiary_company_name": null,
+  "beneficiary_first_name": "Alexander",
+  "beneficiary_last_name": "Fisher",
+  "beneficiary_city": null,
+  "beneficiary_postcode": null,
+  "beneficiary_state_or_province": null,
+  "beneficiary_date_of_birth": null,
+  "beneficiary_identification_type": null,
+  "beneficiary_identification_value": null,
+  "bank_country": "GB",
+  "bank_name": "The Currency Cloud Limited",
+  "bank_account_type": null,
+  "currency": "GBP",
+  "account_number": "94026241",
+  "routing_code_type_1": "sort_code",
+  "routing_code_value_1": "123456",
+  "routing_code_type_2": null,
+  "routing_code_value_2": null,
+  "bic_swift": "TCCLGB3L",
+  "iban": "GB73TCCL12345694026241",
+  "default_beneficiary": "false",
+  "creator_contact_id": "b7e3d86b-be14-4417-816f-9161accb1ec4",
+  "bank_address": [
+    "12 Steward Street, The Steward Building, London, E1 6FQ, GB"
+  ],
+  "business_nature": null,
+  "company_website": null,
+  "created_at": "2024-08-04T11:15:25+00:00",
+  "updated_at": "2024-08-04T11:15:25+00:00",
+  "beneficiary_external_reference": null
+}
+
+
+
+
+
+
+

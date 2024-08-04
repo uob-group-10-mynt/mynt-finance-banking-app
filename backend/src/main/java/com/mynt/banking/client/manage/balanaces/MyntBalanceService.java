@@ -24,7 +24,7 @@ public class MyntBalanceService {
     private final BalanceService balanceService;
     private final FundingService fundingService;
 
-    public List<FindBalanceResponse> findBalance(String currencyCode) {
+    public FindBalanceResponse findBalance(String currencyCode) {
         // Fetch balance:
         ResponseEntity<JsonNode> balanceResponse = balanceService.find(currencyCode,
                 userContextService.getCurrentUserUuid());
@@ -51,7 +51,8 @@ public class MyntBalanceService {
         String bankName = accountDetailsBody.get("bank_name").asText();
 
         // Generate Balance Response:
-        FindBalanceResponse findBalanceResponse = FindBalanceResponse.builder()
+
+        return FindBalanceResponse.builder()
                 .bank(bankName)
                 .label(currencyCode + " Currency Account")
                 .accountNumberType(accountNumberType)
@@ -61,8 +62,6 @@ public class MyntBalanceService {
                 .currency(currencyCode)
                 .balance(amount)
                 .build();
-
-        return Collections.singletonList(findBalanceResponse);
     }
 
 
