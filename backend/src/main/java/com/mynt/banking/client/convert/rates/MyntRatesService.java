@@ -63,14 +63,14 @@ public class MyntRatesService {
 
 
     public ResponseEntity<JsonNode> getBasicRates (
-            @NotNull String otherCurrencies
+            String otherCurrencies
     ) throws NoSuchElementException {
         String currencyPair;
         User user = userRepository.findByEmail(userContextService.getCurrentUsername()).orElseThrow();
         String baseCurrency = user.getBaseCurrency().toUpperCase();
         String contactUUID = userContextService.getCurrentUserUuid();
 
-        if (otherCurrencies.isBlank()) {
+        if (otherCurrencies == null || otherCurrencies.isBlank()) {
             currencyPair = currencyPairBuilder(baseCurrency, SUPPORTED_CURRENCIES);
         }
         else {
