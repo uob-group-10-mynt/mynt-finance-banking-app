@@ -21,9 +21,8 @@ const accountFields = [
         value: ""
     },
     {
-        label: "Date of birth",
+        label: "Date of birth (read-only)",
         id: "dob",
-        required: true,
         readonly: true,
         value: "",
         type: "date"
@@ -57,6 +56,7 @@ export default function UserDetails() {
         e.preventDefault();
         
         setDetails(details.forEach((field) => {
+            if (field.id !== 'dob')
             field.readonly = false;
         }))
         setEditButtonDisplayed("none")
