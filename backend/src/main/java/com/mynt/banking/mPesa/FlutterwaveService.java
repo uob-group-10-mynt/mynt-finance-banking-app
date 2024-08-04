@@ -376,7 +376,7 @@ public class FlutterwaveService {
                 .uniqueRequestId(ref)
                 .build();
 
-        ResponseEntity<JsonNode> response = paymentService.createPayment(dto).block();
+        ResponseEntity<JsonNode> response = paymentService.create(dto).block();
 
         if(!response.getStatusCode().is2xxSuccessful()) {
             ObjectMapper mapper = new ObjectMapper();

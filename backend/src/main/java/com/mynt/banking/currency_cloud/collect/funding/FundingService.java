@@ -13,6 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ public class FundingService {
                 .queryParam("currency", accountDetailsRequest.getCurrency())
                 .queryParam("account_id", accountDetailsRequest.getAccountId())
                 .queryParam("on_behalf_of", accountDetailsRequest.getOnBehalfOf())
+                .queryParamIfPresent("payment_type", Optional.ofNullable(accountDetailsRequest.getPaymentType()))
                 .toUriString();
 
         // Execute the GET request and retrieve the response

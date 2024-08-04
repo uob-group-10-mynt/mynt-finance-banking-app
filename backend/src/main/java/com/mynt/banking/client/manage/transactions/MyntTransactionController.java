@@ -1,12 +1,10 @@
 package com.mynt.banking.client.manage.transactions;
 
 import jakarta.validation.Valid;
+import jakarta.ws.rs.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/transaction")
@@ -16,8 +14,7 @@ public class MyntTransactionController {
 
     private final MyntTransactionService transactionService;
 
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/find")
+    @GetMapping
     public TransactionDetailResponse findTransactions(
             @Valid
             @RequestParam(required = false) String currency,
@@ -27,21 +24,10 @@ public class MyntTransactionController {
         return transactionService.findTransaction(currency, relatedEntityType, perPage, page);
     }
 
-//    public TransactionDetailResponse.Transaction getTransaction(@RequestParam String transaction_id) {
-//        return transactionService.getTransaction(transaction_id);
-//    }
-
-    // TODO: Add functionality to return more specific details about the transactions
-    //  payments, conversions transfers
-
-    public PaymentDetailResponse getPaymentDetail(@RequestParam String transaction_id) {
-
+    @GetMapping("/payment/{transaction_id}")
+    public PaymentDetailResponse getPaymentDetail(@PathVariable String transaction_id) {
         return transactionService.getPaymentDetail(transaction_id);
     }
-
-
-
-
 }
 
 

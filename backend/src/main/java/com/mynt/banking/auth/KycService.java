@@ -350,7 +350,7 @@ public class KycService {
                 .city(user.getAddress())
                 .country("gb")
                 .build();
-        return accountService.createAccount(createAccountRequest).block();
+        return accountService.create(createAccountRequest).block();
     }
 
     private ResponseEntity<JsonNode> createContact(String email, ResponseEntity<JsonNode> account){

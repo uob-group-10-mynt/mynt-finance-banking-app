@@ -84,6 +84,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/currency-cloud/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/demo-controller/**").hasRole("USER")
                         .requestMatchers("/api/v1/flutterwave/**").hasRole("USER")
+                        .requestMatchers("/api/v1/transaction/**").hasRole("USER")
                         .anyRequest()
                         .authenticated()
                 )

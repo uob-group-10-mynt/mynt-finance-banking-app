@@ -13,14 +13,12 @@ public class MyntBalanceController {
     private final MyntBalanceService balanceService;
 
     // find a single balance by currency code:
-    @GetMapping("/find/{currency_code}")
+    @GetMapping("/{currency_code}")
     public FindBalanceResponse findBalance(@PathVariable("currency_code") String currency) {
         return balanceService.findBalance(currency);
     }
 
     // find all balances associated with sub-account:
-    @GetMapping("/find")
-    public List<FindBalanceResponse> findBalances() {
-        return balanceService.findBalances();
-    }
+    @GetMapping
+    public List<FindBalanceResponse> findBalances() { return balanceService.findBalances(); }
 }

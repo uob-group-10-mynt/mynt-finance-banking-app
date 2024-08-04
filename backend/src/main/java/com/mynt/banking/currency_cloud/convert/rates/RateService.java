@@ -35,9 +35,7 @@ public class RateService {
                 });
     }
 
-    public Mono<ResponseEntity<JsonNode>> getBasicRates(
-            GetBasicRatesRequest request
-    ) {
+    public Mono<ResponseEntity<JsonNode>> getBasicRates(GetBasicRatesRequest request) {
         String uri = UriBuilderUtil.buildUriWithQueryParams("/v2/rates/find", request);
         return webClient
                 .get()

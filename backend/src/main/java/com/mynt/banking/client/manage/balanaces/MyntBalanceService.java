@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
 @Component
 @RequiredArgsConstructor
 public class MyntBalanceService {
@@ -69,8 +68,8 @@ public class MyntBalanceService {
         ResponseEntity<JsonNode> balancesResponse = balanceService.find(
                 userContextService.getCurrentUserUuid());
 
+
         // Check if the "balances" array exists and has at least one entry and extract account_id:
-        String accountID;
         JsonNode balancesArray = Objects.requireNonNull(balancesResponse.getBody()).path("balances");
 
         List<FindBalanceResponse> balancesResponseList = new ArrayList<>();
