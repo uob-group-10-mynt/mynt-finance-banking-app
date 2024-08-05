@@ -23,6 +23,12 @@ public class MyntCreatePaymentRequest {
     @Schema(description = "The amount to be paid", example = "0.00")
     private String amount;
 
+    @NotBlank
+    @JsonProperty("from_currency")
+    @Pattern(regexp = "^[A-z]{3}$", message = "Incorrect format for currency")
+    @Schema(description = "The currency used for issuing the payment.", example = "KES")
+    private String fromCurrency;
+
     @Size(max = 100, message = "Exceeded size for reason")
     @Schema(description = "Optional input from user specifying reason.", example = "No reason")
     private String reason;

@@ -1,9 +1,9 @@
 package com.mynt.banking.client.pay.payments;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mynt.banking.client.pay.payments.requests.MyntCreatePaymentRequest;
+import com.mynt.banking.currency_cloud.convert.conversions.ConversionService;
+import com.mynt.banking.currency_cloud.convert.conversions.requests.CreateConversionRequest;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
 import com.mynt.banking.currency_cloud.pay.payments.PaymentService;
 import com.mynt.banking.currency_cloud.pay.payments.requests.CreatePaymentRequest;
@@ -20,10 +20,12 @@ public class MyntPaymentsService {
     private final UserContextService userContextService;
     private final PaymentService paymentService;
     private final BeneficiaryService beneficiaryService;
+    private final ConversionService conversionService;
 
     public ResponseEntity<JsonNode> createPayment(MyntCreatePaymentRequest request) {
         String beneficiaryId = request.getBeneficiaryId();
         String amount = request.getAmount();
+        String fromCurrency = request.getFromCurrency().toUpperCase();
         String reason = request.getReason();
         String reference = request.getReference();
         String contactUuid = userContextService.getCurrentUserUuid();
@@ -34,7 +36,12 @@ public class MyntPaymentsService {
         if (!ccGetBeneficiaryResponse.getStatusCode().is2xxSuccessful()) return ccGetBeneficiaryResponse;
         JsonNode ccGetBeneficiaryResponseNode = ccGetBeneficiaryResponse.getBody();
         assert ccGetBeneficiaryResponseNode != null;
-        String currency = ccGetBeneficiaryResponseNode.get("currency").asText();
+        String toCurrency = ccGetBeneficiaryResponseNode.get("currency").asText().toUpperCase();
+
+        if (!fromCurrency.equals(toCurrency)) {
+            ResponseEntity<JsonNode> convertResponse = convertBeforePayment(fromCurrency,toCurrency,amount);
+            if (!convertResponse.getStatusCode().is2xxSuccessful()) return convertResponse;
+        }
 
         CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
                 .onBehalfOf(contactUuid)
@@ -42,7 +49,7 @@ public class MyntPaymentsService {
                 .amount(amount)
                 .reason(reason)
                 .reference(reference)
-                .currency(currency)
+                .currency(toCurrency)
                 .uniqueRequestId(uniqueRequestId)
                 .build();
 
@@ -51,5 +58,19 @@ public class MyntPaymentsService {
         if(!ccCreatePaymentResponse.getStatusCode().is2xxSuccessful()) return ccCreatePaymentResponse;
 
         return ResponseEntity.ok().build();
+    }
+
+    private ResponseEntity<JsonNode> convertBeforePayment(String fromCurrency, String toCurrency, String amount) {
+        String contactUuid = userContextService.getCurrentUserUuid();
+        CreateConversionRequest createConversionRequest = CreateConversionRequest.builder()
+                .onBehalfOf(contactUuid)
+                .sellCurrency(fromCurrency)
+                .buyCurrency(toCurrency)
+                .fixedSide("buy")
+                .amount(amount)
+                .termAgreement(true)
+                .build();
+
+        return conversionService.createConversion(createConversionRequest).block();
     }
 }
