@@ -27,28 +27,32 @@ const accountFields = [
         id: "firstname",
         required: true,
         readonly: true,
-        value: ""
+        value: "",
+        border: "none"
     },
     {
         label: "Last name",
         id: "lastname",
         required: true,
         readonly: true,
-        value: ""
+        value: "",
+        border: "none"
     },
     {
         label: "Address",
         id: "address",
         required: true,
         readonly: true,
-        value: ""
+        value: "",
+        border: "none"
     },
     {
         label: "Phone number",
         id: "phoneNumber",
         required: true,
         readonly: true,
-        value: ""
+        value: "",
+        border: "none"
     },
 ];
 
@@ -62,10 +66,12 @@ export default function UserDetails() {
     function editForm(e) {
         e.preventDefault();
         
-        setDetails(details.forEach((field) => {
-            if (field.id === 'dob' || field.id === 'email') {
-                field.readonly = true;
-            } else field.readonly = false;
+        setDetails(details.map((field) => {
+            if (field.id !== 'dob' && field.id !== 'email') {
+                field.readonly = false;
+                field.border = null
+            }
+            return field
         }))
         setEditButtonDisplayed("none")
         setSaveButtonDisplayed(" ")
@@ -112,7 +118,12 @@ export default function UserDetails() {
                 },
                 body: JSON.stringify(formValuesJSON)
             });
-            getAndSetDetails()
+            //getAndSetDetails()
+            setDetails(details.map((field) => {
+                field.readonly = true;
+                field.border = "none"
+                return field
+            }))
             if (!response.ok) {
                 throw new Error('Authentication failed');
             }
