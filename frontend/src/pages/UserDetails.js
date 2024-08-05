@@ -56,18 +56,19 @@ const accountFields = [
 
 export default function UserDetails() {
     const [details, setDetails] = useState(accountFields)
-    const [editButtonDisplayed, setEditButtonDisplayed] = useState()
-    const [saveButtonDisplayed, setSaveButtonDisplayed] = useState()
+    const [editButtonDisplayed, setEditButtonDisplayed] = useState(" ")
+    const [saveButtonDisplayed, setSaveButtonDisplayed] = useState("none")
     
     
     //edit form changes state, readonly becomes false
     function editForm(e) {
         e.preventDefault();
         
-        setDetails(details.forEach((field) => {
-            if (field.id === 'dob' || field.id === 'email') {
-                field.readonly = true;
-            } else field.readonly = false;
+        setDetails(details.map((field) => {
+            if (field.id !== 'dob' && field.id !== 'email') {
+                field.readonly = false;
+            }
+            return field
         }))
         setEditButtonDisplayed("none")
         setSaveButtonDisplayed(" ")
@@ -86,23 +87,19 @@ export default function UserDetails() {
                 throw new Error('respose not ok');
             }
             const data = await response.json()
-            accountFields.forEach(field => {
-                    field.value = data[field.id]
-                    field.readonly = true
-            });
-            setDetails(accountFields)
+            setDetails(accountFields.map(field => {
+                field.value = data[field.id]
+                return field
+            }))
         } catch (error) {
             console.error(error);
         }
     }
 
-    useEffect(() => {
-        getAndSetDetails()
-        .then(() => {
-            setEditButtonDisplayed(" ")
-            setSaveButtonDisplayed("none")
-        })
-    }, []) // empty array means useEffect() is only called on initial render of component
+     useEffect(() => {
+         getAndSetDetails()
+     }, []) // empty array means useEffect() is only called on initial render of component
+    //getAndSetDetails()
     
 
     const updateDetails = async (formValuesJSON) => {
@@ -115,7 +112,11 @@ export default function UserDetails() {
                 },
                 body: JSON.stringify(formValuesJSON)
             });
-            getAndSetDetails()
+            //getAndSetDetails()
+            setDetails(details.map((field) => {
+                field.readonly = true;
+                return field
+            }))
             if (!response.ok) {
                 throw new Error('Authentication failed');
             }
@@ -129,7 +130,7 @@ export default function UserDetails() {
     return(
         <Page>
             <Heading as='h1' size='xl' mb={4}>Your personal details</Heading>
-            <CustomForm onSubmit={updateDetails} buttonText="Save" buttonDisplayed={saveButtonDisplayed} buttonId="saveDetailsButton" parentState={accountFields} setParentState={setDetails}>
+            <CustomForm onSubmit={updateDetails} buttonText="Save" buttonDisplayed={saveButtonDisplayed} buttonId="saveDetailsButton" parentState={details} setParentState={setDetails}>
             </CustomForm>
             <CustomButton data-cy="EditButton" display={editButtonDisplayed} onClick={(e) => {editForm(e)}}>
                 Edit
