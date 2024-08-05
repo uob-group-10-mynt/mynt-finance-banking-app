@@ -3,7 +3,7 @@ import CustomForm from "../components/forms/CustomForm";
 import { getUserDetailsAPI, updateUserDetailsAPI } from "../utils/APIEndpoints";
 import Page from "../components/Page";
 import CustomButton from "../components/forms/CustomButton";
-import { border, Heading } from "@chakra-ui/react";
+import PageHeader from "../components/forms/PageHeader";
 
 const accountFields = [
     {
@@ -52,27 +52,23 @@ const accountFields = [
     },
 ];
 
-
-
 export default function UserDetails() {
     const [details, setDetails] = useState(accountFields)
-    const [editButtonDisplayed, setEditButtonDisplayed] = useState()
-    const [saveButtonDisplayed, setSaveButtonDisplayed] = useState()
-    
-    
+    const [editButtonDisplayed, setEditButtonDisplayed] = useState("")
+    const [saveButtonDisplayed, setSaveButtonDisplayed] = useState("")
+
+
     //edit form changes state, readonly becomes false
     function editForm(e) {
         e.preventDefault();
-        
-        setDetails(details.forEach((field) => {
-            if (field.id === 'dob' || field.id === 'email') {
-                field.readonly = true;
-            } else field.readonly = false;
-        }))
+
+        setDetails(details.map((field) => {
+            field.readonly = field.id === 'dob' || field.id === 'email';
+            return field;
+        }));
         setEditButtonDisplayed("none")
         setSaveButtonDisplayed(" ")
     }
-
 
     const getAndSetDetails = async () => {
         try {
@@ -83,12 +79,12 @@ export default function UserDetails() {
                 }
             });
             if (!response.ok) {
-                throw new Error('respose not ok');
+                throw new Error('Response NOT OK');
             }
             const data = await response.json()
             accountFields.forEach(field => {
-                    field.value = data[field.id]
-                    field.readonly = true
+                field.value = data[field.id]
+                field.readonly = true
             });
             setDetails(accountFields)
         } catch (error) {
@@ -98,12 +94,12 @@ export default function UserDetails() {
 
     useEffect(() => {
         getAndSetDetails()
-        .then(() => {
-            setEditButtonDisplayed(" ")
-            setSaveButtonDisplayed("none")
-        })
+            .then(() => {
+                setEditButtonDisplayed(" ")
+                setSaveButtonDisplayed("none")
+            })
     }, []) // empty array means useEffect() is only called on initial render of component
-    
+
 
     const updateDetails = async (formValuesJSON) => {
         try {
@@ -115,7 +111,7 @@ export default function UserDetails() {
                 },
                 body: JSON.stringify(formValuesJSON)
             });
-            getAndSetDetails()
+            await getAndSetDetails()
             if (!response.ok) {
                 throw new Error('Authentication failed');
             }
@@ -126,12 +122,15 @@ export default function UserDetails() {
         }
     }
 
-    return(
+    return (
         <Page>
-            <Heading as='h1' size='xl' mb={4}>Your personal details</Heading>
-            <CustomForm onSubmit={updateDetails} buttonText="Save" buttonDisplayed={saveButtonDisplayed} buttonId="saveDetailsButton" parentState={accountFields} setParentState={setDetails}>
+            <PageHeader size='lg'>Your personal details</PageHeader>
+            <CustomForm onSubmit={updateDetails} buttonText="Save" buttonDisplayed={saveButtonDisplayed}
+                        buttonId="saveDetailsButton" parentState={accountFields} setParentState={setDetails}>
             </CustomForm>
-            <CustomButton data-cy="EditButton" display={editButtonDisplayed} onClick={(e) => {editForm(e)}}>
+            <CustomButton standard width='100%' data-cy="editButton" display={editButtonDisplayed} onClick={(e) => {
+                editForm(e)
+            }}>
                 Edit
             </CustomButton>
         </Page>
