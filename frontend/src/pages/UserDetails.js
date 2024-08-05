@@ -27,28 +27,32 @@ const accountFields = [
         id: "firstname",
         required: true,
         readonly: true,
-        value: ""
+        value: "",
+        border: "none"
     },
     {
         label: "Last name",
         id: "lastname",
         required: true,
         readonly: true,
-        value: ""
+        value: "",
+        border: "none"
     },
     {
         label: "Address",
         id: "address",
         required: true,
         readonly: true,
-        value: ""
+        value: "",
+        border: "none"
     },
     {
         label: "Phone number",
         id: "phoneNumber",
         required: true,
         readonly: true,
-        value: ""
+        value: "",
+        border: "none"
     },
 ];
 
@@ -67,6 +71,7 @@ export default function UserDetails() {
         setDetails(details.map((field) => {
             if (field.id !== 'dob' && field.id !== 'email') {
                 field.readonly = false;
+                field.border = null
             }
             return field
         }))
@@ -115,6 +120,7 @@ export default function UserDetails() {
             //getAndSetDetails()
             setDetails(details.map((field) => {
                 field.readonly = true;
+                field.border = "none"
                 return field
             }))
             if (!response.ok) {
