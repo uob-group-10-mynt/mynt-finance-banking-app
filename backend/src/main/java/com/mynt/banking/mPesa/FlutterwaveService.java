@@ -5,16 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.TimeBasedGenerator;
-import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
-import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
 import com.mynt.banking.currency_cloud.collect.demo.DemoService;
 import com.mynt.banking.currency_cloud.collect.demo.requests.DemoFundingDto;
+import com.mynt.banking.currency_cloud.collect.funding.FindAccountDetailsRequest;
 import com.mynt.banking.currency_cloud.collect.funding.FundingService;
-import com.mynt.banking.currency_cloud.collect.funding.requests.FindAccountDetails;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.FindBeneficiaryRequest;
 import com.mynt.banking.currency_cloud.pay.payments.PaymentService;
 import com.mynt.banking.currency_cloud.pay.payments.requests.CreatePaymentRequest;
+import com.mynt.banking.currency_cloud.repo.CurrencyCloudEntity;
+import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
 import com.mynt.banking.mPesa.requests.*;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
@@ -64,7 +64,7 @@ public class FlutterwaveService {
                 .header("Authorization", secretKey)
                 .bodyValue(jsonNode)
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(request -> { return Mono.just(request); });
+                .flatMap(Mono::just);
     }
 
     public Mono<ResponseEntity<JsonNode>> wallet2Wallet(Wallet2WalletDto dto) {
@@ -87,7 +87,7 @@ public class FlutterwaveService {
                 .header("Authorization", secretKey)
                 .bodyValue(jsonNode)
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(request -> { return Mono.just(request); });
+                .flatMap(Mono::just);
     }
 
     public Mono<ResponseEntity<JsonNode>> sendMPesa(SendMpesaDto dto) {
@@ -117,7 +117,7 @@ public class FlutterwaveService {
                 .header("Authorization", secretKey)
                 .bodyValue(jsonNode)
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(request -> { return Mono.just(request); });
+                .flatMap(Mono::just);
     }
 
     public String genTx_ref(String email){
@@ -130,7 +130,7 @@ public class FlutterwaveService {
                 .replace(".","_");
     }
 
-    public Mono<ResponseEntity<JsonNode>> depoistTransactionCheck(String id) {
+    public Mono<ResponseEntity<JsonNode>> depositTransactionCheck(String id) {
 
         String url = "/v3/transactions/"+id+"/verify";
         return webClient.webClientFW()
@@ -138,7 +138,7 @@ public class FlutterwaveService {
                 .uri(url)
                 .header("Authorization", secretKey)
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(request -> { return Mono.just(request); });
+                .flatMap(Mono::just);
 
     }
 
@@ -150,11 +150,11 @@ public class FlutterwaveService {
                 .uri(url)
                 .header("Authorization", secretKey)
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(request -> { return Mono.just(request); });
+                .flatMap(Mono::just);
 
     }
 
-    // mpesa to CC including CC methrods
+    // mpesa to CC including CC methods
     public ResponseEntity<JsonNode> mpesaToCloudCurrency(MPesaToCurrencyCloudDto dto,
                                                         String email
                                                         ) {
@@ -163,24 +163,24 @@ public class FlutterwaveService {
 
         Optional<User> user = userRepository.findByEmail(email);
 
-        if(!user.isPresent()) {return null;}
+        if(user.isEmpty()) {return null;}
 
-        User userExsists = user.get();
+        User userExists = user.get();
 
         // mPesaToFlutterwave()
-        ResponseEntity<JsonNode> response = mPesaToFlutterwaveCall(dto, email, userExsists);
+        ResponseEntity<JsonNode> response = mPesaToFlutterwaveCall(dto, email, userExists);
         if(!response.getStatusCode().is2xxSuccessful()) { return response; }
 
-        // depoistTransactionCheck()
+        // depositTransactionCheck()
         response = depoistTransactionCheckCall(response.getBody());
         if(!response.getStatusCode().is2xxSuccessful()) { return response; }
 
         // cc get account details end point
-        response = ccFundAccountDetails(userExsists);
+        response = ccFundAccountDetails(userExists);
         if(!response.getStatusCode().is2xxSuccessful()) { return response; }
 
         //cc demo fund account
-        response =  demoFundAccount(userExsists, response.getBody(),dto);
+        response =  demoFundAccount(userExists, response.getBody(),dto);
         if(!response.getStatusCode().is2xxSuccessful()) { return response; }
 
         // create custom response
@@ -214,7 +214,7 @@ public class FlutterwaveService {
 
     private ResponseEntity<JsonNode> depoistTransactionCheckCall(JsonNode response){
 
-        ResponseEntity<JsonNode> response1 =  this.depoistTransactionCheck(response
+        ResponseEntity<JsonNode> response1 =  this.depositTransactionCheck(response
                         .get("data")
                         .get("id")
                         .asText())
@@ -247,7 +247,7 @@ public class FlutterwaveService {
             uuid = currencyCloudData.get().getUuid();
         }
 
-        FindAccountDetails data = FindAccountDetails.builder()
+        FindAccountDetailsRequest data = FindAccountDetailsRequest.builder()
                 .currency("KES")
                 .onBehalfOf(uuid)
                 .build();
@@ -376,7 +376,7 @@ public class FlutterwaveService {
                 .uniqueRequestId(ref)
                 .build();
 
-        ResponseEntity<JsonNode> response = paymentService.createPayment(dto).block();
+        ResponseEntity<JsonNode> response = paymentService.create(dto).block();
 
         if(!response.getStatusCode().is2xxSuccessful()) {
             ObjectMapper mapper = new ObjectMapper();

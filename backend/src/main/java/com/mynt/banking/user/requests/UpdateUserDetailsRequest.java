@@ -11,25 +11,21 @@ import java.time.LocalDate;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UpdateUserDetailsRequest {
 
-    @NotNull(message = "First name is required")
-    @Schema(description = "First name", example = "James")
-    @Size(max = 100, message = "First name cannot be longer than 50 characters")
+    @NotNull(message = "Firstname is required")
+    @Schema(description = "Firstname", example = "Kelvin")
+    @Size(max = 100, message = "Firstname cannot be longer than 100 characters")
+    @Pattern(regexp = "^[A-z]*$")
     private String firstname;
 
     @NotNull(message = "Last name is required")
-    @Schema(description = "Last name", example = "Love")
-    @Size(max = 100, message = "Last name cannot be longer than 50 characters")
+    @Schema(description = "Last name", example = "Lu")
+    @Size(max = 100, message = "Last name cannot be longer than 100 characters")
+    @Pattern(regexp = "^[A-z]*$")
     private String lastname;
-
-    @NotNull(message = "Date of birth is required")
-    @Schema(description = "Date of birth", example = "1066-8-16")
-    @Size(max = 50, message = "Date of birth cannot be longer than 50 characters")
-    @DateTimeFormat(pattern = "dd MM yyyy")
-    private LocalDate dob;
 
     @NotNull(message = "Address is required")
     @Schema(description = "Address", example = "Bristol")
-    @Size(max = 200, message = "address cannot be longer than 50 characters")
+    @Size(max = 200, message = "Address cannot be longer than 200 characters")
     private String address;
 
     @NotNull(message = "Phone number is required")

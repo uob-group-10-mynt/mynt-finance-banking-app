@@ -4,16 +4,13 @@ import com.mynt.banking.auth.AuthenticationFailureHandler;
 import com.mynt.banking.auth.AuthenticationFilter;
 import com.mynt.banking.auth.ForbiddenAccessHandler;
 import com.mynt.banking.auth.JwtUserDetails;
-import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
+import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,9 +43,6 @@ public class SecurityConfig {
             "/configuration/security",
             "/swagger-ui/**",
             "/webjars/**",
-            "/api/v1/flutterwave/**",
-            "/api/v1/auth/onfidoSdk",
-            "/api/v1/auth/validateKyc",
     };
 
     private final AuthenticationFilter jwtAuthFilter;
@@ -86,6 +80,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/currency-cloud/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/demo-controller/**").hasRole("USER")
                         .requestMatchers("/api/v1/flutterwave/**").hasRole("USER")
+                        .requestMatchers("/api/v1/transaction/**").hasRole("USER")
+                        .requestMatchers("api/v1/flutterwave/**").hasRole("USER")
+                        .requestMatchers("api/v1/rates/**").hasRole("USER")
+                        .requestMatchers("/api/v1/users/**").hasRole("USER")
                         .anyRequest()
                         .authenticated()
                 )

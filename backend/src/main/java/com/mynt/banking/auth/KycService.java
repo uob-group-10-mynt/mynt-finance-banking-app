@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mynt.banking.auth.requests.SignUpRequest;
 import com.mynt.banking.auth.requests.ValidateKycRequest;
 import com.mynt.banking.auth.responses.SDKResponse;
-import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
-import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
+import com.mynt.banking.currency_cloud.repo.CurrencyCloudEntity;
+import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
 import com.mynt.banking.currency_cloud.manage.accounts.AccountService;
 import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountRequest;
 import com.mynt.banking.currency_cloud.manage.contacts.ContactsService;
@@ -350,7 +350,7 @@ public class KycService {
                 .city(user.getAddress())
                 .country("gb")
                 .build();
-        return accountService.createAccount(createAccountRequest).block();
+        return accountService.create(createAccountRequest).block();
     }
 
     private ResponseEntity<JsonNode> createContact(String email, ResponseEntity<JsonNode> account){

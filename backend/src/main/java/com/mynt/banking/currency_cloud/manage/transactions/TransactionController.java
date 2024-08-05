@@ -1,7 +1,6 @@
 package com.mynt.banking.currency_cloud.manage.transactions;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.manage.balances.requests.FindBalanceAllCurrencies;
 import com.mynt.banking.currency_cloud.manage.transactions.requests.FindTransaction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

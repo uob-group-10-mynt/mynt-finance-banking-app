@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.Main;
 import com.mynt.banking.currency_cloud.collect.demo.DemoService;
 import com.mynt.banking.currency_cloud.collect.demo.requests.DemoFundingDto;
+import com.mynt.banking.currency_cloud.collect.funding.FindAccountDetailsRequest;
 import com.mynt.banking.currency_cloud.collect.funding.FundingService;
 import com.mynt.banking.currency_cloud.collect.funding.requests.FindAccountDetails;
 import okhttp3.Response;
@@ -28,7 +29,7 @@ public class FundingCCServiceTest {
     @Test
     void testFindAccountDetails(){
 
-        FindAccountDetails requestDto = FindAccountDetails.builder()
+        FindAccountDetailsRequest requestDto = FindAccountDetailsRequest.builder()
                 .currency("GBP")
                 .build();
 
@@ -41,7 +42,7 @@ public class FundingCCServiceTest {
 
     @Test
     void testFundDemoAccount(){
-        FindAccountDetails requestDto = FindAccountDetails.builder()
+        FindAccountDetailsRequest requestDto = FindAccountDetailsRequest.builder()
                 .currency("GBP")
                 .build();
 

@@ -39,7 +39,7 @@ public class ContactServiceTest {
                 .country("GB")
                 .build();
 
-        ResponseEntity<JsonNode> result = accountService.createAccount(requestBody).block();
+        ResponseEntity<JsonNode> result = accountService.create(requestBody).block();
 
         assert result != null;
         this.accountID = Objects.requireNonNull(result.getBody()).get("id").asText();
@@ -49,7 +49,7 @@ public class ContactServiceTest {
     public void testCreateContact() {
 
         FindAccountRequest requestBody = FindAccountRequest.builder().build();
-        ResponseEntity<JsonNode> accountNumber = accountService.findAccount(requestBody).block();
+        ResponseEntity<JsonNode> accountNumber = accountService.find(requestBody).block();
         accountNumber.getBody().get("pagination").get("total_entries").asText();
         int i = Integer.valueOf(accountNumber.getBody().get("pagination").get("total_entries").asText());
         i++;
