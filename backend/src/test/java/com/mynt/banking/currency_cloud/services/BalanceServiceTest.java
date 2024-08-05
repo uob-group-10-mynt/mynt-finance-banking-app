@@ -3,9 +3,9 @@ package com.mynt.banking.currency_cloud.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mynt.banking.currency_cloud.manage.balances.requests.FindBalanceAllCurrencies;
-import com.mynt.banking.currency_cloud.manage.balances.requests.FindBalancesRequest;
 import com.mynt.banking.Main;
+import com.mynt.banking.currency_cloud.manage.balances.FindBalanceRequest;
+import com.mynt.banking.currency_cloud.manage.balances.FindBalancesRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,8 +20,8 @@ public class BalanceServiceTest {
 
     @Test
     public void testBalanceCC() {
-        FindBalanceAllCurrencies data = FindBalanceAllCurrencies.builder().
-                amountTo("")
+        FindBalanceRequest data = FindBalanceRequest.builder()
+                .amountTo("")
                 .onBehalfOf("")
                 .amountFrom("")
                 .amountTo("")

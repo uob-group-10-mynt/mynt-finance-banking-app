@@ -1,7 +1,7 @@
 package com.mynt.banking.auth;
 
-import com.mynt.banking.currency_cloud.CurrencyCloudEntity;
-import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
+import com.mynt.banking.currency_cloud.repo.CurrencyCloudEntity;
+import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
 import com.mynt.banking.user.User;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;

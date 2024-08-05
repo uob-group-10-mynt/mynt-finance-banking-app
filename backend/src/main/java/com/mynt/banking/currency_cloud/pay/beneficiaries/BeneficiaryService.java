@@ -2,14 +2,18 @@ package com.mynt.banking.currency_cloud.pay.beneficiaries;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mynt.banking.currency_cloud.config.WebClientErrorHandler;
 import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.CreateBeneficiaryRequest;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.FindBeneficiaryRequest;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.ValidateBeneficiaryRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -18,6 +22,25 @@ public class BeneficiaryService {
 
     private final AuthenticationService authenticationService;
     private final WebClient webClient;
+    private final WebClientErrorHandler webClientErrorHandler;
+
+    public ResponseEntity<JsonNode> get(String id, String onBehalfOf) {
+        // Build the URI with the provided parameters
+        String uri = UriComponentsBuilder.fromPath("/v2/beneficiaries/" + id)
+                .queryParam("on_behalf_of", onBehalfOf)
+                .toUriString();
+
+        // Execute the GET request and retrieve the response
+        return webClient.get()
+                .uri(uri)
+                .header("X-Auth-Token", authenticationService.getAuthToken())
+                .retrieve()
+                .onStatus(HttpStatus.UNAUTHORIZED::equals, response -> webClientErrorHandler.handleUnauthorized(uri))
+                .onStatus(HttpStatusCode::is4xxClientError, webClientErrorHandler::handleClientError)
+                .onStatus(HttpStatusCode::is5xxServerError, webClientErrorHandler::handleServerError)
+                .toEntity(JsonNode.class)
+                .block();
+    }
 
     public Mono<ResponseEntity<JsonNode>> find(FindBeneficiaryRequest requestBody) {
         return webClient
@@ -46,11 +69,6 @@ public class BeneficiaryService {
                 .exchangeToMono(response -> response.toEntity(JsonNode.class))
                 .flatMap(response -> {
                     if(response.getStatusCode().is2xxSuccessful()) {
-                        // Exsample code
-//                        JsonNode jsonNode = response.getBody();
-//                        ObjectNode objectNode = ((ObjectNode) jsonNode).put("Custom Messsage","Hello World");
-//                        ResponseEntity<JsonNode> newResponseEntity = new ResponseEntity<>(objectNode,response.getStatusCode());
-//                        return Mono.just(newResponseEntity);
                         return Mono.just(response);
                     }
                     return Mono.just(response);

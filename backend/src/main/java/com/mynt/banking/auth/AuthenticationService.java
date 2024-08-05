@@ -3,7 +3,7 @@ package com.mynt.banking.auth;
 import com.mynt.banking.auth.requests.AuthenticationRequest;
 import com.mynt.banking.auth.requests.RegisterRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
-import com.mynt.banking.currency_cloud.CurrencyCloudRepository;
+import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
 import com.mynt.banking.util.exceptions.registration.RegistrationException;

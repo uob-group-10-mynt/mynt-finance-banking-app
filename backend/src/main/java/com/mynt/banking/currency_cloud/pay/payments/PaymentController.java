@@ -20,6 +20,6 @@ public class PaymentController {
 
     @PostMapping("/create")
     public Mono<ResponseEntity<JsonNode>> createAccount(@RequestBody CreatePaymentRequest request) {
-        return paymentService.createPayment(request);
+        return paymentService.create(request);
     }
 }
