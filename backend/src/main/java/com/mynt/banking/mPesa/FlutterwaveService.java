@@ -346,7 +346,7 @@ public class FlutterwaveService {
         FindBeneficiaryRequest dto = FindBeneficiaryRequest.builder()
                 .name("Flutterwave_KES_MPesa_Account")
                 .build();
-        ResponseEntity<JsonNode> response = beneficiariesService.find(dto).block();
+        ResponseEntity<JsonNode> response = beneficiariesService.find(dto);
 
         if(!response.getStatusCode().is2xxSuccessful()) {
             ObjectMapper mapper = new ObjectMapper();

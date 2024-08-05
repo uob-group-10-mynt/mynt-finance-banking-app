@@ -3,6 +3,7 @@ package com.mynt.banking.currency_cloud.manage.balances;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mynt.banking.client.pay.beneficiaries.BeneficiariesDetailResponse;
 import com.mynt.banking.currency_cloud.config.WebClientErrorHandler;
 import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
 import com.mynt.banking.util.HashMapToQuiryPrams;

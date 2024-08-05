@@ -2,11 +2,13 @@ package com.mynt.banking.currency_cloud.pay.beneficiaries;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mynt.banking.client.pay.beneficiaries.BeneficiariesDetailResponse;
 import com.mynt.banking.currency_cloud.config.WebClientErrorHandler;
 import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.CreateBeneficiaryRequest;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.FindBeneficiaryRequest;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.ValidateBeneficiaryRequest;
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -42,22 +44,18 @@ public class BeneficiaryService {
                 .block();
     }
 
-    public Mono<ResponseEntity<JsonNode>> find(FindBeneficiaryRequest requestBody) {
+    public ResponseEntity<JsonNode> find(FindBeneficiaryRequest requestBody) {
         return webClient
                 .post()
                 .uri("/v2/beneficiaries/find")
                 .header("X-Auth-Token", authenticationService.getAuthToken())
                 .bodyValue(requestBody)
-                .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(response -> {
-                    if(response.getStatusCode().is2xxSuccessful()) {
-                        JsonNode jsonNode = response.getBody();
-                        ObjectNode objectNode = ((ObjectNode) jsonNode);
-                        ResponseEntity<JsonNode> newResponseEntity = new ResponseEntity<>(objectNode,response.getStatusCode());
-                        return Mono.just(newResponseEntity);
-                    }
-                    return Mono.just(response);
-                });
+                .retrieve()
+                .onStatus(HttpStatus.UNAUTHORIZED::equals, response -> webClientErrorHandler.handleUnauthorized("/v2/beneficiaries/find"))
+                .onStatus(HttpStatusCode::is4xxClientError, webClientErrorHandler::handleClientError)
+                .onStatus(HttpStatusCode::is5xxServerError, webClientErrorHandler::handleServerError)
+                .toEntity(JsonNode.class)
+                .block();
     }
 
     public Mono<ResponseEntity<JsonNode>> validate(ValidateBeneficiaryRequest requestBody) {
