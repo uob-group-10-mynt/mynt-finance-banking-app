@@ -31,8 +31,7 @@ public class ReferenceService {
                 .get()
                 .uri(url)
                 .header("X-Auth-Token", authenticationService.getAuthToken())
-                .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(response -> Mono.just(response));
+                .exchangeToMono(response -> response.toEntity(JsonNode.class));
     }
 
     public Mono<ResponseEntity<JsonNode>> getBeneficiaryRequirements(GetBeneficiaryRequirementsRequest request) {
@@ -46,8 +45,15 @@ public class ReferenceService {
                 .get()
                 .uri(url)
                 .header("X-Auth-Token", authenticationService.getAuthToken())
-                .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(response -> Mono.just(response));
-
+                .exchangeToMono(response -> response.toEntity(JsonNode.class));
     }
+
+    public Mono<ResponseEntity<JsonNode>> getAvailableCurrencies() {
+        return webClient
+                .get()
+                .uri("/v2/reference/currencies")
+                .header("X-Auth-Token", authenticationService.getAuthToken())
+                .exchangeToMono(response -> response.toEntity(JsonNode.class));
+    }
+
 }
