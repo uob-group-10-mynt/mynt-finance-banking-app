@@ -6,7 +6,6 @@ import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
 import com.mynt.banking.util.exceptions.registration.RegistrationException;
 import com.mynt.banking.util.exceptions.registration.UserAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,21 +79,19 @@ public class GlobalExceptionHandler {
 
     // Currency Cloud Exceptions
     @ExceptionHandler(CurrencyCloudException.class)
-    public ResponseEntity<String> handleCloudCurrencyException(CurrencyCloudException ex) {
-        return ResponseEntity.status(ex.getStatus())
-                .body(ex.getMessage());
+    public ResponseEntity<Map<String, String>> handleCloudCurrencyException(CurrencyCloudException ex) {
+        return buildResponseEntity(HttpStatus.valueOf(ex.getStatus().value()), ex.getMessage(), null);
     }
 
     /// Response
     @NotNull
-    @Contract("_, _, _ -> new")
-    private ResponseEntity<Map<String, String>> buildResponseEntity(@NotNull HttpStatus status, String message, @NotNull HttpServletRequest request) {
+    private ResponseEntity<Map<String, String>> buildResponseEntity(@NotNull HttpStatus status, String message, HttpServletRequest request) {
         Map<String, String> errorDetails = new HashMap<>();
         errorDetails.put("timestamp", String.valueOf(System.currentTimeMillis()));
         errorDetails.put("status", String.valueOf(status.value()));
         errorDetails.put("error", status.getReasonPhrase());
         errorDetails.put("message", message);
-        errorDetails.put("path", request.getRequestURI());
+        if (request != null) { errorDetails.put("path", request.getRequestURI()); }
 
         return new ResponseEntity<>(errorDetails, status);
     }

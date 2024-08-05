@@ -137,7 +137,7 @@ public class MyntTransactionService {
         if (accountID == null || accountID.isBlank() || accountID.isEmpty()
             || !relatedEntityType.equals("payment") || relatedEntityId == null
             || relatedEntityId.isEmpty() || relatedEntityType.isBlank()) {
-            throw new CurrencyCloudException("Currency Cloud Error: Missing necessary fields missing.", HttpStatus.NO_CONTENT);
+            throw new CurrencyCloudException("Currency Cloud Error: Missing necessary fields missing.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         // Fetch Account Details:
@@ -152,39 +152,42 @@ public class MyntTransactionService {
         JsonNode accountDetails = Objects.requireNonNull(findAccountDetailResponse.getBody()).get("funding_accounts");
 
         if (accountDetails == null || accountDetails.isEmpty() || accountDetails.size() != 1) {
-            throw new CurrencyCloudException("Currency Cloud Error: Failed to fetch payment details.", HttpStatus.NO_CONTENT);
+            throw new CurrencyCloudException("Currency Cloud Error: Failed to fetch payment details.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         // Fill out PaymentDetailResponse.PayerAccountDetail:
         PaymentDetailResponse.PayerAccountDetails payerAccountDetails = PaymentDetailResponse.PayerAccountDetails.builder()
-                .accountHolderName(accountDetails.path("account_holder_name").asText())
-                .bankCountry(accountDetails.path("country").asText())
-                .bankName(accountDetails.path("bank_name").asText())
-                .accountNumberType(accountDetails.path("account_number_type").asText())
-                .accountNumber(accountDetails.path("account_number").asText())
-                .routingCodeType(accountDetails.path("routing_code_type").asText())
-                .routingCode(accountDetails.path("routing_code").asText())
+                .accountHolderName(accountDetails.get(0).path("account_holder_name").asText())
+                .bankCountry(accountDetails.get(0).path("bank_country").asText())
+                .bankName(accountDetails.get(0).path("bank_name").asText())
+                .accountNumberType(accountDetails.get(0).path("account_number_type").asText())
+                .accountNumber(accountDetails.get(0).path("account_number").asText())
+                .routingCodeType(accountDetails.get(0).path("routing_code_type").asText())
+                .routingCode(accountDetails.get(0).path("routing_code").asText())
                 .build();
 
         // Fetch Payment details using related_entity_id:
         ResponseEntity<JsonNode> paymentDetailsResponse = paymentService.get(relatedEntityId, userContextService.getCurrentUserUuid());
         JsonNode paymentDetails = paymentDetailsResponse.getBody();
         if (paymentDetails == null || paymentDetails.isEmpty()) {
-            throw new CurrencyCloudException("Currency Cloud Error: Failed to fetch payment details.", HttpStatus.NO_CONTENT);
+            throw new CurrencyCloudException("Currency Cloud Error: Failed to fetch payment details.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        // TODO add beneficiary to my cc account and make a payment for testing :
+        // TODO add beneficiary to my cc account and make a payment for testing // check null beneficiary id first:
 
         // Fetch Beneficiary Details:
+        if (paymentDetails.path("beneficiary_id").isNull()) {
+            throw new CurrencyCloudException("Currency Cloud Error: Failed to fetch payment details.", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         ResponseEntity<JsonNode> beneficiaryDetailsResponse = beneficiaryService.get(
                 paymentDetails.path("beneficiary_id").asText(), userContextService.getCurrentUserUuid());
         JsonNode beneficiaryDetails = beneficiaryDetailsResponse.getBody();
         if (beneficiaryDetails == null || beneficiaryDetails.isEmpty()) {
-            throw new CurrencyCloudException("Currency Cloud Error: Failed to fetch payment details.", HttpStatus.NO_CONTENT);
+            throw new CurrencyCloudException("Currency Cloud Error: Failed to fetch payment details.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         PaymentDetailResponse.BeneficiaryAccountDetails beneficiaryAccountDetails = PaymentDetailResponse.BeneficiaryAccountDetails
                 .builder()
-                .accountHolderName(beneficiaryDetails.path("account_holder_name").asText())
+                .accountHolderName(beneficiaryDetails.path("bank_account_holder_name").asText())
                 .bankCountry(beneficiaryDetails.path("bank_country").asText())
                 .bankName(beneficiaryDetails.path("bank_name").asText())
                 .iban(beneficiaryDetails.path("iban").asText())
