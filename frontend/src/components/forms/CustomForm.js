@@ -62,7 +62,9 @@ function transformInputs({parentState, setParentState, errorOccurred}) {
                             type={inputFields.type}
                             value={inputFields.value}
                             onChange={(e) => {
-                                inputFields.onChange(e);
+                                if (typeof inputFields.onChange === 'function') {
+                                    inputFields.onChange(e);
+                                }
                                 handleInputChange(index, e);
                             }}
                             required={inputFields.required}
