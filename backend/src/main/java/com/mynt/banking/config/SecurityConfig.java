@@ -84,6 +84,7 @@ public class SecurityConfig {
                         .requestMatchers("api/v1/flutterwave/**").hasRole("USER")
                         .requestMatchers("api/v1/rates/**").hasRole("USER")
                         .requestMatchers("/api/v1/users/**").hasRole("USER")
+                        .requestMatchers("/api/v1/transfer/**").hasRole("USER")
                         .anyRequest()
                         .authenticated()
                 )
