@@ -26,7 +26,8 @@ export default function Amount() {
                         <Icon name={payee.bank_name}/>
                         <InfoBlock>
                             <CustomText black big>{payee.name}</CustomText>
-                            <CustomText gray small>{payee.currency + " " + payee.account_number}</CustomText>
+                            <CustomText gray xsmall>{"Currency: " + payee.currency}</CustomText>
+                            <CustomText gray xsmall>{"IBAN: " + payee.iban}</CustomText>
                         </InfoBlock>
                     </>
                 );
