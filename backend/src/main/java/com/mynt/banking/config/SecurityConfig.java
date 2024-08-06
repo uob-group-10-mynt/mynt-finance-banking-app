@@ -87,6 +87,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/transaction/**").hasRole("USER")
                         .requestMatchers("/api/v1/rates/**").hasRole("USER")
                         .requestMatchers("/api/v1/users/**").hasRole("USER")
+                        .requestMatchers("/api/v1/beneficiary/**").hasRole("USER")
                         .requestMatchers("/api/v1/transfer/**").hasRole("USER")
                         .requestMatchers("/api/v1/payments/**").hasRole("USER")
                         .anyRequest()
