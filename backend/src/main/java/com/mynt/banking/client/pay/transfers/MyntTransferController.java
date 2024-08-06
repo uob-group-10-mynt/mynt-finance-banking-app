@@ -1,13 +1,9 @@
 package com.mynt.banking.client.pay.transfers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.client.manage.balanaces.FindBalanceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/transfer")

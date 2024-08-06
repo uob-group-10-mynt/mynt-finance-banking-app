@@ -1,7 +1,6 @@
 package com.mynt.banking.client.pay.payments;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.client.pay.payments.requests.MyntCreatePaymentRequest;
 import com.mynt.banking.currency_cloud.convert.conversions.ConversionService;
 import com.mynt.banking.currency_cloud.convert.conversions.requests.CreateConversionRequest;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;

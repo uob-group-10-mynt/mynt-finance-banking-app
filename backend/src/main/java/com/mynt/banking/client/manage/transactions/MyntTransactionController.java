@@ -13,7 +13,7 @@ public class MyntTransactionController {
     private final MyntTransactionService transactionService;
 
     @GetMapping
-    public TransactionsDetailResponse find(
+    public MyntTransactionsDetailResponse find(
             @Valid
             @RequestParam(required = false) String currency,
             @RequestParam(required = false, name = "related_entity_type") String relatedEntityType,
@@ -22,9 +22,14 @@ public class MyntTransactionController {
         return transactionService.find(currency, relatedEntityType, perPage, page);
     }
 
-    @GetMapping("/payment/{id}")
-    public PaymentDetailResponse getPaymentDetail(@PathVariable String id) {
-        return transactionService.getPaymentDetail(id);
+    @GetMapping("/payment/{transaction_id}")
+    public MyntPaymentDetailResponse getPaymentDetail(@PathVariable String transaction_id) {
+        return transactionService.getPaymentDetail(transaction_id);
+    }
+
+    @GetMapping("/conversion/{transaction_id}")
+    public MyntConversionDetailResponse getConversionDetail(@PathVariable String transaction_id) {
+        return transactionService.getConversionDetail(transaction_id);
     }
 }
 

@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class TransactionsDetailResponse {
+public class MyntTransactionsDetailResponse {
     @JsonProperty("transactions")
     private List<Transaction> transactions;
 

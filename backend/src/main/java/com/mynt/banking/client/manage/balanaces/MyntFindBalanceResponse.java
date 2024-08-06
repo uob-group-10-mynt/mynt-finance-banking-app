@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class FindBalanceResponse {
+public class MyntFindBalanceResponse {
 
     @JsonProperty("bank")
     @Schema(description = "The name of the bank.", example = "mynt")

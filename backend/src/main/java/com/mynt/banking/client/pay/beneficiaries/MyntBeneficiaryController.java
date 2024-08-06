@@ -13,19 +13,19 @@ public class MyntBeneficiaryController {
     private final MyntBeneficiaryService myntBeneficiaryService;
 
     @GetMapping
-    public BeneficiariesDetailResponse find(
+    public MyntBeneficiariesDetailResponse find(
                         @RequestParam(required = false, name = "per_page") Integer perPage,
                         @RequestParam(required = false, name = "page") Integer page) {
         return myntBeneficiaryService.find(perPage, page);
     }
 
     @GetMapping("/{id}")
-    public BeneficiaryDetail get(@PathVariable("id") String id) {
+    public MyntBeneficiaryDetail get(@PathVariable("id") String id) {
         return myntBeneficiaryService.get(id);
     }
 
     @PostMapping("/create")
-    public BeneficiaryDetail create(@RequestBody BeneficiaryDetail request) {
+    public MyntBeneficiaryDetail create(@RequestBody MyntBeneficiaryDetail request) {
         return myntBeneficiaryService.create(request);
     }
 
