@@ -61,12 +61,7 @@ function transformInputs({parentState, setParentState, errorOccurred}) {
                             placeholder={inputFields.placeholder}
                             type={inputFields.type}
                             value={inputFields.value}
-                            onChange={(e) => {
-                                if (typeof inputFields.onChange === 'function') {
-                                    inputFields.onChange(e);
-                                }
-                                handleInputChange(index, e);
-                            }}
+                            onChange={(e) => handleInputChange(index, e)}
                             required={inputFields.required}
                             data-cy={inputFields.id + "Input"}
                             readOnly={inputFields.readonly}
