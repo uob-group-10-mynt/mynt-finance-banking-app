@@ -43,7 +43,6 @@ export default function Amount() {
             type: "number",
             required: true,
             value: amount,
-            onChange: (e) => setAmount(e.target.value),
             helperText: `Available balance: ${availableBalance.toLocaleString()} KES`,
             inputLeftElement: "£"
         },
@@ -52,7 +51,7 @@ export default function Amount() {
 
     const handleAmountSubmit = () => {
         // Add validation and submission logic here
-        selectedPayee['transfer_amount'] = amount;
+        selectedPayee['transfer_amount'] = fields[0].value;
         navigate('/remittance/transfer', {state: {selectedPayee: selectedPayee}});
     };
 
