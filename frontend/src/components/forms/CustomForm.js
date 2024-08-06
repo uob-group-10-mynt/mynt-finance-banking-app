@@ -20,17 +20,46 @@ function formDataToRequestBody(credentials) {
     return body;
 }
 
-function CustomForm({parentState, setParentState, onSubmit, buttonText, buttonId, errorOccurred, buttonDisplayed}) {
+
+function editForm(e, editButton, setEditButton, parentState, setParentState) {
+    e.preventDefault();
+    setEditButton(!editButton);
+    const updatedState = parentState.map(field => {
+        if (!field.alwaysReadOnly) {
+            field.readonly = !field.readonly
+            if (editButton) {
+                field.border = null
+            }
+            return field
+        }
+        return field;
+    });
+    setParentState(updatedState);
+}
+
+
+function CustomForm({parentState, setParentState, onSubmit, buttonText, buttonId, errorOccurred, editable}) {
+    const [editButton, setEditButton] = useState(editable);
+
     return (
         <form onSubmit={(e) => {
             e.preventDefault();
+            if (editable) editForm(e, editButton, setEditButton, parentState, setParentState)
             onSubmit(formDataToRequestBody(parentState));
         }
         } style={{display: 'flex', flexDirection: 'column'}}>
             {transformInputs({parentState, setParentState, errorOccurred})}
-            <CustomButton standard width='100%' margin='2' type='submit' data-cy={buttonId} display={buttonDisplayed}>
-                {buttonText}
-            </CustomButton>
+            {
+                editButton ? (
+                    <CustomButton data-cy="EditButton" onClick={(e) => {editForm(e, editButton, setEditButton, parentState, setParentState)}}>
+                        Edit
+                    </CustomButton>
+                ) : (
+                    <CustomButton standard width='100%' margin='2' type='submit' data-cy={buttonId}>
+                        {buttonText}
+                    </CustomButton>
+                )
+            }
         </form>
     );
 }
