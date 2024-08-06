@@ -69,7 +69,17 @@ export default function UserDetails() {
                 }
             });
             if (!response.ok) {
-                throw new Error('response not ok');
+                const refreshResponse = await fetch(getUserDetailsAPI, {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem('refresh')}`
+                    }
+                });
+                console.log("GET refresh response::: ", refreshResponse)
+                if (!refreshResponse.ok) {
+                    throw new Error('response not ok');
+
+                }
             }
             const data = await response.json()
             setDetails(accountFields.map(field => {
@@ -96,14 +106,25 @@ export default function UserDetails() {
                 },
                 body: JSON.stringify(formValuesJSON)
             });
+            if (!response.ok) {
+                const refreshResponse = await fetch(updateUserDetailsAPI, {
+                    method: 'POST',
+                    headers: {
+                        "Content-type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('refresh')}`
+                    },
+                    body: JSON.stringify(formValuesJSON)
+                });
+                console.log("POST refresh response:::", refreshResponse)
+                if (!refreshResponse.ok) {
+                    throw new Error('Authentication failed');
+                }
+            }
             setDetails(details.map((field) => {
                 field.readonly = true;
                 field.border = "none"
                 return field
             }))
-            if (!response.ok) {
-                throw new Error('Authentication failed');
-            }
         } catch (error) {
             console.error(error);
         }
