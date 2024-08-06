@@ -46,7 +46,7 @@ const iconMapper = {
   'AUD': AUSTRALIA,       // Australian Dollar
   'BHD': BAHRAIN,         // Bahrain Dinar
   'CAD': CANADA,          // Canadian Dollar
-  'CNH': CHINA,           // Chinese Yuan (Renminbi)
+  'CNY': CHINA,           // Chinese Yuan (Renminbi)
   'CZK': CZECH,           // Czech Koruna
   'DKK': DENMARK,         // Danish Krone
   'EUR': EUROPEAN_UNION,  // EURO
@@ -79,7 +79,7 @@ const iconMapper = {
   'GBP': UK,              // UK Sterling
   'AED': UAE,             // UAE Dirham
   'USD': US,              // US Dollar
-  'mynt': myntIcon,       // Mynt icon
+  'The Currency Cloud Limited': myntIcon,       // Mynt icon
   'others': defaultIcon,  // Default icon for others
 };
 

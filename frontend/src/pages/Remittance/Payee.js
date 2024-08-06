@@ -1,5 +1,5 @@
-import React from 'react';
-import {useNavigate} from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 import TabBar from "../../components/TabBar";
 import CustomHeading from "../../components/CustomHeading";
 import AddPayeePanel from "./AddPayeePanel";
@@ -8,67 +8,99 @@ import InfoBlock from "../../components/util/InfoBlock";
 import CustomText from "../../components/CustomText";
 import CustomButton from "../../components/forms/CustomButton";
 import Container from "../../components/container/Container";
+import {getBeneficiaries} from "../../utils/APIEndpoints";
 
-function Payee() {
-    const tabs = ['Recent payees', 'My payees', 'New payee']
-    const panels = [<MyPayeesPanel/>, <MyPayeesPanel/>, <AddPayeePanel/>];
+export default function Payee() {
+    const tabs = ['My payees', 'New payee']
+    const panels = [<MyPayeesPanel/>, <AddPayeePanel/>];
+    const location = useLocation();
+    const selectedCurrencyAccount = location.state.selectedCurrencyAccount;
 
     return (
         <>
-            <CustomHeading align='center'>Where would you like to send the money?</CustomHeading>
+            <CustomHeading align='center'>Where would you like to send
+                your {selectedCurrencyAccount.currency}?</CustomHeading>
             <TabBar tabNames={tabs} tabPanels={panels}></TabBar>
         </>
     );
 }
 
 function MyPayeesPanel() {
+    const [payees, setPayees] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
-    // const fetchPayees = await fetch(getPayees, {
-    //     method: 'GET',
-    //     headers: {"Content-type": "application/json"},
-    // });
-    const fetchPayees = [
-        {
-            'id': '1',
-            'payee_reference': '66f51c98-1ef8-4e48-97de-aac0353ba2b4',
-            'bank': 'HSBC',
-            'account_number': '00000000',
-            'label': 'Jan Phillips',
-        },
-        {
-            'id': '2',
-            'payee_reference': '66f51c98-1ef8-4e48-97de-aac0353ba2b4',
-            'bank': 'Citi',
-            'account_number': '01010101',
-            'label': 'Gunho Ryu',
-        },
-    ];
+    const location = useLocation();
+    const selectedCurrencyAccount = location.state.selectedCurrencyAccount;
 
-    const renderPayees = fetchPayees.map((payee) => {
-        return {
-            ...payee,
-            render: () => {
-                return (
-                    <>
-                        <Icon name={payee.bank}/>
-                        <InfoBlock>
-                            <CustomText gray small>{payee.label}</CustomText>
-                            <CustomText black big>{payee.account_number}</CustomText>
-                        </InfoBlock>
-                        <CustomButton side>Send</CustomButton>
-                    </>
-                );
-            },
-
-            onClick: () => {
-                navigate('/remittance/amount', {state: {selectedPayee: payee}});
-            },
-        }
-    });
+    useEffect(() => {
+        fetchPayees();
+    }, []);
+    if (loading) return <CustomText>Loading...</CustomText>;
+    if (error) return <CustomText>Error {error.message}</CustomText>;
 
     return (
-        <Container data={renderPayees} keyFn={(info) => info.id}/>
+        <Container data={renderPayees(payees)} keyFn={(info) => info.id}/>
     );
-}
 
-export default Payee;
+    async function fetchPayees() {
+        try {
+            const response = await fetch(getBeneficiaries, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('access')}`
+                },
+                body: JSON.stringify({})
+            });
+
+            if (!response.ok) {
+                const error = new Error(await response.text());
+                setError(error);
+                setLoading(false);
+                return;
+            }
+
+            // Parse the JSON from the response
+            const data = await response.json(); // Await the promise to get the parsed JSON data
+            setPayees(data.beneficiaries);
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    function renderPayees(payees) {
+        return payees.map(payee => {
+            return {
+                ...payee,
+                render: () => {
+                    return (
+                        <>
+                            <Icon name={payee.bank_name}/>
+                            <InfoBlock>
+                                <CustomText black big>{payee.name}</CustomText>
+                                <CustomText gray small>{payee.currency + " " + payee.account_number}</CustomText>
+                            </InfoBlock>
+                            <CustomButton side onClick={() => {
+                                navigate('/remittance/amount', {
+                                    state: {
+                                        selectedPayee: payee,
+                                        selectedCurrencyAccount: selectedCurrencyAccount
+                                    }
+                                })
+                            }}>Send</CustomButton>
+                        </>
+                    );
+                },
+                onClick: () => navigate('/remittance/amount', {
+                    state: {
+                        selectedPayee: payee,
+                        selectedCurrencyAccount: selectedCurrencyAccount
+                    }
+                }),
+            };
+        });
+    }
+}

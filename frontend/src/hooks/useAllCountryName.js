@@ -2,7 +2,7 @@ export const ALL_CURRENCY_COUNTRY_MAP = {
   'AUD': 'Australia',
   'BHD': 'Bahrain',
   'CAD': 'Canada',
-  'CNH': 'China',
+  'CNY': 'China',
   'CZK': 'Czech Republic',
   'DKK': 'Denmark',
   'EUR': 'European Union',
