@@ -33,28 +33,20 @@ import java.util.Objects;
 public class MyntTransferService {
 
     private final UserContextService userContextService;
-
     private final TransferService transferService;
-
     private final UserRepository userRepository;
-
-    private final CurrencyCloudRepository currencyCloudRepository;
-
     private final ContactsService contactsService;
 
-    public ResponseEntity<JsonNode> createTransfer(String emailTransferTo,
-                                                   String currency,
-                                                   double amount
-                                                   ){
-
+    public ResponseEntity<JsonNode> createTransfer(String emailTransferTo, String currency, double amount) {
         // current user UUID
-        String sourseEmail = userContextService.getCurrentUsername();
+        String sourceEmail = userContextService.getCurrentUsername();
 
         // get current user account ID
-        FindContact findContact = FindContact.builder().emailAddress(sourseEmail).build();
-        ResponseEntity<JsonNode> sourseAccoundID = contactsService.findContact(findContact).block();
+        FindContact findContact = FindContact.builder().emailAddress(sourceEmail).build();
+        ResponseEntity<JsonNode> sourceAccountID = contactsService.findContact(findContact).block();
 
-        if(!sourseAccoundID.getStatusCode().is2xxSuccessful()){
+
+        if(sourceAccountID == null || !sourceAccountID.getStatusCode().is2xxSuccessful()){
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode jsonObject = mapper.createObjectNode();
             jsonObject.put("message", "Error with current User Account ID");
@@ -64,11 +56,11 @@ public class MyntTransferService {
         // recipient UUID
         String recipiantEmail =  userRepository.findByEmail(emailTransferTo).get().getEmail();
 
-        // get recipent ID
+        // get recipient ID
         FindContact findRecipiantContact = FindContact.builder().emailAddress(recipiantEmail).build();
-        ResponseEntity<JsonNode> recipiantAccoundID = contactsService.findContact(findRecipiantContact).block();
+        ResponseEntity<JsonNode> recipiantAccountID = contactsService.findContact(findRecipiantContact).block();
 
-        if(!recipiantAccoundID.getStatusCode().is2xxSuccessful()){
+        if(recipiantAccountID == null || !recipiantAccountID.getStatusCode().is2xxSuccessful()){
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode jsonObject = mapper.createObjectNode();
             jsonObject.put("message", "Error with recipiant User Account ID");
@@ -78,14 +70,14 @@ public class MyntTransferService {
         CreateTransferRequest createTransferRequest = CreateTransferRequest.builder()
                 .amount(amount)
                 .currency(currency)
-                .sourceAccountId(sourseAccoundID.getBody().get("contacts").get(0).get("account_id").asText())
-                .destinationAccountId(recipiantAccoundID.getBody().get("contacts").get(0).get("account_id").asText())
+                .sourceAccountId(sourceAccountID.getBody().get("contacts").get(0).get("account_id").asText())
+                .destinationAccountId(recipiantAccountID.getBody().get("contacts").get(0).get("account_id").asText())
                 .build();
 
         //call transfer
         ResponseEntity<JsonNode> response = this.transferService.createTransfer(createTransferRequest).block();
 
-        if(response.getStatusCode().is2xxSuccessful()){
+        if(response != null && response.getStatusCode().is2xxSuccessful()){
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode jsonObject = mapper.createObjectNode();
             jsonObject.put("message", "Transaction successfully created");
@@ -97,10 +89,5 @@ public class MyntTransferService {
 
         return ResponseEntity.badRequest().body(errorResponse);
     }
-
-
-
-
-
 }
 
