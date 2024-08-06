@@ -50,4 +50,5 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> refreshToken() {
         return ResponseEntity.ok(service.refreshToken());
     }
+
 }
