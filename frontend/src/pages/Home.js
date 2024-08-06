@@ -1,8 +1,11 @@
 import { Box, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import useFormatAmount from '../hooks/useFormatAmount';
+
+import SplashPage from "./SplashPage";
+
 import CustomButton from "../components/forms/CustomButton";
 import CustomText from "../components/CustomText";
 import Icon from "../components/util/Icon";
@@ -10,25 +13,6 @@ import Container from "../components/container/Container";
 import ContainerRowBalanceWrapper from "../components/container/ContainerRowBalanceWrapper";
 import InfoBlock from "../components/util/InfoBlock";
 import ConversionListPage from "./Conversion/ConversionListPage"; 
-
-const fetchAccountData = [
-    {
-        'id': '1',
-        'account_reference': '66f51c98-1ef8-4e48-97de-aac0353ba2b4',
-        'bank': 'mynt',
-        'label': 'Mynt Dollar Account',
-        'balance': '1010234.0',
-        'currency': 'USD',
-    },
-    {
-        'id': '2',
-        'account_reference': '66f51c98-1ef8-4e48-97de-aac0353ba2b4',
-        'bank': 'others',
-        'label': 'Mynt Pound Account',
-        'balance': '1000.0',
-        'currency': 'GBP',
-    },
-];
 
 const fetchConversionData = [
     {
@@ -45,11 +29,65 @@ export default function Home() {
     const navigate = useNavigate(); 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [ selectedCurrency, setSelectedCurrency ] = useState(null);
-    const [ baseCurrency, setBaseCurrency ] = useState(fetchConversionData[0].currency);
-    const [ compareCurrency, setCompareCurrency ] = useState(fetchConversionData[1].currency);
+    const [ baseCurrency, setBaseCurrency ] = useState("KES");
+    const [ compareCurrency, setCompareCurrency ] = useState("USD");
     const [ isBaseCurrency, setIsBaseCurrency ] = useState(false);
+    const [ accounts, setAccounts ] = useState([]);
+    // const [ exchangeRates, setExchangeRates ] = useState([]);
+    const [ loading, setLoading ] = useState(true); 
 
-    const accountKeyFn = (info) => info.id;
+    useEffect(() => {
+        setLoading(true);
+        fetch('http://localhost:8080/api/v1/balance', { 
+            headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` } 
+        })
+        .then(response => 
+            response.json())
+        .then(data => 
+            setAccounts(data)
+        )
+        .catch(error => {
+            console.error("Error fetching accounts:", error);  
+        })
+        .finally(() => 
+            setLoading(false));
+      }, []);
+
+    useEffect(() => {
+        setLoading(true);
+        fetch('http://localhost:8080/api/v1/rates/getBasicRates', { 
+            headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` } 
+        })
+        .then(response => 
+            response.json())
+        .then(data => 
+            setBaseCurrency(data[0].currency)
+        )
+        .catch(error => {
+            console.error("Error fetching accounts:", error);  
+        })
+        .finally(() => 
+            setLoading(false));
+      }, [ baseCurrency ]);
+
+    //   useEffect(() => {
+    //     setLoading(true);
+    //     fetch('http://localhost:8080/api/v1/rates/updateBaseCurrency', { 
+    //         method: 'POST',
+    //         headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` } ,
+    //         body: JSON.stringify({ new_base_currency: selectedCurrency })
+    //     })
+    //     .catch(error => {
+    //         console.error("Error fetching accounts:", error);  
+    //     })
+    //     .finally(() => {
+    //         setLoading(false);
+    //         setBaseCurrency(selectedCurrency);
+    //     });
+    //   }, [ selectedCurrency ]);
+    
+
+    const accountKeyFn = (info) => info.account_number;
     const conversionKeyFn = (info) => info.currency;
 
     const handleSendOnClick = (e) => {
@@ -82,8 +120,9 @@ export default function Home() {
         }
     });
 
-    const accountData = fetchAccountData.map((data) => {
-        const { bank, label, balance, currency } = data;
+    const accountData = accounts.map((data) => {
+        const { bank, account_label, balance, currency } = data;
+        
         return {
             ...data,
             render: () => {
@@ -91,22 +130,23 @@ export default function Home() {
                     <>
                         <Icon name={bank} />
                         <InfoBlock>
-                            <CustomText gray small>{label}</CustomText>
+                            <CustomText gray small>{account_label}</CustomText>
                             <CustomText black big>{useFormatAmount(balance, currency)}</CustomText>
                         </InfoBlock>
                         <CustomButton side onClick={(e) => handleSendOnClick(e)}>Send</CustomButton>
                     </>
                 );
             },
-
             onClick: () => {
-                navigate('/accounts/' + data.id);
+                navigate('/accounts/' + data.currency);
             },
         }
     });
 
     return (
-        <Box
+        (loading)
+        ? <SplashPage />
+        : <Box
             display="flex"
             flexDirection='column'
             justifyContent="center"
