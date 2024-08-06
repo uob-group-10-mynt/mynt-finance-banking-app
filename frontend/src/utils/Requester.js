@@ -1,3 +1,5 @@
+import { refreshTokensAPI } from "./APIEndpoints";
+
 const makeRequest = async (method, endpointURL, requiresAuth, additionalHeaders = {}, requestBody = null) => {
     try {
         // Initial request setup
