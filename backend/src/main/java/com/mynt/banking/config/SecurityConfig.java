@@ -38,7 +38,7 @@ public class SecurityConfig {
             "/api/v1/auth/sdk**",
             "/api/v1/users/**",
             "/api/v1/currency-cloud/beneficiaries/**",
-            "/api/v1/currency-cloud/payments/**",
+            "/api/v1/payments/**",
             "/v3/api-docs/**",
             "/swagger-resources",
             "/swagger-resources/**",
