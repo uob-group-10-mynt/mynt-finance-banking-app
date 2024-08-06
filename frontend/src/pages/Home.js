@@ -90,11 +90,6 @@ export default function Home() {
     const accountKeyFn = (info) => info.account_number;
     const conversionKeyFn = (info) => info.currency;
 
-    const handleSendOnClick = (e) => {
-        e.stopPropagation();
-        console.log("SEND BUTTON CLICKED");
-    }
-
     const openConversionModal = (currency, isBase) => {
         setSelectedCurrency(currency);
         setIsBaseCurrency(isBase);
@@ -122,7 +117,12 @@ export default function Home() {
 
     const accountData = accounts.map((data) => {
         const { bank, account_label, balance, currency } = data;
-        
+        function handleSendOnClick (e) {
+            e.stopPropagation();
+            navigate('/remittance/payee', {state: {selectedCurrencyAccount: data}});
+            console.log("SEND BUTTON CLICKED");
+        }
+
         return {
             ...data,
             render: () => {
