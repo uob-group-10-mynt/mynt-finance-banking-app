@@ -59,20 +59,6 @@ const accountFields = [
 
 export default function UserDetails() {
     const [details, setDetails] = useState(accountFields)
-    
-    
-    //edit form changes state, readonly becomes false
-    function editForm(e) {
-        e.preventDefault();
-        
-        setDetails(details.map((field) => {
-            if (field.id !== 'dob' && field.id !== 'email') {
-                field.readonly = false;
-                field.border = null
-            }
-            return field
-        }))
-    }
 
     const getAndSetDetails = async () => {
         try {

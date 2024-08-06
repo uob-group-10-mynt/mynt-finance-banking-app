@@ -13,8 +13,10 @@ describe('user details page', ()  => {
         //set new details
         cy.get('[data-cy="EditButton"]').click()
         cy.get('[data-cy="saveDetailsButton"]').should('be.visible')
-        cy.get('[data-cy="firstnameInput"]').clear().type(firstname)
-        cy.get('[data-cy="lastnameInput"]').clear().type(lastname)
+        cy.get('[data-cy="firstnameInput"]').clear()
+        cy.get('[data-cy="firstnameInput"]').type(firstname)
+        cy.get('[data-cy="lastnameInput"]').clear()
+        cy.get('[data-cy="lastnameInput"]').type(lastname)
         cy.get('[data-cy="dobInput"]').should('have.attr', 'readonly')
         cy.get('[data-cy="emailInput"]').should('have.attr', 'readonly')
         cy.get('[data-cy="addressInput"]').clear().type(address)
