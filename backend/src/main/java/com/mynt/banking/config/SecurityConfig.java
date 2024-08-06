@@ -46,6 +46,8 @@ public class SecurityConfig {
             "/configuration/security",
             "/swagger-ui/**",
             "/webjars/**",
+            "/api/v1/payments/**"
+            "/api/v1/rates/**"
     };
 
     private final AuthenticationFilter jwtAuthFilter;
@@ -84,9 +86,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/demo-controller/**").hasRole("USER")
                         .requestMatchers("/api/v1/flutterwave/**").hasRole("USER")
                         .requestMatchers("/api/v1/transaction/**").hasRole("USER")
-                        .requestMatchers("api/v1/flutterwave/**").hasRole("USER")
-                        .requestMatchers("api/v1/rates/**").hasRole("USER")
+                        .requestMatchers("/api/v1/rates/**").hasRole("USER")
                         .requestMatchers("/api/v1/users/**").hasRole("USER")
+                        .requestMatchers("/api/v1/payments/**").hasRole("USER")
                         .anyRequest()
                         .authenticated()
                 )
