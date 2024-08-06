@@ -46,12 +46,10 @@ function MyPayeesPanel() {
     async function fetchPayees() {
         try {
             const response = await fetch(getBeneficiaries, {
-                method: 'POST',
+                method: 'GET',
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('access')}`
                 },
-                body: JSON.stringify({})
             });
 
             if (!response.ok) {
