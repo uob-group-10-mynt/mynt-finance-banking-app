@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {authenticateAPI} from "../utils/APIEndpoints";
 import CustomForm from "../components/forms/CustomForm";
 import Page from "../components/Page";
+import makeRequest from "../utils/Requester";
 
 const loginInputFields = [
     {
@@ -39,26 +40,24 @@ function Login() {
 
     const handleLoginSubmit = async (formValuesJSON) => {
         try {
-            const response = await fetch(authenticateAPI, {
-                method: 'POST',
-                headers: {"Content-type": "application/json"},
-                body: JSON.stringify(formValuesJSON)
-            });
-            setEmail('');
-            setPassword('');
-            if (!response.ok) {
-                setErrorOccurred(true)
-                throw new Error('Authentication failed');
-            }
-            setErrorOccurred(false)
-            const data = await response.json()
+            const data = await makeRequest(
+                'POST',
+                authenticateAPI,
+                false,
+                null,
+                formValuesJSON
+            )
+            console.log("data:: ", data)
             sessionStorage.setItem('access', data.access_token)
             sessionStorage.setItem('refresh', data.refresh_token)
+            setEmail('');
+            setPassword('');
+            setErrorOccurred(false)
             setLoggedIn(true)
             navigate('/')
         } catch (error) {
-            //TODO handle errors by redirecting to relevant error page
-            console.error(error);
+            console.error("error occurred: ", error)
+            setErrorOccurred(true)
         }
     }
 
