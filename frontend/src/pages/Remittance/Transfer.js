@@ -24,7 +24,7 @@ export default function Transfer() {
                             <CustomText black big>{payee.name}</CustomText>
                             <CustomText gray small>{payee.currency + " " + payee.account_number}</CustomText>
                             <CustomText black medium>
-                                {`+${selectedCurrencyAccount.currency} ${parseFloat(payee.transfer_amount).toFixed(2).toLocaleString()}`}
+                                {`+${selectedCurrencyAccount.currency} ${Intl.NumberFormat("en-GB").format(payee.transfer_amount)}`}
                             </CustomText>
                         </InfoBlock>
                     </>

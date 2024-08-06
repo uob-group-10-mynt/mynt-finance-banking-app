@@ -45,7 +45,7 @@ export default function Amount() {
             type: "number",
             required: true,
             value: amount,
-            helperText: `Available balance: ${selectedCurrencyAccount.currency} ${availableBalance.toLocaleString()}`,
+            helperText: `Available balance: ${selectedCurrencyAccount.currency} ${Intl.NumberFormat("en-GB").format(availableBalance)}`,
             inputLeftElement: selectedPayee.currency
         },
     ];
