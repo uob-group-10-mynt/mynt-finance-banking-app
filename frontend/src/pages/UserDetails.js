@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import CustomForm from "../components/forms/CustomForm";
 import { getUserDetailsAPI, updateUserDetailsAPI } from "../utils/APIEndpoints";
 import Page from "../components/Page";
-import CustomButton from "../components/forms/CustomButton";
-import PageHeader from "../components/forms/PageHeader";
+import { Heading } from "@chakra-ui/react";
 
 const accountFields = [
     {
         label: "Email",
         id: "email",
+        alwaysReadOnly:true,
         readonly: true,
         value: "",
         type: "text",
@@ -17,6 +17,7 @@ const accountFields = [
     {
         label: "Date of birth",
         id: "dob",
+        alwaysReadOnly:true,
         readonly: true,
         value: "",
         type: "date",
@@ -27,48 +28,37 @@ const accountFields = [
         id: "firstname",
         required: true,
         readonly: true,
-        value: ""
+        value: "",
+        border: "none"
     },
     {
         label: "Last name",
         id: "lastname",
         required: true,
         readonly: true,
-        value: ""
+        value: "",
+        border: "none"
     },
     {
         label: "Address",
         id: "address",
         required: true,
         readonly: true,
-        value: ""
+        value: "",
+        border: "none"
     },
     {
         label: "Phone number",
         id: "phoneNumber",
         required: true,
         readonly: true,
-        value: ""
+        value: "",
+        border: "none"
     },
 ];
 
 export default function UserDetails() {
     const [details, setDetails] = useState(accountFields)
-    const [editButtonDisplayed, setEditButtonDisplayed] = useState("")
-    const [saveButtonDisplayed, setSaveButtonDisplayed] = useState("")
-
-
-    //edit form changes state, readonly becomes false
-    function editForm(e) {
-        e.preventDefault();
-
-        setDetails(details.map((field) => {
-            field.readonly = field.id === 'dob' || field.id === 'email';
-            return field;
-        }));
-        setEditButtonDisplayed("none")
-        setSaveButtonDisplayed(" ")
-    }
 
     const getAndSetDetails = async () => {
         try {
@@ -82,11 +72,10 @@ export default function UserDetails() {
                 throw new Error('response not ok');
             }
             const data = await response.json()
-            accountFields.forEach(field => {
+            setDetails(accountFields.map(field => {
                 field.value = data[field.id]
-                field.readonly = true
-            });
-            setDetails(accountFields)
+                return field
+            }))
         } catch (error) {
             console.error(error);
         }
@@ -94,12 +83,8 @@ export default function UserDetails() {
 
     useEffect(() => {
         getAndSetDetails()
-            .then(() => {
-                setEditButtonDisplayed(" ")
-                setSaveButtonDisplayed("none")
-            })
-    }, []) // empty array means useEffect() is only called on initial render of component
-
+     }, []) // empty array means useEffect() is only called on initial render of component
+    
 
     const updateDetails = async (formValuesJSON) => {
         try {
@@ -111,12 +96,14 @@ export default function UserDetails() {
                 },
                 body: JSON.stringify(formValuesJSON)
             });
-            await getAndSetDetails()
+            setDetails(details.map((field) => {
+                field.readonly = true;
+                field.border = "none"
+                return field
+            }))
             if (!response.ok) {
                 throw new Error('Authentication failed');
             }
-            setEditButtonDisplayed(" ")
-            setSaveButtonDisplayed("none")
         } catch (error) {
             console.error(error);
         }
@@ -124,15 +111,9 @@ export default function UserDetails() {
 
     return (
         <Page>
-            <PageHeader size='lg'>Your personal details</PageHeader>
-            <CustomForm onSubmit={updateDetails} buttonText="Save" buttonDisplayed={saveButtonDisplayed}
-                        buttonId="saveDetailsButton" parentState={accountFields} setParentState={setDetails}>
+            <Heading as='h1' size='xl' mb={4}>Your personal details</Heading>
+            <CustomForm onSubmit={updateDetails} buttonText="Save" buttonId="saveDetailsButton" parentState={details} setParentState={setDetails} editable={true}>
             </CustomForm>
-            <CustomButton standard width='100%' data-cy="editButton" display={editButtonDisplayed} onClick={(e) => {
-                editForm(e)
-            }}>
-                Edit
-            </CustomButton>
         </Page>
     )
 }
