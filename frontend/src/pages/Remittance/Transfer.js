@@ -11,6 +11,7 @@ export default function Transfer() {
     const navigate = useNavigate();
     const toast = useToast();
     const location = useLocation();
+    const selectedCurrencyAccount = location.state.selectedCurrencyAccount;
     const selectedPayee = location.state.selectedPayee;
     const renderSelectedPayee = [selectedPayee].map((payee) => {
         return {
@@ -18,11 +19,13 @@ export default function Transfer() {
             render: () => {
                 return (
                     <>
-                        <Icon name={payee.bank}/>
+                        <Icon name={payee.bank_name}/>
                         <InfoBlock>
-                            <CustomText gray
-                                        small>{payee.label + ' + £' + parseFloat(payee.transfer_amount).toLocaleString(2)}</CustomText>
-                            <CustomText black big>{payee.account_number}</CustomText>
+                            <CustomText black big>{payee.name}</CustomText>
+                            <CustomText gray small>{payee.currency + " " + payee.account_number}</CustomText>
+                            <CustomText black medium>
+                                {`+${selectedCurrencyAccount.currency} ${parseFloat(payee.transfer_amount).toFixed(2).toLocaleString()}`}
+                            </CustomText>
                         </InfoBlock>
                     </>
                 );

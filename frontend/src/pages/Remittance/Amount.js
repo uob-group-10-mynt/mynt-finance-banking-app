@@ -15,6 +15,7 @@ export default function Amount() {
     const location = useLocation();
     const selectedCurrencyAccount = location.state.selectedCurrencyAccount;
     const availableBalance = selectedCurrencyAccount.balance;
+
     const selectedPayee = location.state.selectedPayee;
     const renderSelectedPayee = [selectedPayee].map((payee) => {
         return {
@@ -53,7 +54,12 @@ export default function Amount() {
     const handleAmountSubmit = () => {
         // Add validation and submission logic here
         selectedPayee['transfer_amount'] = fields[0].value;
-        navigate('/remittance/transfer', {state: {selectedPayee: selectedPayee}});
+        navigate('/remittance/transfer', {
+            state: {
+                selectedCurrencyAccount: selectedCurrencyAccount,
+                selectedPayee: selectedPayee,
+            }
+        });
     };
 
     return (
