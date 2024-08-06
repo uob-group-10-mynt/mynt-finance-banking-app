@@ -1,6 +1,7 @@
 package com.mynt.banking.client.pay.beneficiaries;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -19,7 +20,7 @@ public class MyntBeneficiaryController {
     }
 
     @GetMapping("/find/{id}")
-    public BeneficiaryDetail findBeneficiary(@PathVariable String id) {
+    public BeneficiaryDetail findBeneficiary(@PathVariable("id") String id) {
         return myntBeneficiaryService.getBeneficiary(id);
     }
 
@@ -28,15 +29,15 @@ public class MyntBeneficiaryController {
         return myntBeneficiaryService.create(request);
     }
 
-//    @DeleteMapping("/delete/{id}")
-//    public delete(@PathVariable String id) {
-//
-//        return null;
-//    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteResource(@PathVariable("id") String id) {
+        return myntBeneficiaryService.delete(id);
+    }
 
 }
 
 
-// TODO: complete conversion detail
-// TODO: pull James' code
+// TODO: complete conversion detail and restructure endpoint to be transactions/{id}
+// TODO: Pull James' code
 // TODO: complete internal transfer detail --> show email and name
+// TODO: retry and rate limiting

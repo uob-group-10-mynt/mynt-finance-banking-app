@@ -95,4 +95,13 @@ public class MyntBeneficiaryService {
                     HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
+
+    public ResponseEntity<Void> delete(String id) {
+        ResponseEntity<JsonNode> deleteResponse = beneficiaryService.delete(id, userContextService.getCurrentUserUuid());
+        if (deleteResponse.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.noContent().build(); // HTTP 204 No Content
+        } else {
+            return ResponseEntity.notFound().build(); // HTTP 404 Not Found
+        }
+    }
 }
