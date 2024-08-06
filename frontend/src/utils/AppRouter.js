@@ -52,7 +52,7 @@ function ProtectedRoute({element, loadingComponent}) {
 const AppRouter = createBrowserRouter(
     createRoutesFromElements(
         <Route path='/' element={lazyLoad(RootLayout, <Loading/>)}>
-            <Route index element={lazyLoad(Home, <Loading/>)}/>
+            {/* <Route index element={lazyLoad(Home, <Loading/>)}/> */}
             <Route path='login' element={lazyLoad(Login, <Loading/>)}/>
             {/* <Route path='remittance' element={lazyLoad(Remittance, <Loading/>)}> */}
             <Route path='remittance' element={<ProtectedRoute element={Remittance} loadingComponent={<Loading/>}/>}>
@@ -67,16 +67,18 @@ const AppRouter = createBrowserRouter(
             <Route path='accounts/:id' element={<ProtectedRoute element={Account} loadingComponent={<Loading/>}/>}/>
             <Route path='transactions/:id' element={<ProtectedRoute element={Transaction} loadingComponent={<Loading/>}/>}/>
             <Route path='currencies/:currency' element={<ProtectedRoute element={CurrencyPage} loadingComponent={<Loading/>}/>}/>
+            <Route path='currencies' element={<ProtectedRoute element={ForeignExchangePage} loadingComponent={<Loading/>}/>}/>
 
+            <Route path='accounts' element={lazyLoad(Home, <Loading/>)}/>
             {/* <Route path='dashboard' element={lazyLoad(DashBoard, <Loading/>)}></Route>
             <Route path='accounts/:id' element={lazyLoad(Account, <Loading/>)}></Route>
             <Route path='transactions/:id' element={lazyLoad(Transaction, <Loading/>)}></Route>
-            <Route path='currencies' element={lazyLoad(ForeignExchangePage, <Loading/>)}></Route>
-            <Route path='currencies/:currency' element={lazyLoad(CurrencyPage, <Loading/>)}></Route>
+            
+            <Route path='currencies/:currency' element={lazyLoad(CurrencyPage, <Loading/>)}></Route> */}
             <Route path='conversions' element={lazyLoad(ConversionPage, <Loading/>)}>
                 <Route path='confirm' element={lazyLoad(ConversionConfirmPage, <Loading/>)} />
             </Route>
-            <Route path='conversions/confirm' element={lazyLoad(ConversionConfirmPage, <Loading/>)} /> */}
+            <Route path='conversions/confirm' element={lazyLoad(ConversionConfirmPage, <Loading/>)} />
             <Route path={'*'} element={lazyLoad(NotFound404, <Loading/>)}/>
         </Route>
     )

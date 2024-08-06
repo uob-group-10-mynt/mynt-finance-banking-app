@@ -1,8 +1,11 @@
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box } from '@chakra-ui/react';
 
-import useAxios from '../../hooks/useAxios';
 import useFormatAmount from '../../hooks/useFormatAmount';
+
+import SplashPage from '../SplashPage';
+
 import Container from '../../components/container/Container';
 import Icon from '../../components/util/Icon';
 import CustomText from '../../components/CustomText';
@@ -12,76 +15,89 @@ import InfoBlock from '../../components/util/InfoBlock';
 import DateTimeDisplay from '../../components/util/DateTimeDisplay';
 import CustomBox from '../../components/util/CustomBox';
 
-const accountDetail = {
-  'id': '1',
-  'account_reference': '66f51c98-1ef8-4e48-97de-aac0353ba2b4',
-  'bank': 'mynt',
-  'label': 'Mynt Dollar Account',
-  'balance': '100',
-  'currency': 'USD',
-};
-
-const fetchTransactionData = [
-  {
-      'id': '1',
-      'payee_bank': 'mynt',
-      'payer_bank': 'M-PESA',
-      'amount': '100',
-      'currency': 'USD',
-      'flow': '+',
-      'created_at': "2024-06-25T14:13:18+00:00",
-  },
-  {
-      'id': '2',
-      'payee_bank': 'others',
-      'payer_bank': 'M-PESA',
-      'amount': '10000.0',
-      'currency': 'USD',
-      'flow': '-',
-      'created_at': "2024-06-25T14:13:18+00:00",
-  },
-];
-
 
 function AccountPage() {
   const navigate = useNavigate();
-  // const location = useLocation();
-  // const [] = useAxios();
-  const transactionKeyFn = (info) => info.id; 
+  const currency = useLocation().pathname.split('/')[2];
+  const [ account, setAccount ] = useState({});
+  const [ transactions, setTransactions ] = useState([]);
+  const [ pages, setPages ] = useState(1);
+  const [ loading, setLoading ] = useState(true); 
 
-  const transactionData = fetchTransactionData.map((data) => {
+  useEffect(() => {
+    setLoading(true); 
+
+    fetch(`http://localhost:8080/api/v1/transaction?currency=${currency}&page=${pages}`, {
+      headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` }
+    })
+      .then(response => response.json())
+      .then(data => {
+        setTransactions([ ...transactions, ...data.transactions ]);
+        setLoading(false); 
+      })
+      .catch(e => {
+        console.error("ERROR: ", e);
+        setLoading(false); 
+      });
+  }, [pages]);
+
+  useEffect(() => {
+    setLoading(true); // Start loading
+
+    fetch(`http://localhost:8080/api/v1/balance/${currency}`, {
+      headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` }
+    })
+      .then(response => response.json())
+      .then(data => {
+        setAccount(data);
+        setLoading(false); 
+      })
+      .catch(e => {
+        console.error("ERROR: ", e);
+        setLoading(false); 
+      });
+  }, []);
+
+  const transactionKeyFn = (info) => info.accountId;
+
+  const moreButtonOnClick = () => {
+    setPages(pages + 1);
+  }
+
+  const transactionData = transactions.map((data) => {
+    const { createdAt, amount, currency, type } = data;
     return {
-        ...data,
-        render: () => {
-            return (
-                <>
-                    <Icon name={data.payee_bank} />
-                    <InfoBlock>
-                        <CustomText black small>{data.payee_bank}</CustomText>
-                        <DateTimeDisplay time={data.created_at}/>
-                    </InfoBlock>
-                    <ContainerRowBalanceWrapper>
-                      <CustomText black big>{data.flow}{useFormatAmount(data.amount, data.currency)}</CustomText>
-                    </ContainerRowBalanceWrapper>
-                </>
-            );
-        },
+      ...data,
+      render: () => {
+        return (
+          <>
+            <Icon name={'The Currency Cloud Limited'} />
+            <InfoBlock>
+              <CustomText black small>{'The Currency Cloud Limited'}</CustomText>
+              <DateTimeDisplay time={createdAt} />
+            </InfoBlock>
+            <ContainerRowBalanceWrapper>
+              <CustomText black big>{type === 'credit' ? '+' : '-'}{useFormatAmount(amount, currency || 'USD')}</CustomText>
+            </ContainerRowBalanceWrapper>
+          </>
+        );
+      },
 
-        onClick: () => {
-          navigate('/transactions/' + data.id);
-        },
+      onClick: () => {
+        navigate('/transactions/' + data.id);
+      },
     }
   });
 
   const accountInfoBlock = (
     <CustomBox gap='0.2em'>
       <InfoBlock>
-        <CustomText gray small style={{ textDecoration: 'underline' }}>{accountDetail.label}</CustomText>
-        <CustomText gray xsmall>{accountDetail.account_reference}</CustomText>
+        <CustomText gray small style={{ textDecoration: 'underline' }}>{account.account_label}</CustomText>
+        <CustomText gray xsmall>{account.account_number_type}: {account.account_number}</CustomText>
       </InfoBlock>
-      <CustomText black big>{useFormatAmount(accountDetail.balance, accountDetail.currency)}</CustomText>
+      <CustomText black big>{useFormatAmount(account.balance || 0, account.currency || 'USD')}</CustomText>
       <Box
-        display='flex' 
+        display='flex'
         flexDirection='row'
         alignItems="center"
         justifyContent="space-between"
@@ -93,7 +109,9 @@ function AccountPage() {
   );
 
   return (
-    <Box
+    (loading) 
+    ? <SplashPage />
+    : <Box
       display="flex"
       flexDirection='column'
       justifyContent="center"
@@ -103,7 +121,7 @@ function AccountPage() {
     >
       {accountInfoBlock}
       <Container name='Transactions' data={transactionData} keyFn={transactionKeyFn} />
-      <CustomButton medium>More</CustomButton>
+      <CustomButton medium onClick={moreButtonOnClick}>More</CustomButton>
     </Box>
   );
 }
