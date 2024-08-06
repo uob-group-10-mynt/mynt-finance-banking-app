@@ -16,15 +16,11 @@ public class MyntTransferController {
 
     private final MyntTransferService transferService;
 
-
-    @GetMapping("/create/{email}")
-    public ResponseEntity<JsonNode> create(@PathVariable(name = "email", required = true) String emailTransferTo,
+    @PostMapping("/create")
+    public ResponseEntity<JsonNode> create(@RequestParam(name = "email", required = true) String emailTransferTo,
                                                  @RequestParam(name = "currency", required = true) String currency,
                                                  @RequestParam(name = "amount", required = true) Double amount
                                            ) {
-        return transferService.createTransfer(emailTransferTo,
-                                                currency,
-                                                amount);
+        return transferService.createTransfer(emailTransferTo, currency, amount);
     }
-
 }
