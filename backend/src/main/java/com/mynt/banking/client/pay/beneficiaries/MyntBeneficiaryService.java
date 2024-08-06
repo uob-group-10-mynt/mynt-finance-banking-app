@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +50,7 @@ public class MyntBeneficiaryService {
         }
     }
 
-    public BeneficiaryDetail getBeneficiary(String id) {
+    public BeneficiaryDetail get(String id) {
         ResponseEntity<JsonNode> beneficiaryDetailsResponse = beneficiaryService.get(
                 id, userContextService.getCurrentUserUuid());
         JsonNode beneficiaryDetails = beneficiaryDetailsResponse.getBody();
@@ -67,29 +68,26 @@ public class MyntBeneficiaryService {
                     HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
+
     public BeneficiaryDetail create(BeneficiaryDetail request) {
         // Validate beneficiary:
         ObjectMapper mapper = new ObjectMapper();
-        try {
-            ValidateBeneficiaryRequest validateBeneficiaryRequest =  mapper.readValue(request.toString(),
-                    ValidateBeneficiaryRequest.class);
-            validateBeneficiaryRequest.setBeneficiaryEntityType("individual");
-            validateBeneficiaryRequest.setOnBehalfOf(userContextService.getCurrentUserUuid());
-            beneficiaryService.validate(validateBeneficiaryRequest);
-        } catch (IOException ignore) {
-            throw new CurrencyCloudException("Failed to map JSON response to BeneficiariesDetailResponse.Beneficiary",
-                    HttpStatus.UNPROCESSABLE_ENTITY);
-        }
+
+
+        ValidateBeneficiaryRequest validateBeneficiaryRequest = mapToValidateBeneficiaryRequest(request);
+        validateBeneficiaryRequest.setBeneficiaryEntityType("individual");
+        validateBeneficiaryRequest.setOnBehalfOf(userContextService.getCurrentUserUuid());
+        beneficiaryService.validate(validateBeneficiaryRequest);
 
         // Create beneficiary:
         BeneficiaryDetail beneficiaryDetail;
         try {
-            CreateBeneficiaryRequest createBeneficiaryRequest =  mapper.readValue(request.toString(),
-                    CreateBeneficiaryRequest.class);
+            CreateBeneficiaryRequest createBeneficiaryRequest = mapToCreateBeneficiaryRequest(request);
             createBeneficiaryRequest.setBeneficiaryEntityType("individual");
+            createBeneficiaryRequest.setBankAccountHolderName(request.getBankAccountHolderName());
             createBeneficiaryRequest.setOnBehalfOf(userContextService.getCurrentUserUuid());
-            ResponseEntity<JsonNode>  response = beneficiaryService.create(createBeneficiaryRequest);
-            return mapper.readValue(response.getBody().toString(), BeneficiaryDetail.class);
+            ResponseEntity<JsonNode> response = beneficiaryService.create(createBeneficiaryRequest);
+            return mapper.readValue(Objects.requireNonNull(response.getBody()).toString(), BeneficiaryDetail.class);
         } catch (IOException ignore) {
             throw new CurrencyCloudException("Failed to map JSON response to BeneficiariesDetailResponse.Beneficiary",
                     HttpStatus.UNPROCESSABLE_ENTITY);
@@ -103,5 +101,101 @@ public class MyntBeneficiaryService {
         } else {
             return ResponseEntity.notFound().build(); // HTTP 404 Not Found
         }
+    }
+
+
+    // Private mapper method
+    private ValidateBeneficiaryRequest mapToValidateBeneficiaryRequest(BeneficiaryDetail beneficiaryDetail) {
+        if (beneficiaryDetail == null) {
+            return null;
+        }
+
+        String beneficiaryAddress = null;
+        if (beneficiaryDetail.getBeneficiaryAddress() != null) {
+            StringJoiner joiner = new StringJoiner(", ");
+            for (String address : beneficiaryDetail.getBeneficiaryAddress()) {
+                joiner.add(address);
+            }
+            beneficiaryAddress = joiner.toString();
+        }
+
+        return ValidateBeneficiaryRequest.builder()
+                .bankCountry(beneficiaryDetail.getBankCountry())
+                .currency(beneficiaryDetail.getCurrency())
+                .beneficiaryAddress(beneficiaryAddress)
+                .beneficiaryCountry(beneficiaryDetail.getBeneficiaryCountry())
+                .bicSwift(beneficiaryDetail.getBicSwift())
+                .iban(beneficiaryDetail.getIban())
+                .bankName(beneficiaryDetail.getBankName())
+                .beneficiaryFirstName(beneficiaryDetail.getBeneficiaryFirstName())
+                .beneficiaryLastName(beneficiaryDetail.getBeneficiaryLastName())
+                .beneficiaryCity(beneficiaryDetail.getBeneficiaryCity())
+                .beneficiaryPostcode(beneficiaryDetail.getBeneficiaryPostcode())
+                .accountNumber("") // Assuming default value, adjust as needed
+                .routingCodeType1("") // Assuming default value, adjust as needed
+                .routingCodeValue1("") // Assuming default value, adjust as needed
+                .routingCodeType2("") // Assuming default value, adjust as needed
+                .routingCodeValue2("") // Assuming default value, adjust as needed
+                .bankAddress("") // Assuming default value, adjust as needed
+                .bankAccountType("") // Assuming default value, adjust as needed
+                .beneficiaryCompanyName("") // Assuming default value, adjust as needed
+                .beneficiaryStateOrProvince("") // Assuming default value, adjust as needed
+                .beneficiaryDateOfBirth("") // Assuming default value, adjust as needed
+                .beneficiaryIdentificationType("") // Assuming default value, adjust as needed
+                .beneficiaryIdentificationValue("") // Assuming default value, adjust as needed
+                .paymentTypes(null) // Assuming default value, adjust as needed
+                .onBehalfOf("") // Assuming default value, adjust as needed
+                .build();
+    }
+
+    private CreateBeneficiaryRequest mapToCreateBeneficiaryRequest(BeneficiaryDetail beneficiaryDetail) {
+        if (beneficiaryDetail == null) {
+            return null;
+        }
+
+        String beneficiaryAddress = null;
+        if (beneficiaryDetail.getBeneficiaryAddress() != null) {
+            StringJoiner joiner = new StringJoiner(", ");
+            for (String address : beneficiaryDetail.getBeneficiaryAddress()) {
+                joiner.add(address);
+            }
+            beneficiaryAddress = joiner.toString();
+        }
+
+        return CreateBeneficiaryRequest.builder()
+                .name(beneficiaryDetail.getName())
+                .bankAccountHolderName(beneficiaryDetail.getBankAccountHolderName())
+                .bankCountry(beneficiaryDetail.getBankCountry())
+                .currency(beneficiaryDetail.getCurrency())
+                .email("") // Assuming default value, adjust as needed
+                .beneficiaryAddress(beneficiaryAddress)
+                .beneficiaryCountry(beneficiaryDetail.getBeneficiaryCountry())
+                .accountNumber("") // Assuming default value, adjust as needed
+                .routingCodeType1(null) // Assuming default value, adjust as needed
+                .routingCodeValue1(null) // Assuming default value, adjust as needed
+                .routingCodeType2(null) // Assuming default value, adjust as needed
+                .routingCodeValue2(null) // Assuming default value, adjust as needed
+                .bicSwift(beneficiaryDetail.getBicSwift())
+                .iban(beneficiaryDetail.getIban())
+                .defaultBeneficiary(false) // Assuming default value, adjust as needed
+                .bankAddress("") // Assuming default value, adjust as needed
+                .bankName(beneficiaryDetail.getBankName())
+                .bankAccountType("") // Assuming default value, adjust as needed
+                .beneficiaryEntityType("individual") // Assuming default value, adjust as needed
+                .beneficiaryCompanyName("") // Assuming default value, adjust as needed
+                .beneficiaryFirstName(beneficiaryDetail.getBeneficiaryFirstName())
+                .beneficiaryLastName(beneficiaryDetail.getBeneficiaryLastName())
+                .beneficiaryCity(beneficiaryDetail.getBeneficiaryCity())
+                .beneficiaryPostcode(beneficiaryDetail.getBeneficiaryPostcode())
+                .beneficiaryStateOrProvince("") // Assuming default value, adjust as needed
+                .beneficiaryDateOfBirth("") // Assuming default value, adjust as needed
+                .beneficiaryIdentificationType("") // Assuming default value, adjust as needed
+                .beneficiaryIdentificationValue("") // Assuming default value, adjust as needed
+                .paymentTypes(null) // Assuming default value, adjust as needed
+                .onBehalfOf("") // Assuming default value, adjust as needed
+                .beneficiaryExternalReference("") // Assuming default value, adjust as needed
+                .businessType("") // Assuming default value, adjust as needed
+                .companyWebsite("") // Assuming default value, adjust as needed
+                .build();
     }
 }

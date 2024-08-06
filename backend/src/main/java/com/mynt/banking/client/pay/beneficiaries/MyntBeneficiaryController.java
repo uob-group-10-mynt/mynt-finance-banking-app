@@ -19,9 +19,9 @@ public class MyntBeneficiaryController {
         return myntBeneficiaryService.find(perPage, page);
     }
 
-    @GetMapping("/find/{id}")
-    public BeneficiaryDetail findBeneficiary(@PathVariable("id") String id) {
-        return myntBeneficiaryService.getBeneficiary(id);
+    @GetMapping("/{id}")
+    public BeneficiaryDetail get(@PathVariable("id") String id) {
+        return myntBeneficiaryService.get(id);
     }
 
     @PostMapping("/create")
@@ -30,7 +30,7 @@ public class MyntBeneficiaryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteResource(@PathVariable("id") String id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") String id) {
         return myntBeneficiaryService.delete(id);
     }
 
@@ -38,6 +38,6 @@ public class MyntBeneficiaryController {
 
 
 // TODO: complete conversion detail and restructure endpoint to be transactions/{id}
-// TODO: Pull James' code
+// TODO: Accept PR from James' code
 // TODO: complete internal transfer detail --> show email and name
 // TODO: retry and rate limiting
