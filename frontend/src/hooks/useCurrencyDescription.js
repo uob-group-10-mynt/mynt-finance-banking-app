@@ -2,7 +2,7 @@ const CURRENCY_DESCRIPTION = {
   'AUD': "Australian Dollar",
   'BHD': "Bahrain Dinar",
   'CAD': "Canadian Dollar",
-  'CNH': "Chinese Yuan",
+  'CNY': "Chinese Yuan",
   'CZK': "Czech Koruna",
   'DKK': 'Danish Krone',
   'EUR': 'European Euro',

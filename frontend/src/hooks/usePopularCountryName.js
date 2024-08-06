@@ -5,7 +5,7 @@ export const POPULAR_CURRENCY_COUNTRY_MAP = {
   'EUR': 'European Union',
   'CAD': 'Canada',
   'JPY': 'Japan',
-  'CNH': 'China',
+  'CNY': 'China',
 };
 
 export default function usePopularCountryName(currency) {

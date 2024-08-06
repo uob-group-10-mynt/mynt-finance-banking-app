@@ -36,6 +36,9 @@ public class SecurityConfig {
     private static final String[] WHITE_LIST_URL = {
             "/api/v1/auth/**",
             "/api/v1/auth/sdk**",
+            "/api/v1/users/**",
+            "/api/v1/currency-cloud/beneficiaries/**",
+            "/api/v1/payments/**",
             "/v3/api-docs/**",
             "/swagger-resources",
             "/swagger-resources/**",
@@ -43,6 +46,7 @@ public class SecurityConfig {
             "/configuration/security",
             "/swagger-ui/**",
             "/webjars/**",
+            "/api/v1/rates/**"
     };
 
     private final AuthenticationFilter jwtAuthFilter;
@@ -77,14 +81,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(WHITE_LIST_URL)
                         .permitAll()
-                        .requestMatchers("/api/v1/currency-cloud/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/currency-cloud/**").hasRole("USER")
                         .requestMatchers("/api/v1/demo-controller/**").hasRole("USER")
                         .requestMatchers("/api/v1/flutterwave/**").hasRole("USER")
                         .requestMatchers("/api/v1/transaction/**").hasRole("USER")
-                        .requestMatchers("api/v1/flutterwave/**").hasRole("USER")
-                        .requestMatchers("api/v1/rates/**").hasRole("USER")
+                        .requestMatchers("/api/v1/rates/**").hasRole("USER")
                         .requestMatchers("/api/v1/users/**").hasRole("USER")
                         .requestMatchers("/api/v1/transfer/**").hasRole("USER")
+                        .requestMatchers("/api/v1/payments/**").hasRole("USER")
                         .anyRequest()
                         .authenticated()
                 )

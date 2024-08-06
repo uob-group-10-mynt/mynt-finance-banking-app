@@ -2,7 +2,7 @@ const CURRENCY_SYMBOLS = {
   'AUD': 'A$', // Added symbol for Australian Dollar
   'BHD': 'BD', // Added symbol for Bahrain Dinar
   'CAD': 'C$', // Added symbol for Canadian Dollar
-  'CNH': '¥', // Added symbol for Chinese Yuan (Renminbi)
+  'CNY': '¥', // Added symbol for Chinese Yuan (Renminbi)
   'CZK': 'Kč', // Added symbol for Czech Koruna
   'DKK': 'kr', // Added symbol for Danish Krone
   'EUR': '€',  // Added symbol for European Euro

@@ -64,7 +64,11 @@ public class MyntRatesService {
         response.add(firstRate);
 
         JsonNode ccRates = Objects.requireNonNull(ccResponse.getBody()).get("rates");
-        ccRates.fieldNames().forEachRemaining( key -> {
+        List<String> fieldNames = new LinkedList<>();
+        ccRates.fieldNames().forEachRemaining(fieldNames::add);
+        Collections.sort(fieldNames);
+
+        fieldNames.forEach( key -> {
             MyntGetBasicRatesResponse responseElement = MyntGetBasicRatesResponse.builder()
                     .currency(key.toUpperCase().replace(baseCurrency, ""))
                     .rate(ccRates.get(key).get(0).asText())
@@ -84,7 +88,6 @@ public class MyntRatesService {
         assert ccResponse.getStatusCode().is2xxSuccessful();
         JsonNode currenciesNode = Objects.requireNonNull(ccResponse.getBody()).get("currencies");
         currenciesNode.forEach(node -> codes.add(node.get("code").asText()));
-
         return codes;
     }
 
