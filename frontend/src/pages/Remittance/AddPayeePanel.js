@@ -79,7 +79,6 @@ export default function AddPayeePanel() {
                 return;
             }
 
-            // Parse the JSON from the response
             setResponse(await response.json());
         } catch (error) {
             setError(error);
