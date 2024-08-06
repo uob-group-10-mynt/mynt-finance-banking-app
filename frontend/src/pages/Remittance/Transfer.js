@@ -14,7 +14,6 @@ export default function Transfer() {
     const toast = useToast();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [response, setResponse] = useState('')
 
     const location = useLocation();
     const selectedCurrencyAccount = location.state.selectedCurrencyAccount;
@@ -28,8 +27,8 @@ export default function Transfer() {
                         <Icon name={payee.bank_name}/>
                         <InfoBlock>
                             <CustomText black big>{payee.name}</CustomText>
-                            <CustomText black big>{payee.beneficiary_id}</CustomText>
-                            <CustomText gray small>{`${payee.currency} ${payee.account_number}`}</CustomText>
+                            <CustomText gray xsmall>{"Currency: " + payee.currency}</CustomText>
+                            <CustomText gray xsmall>{"IBAN: " + payee.iban}</CustomText>
                             <CustomText black medium>
                                 {`+${Intl.NumberFormat("en-GB").format(payee.transfer_amount)} ${payee.currency} `}
                             </CustomText>
@@ -52,37 +51,38 @@ export default function Transfer() {
                     "beneficiary_id": selectedPayee.id,
                     "from_currency": selectedCurrencyAccount.currency,
                     "amount": selectedPayee.transfer_amount,
+                    "reason": "No reason",
+                    "reference": "No reference",
                 })
             });
+
+            if (response.ok) {
+                toast({
+                    position: 'top',
+                    title: 'Transfer made.',
+                    description: "You've successfully made a transfer.",
+                    status: 'success',
+                    duration: 5000,
+                    isClosable: true,
+                });
+
+                setTimeout(() => {
+                    navigate('/');
+                }, 3000);
+                return;
+            }
 
             if (!response.ok) {
                 const error = new Error(await response.text());
                 setError(error);
                 setLoading(false);
-                return;
             }
-
-            setResponse(await response.json());
         } catch (error) {
             setError(error);
         } finally {
             setLoading(false);
         }
 
-        if (response.ok) {
-            toast({
-                position: 'top',
-                title: 'Transfer made.',
-                description: "You've successfully made a transfer.",
-                status: 'success',
-                duration: 5000,
-                isClosable: true,
-            });
-
-            setTimeout(() => {
-                navigate('/');
-            }, 10000);
-        }
     }
 
     return (

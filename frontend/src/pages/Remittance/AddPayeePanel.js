@@ -27,6 +27,14 @@ export default function AddPayeePanel() {
             value: ""
         },
         {
+            id: "bank-name",
+            label: "bank_name",
+            placeholder: "Enter bank name of the bank account",
+            type: "text",
+            required: true,
+            value: ""
+        },
+        {
             id: "bank-country",
             label: "bank_country",
             placeholder: "Enter country of the bank account",
@@ -35,9 +43,73 @@ export default function AddPayeePanel() {
             value: ""
         },
         {
+            id: "bic-swift",
+            label: "bic_swift",
+            placeholder: "Enter SWIFT/BIC",
+            type: "text",
+            required: true,
+            value: ""
+        },
+        {
+            id: "iban",
+            label: "iban",
+            placeholder: "Enter IBAN",
+            type: "text",
+            required: true,
+            value: ""
+        },
+        {
             id: "currency",
             label: "currency",
             placeholder: "Enter currency of the bank account",
+            type: "text",
+            required: true,
+            value: ""
+        },
+        {
+            id: "beneficiary-address",
+            label: "beneficiary_address",
+            placeholder: "Enter address of the beneficiary",
+            type: "text",
+            required: true,
+            value: ""
+        },
+        {
+            id: "beneficiary-country",
+            label: "beneficiary_country",
+            placeholder: "Enter country of the beneficiary",
+            type: "text",
+            required: true,
+            value: ""
+        },
+        {
+            id: "beneficiary-first-name",
+            label: "beneficiary_first_name",
+            placeholder: "Enter first name of the beneficiary",
+            type: "text",
+            required: true,
+            value: ""
+        },
+        {
+            id: "beneficiary-last-name",
+            label: "beneficiary_last_name",
+            placeholder: "Enter last name of the beneficiary",
+            type: "text",
+            required: true,
+            value: ""
+        },
+        {
+            id: "beneficiary-city",
+            label: "beneficiary_city",
+            placeholder: "Enter city of the beneficiary",
+            type: "text",
+            required: true,
+            value: ""
+        },
+        {
+            id: "beneficiary-postcode",
+            label: "beneficiary_postcode",
+            placeholder: "Enter postcode of the beneficiary",
             type: "text",
             required: true,
             value: ""

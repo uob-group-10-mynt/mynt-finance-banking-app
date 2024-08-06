@@ -46,12 +46,10 @@ function MyPayeesPanel() {
     async function fetchPayees() {
         try {
             const response = await fetch(getBeneficiaries, {
-                method: 'POST',
+                method: 'GET',
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('access')}`
                 },
-                body: JSON.stringify({})
             });
 
             if (!response.ok) {
@@ -81,7 +79,8 @@ function MyPayeesPanel() {
                             <Icon name={payee.bank_name}/>
                             <InfoBlock>
                                 <CustomText black big>{payee.name}</CustomText>
-                                <CustomText gray small>{payee.currency + " " + payee.account_number}</CustomText>
+                                <CustomText gray xsmall>{"Currency: " + payee.currency}</CustomText>
+                                <CustomText gray xsmall>{"IBAN: " + payee.iban}</CustomText>
                             </InfoBlock>
                             <CustomButton side onClick={() => {
                                 navigate('/remittance/amount', {
