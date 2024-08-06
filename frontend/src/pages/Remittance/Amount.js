@@ -18,6 +18,7 @@ export default function Amount() {
 
     const location = useLocation();
     const selectedPayee = location.state.selectedPayee;
+    const selectedCurrencyAccount = location.state.selectedCurrencyAccount;
     const renderSelectedPayee = [selectedPayee].map((payee) => {
         return {
             ...payee,

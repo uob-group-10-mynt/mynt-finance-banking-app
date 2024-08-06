@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import TabBar from "../../components/TabBar";
 import CustomHeading from "../../components/CustomHeading";
 import AddPayeePanel from "./AddPayeePanel";
@@ -27,6 +27,9 @@ function MyPayeesPanel() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
+    const selectedCurrencyAccount = location.state.selectedCurrencyAccount;
+
 
     useEffect(() => {
         fetchPayees();
@@ -84,7 +87,12 @@ function MyPayeesPanel() {
                     );
                 },
                 onClick: () => {
-                    navigate('/remittance/amount', {state: {selectedPayee: payee}});
+                    navigate('/remittance/amount', {
+                        state: {
+                            selectedCurrencyAccount: selectedCurrencyAccount,
+                            selectedPayee: payee,
+                        }
+                    });
                 },
             };
         });

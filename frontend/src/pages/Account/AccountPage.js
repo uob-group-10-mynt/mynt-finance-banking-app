@@ -103,7 +103,7 @@ function AccountPage() {
         justifyContent="space-between"
       >
         <CustomButton medium style={{ flex: 1, marginRight: '0.5em' }} colorScheme='blue'>Withdraw</CustomButton>
-        <CustomButton medium style={{ flex: 1, marginRight: '0.5em' }}>Send</CustomButton>
+        <CustomButton medium style={{flex: 1, marginRight: '0.5em'}} onClick={() => navigate('/remittance/payee', {state: {selectedCurrencyAccount: account}})}>Send</CustomButton>
       </Box>
     </CustomBox>
   );
