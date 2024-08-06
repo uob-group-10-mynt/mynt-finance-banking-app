@@ -3,7 +3,7 @@ import CustomHeading from "../components/CustomHeading";
 
 export default function Header({children}) {
     return (
-        <Box as="header">
+        <Box>
             <CustomHeading>
                 {children}
             </CustomHeading>

@@ -17,6 +17,7 @@ import {LoggedInContext} from "../App";
 const RootLayout = lazy(() => import('../layouts/RootLayout'))
 // Pages
 const Home = lazy(() => import('../pages/Home'));
+const HomePage = lazy(() => import('../pages/HomePage'))
 const Login = lazy(() => import('../pages/Login'));
 const Signup = lazy(() => import('../pages/Signup'));
 const Kyc = lazy(() => import('../pages/KYC'));
@@ -53,6 +54,7 @@ const AppRouter = createBrowserRouter(
     createRoutesFromElements(
         <Route path='/' element={lazyLoad(RootLayout, <Loading/>)}>
             {/* <Route index element={lazyLoad(Home, <Loading/>)}/> */}
+            <Route index element={lazyLoad(HomePage, <Loading/>)}/>
             <Route path='login' element={lazyLoad(Login, <Loading/>)}/>
             {/* <Route path='remittance' element={lazyLoad(Remittance, <Loading/>)}> */}
             <Route path='remittance' element={<ProtectedRoute element={Remittance} loadingComponent={<Loading/>}/>}>
