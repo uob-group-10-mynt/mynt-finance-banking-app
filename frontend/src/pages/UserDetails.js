@@ -63,26 +63,13 @@ export default function UserDetails() {
 
     const getAndSetDetails = async () => {
         try {
-            const response = await fetch(getUserDetailsAPI, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem('access')}`
-                }
-            });
-            if (!response.ok) {
-                const refreshResponse = await fetch(getUserDetailsAPI, {
-                    method: 'GET',
-                    headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem('refresh')}`
-                    }
-                });
-                console.log("GET refresh response::: ", refreshResponse)
-                if (!refreshResponse.ok) {
-                    throw new Error('response not ok');
-
-                }
-            }
-            const data = await response.json()
+            const data = await makeRequest(
+                'GET',
+                getUserDetailsAPI,
+                true,
+                null,
+                null,
+            )
             setDetails(accountFields.map(field => {
                 field.value = data[field.id]
                 return field
