@@ -58,37 +58,31 @@ public class BeneficiaryService {
                 .block();
     }
 
-    public Mono<ResponseEntity<JsonNode>> validate(ValidateBeneficiaryRequest requestBody) {
+    public ResponseEntity<JsonNode> validate(ValidateBeneficiaryRequest requestBody) {
         return webClient
                 .post()
                 .uri("/v2/beneficiaries/validate")
                 .header("X-Auth-Token", authenticationService.getAuthToken())
                 .bodyValue(requestBody)
-                .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(response -> {
-                    if(response.getStatusCode().is2xxSuccessful()) {
-                        return Mono.just(response);
-                    }
-                    return Mono.just(response);
-                });
-
+                .retrieve()
+                .onStatus(HttpStatus.UNAUTHORIZED::equals, response -> webClientErrorHandler.handleUnauthorized("/v2/beneficiaries/find"))
+                .onStatus(HttpStatusCode::is4xxClientError, webClientErrorHandler::handleClientError)
+                .onStatus(HttpStatusCode::is5xxServerError, webClientErrorHandler::handleServerError)
+                .toEntity(JsonNode.class)
+                .block();
     }
 
-    public Mono<ResponseEntity<JsonNode>> create(CreateBeneficiaryRequest requestBody) {
+    public ResponseEntity<JsonNode> create(CreateBeneficiaryRequest requestBody) {
         return webClient
                 .post()
                 .uri("/v2/beneficiaries/create")
                 .header("X-Auth-Token", authenticationService.getAuthToken())
                 .bodyValue(requestBody)
-                .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(response -> {
-                    if(response.getStatusCode().is2xxSuccessful()) {
-                        JsonNode jsonNode = response.getBody();
-                        ObjectNode objectNode = ((ObjectNode) jsonNode);
-                        ResponseEntity<JsonNode> newResponseEntity = new ResponseEntity<>(objectNode,response.getStatusCode());
-                        return Mono.just(newResponseEntity);
-                    }
-                    return Mono.just(response);
-                });
+                .retrieve()
+                .onStatus(HttpStatus.UNAUTHORIZED::equals, response -> webClientErrorHandler.handleUnauthorized("/v2/beneficiaries/find"))
+                .onStatus(HttpStatusCode::is4xxClientError, webClientErrorHandler::handleClientError)
+                .onStatus(HttpStatusCode::is5xxServerError, webClientErrorHandler::handleServerError)
+                .toEntity(JsonNode.class)
+                .block();
     }
 }

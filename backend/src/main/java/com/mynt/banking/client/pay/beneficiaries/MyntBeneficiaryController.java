@@ -19,13 +19,24 @@ public class MyntBeneficiaryController {
     }
 
     @GetMapping("/find/{id}")
-    public BeneficiariesDetailResponse.Beneficiary findBeneficiary(@PathVariable String id) {
+    public BeneficiaryDetail findBeneficiary(@PathVariable String id) {
         return myntBeneficiaryService.getBeneficiary(id);
     }
 
+    @PostMapping("/create")
+    public BeneficiaryDetail create(@RequestBody BeneficiaryDetail request) {
+        return myntBeneficiaryService.create(request);
+    }
+
+//    @DeleteMapping("/delete/{id}")
+//    public delete(@PathVariable String id) {
+//
+//        return null;
+//    }
+
 }
 
-// TODO: create and validate beneficiary
+
 // TODO: complete conversion detail
 // TODO: pull James' code
 // TODO: complete internal transfer detail --> show email and name
