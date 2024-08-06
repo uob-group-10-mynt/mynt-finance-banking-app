@@ -50,7 +50,7 @@ export default function Transfer() {
                 },
                 body: JSON.stringify({
                     "beneficiary_id": selectedPayee.id,
-                    "currency": selectedCurrencyAccount.currency,
+                    "from_currency": selectedCurrencyAccount.currency,
                     "amount": selectedPayee.transfer_amount,
                 })
             });

@@ -83,7 +83,14 @@ function MyPayeesPanel() {
                                 <CustomText black big>{payee.name}</CustomText>
                                 <CustomText gray small>{payee.currency + " " + payee.account_number}</CustomText>
                             </InfoBlock>
-                            <CustomButton side>Send</CustomButton>
+                            <CustomButton side onClick={() => {
+                                navigate('/remittance/amount', {
+                                    state: {
+                                        selectedPayee: payee,
+                                        selectedCurrencyAccount: selectedCurrencyAccount
+                                    }
+                                })
+                            }}>Send</CustomButton>
                         </>
                     );
                 },

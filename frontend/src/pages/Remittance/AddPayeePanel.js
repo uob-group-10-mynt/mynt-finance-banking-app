@@ -11,17 +11,33 @@ export default function AddPayeePanel() {
     const [error, setError] = useState(null);
     const newPayeeInputFields = [
         {
-            id: "account-number",
-            label: "Account Number",
-            placeholder: "Enter account number",
-            type: "number",
+            id: "name",
+            label: "name",
+            placeholder: "Enter name for your payee",
+            type: "text",
             required: true,
             value: ""
         },
         {
-            id: "payee-name",
-            label: "Payee Name",
-            placeholder: "Enter payee name",
+            id: "bank-account-holder-name",
+            label: "bank_account_holder_name",
+            placeholder: "Enter holder name of the bank account",
+            type: "text",
+            required: true,
+            value: ""
+        },
+        {
+            id: "bank-country",
+            label: "bank_country",
+            placeholder: "Enter country of the bank account",
+            type: "text",
+            required: true,
+            value: ""
+        },
+        {
+            id: "currency",
+            label: "currency",
+            placeholder: "Enter currency of the bank account",
             type: "text",
             required: true,
             value: ""
@@ -39,8 +55,33 @@ export default function AddPayeePanel() {
         </>
     );
 
-    async function handleAddPayee() {
-        await addPayee();
+    async function handleAddPayee(formValuesJSON) {
+        setLoading(true);
+        try {
+            // POST request to add a payee
+            const response = await fetch(addBeneficiaries, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({formValuesJSON})
+            });
+
+            if (!response.ok) {
+                const error = new Error(await response.text());
+                setError(error);
+                setLoading(false);
+                return;
+            }
+
+            setResponse(await response.json());
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+
         if (response.ok) {
             toast({
                 position: 'top',
@@ -57,34 +98,6 @@ export default function AddPayeePanel() {
             inputField.value = ""
         })
         setFormData(newPayeeInputFields)
-    }
-
-    async function addPayee() {
-        try {
-            setLoading(true);
-            // POST request to add a payee
-            const response = await fetch(addBeneficiaries, {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem('access')}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({formData}),
-            });
-
-            if (!response.ok) {
-                const error = new Error(await response.text());
-                setError(error);
-                setLoading(false);
-                return;
-            }
-
-            setResponse(await response.json());
-        } catch (error) {
-            setError(error);
-        } finally {
-            setLoading(false);
-        }
     }
 
 }
