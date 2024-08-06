@@ -103,7 +103,7 @@ function AccountPage() {
         justifyContent="space-between"
       >
         <CustomButton medium style={{ flex: 1, marginRight: '0.5em' }} colorScheme='blue'>Withdraw</CustomButton>
-        <CustomButton medium style={{flex: 1, marginRight: '0.5em'}} onClick={() => navigate('/remittance/payee', {state: {selectedCurrencyAccount: account}})}>Send</CustomButton>
+        <CustomButton medium style={{flex: 1, marginRight: '0.5em'}} onClick={(e) => handleSendOnClick(e)}>Send</CustomButton>
       </Box>
     </CustomBox>
   );
@@ -124,6 +124,12 @@ function AccountPage() {
       <CustomButton medium onClick={moreButtonOnClick}>More</CustomButton>
     </Box>
   );
+
+    function handleSendOnClick (e) {
+        e.stopPropagation();
+        navigate('/remittance/payee', {state: {selectedCurrencyAccount: account}});
+    }
+
 }
 
 export default AccountPage;

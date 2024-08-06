@@ -13,10 +13,13 @@ import {getBeneficiaries} from "../../utils/APIEndpoints";
 export default function Payee() {
     const tabs = ['My payees', 'New payee']
     const panels = [<MyPayeesPanel/>, <AddPayeePanel/>];
+    const location = useLocation();
+    const selectedCurrencyAccount = location.state.selectedCurrencyAccount;
 
     return (
         <>
-            <CustomHeading align='center'>Where would you like to send the money?</CustomHeading>
+            <CustomHeading align='center'>Where would you like to send
+                your {selectedCurrencyAccount.currency}?</CustomHeading>
             <TabBar tabNames={tabs} tabPanels={panels}></TabBar>
         </>
     );
@@ -29,7 +32,6 @@ function MyPayeesPanel() {
     const navigate = useNavigate();
     const location = useLocation();
     const selectedCurrencyAccount = location.state.selectedCurrencyAccount;
-
 
     useEffect(() => {
         fetchPayees();
@@ -76,24 +78,21 @@ function MyPayeesPanel() {
                 render: () => {
                     return (
                         <>
-                            <Icon name={""}/>
+                            <Icon name={payee.bank_name}/>
                             <InfoBlock>
                                 <CustomText black big>{payee.name}</CustomText>
                                 <CustomText gray small>{payee.currency + " " + payee.account_number}</CustomText>
-                                {/*<CustomText gray small>{payee.bank_country}</CustomText>*/}
                             </InfoBlock>
                             <CustomButton side>Send</CustomButton>
                         </>
                     );
                 },
-                onClick: () => {
-                    navigate('/remittance/amount', {
-                        state: {
-                            selectedCurrencyAccount: selectedCurrencyAccount,
-                            selectedPayee: payee,
-                        }
-                    });
-                },
+                onClick: () => navigate('/remittance/amount', {
+                    state: {
+                        selectedPayee: payee,
+                        selectedCurrencyAccount: selectedCurrencyAccount
+                    }
+                }),
             };
         });
     }

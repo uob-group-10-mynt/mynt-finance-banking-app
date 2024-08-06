@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import CustomHeading from "../../components/CustomHeading";
 import Container from "../../components/container/Container";
@@ -7,28 +7,25 @@ import InfoBlock from "../../components/util/InfoBlock";
 import CustomText from "../../components/CustomText";
 import CustomForm from "../../components/forms/CustomForm";
 import {Center} from "@chakra-ui/react";
-import {getBalance} from "../../utils/APIEndpoints";
 
 export default function Amount() {
     const navigate = useNavigate();
     const [amount, setAmount] = useState('');
-    const [balance, setBalance] = useState('')
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     const location = useLocation();
-    const selectedPayee = location.state.selectedPayee;
     const selectedCurrencyAccount = location.state.selectedCurrencyAccount;
+    const availableBalance = selectedCurrencyAccount.balance;
+    const selectedPayee = location.state.selectedPayee;
     const renderSelectedPayee = [selectedPayee].map((payee) => {
         return {
             ...payee,
             render: () => {
                 return (
                     <>
-                        <Icon name={payee.bank}/>
+                        <Icon name={payee.bank_name}/>
                         <InfoBlock>
-                            <CustomText gray small>{payee.label}</CustomText>
-                            <CustomText black big>{payee.account_number}</CustomText>
+                            <CustomText black big>{payee.name}</CustomText>
+                            <CustomText gray small>{payee.currency + " " + payee.account_number}</CustomText>
                         </InfoBlock>
                     </>
                 );
@@ -37,12 +34,6 @@ export default function Amount() {
             },
         }
     });
-
-    useEffect(() => {
-        fetchBalance();
-    }, []);
-    if (loading) return <CustomText>Loading...</CustomText>;
-    if (error) return <CustomText>Error {error.message}</CustomText>;
 
     const amountInputFields = [
         {
@@ -53,8 +44,8 @@ export default function Amount() {
             type: "number",
             required: true,
             value: amount,
-            helperText: `Available balance: ${availableBalance.toLocaleString()} KES`,
-            inputLeftElement: "£"
+            helperText: `Available balance: ${selectedCurrencyAccount.currency} ${availableBalance.toLocaleString()}`,
+            inputLeftElement: selectedPayee.currency
         },
     ];
     const [fields, setFields] = useState(amountInputFields)
@@ -72,35 +63,10 @@ export default function Amount() {
                 <Container name='Selected Payee' data={renderSelectedPayee} keyFn={(info) => info.id}/>
             </Center>
             <CustomForm
-                onSubmit={handleAmountSubmit} buttonText="Confirm" buttonId="amountButton" parentState={fields} setParentState={setFields}>
+                onSubmit={handleAmountSubmit} buttonText="Confirm" buttonId="amountButton" parentState={fields}
+                setParentState={setFields}>
             </CustomForm>
         </>
     );
-
-    async function fetchBalance() {
-        try {
-            const response = await fetch(getBalance, {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem('access')}`
-                }
-            });
-
-            if (!response.ok) {
-                const error = new Error(await response.text());
-                setError(error);
-                setLoading(false);
-                return;
-            }
-
-            // Parse the JSON from the response
-            const balance = await response.json();
-            setBalance(balance);
-        } catch (error) {
-            setError(error);
-        } finally {
-            setLoading(false);
-        }
-    }
 
 }
