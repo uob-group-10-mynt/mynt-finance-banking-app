@@ -5,14 +5,18 @@ import com.mynt.banking.currency_cloud.collect.funding.FindAccountDetailsRequest
 import com.mynt.banking.currency_cloud.collect.funding.FundingService;
 import com.mynt.banking.currency_cloud.manage.balances.BalanceService;
 import com.mynt.banking.user.UserContextService;
+import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+// TODO remove object null exception and throw custom exceptions:
 
 @Component
 @RequiredArgsConstructor
@@ -22,14 +26,21 @@ public class MyntBalanceService {
     private final BalanceService balanceService;
     private final FundingService fundingService;
 
-    public FindBalanceResponse findBalance(String currencyCode) {
+    public FindBalanceResponse get(String currencyCode) {
         // Fetch balance:
-        ResponseEntity<JsonNode> balanceResponse = balanceService.find(currencyCode,
+        ResponseEntity<JsonNode> balanceResponse = balanceService.get(currencyCode,
                 userContextService.getCurrentUserUuid());
 
         // Extract account_id and amount from balance response
-        String accountId = Objects.requireNonNull(balanceResponse.getBody()).get("account_id").asText();
-        String amount = Objects.requireNonNull(balanceResponse.getBody()).get("amount").asText();
+        String accountId;
+        String amount;
+        try {
+            accountId = Objects.requireNonNull(balanceResponse.getBody()).get("account_id").asText();
+            amount = Objects.requireNonNull(balanceResponse.getBody()).get("amount").asText();
+        }
+        catch (NullPointerException ignore) {
+            throw new CurrencyCloudException("Currency Cloud Error: Issue parsing necessary fields", HttpStatus.NO_CONTENT);
+        }
 
         // Fetch bank account details:
         FindAccountDetailsRequest accountDetailsRequest = FindAccountDetailsRequest.builder()
@@ -49,7 +60,6 @@ public class MyntBalanceService {
         String bankName = accountDetailsBody.get("bank_name").asText();
 
         // Generate Balance Response:
-
         return FindBalanceResponse.builder()
                 .bank(bankName)
                 .label(currencyCode + " Currency Account")
@@ -63,17 +73,17 @@ public class MyntBalanceService {
     }
 
 
-    public List<FindBalanceResponse> findBalances() {
+    public List<FindBalanceResponse> find() {
         // Fetch balance:
-        ResponseEntity<JsonNode> balancesResponse = balanceService.find(
-                userContextService.getCurrentUserUuid());
-
+        ResponseEntity<JsonNode> balancesResponse = balanceService.find(userContextService.getCurrentUserUuid());
 
         // Check if the "balances" array exists and has at least one entry and extract account_id:
         JsonNode balancesArray = Objects.requireNonNull(balancesResponse.getBody()).path("balances");
 
         List<FindBalanceResponse> balancesResponseList = new ArrayList<>();
-        if (balancesArray.isEmpty()) return List.of();
+        if (balancesArray.isEmpty()) {
+            throw new CurrencyCloudException("No content", HttpStatus.NO_CONTENT);
+        }
 
         // Extract account_id from the first balance
         String accountId = balancesArray.get(0).path("account_id").asText();

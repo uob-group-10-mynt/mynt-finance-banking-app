@@ -12,21 +12,20 @@ public class MyntBeneficiaryController {
     private final MyntBeneficiaryService myntBeneficiaryService;
 
     @GetMapping
-    public BeneficiariesDetailResponse findBeneficiaries(
+    public BeneficiariesDetailResponse find(
                         @RequestParam(required = false, name = "per_page") Integer perPage,
                         @RequestParam(required = false, name = "page") Integer page) {
-        return myntBeneficiaryService.findBeneficiaries(perPage, page);
+        return myntBeneficiaryService.find(perPage, page);
     }
 
     @GetMapping("/find/{id}")
     public BeneficiariesDetailResponse.Beneficiary findBeneficiary(@PathVariable String id) {
-        return null;
+        return myntBeneficiaryService.getBeneficiary(id);
     }
 
 }
 
-
-// TODO: add bank_brand_label = mynt to dtos agaon ask GunHo
-// TODO: complete beneficiary wrappers and error handling
+// TODO: create and validate beneficiary
 // TODO: complete conversion detail
+// TODO: pull James' code
 // TODO: complete internal transfer detail --> show email and name

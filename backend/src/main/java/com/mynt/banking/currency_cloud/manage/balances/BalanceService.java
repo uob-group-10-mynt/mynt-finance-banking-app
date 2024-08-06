@@ -3,7 +3,6 @@ package com.mynt.banking.currency_cloud.manage.balances;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mynt.banking.client.pay.beneficiaries.BeneficiariesDetailResponse;
 import com.mynt.banking.currency_cloud.config.WebClientErrorHandler;
 import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
 import com.mynt.banking.util.HashMapToQuiryPrams;
@@ -26,7 +25,7 @@ public class BalanceService {
     private final WebClient webClient;
     private final WebClientErrorHandler webClientErrorHandler;
 
-    public ResponseEntity<JsonNode> find(String currencyCode, String onBehalfOf) {
+    public ResponseEntity<JsonNode> get(String currencyCode, String onBehalfOf) {
         // Build the URI with the provided parameters
         String uri = UriComponentsBuilder.fromPath("/v2/balances/" + currencyCode)
                 .queryParam("on_behalf_of", onBehalfOf)

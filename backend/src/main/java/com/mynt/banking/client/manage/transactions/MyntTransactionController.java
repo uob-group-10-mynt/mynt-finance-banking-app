@@ -13,13 +13,13 @@ public class MyntTransactionController {
     private final MyntTransactionService transactionService;
 
     @GetMapping
-    public TransactionsDetailResponse findTransactions(
+    public TransactionsDetailResponse find(
             @Valid
             @RequestParam(required = false) String currency,
             @RequestParam(required = false, name = "related_entity_type") String relatedEntityType,
             @RequestParam(required = false, name = "per_page") Integer perPage,
             @RequestParam(required = false) Integer page) {
-        return transactionService.findTransaction(currency, relatedEntityType, perPage, page);
+        return transactionService.find(currency, relatedEntityType, perPage, page);
     }
 
     @GetMapping("/payment/{id}")
