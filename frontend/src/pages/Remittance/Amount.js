@@ -57,16 +57,12 @@ export default function Amount() {
             inputLeftElement: "£"
         },
     ];
+    const [fields, setFields] = useState(amountInputFields)
 
-    const handleAmountSubmit = (event) => {
-        event.preventDefault();
-
+    const handleAmountSubmit = () => {
         // Add validation and submission logic here
         selectedPayee['transfer_amount'] = amount;
         navigate('/remittance/transfer', {state: {selectedPayee: selectedPayee}});
-
-        // Reset form fields after submission
-        // setAmount('');
     };
 
     return (
@@ -75,8 +71,8 @@ export default function Amount() {
             <Center>
                 <Container name='Selected Payee' data={renderSelectedPayee} keyFn={(info) => info.id}/>
             </Center>
-            <CustomForm onSubmit={handleAmountSubmit} buttonText="Confirm" buttonId="amountButton">
-                {amountInputFields}
+            <CustomForm
+                onSubmit={handleAmountSubmit} buttonText="Confirm" buttonId="amountButton" parentState={fields} setParentState={setFields}>
             </CustomForm>
         </>
     );

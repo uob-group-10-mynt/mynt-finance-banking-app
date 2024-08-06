@@ -20,7 +20,7 @@ public class FlutterwaveController {
     // /v3/transactions/${ID}/verify
     @GetMapping("/transactions/{id}/verify")
     public Mono<ResponseEntity<JsonNode>> depoistTransactionCheck(@PathVariable(name = "id", required = true) String id) { //@RequestBody FindAccountDetails request
-        return flutterwaveService.depoistTransactionCheck(id) ;
+        return flutterwaveService.depositTransactionCheck(id) ;
     }
 
     // https://api.flutterwave.com/v3/transfers/${ID}

@@ -2,10 +2,10 @@ import React from 'react';
 import {Box} from '@chakra-ui/react';
 import CustomHeading from "../CustomHeading";
 
-function PageHeader({children}) {
+function PageHeader({children, ...props}) {
     return (
         <Box textAlign="center">
-            <CustomHeading>
+            <CustomHeading {...props}>
                 {children}
             </CustomHeading>
         </Box>

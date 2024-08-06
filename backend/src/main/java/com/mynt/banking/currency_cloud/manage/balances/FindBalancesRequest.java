@@ -1,5 +1,5 @@
 
-package com.mynt.banking.currency_cloud.manage.balances.requests;
+package com.mynt.banking.currency_cloud.manage.balances;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -16,8 +16,6 @@ import reactor.core.publisher.Mono;
 @Service("currencyCloudAuthenticationService")
 public class AuthenticationService {
 
-    private final WebClient webClient;
-
     private String authToken;
 
     @Value("${currency.cloud.api.url}")
@@ -38,7 +36,7 @@ public class AuthenticationService {
     }
 
     public Mono<AuthenticationResponse> authenticate() {
-        return webClient.post()
+        return authWebClient().post()
                 .uri("/v2/authenticate/api")
                 .header("User-Agent", userAgent)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -48,17 +46,15 @@ public class AuthenticationService {
                 .bodyToMono(AuthenticationResponse.class);
     }
 
-    private Mono<String> refreshAuthToken() {
+    public Mono<String> refreshAuthToken() {
         return authenticate()
                 .map(AuthenticationResponse::getAuthToken)
                 .doOnNext(token -> this.authToken = token);
     }
 
-    @Bean
     public WebClient authWebClient() {
         return WebClient.builder()
                 .baseUrl(apiUrl)
                 .build();
     }
-
 }

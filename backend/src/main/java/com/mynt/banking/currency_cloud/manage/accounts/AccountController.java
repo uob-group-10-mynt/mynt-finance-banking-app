@@ -19,18 +19,18 @@ public class AccountController {
 
     @PostMapping("/create")
     public Mono<ResponseEntity<JsonNode>> createAccount(@RequestBody CreateAccountRequest request) {
-        return accountService.createAccount(request);
+        return accountService.create(request);
     }
 
     @PostMapping("/find")
     public Mono<ResponseEntity<JsonNode>> findAccount(@RequestBody FindAccountRequest request) {
-        return accountService.findAccount(request);
+        return accountService.find(request);
     }
 
     @PostMapping("/updateAccount/{id}")
     public Mono<ResponseEntity<JsonNode>> updateAccount(@RequestBody UpdateAccountRequest request,
                                                         @Schema(description = "Account UUID, returned by the create account endpoint.")
                                                         @PathVariable(name = "id") String id) {
-        return accountService.updateAccount(request, id);
+        return accountService.update(request, id);
     }
 }

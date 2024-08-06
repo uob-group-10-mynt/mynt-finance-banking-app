@@ -1,4 +1,5 @@
 package com.mynt.banking.currency_cloud.services;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,7 +43,7 @@ public class AccountServiceTest {
                 .termsAndConditionsAccepted(null)
                 .build();
 
-        ResponseEntity<JsonNode> result = accountService.createAccount(requestBody).block();
+        ResponseEntity<JsonNode> result = accountService.create(requestBody).block();
 
         assert result != null;
         int responseCode = result.getStatusCode().value();
@@ -82,7 +83,7 @@ public class AccountServiceTest {
                 .country("GB")
                 .build();
 
-        ResponseEntity<JsonNode> result = accountService.createAccount(requestBody).block();
+        ResponseEntity<JsonNode> result = accountService.create(requestBody).block();
 
         assert result != null;
         assertEquals(result.getStatusCode().value(),200);
@@ -119,7 +120,7 @@ public class AccountServiceTest {
                 .build();
 
         String id = "44f353c2-d97f-4bf6-86d1-4b668c9dbcef";
-        ResponseEntity<JsonNode> result = accountService.updateAccount(requestBody, id).block();
+        ResponseEntity<JsonNode> result = accountService.update(requestBody, id).block();
 
         assert result != null;
         assertEquals(result.getStatusCode().value(),200);

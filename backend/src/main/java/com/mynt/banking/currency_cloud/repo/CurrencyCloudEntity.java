@@ -1,4 +1,4 @@
-package com.mynt.banking.currency_cloud;
+package com.mynt.banking.currency_cloud.repo;
 
 import com.mynt.banking.user.User;
 import jakarta.persistence.*;

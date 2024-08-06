@@ -1,4 +1,4 @@
-package com.mynt.banking.currency_cloud.collect.funding.requests;
+package com.mynt.banking.currency_cloud.collect.funding;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class FindAccountDetails {
+public class FindAccountDetailsRequest {
 
     @JsonProperty("payment_type")
     @Schema(description = "Type of payment method used", example = "priority")

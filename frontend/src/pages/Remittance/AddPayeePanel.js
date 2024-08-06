@@ -5,48 +5,42 @@ import {addBeneficiaries} from "../../utils/APIEndpoints";
 import CustomText from "../../components/CustomText";
 
 export default function AddPayeePanel() {
-    const [payeeName, setPayeeName] = useState('');
-    const [accountNumber, setAccountNumber] = useState('');
-    const [email, setEmail] = useState('');
     const [response, setResponse] = useState('')
     const toast = useToast();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const newPayeeInputFields = [
         {
-            id: "email",
-            label: "Payee Email",
-            placeholder: "Enter payee email",
-            type: "text",
-            required: true,
-            value: email,
-            onChange: (e) => setEmail(e.target.value)
-        },
-        {
             id: "account-number",
-            label: "Payee Account Number",
+            label: "Account Number",
             placeholder: "Enter account number",
             type: "number",
-            required: false,
-            value: accountNumber,
-            onChange: (e) => setAccountNumber(e.target.value)
+            required: true,
+            value: ""
         },
         {
             id: "payee-name",
             label: "Payee Name",
             placeholder: "Enter payee name",
             type: "text",
-            required: false,
-            value: payeeName,
-            onChange: (e) => setPayeeName(e.target.value)
+            required: true,
+            value: ""
         },
     ];
+    const [formData, setFormData] = useState(newPayeeInputFields)
 
-    async function handleAddPayee(event) {
-        event.preventDefault();
+    return (
+        <>
+            <CustomForm onSubmit={handleAddPayee} buttonText="Add Payee" buttonId="addPayeeButton"
+                        parentState={formData} setParentState={setFormData}>
+            </CustomForm>
+            {loading && <CustomText>Processing...</CustomText>}
+            {error && <CustomText>Error {error.message}</CustomText>}
+        </>
+    );
 
-        // Add validation and submission logic here
-       await addPayee();
+    async function handleAddPayee() {
+        await addPayee();
         if (response.ok) {
             toast({
                 position: 'top',
@@ -59,19 +53,11 @@ export default function AddPayeePanel() {
         }
 
         // Clear form and close panel
-        setPayeeName('');
-        setAccountNumber('');
+        newPayeeInputFields.forEach(inputField => {
+            inputField.value = ""
+        })
+        setFormData(newPayeeInputFields)
     }
-
-    return (
-        <>
-            <CustomForm onSubmit={handleAddPayee} buttonText="Add Payee" buttonId="addPayeeButton">
-                {newPayeeInputFields}
-            </CustomForm>
-            {loading && <CustomText>Processing...</CustomText>}
-            {error && <CustomText>Error {error.message}</CustomText>}
-        </>
-    );
 
     async function addPayee() {
         try {
@@ -83,11 +69,7 @@ export default function AddPayeePanel() {
                     Authorization: `Bearer ${sessionStorage.getItem('access')}`,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    'email': email,
-                    'bank_account_holder_name': payeeName,
-                    'account_number': accountNumber,
-                }),
+                body: JSON.stringify({formData}),
             });
 
             if (!response.ok) {
