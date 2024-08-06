@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import CustomForm from "../components/forms/CustomForm";
 import { getUserDetailsAPI, updateUserDetailsAPI } from "../utils/APIEndpoints";
 import Page from "../components/Page";
-import CustomButton from "../components/forms/CustomButton";
-import PageHeader from "../components/forms/PageHeader";
+import { Heading } from "@chakra-ui/react";
 
 const accountFields = [
     {
@@ -87,18 +86,17 @@ export default function UserDetails() {
                 throw new Error('response not ok');
             }
             const data = await response.json()
-            accountFields.forEach(field => {
-                    field.value = data[field.id]
-                    field.readonly = true
-            });
-            setDetails(accountFields)
+            setDetails(accountFields.map(field => {
+                field.value = data[field.id]
+                return field
+            }))
         } catch (error) {
             console.error(error);
         }
     }
 
-     useEffect(() => {
-         getAndSetDetails()
+    useEffect(() => {
+        getAndSetDetails()
      }, []) // empty array means useEffect() is only called on initial render of component
     
 

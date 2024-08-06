@@ -5,9 +5,10 @@ import {
     FormLabel,
     Input,
     InputGroup,
-    InputLeftElement
+    InputLeftElement,
 } from "@chakra-ui/react";
 import CustomButton from "./CustomButton";
+import { useState } from "react";
 
 function formDataToRequestBody(credentials) {
     // converts form data and returns JSON body  
