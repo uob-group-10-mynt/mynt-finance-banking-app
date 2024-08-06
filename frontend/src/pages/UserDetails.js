@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CustomForm from "../components/forms/CustomForm";
-import { getUserDetailsAPI, updateUserDetailsAPI } from "../utils/APIEndpoints";
+import { getUserDetailsAPI, updateUserDetailsAPI, refreshTokensAPI } from "../utils/APIEndpoints";
 import Page from "../components/Page";
 import { Heading } from "@chakra-ui/react";
 
@@ -107,14 +107,26 @@ export default function UserDetails() {
                 body: JSON.stringify(formValuesJSON)
             });
             if (!response.ok) {
-                const refreshResponse = await fetch(updateUserDetailsAPI, {
+                const newTokens = await fetch(refreshTokensAPI, {
                     method: 'POST',
                     headers: {
                         "Content-type": "application/json",
                         Authorization: `Bearer ${sessionStorage.getItem('refresh')}`
                     },
+                });
+                const data = await newTokens.json()
+                sessionStorage.setItem('access', data.access_token)
+                sessionStorage.setItem('refresh', data.refresh_token)
+
+                const refreshResponse = await fetch(updateUserDetailsAPI, {
+                    method: 'POST',
+                    headers: {
+                        "Content-type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('access')}`
+                    },
                     body: JSON.stringify(formValuesJSON)
                 });
+
                 console.log("POST refresh response:::", refreshResponse)
                 if (!refreshResponse.ok) {
                     throw new Error('Authentication failed');
