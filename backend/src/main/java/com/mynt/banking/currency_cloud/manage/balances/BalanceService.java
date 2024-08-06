@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mynt.banking.currency_cloud.config.WebClientErrorHandler;
 import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
 import com.mynt.banking.util.HashMapToQuiryPrams;
+import com.mynt.banking.util.UriBuilderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -104,4 +105,14 @@ public class BalanceService {
                     return Mono.just(response);
                 });
     }
+
+    public Mono<ResponseEntity<JsonNode>> getBalance(String currency, GetBalanceRequest request) {
+        String uri = UriBuilderUtil.buildUriWithQueryParams("/v2/balances/" + currency, request);
+        return webClient
+                .get()
+                .uri(uri)
+                .header("X-Auth-Token", authenticationService.getAuthToken())
+                .exchangeToMono(response -> response.toEntity(JsonNode.class));
+    }
+
 }
