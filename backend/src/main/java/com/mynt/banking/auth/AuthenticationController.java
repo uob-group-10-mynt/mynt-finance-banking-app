@@ -9,6 +9,7 @@ import com.mynt.banking.auth.responses.SDKResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -45,7 +46,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh-token")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<AuthenticationResponse> refreshToken() {
         return ResponseEntity.ok(service.refreshToken());
     }
+
 }
