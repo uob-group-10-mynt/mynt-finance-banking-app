@@ -11,8 +11,8 @@ import Container from "../../components/container/Container";
 import {getBeneficiaries} from "../../utils/APIEndpoints";
 
 export default function Payee() {
-    const tabs = ['Recent payees', 'My payees', 'New payee']
-    const panels = [<MyPayeesPanel/>, <MyPayeesPanel/>, <AddPayeePanel/>];
+    const tabs = ['My payees', 'New payee']
+    const panels = [<MyPayeesPanel/>, <AddPayeePanel/>];
 
     return (
         <>
@@ -26,21 +26,7 @@ function MyPayeesPanel() {
     const [payees, setPayees] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    // placeholder received payees data
-    // const fetchPayees = [
-    //     {
-    //         'id': '1',
-    //         'bank': 'HSBC',
-    //         'account_number': '00000000',
-    //         'label': 'Jan Phillips',
-    //     },
-    //     {
-    //         'id': '2',
-    //         'bank': 'Citi',
-    //         'account_number': '01010101',
-    //         'label': 'Gunho Ryu',
-    //     },
-    // ];
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchPayees();
@@ -54,12 +40,13 @@ function MyPayeesPanel() {
 
     async function fetchPayees() {
         try {
-            // GET request to fetch payees
             const response = await fetch(getBeneficiaries, {
                 method: 'POST',
                 headers: {
+                    "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('access')}`
-                }
+                },
+                body: JSON.stringify({})
             });
 
             if (!response.ok) {
@@ -70,8 +57,8 @@ function MyPayeesPanel() {
             }
 
             // Parse the JSON from the response
-            const payees = await response.json();
-            setPayees(payees);
+            const data = await response.json(); // Await the promise to get the parsed JSON data
+            setPayees(data.beneficiaries);
         } catch (error) {
             setError(error);
         } finally {
@@ -80,25 +67,24 @@ function MyPayeesPanel() {
     }
 
     function renderPayees(payees) {
-        const navigate = useNavigate();
-
         return payees.map(payee => {
             return {
                 ...payee,
                 render: () => {
                     return (
                         <>
-                            <Icon name={payee.bank} />
+                            <Icon name={""}/>
                             <InfoBlock>
-                                <CustomText gray small>{payee.label}</CustomText>
-                                <CustomText black big>{payee.account_number}</CustomText>
+                                <CustomText black big>{payee.name}</CustomText>
+                                <CustomText gray small>{payee.currency + " " + payee.account_number}</CustomText>
+                                {/*<CustomText gray small>{payee.bank_country}</CustomText>*/}
                             </InfoBlock>
                             <CustomButton side>Send</CustomButton>
                         </>
                     );
                 },
                 onClick: () => {
-                    navigate('/remittance/amount', { state: { selectedPayee: payee } });
+                    navigate('/remittance/amount', {state: {selectedPayee: payee}});
                 },
             };
         });
