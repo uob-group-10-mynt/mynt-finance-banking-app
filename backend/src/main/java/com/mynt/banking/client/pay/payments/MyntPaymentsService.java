@@ -39,6 +39,8 @@ public class MyntPaymentsService {
         String reference = request.getReference();
         String contactUuid = userContextService.getCurrentUserUuid();
         String uniqueRequestId = Instant.now().toString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode errorBody = objectMapper.createObjectNode();
 
         ResponseEntity<JsonNode> ccGetBeneficiaryResponse = beneficiaryService.get(beneficiaryId, contactUuid);
         if (!ccGetBeneficiaryResponse.getStatusCode().is2xxSuccessful()) return ccGetBeneficiaryResponse;
@@ -51,17 +53,21 @@ public class MyntPaymentsService {
             sellAmount = Double.parseDouble(amount);
         }
         else {
+            String currencyPair = fromCurrency+toCurrency;
             ResponseEntity<JsonNode> rateResponse = getRateForSellAmount(fromCurrency, toCurrency);
             if (!rateResponse.getStatusCode().is2xxSuccessful()) return rateResponse;
-            double rate = Objects.requireNonNull(rateResponse.getBody()).get("rates").get(0).get(0).asDouble();
-            sellAmount = rate * Double.parseDouble(amount);
+            JsonNode rates = Objects.requireNonNull(rateResponse.getBody()).get("rates");
+            if (rates.isEmpty()) {
+                errorBody.put("Error", "Currency pair " + currencyPair + " currently not available");
+                return ResponseEntity.badRequest().body(errorBody);
+            }
+            double rate = Objects.requireNonNull(rateResponse.getBody()).get("rates").get(currencyPair).get(0).asDouble();
+            sellAmount = Double.parseDouble(amount) / rate;
         }
 
         if (!hasEnoughBalance(fromCurrency, sellAmount)) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            ObjectNode notEnoughBalanceBody = objectMapper.createObjectNode();
-            notEnoughBalanceBody.put("Error", "Not enough balance in " + fromCurrency + " account");
-            return ResponseEntity.badRequest().body(notEnoughBalanceBody);
+            errorBody.put("Error", "Not enough balance in " + fromCurrency + " account");
+            return ResponseEntity.badRequest().body(errorBody);
         }
         if (!fromCurrency.equals(toCurrency)) {
             ResponseEntity<JsonNode> convertResponse = convertBeforePayment(fromCurrency,toCurrency,amount);
