@@ -53,7 +53,7 @@ function Login() {
             setPassword('');
             setErrorOccurred(false)
             setLoggedIn(true)
-            navigate('/')
+            navigate('/accounts')
         } catch (error) {
             console.error("error occurred: ", error)
             setErrorOccurred(true)

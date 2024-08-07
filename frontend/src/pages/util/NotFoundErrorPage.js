@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Image, Heading, Text, Button } from '@chakra-ui/react';
 
-function ErrorPage() {
+function NotFoundErrorPage() {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
@@ -52,4 +52,4 @@ function ErrorPage() {
   );
 }
 
-export default ErrorPage;
+export default NotFoundErrorPage;
