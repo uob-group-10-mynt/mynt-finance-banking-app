@@ -35,7 +35,7 @@ export default function ConversionPage() {
   const compare = query.get('compare');
 
   useEffect(() => {
-    fetch(`http://localhost:8080/api/v1/rates/getBasicRates?other_currencies=${compare}`, {
+    fetch(`http://localhost:8080/api/v1/rates/getBasicRates?buy_currencies=${compare}`, {
       headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` }
     })
     .then(response => 

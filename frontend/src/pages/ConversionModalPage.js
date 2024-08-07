@@ -1,10 +1,6 @@
-import { Box, Input } from "@chakra-ui/react";
+import { Box, Input, useToast } from "@chakra-ui/react";
 import { ArrowUpDownIcon, PhoneIcon, AtSignIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-import useConversion from "../hooks/useConversion";
-import useQuery from "../hooks/useQuery";
 
 import CustomBox from "../components/util/CustomBox";
 import CustomText from "../components/CustomText";
@@ -12,7 +8,7 @@ import CustomButton from "../components/forms/CustomButton";
 import Icon from "../components/util/Icon";
 
 const formatNumberWithCommas = (number) => {
-  if (!number) return '';
+  if (number === null || number === undefined) return '';
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
@@ -21,43 +17,37 @@ const parseNumberFromString = (numberString) => {
   return parseFloat(numberString.replace(/,/g, ''));
 };
 
-const fetchRates = async (currency, setBaseValue, setCompareValue) => {
-  try {
-    const response = await fetch(`http://localhost:8080/api/v1/rates/getBasicRates?base_currency=${currency}&other_currencies=KES`, {
-      headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` }
-    });
-    const data = await response.json();
-    setBaseValue(data[0].rate);
-    setCompareValue(data[1].rate);
-  } catch (e) {
-    console.error("ERROR: " + e);
-  }
-};
-
 export default function ConversionModalPage({ onClose, currency }) {
-  const query = useQuery();
-  const [ rates, setRates ] = useState(parseFloat(null));
-  const [ baseValue, setBaseValue ] = useState(null);
-  const [ compareValue, setCompareValue ] = useState(null);
-  const [ mobile, setMobile ] = useState(null);
-  const [ beneficiaryName, setBeneficiaryName ] = useState("");
+  const [rates, setRates] = useState(null);
+  const [baseValue, setBaseValue] = useState('');
+  const [compareValue, setCompareValue] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [beneficiaryName, setBeneficiaryName] = useState("");
 
-  const navigate = useNavigate();
+  const toast = useToast();
 
   useEffect(() => {
-    fetchRates(currency, setBaseValue, setCompareValue);
+    fetch(`http://localhost:8080/api/v1/rates/getBasicRates?sell_currency=${currency}&buy_currencies=KES`, {
+      headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` }
+    })
+    .then(response => response.json())
+    .then(data => {
+      setBaseValue('1');
+      setCompareValue(formatNumberWithCommas(data[1].rate));
+      setRates(data[1].rate);
+    });
   }, [currency]);
 
   const handleOnChangeBaseValue = (e) => {
     const value = parseNumberFromString(e.target.value);
-    setBaseValue(value);
-    setCompareValue(value * rates);
+    setBaseValue(formatNumberWithCommas(value));
+    setCompareValue(formatNumberWithCommas(value * rates));
   };
 
   const handleOnChangeCompareValue = (e) => {
     const value = parseNumberFromString(e.target.value);
-    setCompareValue(value);
-    setBaseValue(value / rates);
+    setCompareValue(formatNumberWithCommas(value));
+    setBaseValue(formatNumberWithCommas(value / rates));
   };
 
   const handleConfirmOnClick = () => {
@@ -68,13 +58,23 @@ export default function ConversionModalPage({ onClose, currency }) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ 
-        amount: compareValue,
+        amount: parseNumberFromString(compareValue),
         mobile_number: mobile,
         beneficiary_name: beneficiaryName,
-       })
+      })
+    }).then(() => {
+      toast({
+        position: 'top',
+        title: 'Conversion Complete.',
+        description: "You've successfully made a withdrawal.",
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
     })
-
-    navigate('confirm');
+    .finally(() => {
+      onClose();
+    });
   };
 
   const renderInputBox = (value, onChange, label, type = 'text', icon) => (
@@ -87,7 +87,7 @@ export default function ConversionModalPage({ onClose, currency }) {
       borderColor="black.300"
       borderRadius="md"
       padding="0.5em"
-      width={[ '100%', '60%' ]}
+      width={[ '100%', '80%' ]}
     >
       <Box width='60%'>
         <CustomText small black>{label}</CustomText>
@@ -104,7 +104,7 @@ export default function ConversionModalPage({ onClose, currency }) {
             boxShadow: 'none',
           }}
           min={0}
-          value={type === 'number' ? formatNumberWithCommas(value) : value}
+          value={value}
           onChange={onChange}
         />
       </Box>
@@ -135,18 +135,18 @@ export default function ConversionModalPage({ onClose, currency }) {
       <CustomBox justifyContent='center' alignItems='center'>
         <CustomBox gap='0.7em' justifyContent='center' alignItems='center'>
           <CustomText small black>You Withdraw Exactly</CustomText>
-          {renderInputBox(baseValue, handleOnChangeBaseValue, 'Amount', 'number', <Icon name={currency} boxSize={[ '1.5em', '3em' ]} currency />)}
+          {renderInputBox(baseValue, handleOnChangeBaseValue, 'Amount', 'text', <Icon name={currency} boxSize={[ '1.5em', '3em' ]} currency />)}
         </CustomBox>
         <ArrowUpDownIcon />
         <CustomBox gap='0.7em' justifyContent='center' alignItems='center'>
           <CustomText small black>Equivalent to</CustomText>
-          {renderInputBox(compareValue, handleOnChangeCompareValue, 'Amount', 'number', <Icon name="KES" boxSize={[ '1.5em', '3em' ]} currency />)}
+          {renderInputBox(compareValue, handleOnChangeCompareValue, 'Amount', 'text', <Icon name="KES" boxSize={[ '1.5em', '3em' ]} currency />)}
         </CustomBox>
         <CustomBox gap='0.7em' justifyContent='center' alignItems='center'>
           <CustomText small black>Mobile Number</CustomText>
-          {renderInputBox(null, setMobile, 'Mobile Number', 'text', <PhoneIcon />)}
+          {renderInputBox(mobile, (e) => setMobile(e.target.value), 'Mobile Number', 'text', <PhoneIcon />)}
           <CustomText small black>Beneficiary Name</CustomText>
-          {renderInputBox(null, setBeneficiaryName, 'Beneficiary Name', 'text', <AtSignIcon />)}
+          {renderInputBox(beneficiaryName, (e) => setBeneficiaryName(e.target.value), 'Beneficiary Name', 'text', <AtSignIcon />)}
         </CustomBox>
         <CustomButton standard marginTop='1em' onClick={handleConfirmOnClick}>Confirm</CustomButton>
       </CustomBox>
@@ -163,11 +163,11 @@ export default function ConversionModalPage({ onClose, currency }) {
       <CustomBox justifyContent='center' alignItems='center'>
         <CustomBox gap='0.7em' justifyContent='center' alignItems='center'>
           <CustomText small black>You Withdraw Exactly</CustomText>
-          {renderInputBox(baseValue, handleOnChangeBaseValue, 'Amount', 'number', <Icon name={currency} boxSize={[ '1.5em', '3em' ]} currency />)}
+          {renderInputBox(baseValue, handleOnChangeBaseValue, 'Amount', 'text', <Icon name={currency} boxSize={[ '1.5em', '3em' ]} currency />)}
           <CustomText small black>Mobile Number</CustomText>
-          {renderInputBox(null, setMobile, 'Mobile Number', 'text', <PhoneIcon />)}
+          {renderInputBox(mobile, (e) => setMobile(e.target.value), 'Mobile Number', 'text', <PhoneIcon />)}
           <CustomText small black>Beneficiary Name</CustomText>
-          {renderInputBox(null, setBeneficiaryName, 'Beneficiary Name', 'text', <AtSignIcon />)}
+          {renderInputBox(beneficiaryName, (e) => setBeneficiaryName(e.target.value), 'Beneficiary Name', 'text', <AtSignIcon />)}
         </CustomBox>
         <CustomButton confirm onClick={handleConfirmOnClick}>Confirm</CustomButton>
       </CustomBox>
