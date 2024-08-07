@@ -77,7 +77,7 @@ function transformInputs({parentState, setParentState, errorOccurred}) {
                 <FormControl isRequired={inputFields.required} margin='0.5em' isInvalid={errorOccurred}>
                     {
                         inputFields.display === "formattedNumber" ? (
-                            <FormLabel>{inputFields.label + Intl.NumberFormat("en-GB").format(inputFields.value)}</FormLabel>
+                            <FormLabel>{inputFields.label}: {Intl.NumberFormat("en-GB").format(inputFields.value)}</FormLabel>
                         ) : <FormLabel>{inputFields.label}</FormLabel>
                     }
                     <InputGroup>

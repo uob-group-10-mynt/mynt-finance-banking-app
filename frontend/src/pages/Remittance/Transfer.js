@@ -40,6 +40,7 @@ export default function Transfer() {
     });
 
     async function handleConfirm() {
+        setLoading(true);
         try {
             const response = await fetch(createPayment, {
                 method: 'POST',
