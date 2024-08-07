@@ -35,15 +35,15 @@ function Mynt2MyntPanel() {
     const myntTransferInputFields = [
         {
             id: "email",
-            label: "email",
+            label: "Email",
             placeholder: "Enter mynt account email of your payee",
-            type: "text",
+            type: "email",
             required: true,
             value: ""
         },
         {
             id: "currency",
-            label: "currency",
+            label: "Currency",
             placeholder: "Enter the currency your payee will receive",
             type: "text",
             required: true,
@@ -51,7 +51,7 @@ function Mynt2MyntPanel() {
         },
         {
             id: "amount",
-            label: "amount",
+            label: "Amount",
             display: "formattedNumber",
             placeholder: "Enter transfer amount",
             type: "number",
@@ -118,6 +118,7 @@ function MyPayeesPanel() {
     const [payees, setPayees] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const toast = useToast();
     const navigate = useNavigate();
     const location = useLocation();
     const selectedCurrencyAccount = location.state.selectedCurrencyAccount;
@@ -179,6 +180,9 @@ function MyPayeesPanel() {
                                     }
                                 })
                             }}>Send</CustomButton>
+                            <CustomButton side onClick={() => {
+                                handleDeletePayee(payee.id);
+                            }}>Delete</CustomButton>
                         </>
                     );
                 },
@@ -190,5 +194,38 @@ function MyPayeesPanel() {
                 }),
             };
         });
+
+        async function handleDeletePayee(id) {
+            try {
+                const response = await fetch(`${getBeneficiaries}/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem('access')}`
+                    },
+                });
+
+                if (response.ok) {
+                    navigate(0);
+                    toast({
+                        position: 'top',
+                        title: 'Payee deleted.',
+                        description: "You've successfully removed a payee.",
+                        status: 'success',
+                        duration: 5000,
+                        isClosable: true,
+                    });
+                }
+
+                if (!response.ok) {
+                    const error = new Error(await response.text());
+                    setError(error);
+                    setLoading(false);
+                }
+            } catch (error) {
+                setError(error);
+            } finally {
+                setLoading(false);
+            }
+        }
     }
 }

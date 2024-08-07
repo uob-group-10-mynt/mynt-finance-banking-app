@@ -11,7 +11,7 @@ const accountFields = [
         alwaysReadOnly:true,
         readonly: true,
         value: "",
-        type: "text",
+        type: "email",
         border: "none"
     },
     {
