@@ -11,9 +11,8 @@ import CustomText from "../../components/CustomText";
 import CustomButton from "../../components/forms/CustomButton";
 import Icon from "../../components/util/Icon";
 
-
 const formatNumberWithCommas = (number) => {
-  if (!number) return '';
+  if (number === null || number === undefined) return '';
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
@@ -26,7 +25,7 @@ export default function ConversionPage() {
   const query = useQuery();
   const [ rates, setRates ] = useState(null);
   const [ baseValue, setBaseValue ] = useState(1);
-  const [ compareValue, setCompareValue ] = useState(null);
+  const [ compareValue, setCompareValue ] = useState('');
 
   const { conversionRequest, setConversionRequest } = useConversion();
   const navigate = useNavigate();
@@ -38,30 +37,26 @@ export default function ConversionPage() {
     fetch(`http://localhost:8080/api/v1/rates/getBasicRates?buy_currencies=${compare}`, {
       headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` }
     })
-    .then(response => 
-      response.json()
-    )
+    .then(response => response.json())
     .then(data => {
-      setBaseValue(data[0].rate);
-      setCompareValue(data[1].rate);
+      setRates(data[1].rate); 
+      setCompareValue(formatNumberWithCommas(data[1].rate));
     })
     .catch((e) => {
       console.log("ERROR: " + e);
-    })
-  }, []);
-  
-  
+    });
+  }, [compare]);
 
   const handleOnChangeBaseValue = (e) => {
     const value = parseNumberFromString(e.target.value);
     setBaseValue(value);
-    setCompareValue(value * rates);
+    setCompareValue(formatNumberWithCommas(value * rates));
   };
 
   const handleOnChangeCompareValue = (e) => {
     const value = parseNumberFromString(e.target.value);
-    setCompareValue(value);
-    setBaseValue(value / rates);
+    setCompareValue(formatNumberWithCommas(value));
+    setBaseValue(formatNumberWithCommas(value / rates));
   };
 
   const handleNextOnClick = () => {
@@ -86,7 +81,7 @@ export default function ConversionPage() {
       borderColor="black.300"
       borderRadius="md"
       padding="0.5em"
-      width={[ '100%', '60%' ]}
+      width={[ '100%', '80%' ]}
     >
       <Input
         width='60%' 
@@ -107,7 +102,7 @@ export default function ConversionPage() {
           boxShadow: 'none',
         }}
         min={0}
-        value={formatNumberWithCommas(value)} 
+        value={value}
         onChange={onChange}
       />
       <Box
