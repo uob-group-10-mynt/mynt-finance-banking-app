@@ -47,7 +47,6 @@ function Login() {
                 null,
                 formValuesJSON
             )
-            console.log("data:: ", data)
             sessionStorage.setItem('access', data.access_token)
             sessionStorage.setItem('refresh', data.refresh_token)
             setEmail('');
