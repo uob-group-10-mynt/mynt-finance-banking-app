@@ -12,13 +12,6 @@ import CustomButton from "../../components/forms/CustomButton";
 import Icon from "../../components/util/Icon";
 
 
-const FETCH_CONVERSION_DATA = {
-  rates: '1.54',
-  buy_currency: 'USD',
-  sell_currency: 'KES',
-  settlement_date: "2024-07-13T14:13:18+00:00",
-};
-
 const formatNumberWithCommas = (number) => {
   if (!number) return '';
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -31,10 +24,9 @@ const parseNumberFromString = (numberString) => {
 
 export default function ConversionPage() {
   const query = useQuery();
-  const [ rates, setRates ] = useState(parseFloat(FETCH_CONVERSION_DATA.rates));
+  const [ rates, setRates ] = useState(null);
   const [ baseValue, setBaseValue ] = useState(1);
-  const [ compareValue, setCompareValue ] = useState(1 * rates);
-  const [ conversion, setConversion ] = useState(null);
+  const [ compareValue, setCompareValue ] = useState(null);
 
   const { conversionRequest, setConversionRequest } = useConversion();
   const navigate = useNavigate();
