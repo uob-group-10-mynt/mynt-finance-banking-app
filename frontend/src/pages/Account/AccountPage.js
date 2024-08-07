@@ -1,10 +1,11 @@
+import { Box, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Box } from '@chakra-ui/react';
 
 import useFormatAmount from '../../hooks/useFormatAmount';
 
 import SplashPage from '../SplashPage';
+import ConversionModalPage from '../ConversionModalPage';
 
 import Container from '../../components/container/Container';
 import Icon from '../../components/util/Icon';
@@ -18,6 +19,7 @@ import CustomBox from '../../components/util/CustomBox';
 
 function AccountPage() {
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const currency = useLocation().pathname.split('/')[2];
   const [ account, setAccount ] = useState({});
   const [ transactions, setTransactions ] = useState([]);
@@ -27,7 +29,7 @@ function AccountPage() {
   useEffect(() => {
     setLoading(true); 
 
-    fetch(`http://localhost:8080/api/v1/transaction?currency=${currency}&page=${pages}`, {
+    fetch(`http://localhost:8080/api/v1/transaction?currency=${currency}&per_page=${5}&page=${pages}`, {
       headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` }
     })
       .then(response => response.json())
@@ -64,8 +66,12 @@ function AccountPage() {
     setPages(pages + 1);
   }
 
+  const withdrawalOnClick = () => {
+    onOpen();
+  };
+
   const transactionData = transactions.map((data) => {
-    const { id, createdAt, amount, currency, type } = data;
+    const { id, created_at, amount, currency, type } = data;
 
     return {
       ...data,
@@ -75,7 +81,7 @@ function AccountPage() {
             <Icon name={'The Currency Cloud Limited'} />
             <InfoBlock>
               <CustomText black small>{'The Currency Cloud Limited'}</CustomText>
-              <DateTimeDisplay time={createdAt} />
+              <DateTimeDisplay time={created_at} />
             </InfoBlock>
             <ContainerRowBalanceWrapper>
               <CustomText black big>{type === 'credit' ? '+' : '-'}{useFormatAmount(amount, currency || 'USD')}</CustomText>
@@ -103,7 +109,7 @@ function AccountPage() {
         alignItems="center"
         justifyContent="space-between"
       >
-        <CustomButton medium style={{ flex: 1, marginRight: '0.5em' }} colorScheme='blue'>Withdraw</CustomButton>
+        <CustomButton medium style={{ flex: 1, marginRight: '0.5em' }} colorScheme='blue' onClick={withdrawalOnClick}>Withdraw</CustomButton>
         <CustomButton medium style={{flex: 1, marginRight: '0.5em'}} onClick={(e) => handleSendOnClick(e)}>Send</CustomButton>
       </Box>
     </CustomBox>
@@ -123,6 +129,16 @@ function AccountPage() {
       {accountInfoBlock}
       <Container name='Transactions' data={transactionData} keyFn={transactionKeyFn} />
       <CustomButton medium onClick={moreButtonOnClick}>More</CustomButton>
+      <Modal isOpen={isOpen} onClose={onClose} size="2xlg">
+        <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Withdraw Funds</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <ConversionModalPage onClose={onClose} currency={currency} />
+              </ModalBody>
+          </ModalContent>
+      </Modal>
     </Box>
   );
 

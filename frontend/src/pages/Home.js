@@ -13,7 +13,7 @@ import Container from "../components/container/Container";
 import ContainerRowBalanceWrapper from "../components/container/ContainerRowBalanceWrapper";
 import InfoBlock from "../components/util/InfoBlock";
 import ConversionListPage from "./Conversion/ConversionListPage"; 
-import DepositPage from './DepositPage';  // Make sure you have a component for deposit
+import DepositPage from './DepositPage'; 
 
 export default function Home() {
     const navigate = useNavigate(); 
