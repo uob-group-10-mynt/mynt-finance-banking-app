@@ -8,11 +8,13 @@ import InfoBlock from "../../components/util/InfoBlock";
 import CustomText from "../../components/CustomText";
 import CustomButton from "../../components/forms/CustomButton";
 import Container from "../../components/container/Container";
-import {getBeneficiaries} from "../../utils/APIEndpoints";
+import {createMynt2MyntPayment, getBeneficiaries} from "../../utils/APIEndpoints";
+import {useToast} from "@chakra-ui/react";
+import CustomForm from "../../components/forms/CustomForm";
 
 export default function Payee() {
-    const tabs = ['My payees', 'New payee']
-    const panels = [<MyPayeesPanel/>, <AddPayeePanel/>];
+    const tabs = ['My payees', 'New payee', 'Mynt to Mynt']
+    const panels = [<MyPayeesPanel/>, <AddPayeePanel/>, <Mynt2MyntPanel/>];
     const location = useLocation();
     const selectedCurrencyAccount = location.state.selectedCurrencyAccount;
 
@@ -23,6 +25,96 @@ export default function Payee() {
             <TabBar tabNames={tabs} tabPanels={panels}></TabBar>
         </>
     );
+}
+
+function Mynt2MyntPanel() {
+    const toast = useToast();
+    const [response, setResponse] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const myntTransferInputFields = [
+        {
+            id: "email",
+            label: "email",
+            placeholder: "Enter mynt account email of your payee",
+            type: "text",
+            required: true,
+            value: ""
+        },
+        {
+            id: "currency",
+            label: "currency",
+            placeholder: "Enter the currency your payee will receive",
+            type: "text",
+            required: true,
+            value: ""
+        },
+        {
+            id: "amount",
+            label: "amount",
+            placeholder: "Enter transfer amount",
+            type: "number",
+            required: true,
+            value: ""
+        },
+    ];
+    const [formData, setFormData] = useState(myntTransferInputFields)
+
+    return (
+        <>
+            <CustomForm onSubmit={handleMyntTransfer} buttonText="Confirm Transfer" buttonId="myntTransferButton"
+                        parentState={formData} setParentState={setFormData}>
+            </CustomForm>
+            {loading && <CustomText>Processing...</CustomText>}
+            {error && <CustomText>Error {error.message}</CustomText>}
+        </>
+    );
+
+    async function handleMyntTransfer(formValuesJSON) {
+        setLoading(true);
+        try {
+            // POST request to add a payee
+            const response = await fetch(createMynt2MyntPayment, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({formValuesJSON})
+            });
+
+            if (!response.ok) {
+                const error = new Error(await response.text());
+                setError(error);
+                setLoading(false);
+                return;
+            }
+
+            setResponse(await response.json());
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+
+        if (response.ok) {
+            toast({
+                position: 'top',
+                title: 'Transfer made.',
+                description: "You've successfully made a transfer.",
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
+        }
+
+        // Clear form and close panel
+        myntTransferInputFields.forEach(inputField => {
+            inputField.value = ""
+        })
+        setFormData(myntTransferInputFields)
+    }
+
 }
 
 function MyPayeesPanel() {
