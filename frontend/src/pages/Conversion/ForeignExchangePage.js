@@ -68,7 +68,7 @@ export default function ForeignExchangePage() {
           setLoading(false);
         });
     }
-  }, [baseCurrency, fetchExchangeRates]);
+  }, [ baseCurrency, fetchExchangeRates ]);
 
   const openConversionModal = () => {
     onOpen();
@@ -86,7 +86,7 @@ export default function ForeignExchangePage() {
     });
   };
 
-  const allCurrencyList = exchangeRates
+  const allCurrencyList = (exchangeRates.length > 0) ? exchangeRates
     .filter(info => info.currency !== baseCurrency)
     .map((info) => {
       const { currency, rate } = info;
@@ -109,12 +109,13 @@ export default function ForeignExchangePage() {
           </>
         ),
         onClick: () => {
-          navigate(`/currencies/${baseCurrency}?compare=${currency}`);
+          // navigate(`/currencies/${baseCurrency}?compare=${currency}`);
+          navigate(`/conversions?base=${baseCurrency}&compare=${currency}`);
         },
       };
-    });
+    }): [];
 
-    const popularCurrencyList = exchangeRates
+    const popularCurrencyList = (exchangeRates.length > 0) ? exchangeRates
       .filter((info) => info.currency !== baseCurrency && usePopularCountryName(info.currency) != 'Unknown Country')
       .map((info) => {
         const { currency, rate } = info;
@@ -137,10 +138,10 @@ export default function ForeignExchangePage() {
             </>
           ),
           onClick: () => {
-            navigate(`/currencies/${baseCurrency}?compare=${currency}`);
+            navigate(`/conversions?base=${baseCurrency}&compare=${currency}`);
           },
         };
-      });
+      }) : [];
 
   const filteredAllCurrencyList = filterData(allCurrencyList);
   const showFilteredResults = searchTerm.length > 0;

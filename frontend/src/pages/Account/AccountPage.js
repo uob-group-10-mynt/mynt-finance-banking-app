@@ -39,10 +39,10 @@ function AccountPage() {
         console.error("ERROR: ", e);
         setLoading(false); 
       });
-  }, [pages]);
+  }, [ pages ]);
 
   useEffect(() => {
-    setLoading(true); // Start loading
+    setLoading(true);
 
     fetch(`http://localhost:8080/api/v1/balance/${currency}`, {
       headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` }
@@ -58,14 +58,15 @@ function AccountPage() {
       });
   }, []);
 
-  const transactionKeyFn = (info) => info.accountId;
+  const transactionKeyFn = (info) => info.id;
 
   const moreButtonOnClick = () => {
     setPages(pages + 1);
   }
 
   const transactionData = transactions.map((data) => {
-    const { createdAt, amount, currency, type } = data;
+    const { id, createdAt, amount, currency, type } = data;
+
     return {
       ...data,
       render: () => {
@@ -84,7 +85,7 @@ function AccountPage() {
       },
 
       onClick: () => {
-        navigate('/transactions/' + data.id);
+        navigate('/transactions/' + id);
       },
     }
   });

@@ -29,6 +29,15 @@ const buttonStyleMapper = {
     height: { base: '1.75em', md: '2.125em', lg: '2.5em' },  
   },
 
+  xside: {
+    variant: 'solid',
+    color: 'white',
+    colorScheme: 'blue',
+    width: '8%',
+    padding: { base: '0.25em', md: '0.375em', lg: '0.7em' }, 
+    height: { base: '1.05em', md: '1.325em', lg: '1.5em' },  
+  },
+
   medium: {
     variant: 'solid',
     color: 'white',
@@ -49,7 +58,11 @@ const buttonFontMapper = {
   },
 
   side: {
-    fontSize: { base: '0.875em', md: '1.125em', lg: '1.375em' }, 
+    fontSize: { base: '0.825em', md: '1.125em', lg: '1.375em' }, 
+  },
+
+  xside: {
+    fontSize: { base: '0.525em', md: '0.825em', lg: '1em' }, 
   },
 
   medium: {
@@ -86,14 +99,15 @@ function CustomButton({
   confirm,
   medium,
   side,
+  xside,
   children,
   ...rest
 }) {
-  const mapper = (standard) ? 'standard' : (confirm) ? 'confirm' : (medium) ? 'medium' : 'side';  
+  const mapper = (standard) ? 'standard' : (confirm) ? 'confirm' : (medium) ? 'medium' : (side) ? 'side' : 'xside';  
 
   return (
     <Button { ...buttonStyleMapper[mapper] } { ...rest }>
-      <Text { ...buttonFontMapper[mapper] }>
+      <Text as='b' { ...buttonFontMapper[mapper] }>
         {children}
       </Text>
     </Button>
