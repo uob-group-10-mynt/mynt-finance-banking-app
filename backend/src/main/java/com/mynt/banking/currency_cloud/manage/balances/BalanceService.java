@@ -26,7 +26,7 @@ public class BalanceService {
     private final WebClient webClient;
     private final WebClientErrorHandler webClientErrorHandler;
 
-    public ResponseEntity<JsonNode> find(String currencyCode, String onBehalfOf) {
+    public ResponseEntity<JsonNode> get(String currencyCode, String onBehalfOf) {
         // Build the URI with the provided parameters
         String uri = UriComponentsBuilder.fromPath("/v2/balances/" + currencyCode)
                 .queryParam("on_behalf_of", onBehalfOf)

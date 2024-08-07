@@ -11,9 +11,11 @@ import {Center} from "@chakra-ui/react";
 export default function Amount() {
     const navigate = useNavigate();
     const [amount, setAmount] = useState('');
-    const availableBalance = 1000; // To be replaced with logic to fetch balance dynamically from an API
 
     const location = useLocation();
+    const selectedCurrencyAccount = location.state.selectedCurrencyAccount;
+    const availableBalance = selectedCurrencyAccount.balance;
+
     const selectedPayee = location.state.selectedPayee;
     const renderSelectedPayee = [selectedPayee].map((payee) => {
         return {
@@ -21,10 +23,11 @@ export default function Amount() {
             render: () => {
                 return (
                     <>
-                        <Icon name={payee.bank}/>
+                        <Icon name={payee.bank_name}/>
                         <InfoBlock>
-                            <CustomText gray small>{payee.label}</CustomText>
-                            <CustomText black big>{payee.account_number}</CustomText>
+                            <CustomText black big>{payee.name}</CustomText>
+                            <CustomText gray xsmall>{"Currency: " + payee.currency}</CustomText>
+                            <CustomText gray xsmall>{"IBAN: " + payee.iban}</CustomText>
                         </InfoBlock>
                     </>
                 );
@@ -43,8 +46,8 @@ export default function Amount() {
             type: "number",
             required: true,
             value: amount,
-            helperText: `Available balance: ${availableBalance.toLocaleString()} KES`,
-            inputLeftElement: "£"
+            helperText: `Available balance: ${selectedCurrencyAccount.currency} ${Intl.NumberFormat("en-GB").format(availableBalance)}`,
+            inputLeftElement: selectedPayee.currency
         },
     ];
     const [fields, setFields] = useState(amountInputFields)
@@ -52,7 +55,12 @@ export default function Amount() {
     const handleAmountSubmit = () => {
         // Add validation and submission logic here
         selectedPayee['transfer_amount'] = fields[0].value;
-        navigate('/remittance/transfer', {state: {selectedPayee: selectedPayee}});
+        navigate('/remittance/transfer', {
+            state: {
+                selectedCurrencyAccount: selectedCurrencyAccount,
+                selectedPayee: selectedPayee,
+            }
+        });
     };
 
     return (
@@ -62,8 +70,10 @@ export default function Amount() {
                 <Container name='Selected Payee' data={renderSelectedPayee} keyFn={(info) => info.id}/>
             </Center>
             <CustomForm
-                onSubmit={handleAmountSubmit} buttonText="Confirm" buttonId="amountButton" parentState={fields} setParentState={setFields}>
+                onSubmit={handleAmountSubmit} buttonText="Confirm" buttonId="amountButton" parentState={fields}
+                setParentState={setFields}>
             </CustomForm>
         </>
     );
+
 }

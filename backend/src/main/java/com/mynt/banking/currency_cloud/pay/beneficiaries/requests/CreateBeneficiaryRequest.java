@@ -231,7 +231,7 @@ public class CreateBeneficiaryRequest {
     @JsonProperty("beneficiary_identification_value")
     @Schema(description = "A unique reference code for the identification document, such as a passport number.", example = " ")
     @Builder.Default
-    private String identificationType = "";
+    private String beneficiaryIdentificationValue = "";
 
     @JsonProperty("payment_types")
     @Schema(description = "Currencycloud supports two types of payments: \"priority\", made using the Swift network; and \"regular\", made using the local bank network.",

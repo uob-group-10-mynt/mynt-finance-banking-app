@@ -63,7 +63,6 @@ public class MyntPaymentsService {
             notEnoughBalanceBody.put("Error", "Not enough balance in " + fromCurrency + " account");
             return ResponseEntity.badRequest().body(notEnoughBalanceBody);
         }
-
         if (!fromCurrency.equals(toCurrency)) {
             ResponseEntity<JsonNode> convertResponse = convertBeforePayment(fromCurrency,toCurrency,amount);
             if (!convertResponse.getStatusCode().is2xxSuccessful()) return convertResponse;
@@ -106,7 +105,6 @@ public class MyntPaymentsService {
                 .build();
         return rateService.getBasicRates(getBasicRatesRequest).block();
     }
-
     private ResponseEntity<JsonNode> convertBeforePayment(String fromCurrency, String toCurrency, String amount) {
         String contactUuid = userContextService.getCurrentUserUuid();
         CreateConversionRequest createConversionRequest = CreateConversionRequest.builder()
