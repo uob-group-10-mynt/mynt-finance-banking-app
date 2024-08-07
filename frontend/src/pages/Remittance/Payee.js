@@ -29,7 +29,7 @@ export default function Payee() {
 
 function Mynt2MyntPanel() {
     const toast = useToast();
-    const [response, setResponse] = useState('');
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const myntTransferInputFields = [
@@ -73,49 +73,45 @@ function Mynt2MyntPanel() {
 
     async function handleMyntTransfer(formValuesJSON) {
         setLoading(true);
+        const m2mQuery = createMynt2MyntPayment + "?email=" + formValuesJSON.email + "&currency=" + formValuesJSON.currency + "&amount=" + formValuesJSON.amount;
         try {
             // POST request to add a payee
-            const response = await fetch(createMynt2MyntPayment, {
+            const response = await fetch(m2mQuery, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${sessionStorage.getItem('access')}`,
-                    "Content-Type": "application/json"
+                    // "Content-Type": "application/json"
                 },
-                body: JSON.stringify({formValuesJSON})
+                // body: JSON.stringify({formValuesJSON})
             });
+
+            if (response.ok) {
+                toast({
+                    position: 'top',
+                    title: 'Transfer made.',
+                    description: "You've successfully made a transfer.",
+                    status: 'success',
+                    duration: 5000,
+                    isClosable: true,
+                });
+
+                setTimeout(() => {
+                    navigate('/');
+                }, 3000);
+                return;
+            }
 
             if (!response.ok) {
                 const error = new Error(await response.text());
                 setError(error);
                 setLoading(false);
-                return;
             }
-
-            setResponse(await response.json());
         } catch (error) {
             setError(error);
         } finally {
             setLoading(false);
         }
-
-        if (response.ok) {
-            toast({
-                position: 'top',
-                title: 'Transfer made.',
-                description: "You've successfully made a transfer.",
-                status: 'success',
-                duration: 5000,
-                isClosable: true,
-            });
-        }
-
-        // Clear form and close panel
-        myntTransferInputFields.forEach(inputField => {
-            inputField.value = ""
-        })
-        setFormData(myntTransferInputFields)
     }
-
 }
 
 function MyPayeesPanel() {

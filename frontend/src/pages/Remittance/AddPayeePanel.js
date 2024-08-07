@@ -3,10 +3,11 @@ import {useToast} from '@chakra-ui/react';
 import CustomForm from "../../components/forms/CustomForm";
 import {addBeneficiaries} from "../../utils/APIEndpoints";
 import CustomText from "../../components/CustomText";
+import {useNavigate} from "react-router-dom";
 
 export default function AddPayeePanel() {
-    const [response, setResponse] = useState('')
     const toast = useToast();
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const newPayeeInputFields = [
@@ -140,29 +141,31 @@ export default function AddPayeePanel() {
                 body: JSON.stringify({formValuesJSON})
             });
 
+            if (response.ok) {
+                toast({
+                    position: 'top',
+                    title: 'Payee added.',
+                    description: "You've successfully added a new payee.",
+                    status: 'success',
+                    duration: 5000,
+                    isClosable: true,
+                });
+
+                setTimeout(() => {
+                    navigate('/remittance/payee');
+                }, 2000);
+                return;
+            }
+
             if (!response.ok) {
                 const error = new Error(await response.text());
                 setError(error);
                 setLoading(false);
-                return;
             }
-
-            setResponse(await response.json());
         } catch (error) {
             setError(error);
         } finally {
             setLoading(false);
-        }
-
-        if (response.ok) {
-            toast({
-                position: 'top',
-                title: 'Payee added.',
-                description: "You've successfully added a new payee.",
-                status: 'success',
-                duration: 5000,
-                isClosable: true,
-            });
         }
 
         // Clear form and close panel
