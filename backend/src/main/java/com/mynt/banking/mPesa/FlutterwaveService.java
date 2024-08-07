@@ -196,7 +196,7 @@ public class FlutterwaveService {
         MPesaToFlutterWearDto mPesaToFlutterWearDto = MPesaToFlutterWearDto.builder()
                 .amount(dto.getAmount())
                 .email(userExsists.getEmail())
-                .phone_number(userExsists.getPhone_number())
+                .phone_number(userExsists.getPhone_number().replace("+", "0").replace(" ",""))
                 .fullname(userExsists.getFirstname()+" "+userExsists.getLastname())
                 .build();
         ResponseEntity<JsonNode> response = this.mPesaToFlutterwave(mPesaToFlutterWearDto).block();

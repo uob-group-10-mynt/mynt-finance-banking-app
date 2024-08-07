@@ -39,7 +39,7 @@ public class MPesaToFlutterWearDto {
     @NotNull
     @JsonProperty("phone_number")
     @Size(max = 255)
-    @Schema(description = "phone_number", example = "+44 7824792472")
+    @Schema(description = "phone_number", example = "0447824792472")
     @Builder.Default
     private String phone_number = "0447824792472" ;
 
