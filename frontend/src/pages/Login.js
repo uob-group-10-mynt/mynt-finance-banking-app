@@ -55,7 +55,7 @@ function Login() {
             sessionStorage.setItem('access', data.access_token)
             sessionStorage.setItem('refresh', data.refresh_token)
             setLoggedIn(true)
-            navigate('/')
+            navigate('/accounts')
         } catch (error) {
             //TODO handle errors by redirecting to relevant error page
             console.error(error);
