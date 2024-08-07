@@ -1,9 +1,10 @@
 import { Box, Input } from "@chakra-ui/react";
 import { ArrowUpDownIcon } from '@chakra-ui/icons';
-import { useState } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 
 import useConversion from "../../hooks/useConversion";
+import useQuery from "../../hooks/useQuery";
 
 import CustomBox from "../../components/util/CustomBox";
 import CustomText from "../../components/CustomText";
@@ -29,12 +30,35 @@ const parseNumberFromString = (numberString) => {
 };
 
 export default function ConversionPage() {
+  const query = useQuery();
   const [ rates, setRates ] = useState(parseFloat(FETCH_CONVERSION_DATA.rates));
   const [ baseValue, setBaseValue ] = useState(1);
   const [ compareValue, setCompareValue ] = useState(1 * rates);
+  const [ conversion, setConversion ] = useState(null);
 
   const { conversionRequest, setConversionRequest } = useConversion();
   const navigate = useNavigate();
+
+  const base = query.get('base');
+  const compare = query.get('compare');
+
+  useEffect(() => {
+    fetch(`http://localhost:8080/api/v1/rates/getBasicRates?other_currencies=${compare}`, {
+      headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` }
+    })
+    .then(response => 
+      response.json()
+    )
+    .then(data => {
+      setBaseValue(data[0].rate);
+      setCompareValue(data[1].rate);
+    })
+    .catch((e) => {
+      console.log("ERROR: " + e);
+    })
+  }, []);
+  
+  
 
   const handleOnChangeBaseValue = (e) => {
     const value = parseNumberFromString(e.target.value);
@@ -51,8 +75,8 @@ export default function ConversionPage() {
   const handleNextOnClick = () => {
     setConversionRequest({
       ...conversionRequest,
-      base: FETCH_CONVERSION_DATA.sell_currency,
-      compare: FETCH_CONVERSION_DATA.buy_currency,
+      base: base,
+      compare: compare,
       amount: baseValue,
       convertedAmount: compareValue,
     });
@@ -121,12 +145,12 @@ export default function ConversionPage() {
       <CustomBox justifyContent='center' alignItems='center'>
         <CustomBox gap='0.7em' justifyContent='center' alignItems='center'>
           <CustomText small black>You send exactly</CustomText>
-          {renderInputBox(baseValue, handleOnChangeBaseValue, FETCH_CONVERSION_DATA.sell_currency)}
+          {renderInputBox(baseValue, handleOnChangeBaseValue, base)}
         </CustomBox>
         <ArrowUpDownIcon />
         <CustomBox gap='0.7em' justifyContent='center' alignItems='center'>
           <CustomText small black>Recipient gets</CustomText>
-          {renderInputBox(compareValue, handleOnChangeCompareValue, FETCH_CONVERSION_DATA.buy_currency)}
+          {renderInputBox(compareValue, handleOnChangeCompareValue, compare)}
         </CustomBox>
         <CustomButton standard marginTop='1em' onClick={handleNextOnClick}>Next</CustomButton>
       </CustomBox>
