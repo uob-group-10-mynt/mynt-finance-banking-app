@@ -52,6 +52,7 @@ function Mynt2MyntPanel() {
         {
             id: "amount",
             label: "amount",
+            display: "formattedNumber",
             placeholder: "Enter transfer amount",
             type: "number",
             required: true,

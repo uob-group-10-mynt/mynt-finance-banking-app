@@ -40,7 +40,7 @@ export default function Amount() {
     const amountInputFields = [
         {
             id: "transfer-amount",
-            label: "Amount: ",
+            label: "Amount",
             display: "formattedNumber",
             placeholder: "0",
             type: "number",
