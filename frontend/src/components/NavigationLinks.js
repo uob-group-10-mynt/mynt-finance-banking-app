@@ -21,7 +21,7 @@ export default function NavigationLinks() {
         {text: "Account Details", id: "DetailsLink", onClick: async ()=>{navigate("/userDetails");return false}},
         {text: "Dashboard", id: "DashboardLink", onClick: async ()=>{navigate("/dashboard");return false}},
         {text: "Currencies", id: "CurrenciesLink", onClick: async ()=>{navigate("/currencies");return false}},
-        {text: "Accounts", id: "AccountsLink", onClick: async ()=>{navigate("/accounts");return false}},
+        // {text: "Accounts", id: "AccountsLink", onClick: async ()=>{navigate("/accounts");return false}},
         {text: "Log Out", id: "LogOutLink", onClick: async ()=>{logOut();navigate("/login");return false}}
 
     ]
