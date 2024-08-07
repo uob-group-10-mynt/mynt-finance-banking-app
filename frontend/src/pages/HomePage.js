@@ -30,7 +30,7 @@ export default function HomePage() {
             Modern banking, simplified. Manage your finances with ease.
             </Text>
             <Link to='/signup'>
-                <CustomButton colorScheme="teal" size="lg" color='white'>Get Started</CustomButton>
+                <CustomButton colorScheme="teal" size="lg" color='white' width='auto'>Get Started</CustomButton>
             </Link>
             <Image src={graphic} alt="Banking Illustration" mt={10} mx="auto" />
         </Container>
