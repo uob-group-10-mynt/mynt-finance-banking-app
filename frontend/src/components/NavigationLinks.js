@@ -19,7 +19,7 @@ export default function NavigationLinks() {
     const loggedInData = [
         {text: "Transfer", id: "RemittanceLink", onClick: async ()=>{navigate("/accounts");return false}},
         {text: "Account Details", id: "DetailsLink", onClick: async ()=>{navigate("/userDetails");return false}},
-        {text: "Log Out", id: "LogOutLink", onClick: logOut}
+        {text: "Log Out", id: "LogOutLink", onClick: async ()=>{logOut();navigate("/userDetails");return false}}
     ]
     const loggedOutData = [
         {text: "Sign Up", id: "SignUpLink", onClick: async ()=>{navigate("/signup");return false}},
