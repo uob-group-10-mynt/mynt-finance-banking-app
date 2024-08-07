@@ -119,7 +119,12 @@ export default function Home() {
         }
     }) : [];
 
-    const accountData = (accounts.length > 1) ? accounts.map((data) => {
+    console.log("DDDD");
+    console.log(accounts);
+    
+    
+
+    const accountData = (accounts.length > 0) ? accounts.map((data) => {
         const { bank, account_label, balance, currency } = data;
         function handleSendOnClick (e) {
             e.stopPropagation();

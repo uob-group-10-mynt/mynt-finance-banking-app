@@ -49,7 +49,7 @@ export default function ConversionPage() {
 
   const handleOnChangeBaseValue = (e) => {
     const value = parseNumberFromString(e.target.value);
-    setBaseValue(value);
+    setBaseValue(formatNumberWithCommas(value));
     setCompareValue(formatNumberWithCommas(value * rates));
   };
 
