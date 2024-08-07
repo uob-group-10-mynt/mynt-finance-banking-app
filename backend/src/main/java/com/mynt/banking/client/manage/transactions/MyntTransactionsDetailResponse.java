@@ -83,6 +83,7 @@ public class MyntTransactionsDetailResponse {
         private String order;
 
         @JsonProperty("order_asc_desc")
-        private String orderAscDesc;
+        @Builder.Default
+        private String orderAscDesc = "desc";
     }
 }
