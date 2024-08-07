@@ -17,11 +17,12 @@ import {LoggedInContext} from "../App";
 const RootLayout = lazy(() => import('../layouts/RootLayout'))
 // Pages
 const Home = lazy(() => import('../pages/Home'));
+const HomePage = lazy(() => import('../pages/HomePage'))
 const Login = lazy(() => import('../pages/Login'));
 const Signup = lazy(() => import('../pages/Signup'));
 const Kyc = lazy(() => import('../pages/KYC'));
 const DashBoard = lazy(() => import('../pages/DashBoard/DashboardPage'))
-const NotFound404 = lazy(() => import('../pages/util/ErrorPage'));
+const NotFound404 = lazy(() => import('../pages/util/NotFoundErrorPage'));
 const Account = lazy(() => import('../pages/Account/AccountPage'));
 const Transaction = lazy(() => import('../pages/Transaction/TransactionPage'));
 const CurrencyPage = lazy(() => import('../pages/Conversion/CurrencyPage'));
@@ -53,6 +54,7 @@ const AppRouter = createBrowserRouter(
     createRoutesFromElements(
         <Route path='/' element={lazyLoad(RootLayout, <Loading/>)}>
             {/* <Route index element={lazyLoad(Home, <Loading/>)}/> */}
+            <Route index element={lazyLoad(HomePage, <Loading/>)}/>
             <Route path='login' element={lazyLoad(Login, <Loading/>)}/>
             {/* <Route path='remittance' element={lazyLoad(Remittance, <Loading/>)}> */}
             <Route path='remittance' element={<ProtectedRoute element={Remittance} loadingComponent={<Loading/>}/>}>
@@ -68,6 +70,10 @@ const AppRouter = createBrowserRouter(
             <Route path='transactions/:id' element={<ProtectedRoute element={Transaction} loadingComponent={<Loading/>}/>}/>
             <Route path='currencies/:currency' element={<ProtectedRoute element={CurrencyPage} loadingComponent={<Loading/>}/>}/>
             <Route path='currencies' element={<ProtectedRoute element={ForeignExchangePage} loadingComponent={<Loading/>}/>}/>
+            <Route path='conversions' element={<ProtectedRoute element={ConversionPage} loadingComponent={<Loading/>}/>}/>
+            <Route path='conversions/confirm' element={<ProtectedRoute element={ConversionConfirmPage} loadingComponent={<Loading/>}/>}/>
+
+
 
             <Route path='accounts' element={lazyLoad(Home, <Loading/>)}/>
             {/* <Route path='dashboard' element={lazyLoad(DashBoard, <Loading/>)}></Route>
@@ -75,9 +81,9 @@ const AppRouter = createBrowserRouter(
             <Route path='transactions/:id' element={lazyLoad(Transaction, <Loading/>)}></Route>
             
             <Route path='currencies/:currency' element={lazyLoad(CurrencyPage, <Loading/>)}></Route> */}
-            <Route path='conversions' element={lazyLoad(ConversionPage, <Loading/>)}>
-                <Route path='confirm' element={lazyLoad(ConversionConfirmPage, <Loading/>)} />
-            </Route>
+            {/* <Route path='conversions' element={lazyLoad(ConversionPage, <Loading/>)}> */}
+                {/* <Route path='confirm' element={lazyLoad(ConversionConfirmPage, <Loading/>)} /> */}
+            {/* </Route> */}
             <Route path='conversions/confirm' element={lazyLoad(ConversionConfirmPage, <Loading/>)} />
             <Route path={'*'} element={lazyLoad(NotFound404, <Loading/>)}/>
         </Route>

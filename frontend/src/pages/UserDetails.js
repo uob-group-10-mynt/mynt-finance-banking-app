@@ -3,6 +3,7 @@ import CustomForm from "../components/forms/CustomForm";
 import { getUserDetailsAPI, updateUserDetailsAPI } from "../utils/APIEndpoints";
 import Page from "../components/Page";
 import { Heading } from "@chakra-ui/react";
+import makeRequest from "../utils/Requester";
 
 const accountFields = [
     {
@@ -62,16 +63,13 @@ export default function UserDetails() {
 
     const getAndSetDetails = async () => {
         try {
-            const response = await fetch(getUserDetailsAPI, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem('access')}`
-                }
-            });
-            if (!response.ok) {
-                throw new Error('response not ok');
-            }
-            const data = await response.json()
+            const data = await makeRequest(
+                'GET',
+                getUserDetailsAPI,
+                true,
+                null,
+                null,
+            )
             setDetails(accountFields.map(field => {
                 field.value = data[field.id]
                 return field
@@ -88,22 +86,18 @@ export default function UserDetails() {
 
     const updateDetails = async (formValuesJSON) => {
         try {
-            const response = await fetch(updateUserDetailsAPI, {
-                method: 'POST',
-                headers: {
-                    "Content-type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('access')}`
-                },
-                body: JSON.stringify(formValuesJSON)
-            });
+            const response = await makeRequest(
+                'POST',
+                updateUserDetailsAPI,
+                true,
+                null,
+                formValuesJSON
+            )
             setDetails(details.map((field) => {
                 field.readonly = true;
                 field.border = "none"
                 return field
             }))
-            if (!response.ok) {
-                throw new Error('Authentication failed');
-            }
         } catch (error) {
             console.error(error);
         }

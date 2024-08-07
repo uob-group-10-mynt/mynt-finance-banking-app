@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class TransactionsDetailResponse {
+public class MyntTransactionsDetailResponse {
     @JsonProperty("transactions")
     private List<Transaction> transactions;
 
@@ -83,6 +83,7 @@ public class TransactionsDetailResponse {
         private String order;
 
         @JsonProperty("order_asc_desc")
-        private String orderAscDesc;
+        @Builder.Default
+        private String orderAscDesc = "desc";
     }
 }
