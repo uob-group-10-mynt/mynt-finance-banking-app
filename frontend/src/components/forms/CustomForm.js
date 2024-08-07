@@ -16,7 +16,8 @@ function formDataToRequestBody(credentials) {
     // e.g. "email", or "firstname"
     const body = {}
     credentials.forEach(credential => {
-        body[credential.id] = credential.value
+        if (credential.toArray) body[credential.id] = [credential.value];
+        else body[credential.id] = credential.value
     })
     return body;
 }

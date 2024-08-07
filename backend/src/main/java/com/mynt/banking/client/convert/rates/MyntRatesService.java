@@ -28,23 +28,30 @@ public class MyntRatesService {
     private final ReferenceService referenceService;
 
     public ResponseEntity<JsonNode> getBasicRates (
-            String otherCurrencies
+            String sellCurrency,
+            String buyCurrencies
     ) throws NoSuchElementException {
-        String currencyPair;
-        User user = userRepository.findByEmail(userContextService.getCurrentUsername()).orElseThrow();
-        String baseCurrency = user.getBaseCurrency().toUpperCase();
+        String currencyPairs;
         String contactUUID = userContextService.getCurrentUserUuid();
 
-        if (otherCurrencies == null || otherCurrencies.isBlank()) {
-            currencyPair = currencyPairBuilder(baseCurrency, getAvailableCurrenciesAsStringList());
+        if (sellCurrency == null || sellCurrency.isBlank()) {
+            User user = userRepository.findByEmail(userContextService.getCurrentUsername()).orElseThrow();
+            sellCurrency = user.getBaseCurrency().toUpperCase();
         }
         else {
-            String[] arrOfCurrencies = otherCurrencies.split(",");
-            currencyPair = currencyPairBuilder(baseCurrency, List.of(arrOfCurrencies));
+            sellCurrency = sellCurrency.toUpperCase();
+        }
+
+        if (buyCurrencies == null || buyCurrencies.isBlank()) {
+            currencyPairs = currencyPairsBuilder(sellCurrency, getAvailableCurrenciesAsStringList());
+        }
+        else {
+            String[] arrOfCurrencies = buyCurrencies.toUpperCase().split(",");
+            currencyPairs = currencyPairsBuilder(sellCurrency, List.of(arrOfCurrencies));
         }
 
         GetBasicRatesRequest getBasicRatesRequest = GetBasicRatesRequest.builder()
-                .currencyPair(currencyPair)
+                .currencyPair(currencyPairs)
                 .onBehalfOf(contactUUID)
                 .build();
 
@@ -57,7 +64,7 @@ public class MyntRatesService {
         ArrayNode response = objectMapper.createArrayNode();
 
         MyntGetBasicRatesResponse firstElement = MyntGetBasicRatesResponse.builder()
-                .currency(baseCurrency)
+                .currency(sellCurrency)
                 .rate("1")
                 .build();
         JsonNode firstRate = objectMapper.convertValue(firstElement, JsonNode.class);
@@ -68,9 +75,10 @@ public class MyntRatesService {
         ccRates.fieldNames().forEachRemaining(fieldNames::add);
         Collections.sort(fieldNames);
 
-        fieldNames.forEach( key -> {
+        String finalSellCurrency = sellCurrency;
+        fieldNames.forEach(key -> {
             MyntGetBasicRatesResponse responseElement = MyntGetBasicRatesResponse.builder()
-                    .currency(key.toUpperCase().replace(baseCurrency, ""))
+                    .currency(key.toUpperCase().replace(finalSellCurrency, ""))
                     .rate(ccRates.get(key).get(0).asText())
                     .build();
             JsonNode rate = objectMapper.convertValue(responseElement, JsonNode.class);
@@ -91,7 +99,7 @@ public class MyntRatesService {
         return codes;
     }
 
-    private String currencyPairBuilder(String baseCurrency, List<String> otherCurrencies) {
+    private String currencyPairsBuilder(String baseCurrency, List<String> otherCurrencies) {
         StringBuilder currencyPair = new StringBuilder();
         String delimiter = "";
         for (String curr : otherCurrencies) {

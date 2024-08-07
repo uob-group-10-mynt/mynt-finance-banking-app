@@ -13,39 +13,39 @@ export default function AddPayeePanel() {
     const newPayeeInputFields = [
         {
             id: "name",
-            label: "name",
+            label: "Name",
             placeholder: "Enter name for your payee",
             type: "text",
             required: true,
             value: ""
         },
         {
-            id: "bank-account-holder-name",
-            label: "bank_account_holder_name",
+            id: "bank_account_holder_name",
+            label: "Bank Account Holder Name",
             placeholder: "Enter holder name of the bank account",
             type: "text",
             required: true,
             value: ""
         },
         {
-            id: "bank-name",
-            label: "bank_name",
+            id: "bank_name",
+            label: "Bank Name",
             placeholder: "Enter bank name of the bank account",
             type: "text",
             required: true,
             value: ""
         },
         {
-            id: "bank-country",
-            label: "bank_country",
+            id: "bank_country",
+            label: "Bank Country",
             placeholder: "Enter country of the bank account",
             type: "text",
             required: true,
             value: ""
         },
         {
-            id: "bic-swift",
-            label: "bic_swift",
+            id: "bic_swift",
+            label: "SWIFT/BIC",
             placeholder: "Enter SWIFT/BIC",
             type: "text",
             required: true,
@@ -53,7 +53,7 @@ export default function AddPayeePanel() {
         },
         {
             id: "iban",
-            label: "iban",
+            label: "IBAN",
             placeholder: "Enter IBAN",
             type: "text",
             required: true,
@@ -61,55 +61,56 @@ export default function AddPayeePanel() {
         },
         {
             id: "currency",
-            label: "currency",
+            label: "Currency",
             placeholder: "Enter currency of the bank account",
             type: "text",
             required: true,
             value: ""
         },
         {
-            id: "beneficiary-address",
-            label: "beneficiary_address",
+            id: "beneficiary_address",
+            label: "Beneficiary Address",
             placeholder: "Enter address of the beneficiary",
             type: "text",
             required: true,
-            value: ""
+            value: "",
+            toArray: true
         },
         {
-            id: "beneficiary-country",
-            label: "beneficiary_country",
+            id: "beneficiary_country",
+            label: "Beneficiary Country",
             placeholder: "Enter country of the beneficiary",
             type: "text",
             required: true,
             value: ""
         },
         {
-            id: "beneficiary-first-name",
-            label: "beneficiary_first_name",
+            id: "beneficiary_first_name",
+            label: "Beneficiary First Name",
             placeholder: "Enter first name of the beneficiary",
             type: "text",
             required: true,
             value: ""
         },
         {
-            id: "beneficiary-last-name",
-            label: "beneficiary_last_name",
+            id: "beneficiary_last_name",
+            label: "Beneficiary Last Name",
             placeholder: "Enter last name of the beneficiary",
             type: "text",
             required: true,
             value: ""
         },
         {
-            id: "beneficiary-city",
-            label: "beneficiary_city",
+            id: "beneficiary_city",
+            label: "Beneficiary City",
             placeholder: "Enter city of the beneficiary",
             type: "text",
             required: true,
             value: ""
         },
         {
-            id: "beneficiary-postcode",
-            label: "beneficiary_postcode",
+            id: "beneficiary_postcode",
+            label: "Beneficiary Postcode",
             placeholder: "Enter postcode of the beneficiary",
             type: "text",
             required: true,
@@ -138,7 +139,7 @@ export default function AddPayeePanel() {
                     Authorization: `Bearer ${sessionStorage.getItem('access')}`,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({formValuesJSON})
+                body: JSON.stringify(formValuesJSON)
             });
 
             if (response.ok) {
@@ -152,7 +153,7 @@ export default function AddPayeePanel() {
                 });
 
                 setTimeout(() => {
-                    navigate('/remittance/payee');
+                    navigate(0);
                 }, 2000);
                 return;
             }
