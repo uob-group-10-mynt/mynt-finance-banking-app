@@ -9,7 +9,6 @@ import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.FindBeneficiar
 import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.ValidateBeneficiaryRequest;
 import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
-import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,7 @@ public class MyntBeneficiaryService {
     private final BeneficiaryService beneficiaryService;
     private final UserContextService userContextService;
 
-    public BeneficiariesDetailResponse find(Integer perPage, Integer page) {
+    public MyntBeneficiariesDetailResponse find(Integer perPage, Integer page) {
         // Form Beneficiary Request:
         FindBeneficiaryRequest findBeneficiaryRequest = FindBeneficiaryRequest.builder()
                 .onBehalfOf(userContextService.getCurrentUserUuid())
@@ -43,14 +42,14 @@ public class MyntBeneficiaryService {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
             return mapper.readValue(Objects.requireNonNull(currencyCloudBeneficiariesResponse.getBody()).toString(),
-                    BeneficiariesDetailResponse.class);
+                    MyntBeneficiariesDetailResponse.class);
         } catch (IOException ignore) {
             throw new CurrencyCloudException("Failed to map JSON response to BeneficiariesDetailResponse",
                     HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 
-    public BeneficiaryDetail get(String id) {
+    public MyntBeneficiaryDetail get(String id) {
         ResponseEntity<JsonNode> beneficiaryDetailsResponse = beneficiaryService.get(
                 id, userContextService.getCurrentUserUuid());
         JsonNode beneficiaryDetails = beneficiaryDetailsResponse.getBody();
@@ -62,14 +61,14 @@ public class MyntBeneficiaryService {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
-            return mapper.readValue(beneficiaryDetails.toString(), BeneficiaryDetail.class);
+            return mapper.readValue(beneficiaryDetails.toString(), MyntBeneficiaryDetail.class);
         } catch (IOException ignore) {
             throw new CurrencyCloudException("Failed to map JSON response to BeneficiariesDetailResponse.Beneficiary",
                     HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 
-    public BeneficiaryDetail create(BeneficiaryDetail request) {
+    public MyntBeneficiaryDetail create(MyntBeneficiaryDetail request) {
         // Validate beneficiary:
         ObjectMapper mapper = new ObjectMapper();
 
@@ -80,14 +79,14 @@ public class MyntBeneficiaryService {
         beneficiaryService.validate(validateBeneficiaryRequest);
 
         // Create beneficiary:
-        BeneficiaryDetail beneficiaryDetail;
+        MyntBeneficiaryDetail beneficiaryDetail;
         try {
             CreateBeneficiaryRequest createBeneficiaryRequest = mapToCreateBeneficiaryRequest(request);
             createBeneficiaryRequest.setBeneficiaryEntityType("individual");
             createBeneficiaryRequest.setBankAccountHolderName(request.getBankAccountHolderName());
             createBeneficiaryRequest.setOnBehalfOf(userContextService.getCurrentUserUuid());
             ResponseEntity<JsonNode> response = beneficiaryService.create(createBeneficiaryRequest);
-            return mapper.readValue(Objects.requireNonNull(response.getBody()).toString(), BeneficiaryDetail.class);
+            return mapper.readValue(Objects.requireNonNull(response.getBody()).toString(), MyntBeneficiaryDetail.class);
         } catch (IOException ignore) {
             throw new CurrencyCloudException("Failed to map JSON response to BeneficiariesDetailResponse.Beneficiary",
                     HttpStatus.UNPROCESSABLE_ENTITY);
@@ -105,7 +104,7 @@ public class MyntBeneficiaryService {
 
 
     // Private mapper method
-    private ValidateBeneficiaryRequest mapToValidateBeneficiaryRequest(BeneficiaryDetail beneficiaryDetail) {
+    private ValidateBeneficiaryRequest mapToValidateBeneficiaryRequest(MyntBeneficiaryDetail beneficiaryDetail) {
         if (beneficiaryDetail == null) {
             return null;
         }
@@ -148,7 +147,7 @@ public class MyntBeneficiaryService {
                 .build();
     }
 
-    private CreateBeneficiaryRequest mapToCreateBeneficiaryRequest(BeneficiaryDetail beneficiaryDetail) {
+    private CreateBeneficiaryRequest mapToCreateBeneficiaryRequest(MyntBeneficiaryDetail beneficiaryDetail) {
         if (beneficiaryDetail == null) {
             return null;
         }

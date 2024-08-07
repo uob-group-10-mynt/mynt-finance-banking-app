@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class FindBalanceRequest {
+public class MyntFindBalanceRequest {
 
     @JsonProperty("currency_code")
     @Size(max = 3)

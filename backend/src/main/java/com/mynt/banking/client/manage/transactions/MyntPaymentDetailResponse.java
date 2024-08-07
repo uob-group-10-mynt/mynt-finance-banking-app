@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PaymentDetailResponse {
+public class MyntPaymentDetailResponse {
     @JsonProperty("id")
     private String id;
     @JsonProperty("amount")

@@ -1,7 +1,6 @@
 package com.mynt.banking.client.pay.payments;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.client.pay.payments.requests.MyntCreatePaymentRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +18,7 @@ public class MyntPaymentsController {
     private final MyntPaymentsService myntPaymentsService;
 
     @PostMapping("/createPayment")
-    public Mono<ResponseEntity<JsonNode>> createPayment(
-            @Valid @RequestBody MyntCreatePaymentRequest request
-    ) {
+    public Mono<ResponseEntity<JsonNode>> createPayment(@Valid @RequestBody MyntCreatePaymentRequest request) {
         return Mono.just(myntPaymentsService.createPayment(request));
     }
 }

@@ -8,8 +8,8 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BeneficiariesDetailResponse {
-    private List<BeneficiaryDetail> beneficiaries;
+public class MyntBeneficiariesDetailResponse {
+    private List<MyntBeneficiaryDetail> beneficiaries;
     private Pagination pagination;
 
     @Data

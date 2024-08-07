@@ -1,4 +1,4 @@
-package com.mynt.banking.client.pay.payments.requests;
+package com.mynt.banking.client.pay.payments;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -26,7 +26,7 @@ public class MyntBalanceService {
     private final BalanceService balanceService;
     private final FundingService fundingService;
 
-    public FindBalanceResponse get(String currencyCode) {
+    public MyntFindBalanceResponse get(String currencyCode) {
         // Fetch balance:
         ResponseEntity<JsonNode> balanceResponse = balanceService.get(currencyCode,
                 userContextService.getCurrentUserUuid());
@@ -60,7 +60,7 @@ public class MyntBalanceService {
         String bankName = accountDetailsBody.get("bank_name").asText();
 
         // Generate Balance Response:
-        return FindBalanceResponse.builder()
+        return MyntFindBalanceResponse.builder()
                 .bank(bankName)
                 .label(currencyCode + " Currency Account")
                 .accountNumberType(accountNumberType)
@@ -73,14 +73,14 @@ public class MyntBalanceService {
     }
 
 
-    public List<FindBalanceResponse> find() {
+    public List<MyntFindBalanceResponse> find() {
         // Fetch balance:
         ResponseEntity<JsonNode> balancesResponse = balanceService.find(userContextService.getCurrentUserUuid());
 
         // Check if the "balances" array exists and has at least one entry and extract account_id:
         JsonNode balancesArray = Objects.requireNonNull(balancesResponse.getBody()).path("balances");
 
-        List<FindBalanceResponse> balancesResponseList = new ArrayList<>();
+        List<MyntFindBalanceResponse> balancesResponseList = new ArrayList<>();
         if (balancesArray.isEmpty()) {
             throw new CurrencyCloudException("No content", HttpStatus.NO_CONTENT);
         }
@@ -94,7 +94,7 @@ public class MyntBalanceService {
             String amount = balanceNode.path("amount").asText();
 
             // Fetch bank account details:
-            FindBalanceResponse findBalanceResponse = FindBalanceResponse.builder()
+            MyntFindBalanceResponse findBalanceResponse = MyntFindBalanceResponse.builder()
                     .currency(currency)
                     .balance(amount)
                     .build();

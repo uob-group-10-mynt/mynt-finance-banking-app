@@ -1,8 +1,6 @@
 package com.mynt.banking.client.pay.beneficiaries;
 
 import com.fasterxml.jackson.annotation.*;
-import com.mynt.banking.util.FieldViewAnnotation;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BeneficiaryDetail {
+public class MyntBeneficiaryDetail {
 
     @JsonProperty("id")
     @JsonInclude(JsonInclude.Include.NON_NULL)
