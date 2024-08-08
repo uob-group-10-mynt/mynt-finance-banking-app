@@ -67,7 +67,7 @@ const AppRouter = createBrowserRouter(
             <Route path='KYC' element={lazyLoad(Kyc, <Loading/>)}/>
             <Route path='dashboard' element={<ProtectedRoute element={DashBoard} loadingComponent={<Loading/>}/>}/>
             <Route path='accounts/:id' element={<ProtectedRoute element={Account} loadingComponent={<Loading/>}/>}/>
-            <Route path='transactions/:id' element={<ProtectedRoute element={Transaction} loadingComponent={<Loading/>}/>}/>
+            <Route path='transactions/:type/:id' element={<ProtectedRoute element={Transaction} loadingComponent={<Loading/>}/>}/>
             <Route path='currencies/:currency' element={<ProtectedRoute element={CurrencyPage} loadingComponent={<Loading/>}/>}/>
             <Route path='currencies' element={<ProtectedRoute element={ForeignExchangePage} loadingComponent={<Loading/>}/>}/>
             <Route path='conversions' element={<ProtectedRoute element={ConversionPage} loadingComponent={<Loading/>}/>}/>

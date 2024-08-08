@@ -18,7 +18,7 @@ const parseNumberFromString = (numberString) => {
 };
 
 
-export default function DepositPage({ onClose }) {
+export default function DepositPage({ onClose, onComplete, isComplete }) {
   const [ value, setValue ] = useState(1);
 
   const renderInputBox = (value, onChange, currency) => (
@@ -89,6 +89,7 @@ export default function DepositPage({ onClose }) {
     )
     .then(() => {
       onClose();
+      onComplete(!isComplete);
     })
   };
 

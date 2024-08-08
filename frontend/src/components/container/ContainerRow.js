@@ -21,7 +21,7 @@ function ContainerRow({ info }) {
       onDoubleClickCapture={info.onDoubleClickCapture}
       {...handlers}
     >
-      {info.render(info)}
+      {info.render()}
     </Box>
   );
 }

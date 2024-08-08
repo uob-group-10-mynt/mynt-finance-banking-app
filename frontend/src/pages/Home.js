@@ -1,10 +1,12 @@
 import { Box, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from "@chakra-ui/react";
 import { useState, useEffect, useCallback } from "react";
+import { SmallAddIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import { useNavigate } from 'react-router-dom';
 
 import useFormatAmount from '../hooks/useFormatAmount';
 
 import SplashPage from "./SplashPage";
+import AccountModalPage from "./AccountModalPage";
 
 import CustomButton from "../components/forms/CustomButton";
 import CustomText from "../components/CustomText";
@@ -19,13 +21,17 @@ export default function Home() {
     const navigate = useNavigate(); 
     const { isOpen: isConversionOpen, onOpen: onConversionOpen, onClose: onConversionClose } = useDisclosure();
     const { isOpen: isDepositOpen, onOpen: onDepositOpen, onClose: onDepositClose } = useDisclosure();
-    const [selectedCurrency, setSelectedCurrency] = useState(null);
-    const [baseCurrency, setBaseCurrency] = useState("KES");
-    const [compareCurrency, setCompareCurrency] = useState("USD");
-    const [isBaseCurrency, setIsBaseCurrency] = useState(false);
-    const [accounts, setAccounts] = useState([]);
-    const [exchangeRates, setExchangeRates] = useState([]);
-    const [loading, setLoading] = useState(true); 
+    const { isOpen: isAccountOpen, onOpen: onAccountOpen, onClose: onAccountClose } = useDisclosure();
+
+    const [ selectedCurrency, setSelectedCurrency ] = useState(null);
+    const [ baseCurrency, setBaseCurrency ] = useState("KES");
+    const [ compareCurrency, setCompareCurrency ] = useState("USD");
+    const [ isBaseCurrency, setIsBaseCurrency ] = useState(false);
+    const [ accounts, setAccounts ] = useState([]);
+    const [ exchangeRates, setExchangeRates ] = useState([]);
+    const [ loading, setLoading ] = useState(true); 
+    const [ depositOnComplete, setDepositOnComplete ] = useState(false);
+    const [ createAccountCurrency, setCreateAccountCurrency ] = useState(null)
 
     const fetchExchangeRates = useCallback(async () => {
         setLoading(true);
@@ -66,7 +72,24 @@ export default function Home() {
             console.error("THIS IS ", error);
         })
         .finally(() => setLoading(false));
-    }, []);
+    }, [ depositOnComplete ]);
+
+    useEffect(() => {
+        if (!!createAccountCurrency) {
+            return;
+        }
+
+        // setLoading(true);
+        // fetch('http://localhost:8080/api/v1/balance', { 
+        //     headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` } 
+        // })
+        // .then(response => response.json())
+        // .then(data => setAccounts(data))
+        // .catch(error => {
+        //     console.error("THIS IS ", error);
+        // })
+        // .finally(() => setLoading(false));
+    }, [ createAccountCurrency ]);
 
     useEffect(() => {
         if (baseCurrency) {
@@ -119,17 +142,11 @@ export default function Home() {
         }
     }) : [];
 
-    console.log("DDDD");
-    console.log(accounts);
-    
-    
-
     const accountData = (accounts.length > 0) ? accounts.map((data) => {
         const { bank, account_label, balance, currency } = data;
         function handleSendOnClick (e) {
             e.stopPropagation();
             navigate('/remittance/payee', {state: {selectedCurrencyAccount: data}});
-            console.log("SEND BUTTON CLICKED");
         }
 
         return {
@@ -149,6 +166,21 @@ export default function Home() {
             },
         };
     }) : [];
+
+    accountData.push({
+        render: () => (
+            <>
+                <SmallAddIcon boxSize={6} />
+                <CustomText gray medium>Add Accounts</CustomText>
+                <ChevronRightIcon boxSize={6}/>
+            </>
+        ),
+        onClick: () => {
+            onAccountOpen();
+            console.log("CLICKED");
+        }
+    });
+    
 
     return (
         (loading)
@@ -190,7 +222,26 @@ export default function Home() {
                     <ModalHeader>Deposit Funds</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <DepositPage onClose={onDepositClose} />
+                        <DepositPage 
+                            onClose={onDepositClose} 
+                            onComplete={setDepositOnComplete} 
+                            isComplete={depositOnComplete} 
+                        />
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
+
+            <Modal isOpen={isAccountOpen} onClose={onAccountClose} size="lg">
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Available Accounts</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <AccountModalPage 
+                            selectedCurrency={createAccountCurrency} 
+                            setSelectedCurrency={setCreateAccountCurrency} 
+                            onClose={onAccountClose}
+                        />
                     </ModalBody>
                 </ModalContent>
             </Modal>

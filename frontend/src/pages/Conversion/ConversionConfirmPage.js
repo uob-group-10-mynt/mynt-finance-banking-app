@@ -15,17 +15,36 @@ export default function ConversionConfirmPage() {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const handleOnClick = () => {
-    toast({
-      position: 'top',
-      title: 'Conversion Complete.',
-      description: "You've successfully made a conversion.",
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
-    });
-
-    navigate('/', { replace: true });
+  const handleOnClick = async () => {
+    await fetch('http://localhost:8080/api/v1/conversions/createConversion', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem('access')}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        buy_currency: compare,
+        sell_currency: base,
+        fixed_side: "buy",
+        amount: amount.toString(),
+      })
+    })
+    .then(() => {
+      toast({
+        position: 'top',
+        title: 'Conversion Complete.',
+        description: "You've successfully made a conversion.",
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+  
+      navigate('/', { replace: true });
+    })
+    .catch((e) => {
+      console.log(e);
+      
+    })
   };
 
   return (

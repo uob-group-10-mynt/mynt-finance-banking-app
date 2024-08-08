@@ -71,7 +71,7 @@ function AccountPage() {
   };
 
   const transactionData = transactions.map((data) => {
-    const { id, created_at, amount, currency, type } = data;
+    const { id, created_at, amount, currency, type, related_entity_type } = data;
 
     return {
       ...data,
@@ -91,7 +91,7 @@ function AccountPage() {
       },
 
       onClick: () => {
-        navigate('/transactions/' + id);
+        navigate(`/transactions/${related_entity_type}/${id}`);
       },
     }
   });
