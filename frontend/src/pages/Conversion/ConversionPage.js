@@ -1,7 +1,7 @@
 import { Box, Input } from "@chakra-ui/react";
 import { ArrowUpDownIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 
 import useConversion from "../../hooks/useConversion";
 import useQuery from "../../hooks/useQuery";
@@ -12,8 +12,10 @@ import CustomButton from "../../components/forms/CustomButton";
 import Icon from "../../components/util/Icon";
 
 const formatNumberWithCommas = (number) => {
-  if (number === null || number === undefined) return '';
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  if (number === null || number === undefined || isNaN(number)) return '';
+  const [integer, decimal] = number.toString().split('.');
+  const formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return decimal ? `${formattedInteger}.${decimal}` : formattedInteger;
 };
 
 const parseNumberFromString = (numberString) => {
@@ -23,9 +25,9 @@ const parseNumberFromString = (numberString) => {
 
 export default function ConversionPage() {
   const query = useQuery();
-  const [ rates, setRates ] = useState(null);
-  const [ baseValue, setBaseValue ] = useState(1);
-  const [ compareValue, setCompareValue ] = useState('');
+  const [rates, setRates] = useState(null);
+  const [baseValue, setBaseValue] = useState(1);
+  const [compareValue, setCompareValue] = useState('');
 
   const { conversionRequest, setConversionRequest } = useConversion();
   const navigate = useNavigate();
@@ -64,8 +66,8 @@ export default function ConversionPage() {
       ...conversionRequest,
       base: base,
       compare: compare,
-      amount: baseValue,
-      convertedAmount: compareValue,
+      amount: parseNumberFromString(baseValue),
+      convertedAmount: parseNumberFromString(compareValue),
     });
 
     navigate('confirm');
@@ -102,7 +104,7 @@ export default function ConversionPage() {
           boxShadow: 'none',
         }}
         min={0}
-        value={value}
+        value={value.toString()}
         onChange={onChange}
       />
       <Box
