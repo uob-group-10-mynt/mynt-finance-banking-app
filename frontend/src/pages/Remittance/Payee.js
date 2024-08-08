@@ -96,7 +96,7 @@ function Mynt2MyntPanel() {
                 });
 
                 setTimeout(() => {
-                    navigate('/');
+                    navigate('/accounts');
                 }, 3000);
                 return;
             }

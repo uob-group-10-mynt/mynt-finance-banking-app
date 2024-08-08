@@ -39,6 +39,19 @@ export default function Transfer() {
         }
     });
 
+    return (
+        <VStack>
+            <CustomHeading>Confirm your payment details:</CustomHeading>
+            <Container name='Selected Payee & Transfer Amount' data={renderSelectedPayee}
+                       keyFn={(info) => info.id}/>
+            <CustomButton confirm onClick={handleConfirm} data-cy='confirmPayment'>
+                Confirm Payment
+            </CustomButton>
+            {loading && <CustomText>Processing...</CustomText>}
+            {error && <CustomText>Error {error.message}</CustomText>}
+        </VStack>
+    );
+
     async function handleConfirm() {
         setLoading(true);
         try {
@@ -68,7 +81,7 @@ export default function Transfer() {
                 });
 
                 setTimeout(() => {
-                    navigate('/');
+                    navigate('/accounts');
                 }, 3000);
                 return;
             }
@@ -83,19 +96,5 @@ export default function Transfer() {
         } finally {
             setLoading(false);
         }
-
     }
-
-    return (
-        <VStack>
-            <CustomHeading>Confirm your payment details:</CustomHeading>
-            <Container name='Selected Payee & Transfer Amount' data={renderSelectedPayee}
-                       keyFn={(info) => info.id}/>
-            <CustomButton confirm onClick={handleConfirm} data-cy='confirmPayment'>
-                Confirm Payment
-            </CustomButton>
-            {loading && <CustomText>Processing...</CustomText>}
-            {error && <CustomText>Error {error.message}</CustomText>}
-        </VStack>
-    );
 }
