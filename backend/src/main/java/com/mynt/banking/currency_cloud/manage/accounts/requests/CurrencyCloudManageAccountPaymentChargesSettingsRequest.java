@@ -1,0 +1,31 @@
+
+package com.mynt.banking.currency_cloud.manage.accounts.requests;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import lombok.Data;
+
+import java.util.Date;
+
+@Data
+@Builder
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public class CurrencyCloudManageAccountPaymentChargesSettingsRequest {
+    
+    //@NotNull
+    @JsonProperty("enabled")
+    @Size(max = 255)
+    @Builder.Default
+    private String enabled = "";
+    
+    //@NotNull
+    @JsonProperty("default")
+    @Size(max = 255)
+    @Builder.Default
+    private String _default = "";
+    
+}

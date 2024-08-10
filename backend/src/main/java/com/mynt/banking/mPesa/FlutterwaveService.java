@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.TimeBasedGenerator;
-import com.mynt.banking.currency_cloud.collect.demo.DemoService;
-import com.mynt.banking.currency_cloud.collect.demo.requests.DemoFundingDto;
-import com.mynt.banking.currency_cloud.collect.funding.FindAccountDetailsRequest;
-import com.mynt.banking.currency_cloud.collect.funding.FundingService;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.FindBeneficiaryRequest;
-import com.mynt.banking.currency_cloud.pay.payments.PaymentService;
-import com.mynt.banking.currency_cloud.pay.payments.requests.CreatePaymentRequest;
+import com.mynt.banking.currency_cloud.collect.demo.CurrencyCloudDemoService;
+import com.mynt.banking.currency_cloud.collect.demo.requests.*;
+import com.mynt.banking.currency_cloud.collect.funding.CurrencyCloudFundingService;
+import com.mynt.banking.currency_cloud.collect.funding.requests.*;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.CurrencyCloudBeneficiariesService;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.*;
+import com.mynt.banking.currency_cloud.pay.payments.CurrencyCloudPaymentsService;
+import com.mynt.banking.currency_cloud.pay.payments.requests.*;
 import com.mynt.banking.currency_cloud.repo.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
 import com.mynt.banking.mPesa.requests.*;
@@ -35,11 +35,11 @@ public class FlutterwaveService {
 
     private final FlutterwaveWebClientConfig webClient;
 
-    private final FundingService fundingService;
+    private final CurrencyCloudFundingService fundingService;
 
-    private final DemoService demoService;
+    private final CurrencyCloudDemoService demoService;
 
-    private final BeneficiaryService beneficiariesService;
+    private final CurrencyCloudBeneficiariesService beneficiariesService;
 
     @Value("${flutterwave.api.secretKey}")
     private String secretKey;
@@ -48,7 +48,7 @@ public class FlutterwaveService {
 
     private final CurrencyCloudRepository currencyCloudRepository;
 
-    private final PaymentService paymentService;
+    private final CurrencyCloudPaymentsService paymentService;
 
     public Mono<ResponseEntity<JsonNode>> mPesaToFlutterwave(MPesaToFlutterWearDto mPesaToFlutterWearDto) {
 
@@ -247,12 +247,12 @@ public class FlutterwaveService {
             uuid = currencyCloudData.get().getUuid();
         }
 
-        FindAccountDetailsRequest data = FindAccountDetailsRequest.builder()
+        CurrencyCloudFindFundingAccountsRequest data = CurrencyCloudFindFundingAccountsRequest.builder()
                 .currency("KES")
                 .onBehalfOf(uuid)
                 .build();
 
-        ResponseEntity<JsonNode> response = fundingService.find(data).block();
+        ResponseEntity<JsonNode> response = fundingService.findFundingAccounts(data);
 
         // check for more then one account if so fail the test
         if(!Objects.equals(response.getBody().get("pagination").get("total_entries").toString(), "1")) {
@@ -283,14 +283,14 @@ public class FlutterwaveService {
         TimeBasedGenerator timeBasedGenerator = Generators.timeBasedGenerator();
         UUID idUUID = timeBasedGenerator.generate();
 
-        DemoFundingDto demoFundingDto = DemoFundingDto.builder()
+        CurrencyCloudEmulateInboundFundsRequest demoFundingDto = CurrencyCloudEmulateInboundFundsRequest.builder()
                 .id(idUUID.toString()) // ccFundAccountDetails.get("funding_accounts").get(0).get("account_id").asText()
                 .receiverAccountNumber(ccFundAccountDetails.get("funding_accounts").get(0).get("account_number").asText())
                 .currency("KES")
-                .amount(Integer.valueOf(dto.getAmount()))
+                .amount(dto.getAmount())
                 .onBehalfOf(uuid)
                 .build();
-        ResponseEntity<JsonNode> response =  demoService.create(demoFundingDto).block();
+        ResponseEntity<JsonNode> response =  demoService.emulateInboundFunds(demoFundingDto);
 
         if(!response.getStatusCode().is2xxSuccessful()) {
             errorResponse.put("Error", " with ccFundAccountDetails()");
@@ -343,10 +343,10 @@ public class FlutterwaveService {
     }
 
     private ResponseEntity<JsonNode> findBenificiary(){
-        FindBeneficiaryRequest dto = FindBeneficiaryRequest.builder()
+        CurrencyCloudFindBeneficiariesRequest dto = CurrencyCloudFindBeneficiariesRequest.builder()
                 .name("Flutterwave_KES_MPesa_Account")
                 .build();
-        ResponseEntity<JsonNode> response = beneficiariesService.find(dto);
+        ResponseEntity<JsonNode> response = beneficiariesService.findBeneficiaries(dto);
 
         if(!response.getStatusCode().is2xxSuccessful()) {
             ObjectMapper mapper = new ObjectMapper();
@@ -367,7 +367,7 @@ public class FlutterwaveService {
 
         String ref = userExsists.getEmail()+LocalDateTime.now().toString();
 
-        CreatePaymentRequest dto = CreatePaymentRequest.builder()
+        CurrencyCloudCreatePaymentRequest dto = CurrencyCloudCreatePaymentRequest.builder()
                 .currency("KES")
                 .beneficiaryId(benificiaryUUID)
                 .amount(request.getAmount().toString())
@@ -376,7 +376,7 @@ public class FlutterwaveService {
                 .uniqueRequestId(ref)
                 .build();
 
-        ResponseEntity<JsonNode> response = paymentService.create(dto).block();
+        ResponseEntity<JsonNode> response = paymentService.createPayment(dto);
 
         if(!response.getStatusCode().is2xxSuccessful()) {
             ObjectMapper mapper = new ObjectMapper();

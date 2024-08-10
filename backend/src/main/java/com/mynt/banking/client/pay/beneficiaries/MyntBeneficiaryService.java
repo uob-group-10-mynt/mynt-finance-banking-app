@@ -3,10 +3,8 @@ package com.mynt.banking.client.pay.beneficiaries;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.CreateBeneficiaryRequest;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.FindBeneficiaryRequest;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.ValidateBeneficiaryRequest;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.CurrencyCloudBeneficiariesService;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.*;
 import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
 import lombok.RequiredArgsConstructor;
@@ -22,19 +20,19 @@ import java.util.StringJoiner;
 @RequiredArgsConstructor
 public class MyntBeneficiaryService {
 
-    private final BeneficiaryService beneficiaryService;
+    private final CurrencyCloudBeneficiariesService beneficiaryService;
     private final UserContextService userContextService;
 
     public MyntBeneficiariesDetailResponse find(Integer perPage, Integer page) {
         // Form Beneficiary Request:
-        FindBeneficiaryRequest findBeneficiaryRequest = FindBeneficiaryRequest.builder()
+        CurrencyCloudFindBeneficiariesRequest findBeneficiaryRequest = CurrencyCloudFindBeneficiariesRequest.builder()
                 .onBehalfOf(userContextService.getCurrentUserUuid())
-                .perPage(perPage)
-                .page(page)
+                .perPage(String.valueOf(perPage))
+                .page(String.valueOf(page))
                 .build();
 
         // Fetch beneficiaries:
-        ResponseEntity<JsonNode> currencyCloudBeneficiariesResponse = beneficiaryService.find(findBeneficiaryRequest);
+        ResponseEntity<JsonNode> currencyCloudBeneficiariesResponse = beneficiaryService.findBeneficiaries(findBeneficiaryRequest);
 
         // Map and return the response
         try {
@@ -50,8 +48,11 @@ public class MyntBeneficiaryService {
     }
 
     public MyntBeneficiaryDetail get(String id) {
-        ResponseEntity<JsonNode> beneficiaryDetailsResponse = beneficiaryService.get(
-                id, userContextService.getCurrentUserUuid());
+        CurrencyCloudGetBeneficiaryRequest getBeneficiaryRequest = CurrencyCloudGetBeneficiaryRequest.builder()
+                .onBehalfOf(userContextService.getCurrentUserUuid())
+                .build();
+        ResponseEntity<JsonNode> beneficiaryDetailsResponse = beneficiaryService.getBeneficiary(
+                id, getBeneficiaryRequest);
         JsonNode beneficiaryDetails = beneficiaryDetailsResponse.getBody();
         if (beneficiaryDetails == null || beneficiaryDetails.isEmpty()) {
             throw new CurrencyCloudException("Currency Cloud Error: Failed to fetch payment details.", HttpStatus.UNPROCESSABLE_ENTITY);
@@ -73,19 +74,19 @@ public class MyntBeneficiaryService {
         ObjectMapper mapper = new ObjectMapper();
 
 
-        ValidateBeneficiaryRequest validateBeneficiaryRequest = mapToValidateBeneficiaryRequest(request);
+        CurrencyCloudValidateBeneficiaryRequest validateBeneficiaryRequest = mapToValidateBeneficiaryRequest(request);
         validateBeneficiaryRequest.setBeneficiaryEntityType("individual");
         validateBeneficiaryRequest.setOnBehalfOf(userContextService.getCurrentUserUuid());
-        beneficiaryService.validate(validateBeneficiaryRequest);
+        beneficiaryService.validateBeneficiary(validateBeneficiaryRequest);
 
         // Create beneficiary:
         MyntBeneficiaryDetail beneficiaryDetail;
         try {
-            CreateBeneficiaryRequest createBeneficiaryRequest = mapToCreateBeneficiaryRequest(request);
+            CurrencyCloudCreateBeneficiaryRequest createBeneficiaryRequest = mapToCreateBeneficiaryRequest(request);
             createBeneficiaryRequest.setBeneficiaryEntityType("individual");
             createBeneficiaryRequest.setBankAccountHolderName(request.getBankAccountHolderName());
             createBeneficiaryRequest.setOnBehalfOf(userContextService.getCurrentUserUuid());
-            ResponseEntity<JsonNode> response = beneficiaryService.create(createBeneficiaryRequest);
+            ResponseEntity<JsonNode> response = beneficiaryService.createBeneficiary(createBeneficiaryRequest);
             return mapper.readValue(Objects.requireNonNull(response.getBody()).toString(), MyntBeneficiaryDetail.class);
         } catch (IOException ignore) {
             throw new CurrencyCloudException("Failed to map JSON response to BeneficiariesDetailResponse.Beneficiary",
@@ -94,7 +95,10 @@ public class MyntBeneficiaryService {
     }
 
     public ResponseEntity<Void> delete(String id) {
-        ResponseEntity<JsonNode> deleteResponse = beneficiaryService.delete(id, userContextService.getCurrentUserUuid());
+        CurrencyCloudDeleteBeneficiaryRequest deleteBeneficiaryRequest = CurrencyCloudDeleteBeneficiaryRequest.builder()
+                .onBehalfOf(userContextService.getCurrentUserUuid())
+                .build();
+        ResponseEntity<JsonNode> deleteResponse = beneficiaryService.deleteBeneficiary(id, deleteBeneficiaryRequest);
         if (deleteResponse.getStatusCode().is2xxSuccessful()) {
             return ResponseEntity.noContent().build(); // HTTP 204 No Content
         } else {
@@ -104,7 +108,7 @@ public class MyntBeneficiaryService {
 
 
     // Private mapper method
-    private ValidateBeneficiaryRequest mapToValidateBeneficiaryRequest(MyntBeneficiaryDetail beneficiaryDetail) {
+    private CurrencyCloudValidateBeneficiaryRequest mapToValidateBeneficiaryRequest(MyntBeneficiaryDetail beneficiaryDetail) {
         if (beneficiaryDetail == null) {
             return null;
         }
@@ -118,7 +122,7 @@ public class MyntBeneficiaryService {
             beneficiaryAddress = joiner.toString();
         }
 
-        return ValidateBeneficiaryRequest.builder()
+        return CurrencyCloudValidateBeneficiaryRequest.builder()
                 .bankCountry(beneficiaryDetail.getBankCountry())
                 .currency(beneficiaryDetail.getCurrency())
                 .beneficiaryAddress(beneficiaryAddress)
@@ -147,7 +151,7 @@ public class MyntBeneficiaryService {
                 .build();
     }
 
-    private CreateBeneficiaryRequest mapToCreateBeneficiaryRequest(MyntBeneficiaryDetail beneficiaryDetail) {
+    private CurrencyCloudCreateBeneficiaryRequest mapToCreateBeneficiaryRequest(MyntBeneficiaryDetail beneficiaryDetail) {
         if (beneficiaryDetail == null) {
             return null;
         }
@@ -161,7 +165,7 @@ public class MyntBeneficiaryService {
             beneficiaryAddress = joiner.toString();
         }
 
-        return CreateBeneficiaryRequest.builder()
+        return CurrencyCloudCreateBeneficiaryRequest.builder()
                 .name(beneficiaryDetail.getName())
                 .bankAccountHolderName(beneficiaryDetail.getBankAccountHolderName())
                 .bankCountry(beneficiaryDetail.getBankCountry())
@@ -176,7 +180,7 @@ public class MyntBeneficiaryService {
                 .routingCodeValue2(null) // Assuming default value, adjust as needed
                 .bicSwift(beneficiaryDetail.getBicSwift())
                 .iban(beneficiaryDetail.getIban())
-                .defaultBeneficiary(false) // Assuming default value, adjust as needed
+                .defaultBeneficiary(String.valueOf(false)) // Assuming default value, adjust as needed
                 .bankAddress("") // Assuming default value, adjust as needed
                 .bankName(beneficiaryDetail.getBankName())
                 .bankAccountType("") // Assuming default value, adjust as needed
@@ -193,7 +197,7 @@ public class MyntBeneficiaryService {
                 .paymentTypes(null) // Assuming default value, adjust as needed
                 .onBehalfOf("") // Assuming default value, adjust as needed
                 .beneficiaryExternalReference("") // Assuming default value, adjust as needed
-                .businessType("") // Assuming default value, adjust as needed
+                .businessNature("") // Assuming default value, adjust as needed
                 .companyWebsite("") // Assuming default value, adjust as needed
                 .build();
     }

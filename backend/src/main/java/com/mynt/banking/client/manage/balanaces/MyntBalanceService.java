@@ -1,16 +1,21 @@
 package com.mynt.banking.client.manage.balanaces;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.collect.funding.FindAccountDetailsRequest;
-import com.mynt.banking.currency_cloud.collect.funding.FundingService;
-import com.mynt.banking.currency_cloud.manage.balances.BalanceService;
+import com.mynt.banking.currency_cloud.collect.funding.requests.*;
+import com.mynt.banking.currency_cloud.collect.funding.CurrencyCloudFundingService;
+import com.mynt.banking.currency_cloud.manage.accounts.requests.CurrencyCloudGetAccountRequest;
+import com.mynt.banking.currency_cloud.manage.balances.CurrencyCloudBalancesService;
+import com.mynt.banking.currency_cloud.manage.balances.requests.CurrencyCloudFindBalancesRequest;
+import com.mynt.banking.currency_cloud.manage.balances.requests.CurrencyCloudGetBalanceRequest;
 import com.mynt.banking.user.UserContextService;
+import com.mynt.banking.util.UriBuilderUtil;
 import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +28,16 @@ import java.util.Objects;
 public class MyntBalanceService {
 
     private final UserContextService userContextService;
-    private final BalanceService balanceService;
-    private final FundingService fundingService;
+    private final CurrencyCloudBalancesService balanceService;
+    private final CurrencyCloudFundingService fundingService;
 
     public MyntFindBalanceResponse get(String currencyCode) {
         // Fetch balance:
-        ResponseEntity<JsonNode> balanceResponse = balanceService.get(currencyCode,
-                userContextService.getCurrentUserUuid());
+        CurrencyCloudGetBalanceRequest getBalanceRequest = CurrencyCloudGetBalanceRequest.builder()
+                .onBehalfOf(userContextService.getCurrentUserUuid())
+                .build();
+        ResponseEntity<JsonNode> balanceResponse = balanceService.getBalance(currencyCode,
+                getBalanceRequest);
 
         // Extract account_id and amount from balance response
         String accountId;
@@ -43,13 +51,13 @@ public class MyntBalanceService {
         }
 
         // Fetch bank account details:
-        FindAccountDetailsRequest accountDetailsRequest = FindAccountDetailsRequest.builder()
+        CurrencyCloudFindFundingAccountsRequest accountDetailsRequest = CurrencyCloudFindFundingAccountsRequest.builder()
                 .accountId(accountId)
                 .onBehalfOf(userContextService.getCurrentUserUuid())
                 .currency(currencyCode)
                 .paymentType("priority")
                 .build();
-        ResponseEntity<JsonNode> accountDetailsResponse = fundingService.findAccountDetails(accountDetailsRequest);
+        ResponseEntity<JsonNode> accountDetailsResponse = fundingService.findFundingAccounts(accountDetailsRequest);
 
         // Extract fields from account details:
         JsonNode accountDetailsBody = Objects.requireNonNull(accountDetailsResponse.getBody()).get("funding_accounts").get(0);
@@ -75,7 +83,10 @@ public class MyntBalanceService {
 
     public List<MyntFindBalanceResponse> find() {
         // Fetch balance:
-        ResponseEntity<JsonNode> balancesResponse = balanceService.find(userContextService.getCurrentUserUuid());
+        CurrencyCloudFindBalancesRequest findBalancesRequest = CurrencyCloudFindBalancesRequest.builder()
+                .onBehalfOf(userContextService.getCurrentUserUuid())
+                .build();
+        ResponseEntity<JsonNode> balancesResponse = balanceService.findBalances(findBalancesRequest);
 
         // Check if the "balances" array exists and has at least one entry and extract account_id:
         JsonNode balancesArray = Objects.requireNonNull(balancesResponse.getBody()).path("balances");
@@ -99,13 +110,13 @@ public class MyntBalanceService {
                     .balance(amount)
                     .build();
 
-            FindAccountDetailsRequest accountDetailsRequest = FindAccountDetailsRequest.builder()
+            CurrencyCloudFindFundingAccountsRequest accountDetailsRequest = CurrencyCloudFindFundingAccountsRequest.builder()
                     .accountId(accountId)
                     .onBehalfOf(userContextService.getCurrentUserUuid())
                     .currency(findBalanceResponse.getCurrency())
                     .paymentType("priority")
                     .build();
-            ResponseEntity<JsonNode> accountDetailsResponse = fundingService.findAccountDetails(accountDetailsRequest);
+            ResponseEntity<JsonNode> accountDetailsResponse = fundingService.findFundingAccounts(accountDetailsRequest);
 
             // Extract fields from account details:
             JsonNode accountDetailsBody = Objects.requireNonNull(accountDetailsResponse.getBody()).get("funding_accounts").get(0);
@@ -128,5 +139,6 @@ public class MyntBalanceService {
 
         return balancesResponseList;
     }
+
 }
 

@@ -4,15 +4,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mynt.banking.currency_cloud.convert.conversions.ConversionService;
-import com.mynt.banking.currency_cloud.convert.conversions.requests.CreateConversionRequest;
-import com.mynt.banking.currency_cloud.convert.rates.RateService;
-import com.mynt.banking.currency_cloud.convert.rates.requests.GetBasicRatesRequest;
-import com.mynt.banking.currency_cloud.manage.balances.BalanceService;
-import com.mynt.banking.currency_cloud.manage.balances.GetBalanceRequest;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
-import com.mynt.banking.currency_cloud.pay.payments.PaymentService;
-import com.mynt.banking.currency_cloud.pay.payments.requests.CreatePaymentRequest;
+import com.mynt.banking.currency_cloud.convert.conversions.CurrencyCloudConversionsService;
+import com.mynt.banking.currency_cloud.convert.conversions.requests.*;
+import com.mynt.banking.currency_cloud.convert.rates.CurrencyCloudRatesService;
+import com.mynt.banking.currency_cloud.convert.rates.requests.*;
+import com.mynt.banking.currency_cloud.manage.balances.CurrencyCloudBalancesService;
+import com.mynt.banking.currency_cloud.manage.balances.requests.*;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.CurrencyCloudBeneficiariesService;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.*;
+import com.mynt.banking.currency_cloud.pay.payments.CurrencyCloudPaymentsService;
+import com.mynt.banking.currency_cloud.pay.payments.requests.*;
 import com.mynt.banking.user.UserContextService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +26,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class MyntPaymentsService {
     private final UserContextService userContextService;
-    private final PaymentService paymentService;
-    private final BeneficiaryService beneficiaryService;
-    private final ConversionService conversionService;
-    private final BalanceService balanceService;
-    private final RateService rateService;
+    private final CurrencyCloudPaymentsService paymentService;
+    private final CurrencyCloudBeneficiariesService beneficiaryService;
+    private final CurrencyCloudConversionsService conversionService;
+    private final CurrencyCloudBalancesService balanceService;
+    private final CurrencyCloudRatesService rateService;
 
     public ResponseEntity<JsonNode> createPayment(MyntCreatePaymentRequest request) {
         String beneficiaryId = request.getBeneficiaryId();
@@ -42,7 +43,10 @@ public class MyntPaymentsService {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode errorBody = objectMapper.createObjectNode();
 
-        ResponseEntity<JsonNode> ccGetBeneficiaryResponse = beneficiaryService.get(beneficiaryId, contactUuid);
+        CurrencyCloudGetBeneficiaryRequest getBeneficiaryRequest = CurrencyCloudGetBeneficiaryRequest.builder()
+                .onBehalfOf(contactUuid)
+                .build();
+        ResponseEntity<JsonNode> ccGetBeneficiaryResponse = beneficiaryService.getBeneficiary(beneficiaryId, getBeneficiaryRequest);
         if (!ccGetBeneficiaryResponse.getStatusCode().is2xxSuccessful()) return ccGetBeneficiaryResponse;
         JsonNode ccGetBeneficiaryResponseNode = ccGetBeneficiaryResponse.getBody();
         assert ccGetBeneficiaryResponseNode != null;
@@ -74,7 +78,7 @@ public class MyntPaymentsService {
             if (!convertResponse.getStatusCode().is2xxSuccessful()) return convertResponse;
         }
 
-        CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
+        CurrencyCloudCreatePaymentRequest createPaymentRequest = CurrencyCloudCreatePaymentRequest.builder()
                 .onBehalfOf(contactUuid)
                 .beneficiaryId(beneficiaryId)
                 .amount(amount)
@@ -84,7 +88,7 @@ public class MyntPaymentsService {
                 .uniqueRequestId(uniqueRequestId)
                 .build();
 
-        ResponseEntity<JsonNode> ccCreatePaymentResponse = paymentService.create(createPaymentRequest).block();
+        ResponseEntity<JsonNode> ccCreatePaymentResponse = paymentService.createPayment(createPaymentRequest);
         assert ccCreatePaymentResponse != null;
         if(!ccCreatePaymentResponse.getStatusCode().is2xxSuccessful()) return ccCreatePaymentResponse;
 
@@ -93,10 +97,10 @@ public class MyntPaymentsService {
 
     private boolean hasEnoughBalance(String currency, double amount) {
         String contactUuid = userContextService.getCurrentUserUuid();
-        GetBalanceRequest getBalanceRequest = GetBalanceRequest.builder()
+        CurrencyCloudGetBalanceRequest getBalanceRequest = CurrencyCloudGetBalanceRequest.builder()
                 .onBehalfOf(contactUuid)
                 .build();
-        ResponseEntity<JsonNode> getBalanceResponse = balanceService.getBalance(currency,getBalanceRequest).block();
+        ResponseEntity<JsonNode> getBalanceResponse = balanceService.getBalance(currency,getBalanceRequest);
         assert getBalanceResponse != null;
         if (!getBalanceResponse.getStatusCode().is2xxSuccessful()) return false;
         double balance = Objects.requireNonNull(getBalanceResponse.getBody()).get("amount").asDouble();
@@ -105,22 +109,22 @@ public class MyntPaymentsService {
 
     private ResponseEntity<JsonNode> getRateForSellAmount(String sellCurrency, String buyCurrency) {
         String contactUuid = userContextService.getCurrentUserUuid();
-        GetBasicRatesRequest getBasicRatesRequest = GetBasicRatesRequest.builder()
+        CurrencyCloudGetBasicRatesRequest getBasicRatesRequest = CurrencyCloudGetBasicRatesRequest.builder()
                 .onBehalfOf(contactUuid)
                 .currencyPair(sellCurrency+buyCurrency)
                 .build();
-        return rateService.getBasicRates(getBasicRatesRequest).block();
+        return rateService.getBasicRates(getBasicRatesRequest);
     }
     private ResponseEntity<JsonNode> convertBeforePayment(String fromCurrency, String toCurrency, String amount) {
         String contactUuid = userContextService.getCurrentUserUuid();
-        CreateConversionRequest createConversionRequest = CreateConversionRequest.builder()
+        CurrencyCloudCreateConversionRequest createConversionRequest = CurrencyCloudCreateConversionRequest.builder()
                 .onBehalfOf(contactUuid)
                 .sellCurrency(fromCurrency)
                 .buyCurrency(toCurrency)
                 .fixedSide("buy")
                 .amount(amount)
-                .termAgreement(true)
+                .termAgreement(String.valueOf(true))
                 .build();
-        return conversionService.createConversion(createConversionRequest).block();
+        return conversionService.createConversion(createConversionRequest);
     }
 }

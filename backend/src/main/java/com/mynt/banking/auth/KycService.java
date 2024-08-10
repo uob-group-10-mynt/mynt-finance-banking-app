@@ -8,13 +8,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mynt.banking.auth.requests.SignUpRequest;
 import com.mynt.banking.auth.requests.ValidateKycRequest;
 import com.mynt.banking.auth.responses.SDKResponse;
+import com.mynt.banking.currency_cloud.manage.accounts.CurrencyCloudAccountsService;
+import com.mynt.banking.currency_cloud.manage.contacts.CurrencyCloudContactsService;
+import com.mynt.banking.currency_cloud.manage.accounts.requests.*;
+import com.mynt.banking.currency_cloud.manage.contacts.requests.*;
 import com.mynt.banking.currency_cloud.repo.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
-import com.mynt.banking.currency_cloud.manage.accounts.AccountService;
-import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountRequest;
-import com.mynt.banking.currency_cloud.manage.contacts.ContactsService;
-import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.CreateContact;
-import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.FindContact;
 import com.mynt.banking.user.Role;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
@@ -58,9 +57,9 @@ public class KycService {
 
     private final UserRepository userRepository;
 
-    private final AccountService accountService;
+    private final CurrencyCloudAccountsService accountService;
 
-    private final ContactsService contactsService;
+    private final CurrencyCloudContactsService contactsService;
 
     private final CurrencyCloudRepository currencyCloudRepository;
 
@@ -251,11 +250,11 @@ public class KycService {
             return sdkResponseDTO;
         }
 
-        FindContact findContact = FindContact.builder()
+        CurrencyCloudFindContactsRequest findContact = CurrencyCloudFindContactsRequest.builder()
                 .emailAddress(request.getEmail())
                 .build();
 
-        ResponseEntity<JsonNode> contact = contactsService.findContact(findContact).block();
+        ResponseEntity<JsonNode> contact = contactsService.findContacts(findContact);
 
         assert contact != null;
         int statusCode = contact.getStatusCode().value();
@@ -343,21 +342,21 @@ public class KycService {
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("No User"));
 
-        CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
+        CurrencyCloudCreateAccountRequest createAccountRequest = CurrencyCloudCreateAccountRequest.builder()
                 .accountName(user.getFirstname()+" "+user.getLastname())
                 .legalEntityType("individual")
                 .street(user.getAddress())
                 .city(user.getAddress())
                 .country("gb")
                 .build();
-        return accountService.create(createAccountRequest).block();
+        return accountService.createAccount(createAccountRequest);
     }
 
     private ResponseEntity<JsonNode> createContact(String email, ResponseEntity<JsonNode> account){
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("No User"));
 
-        CreateContact contact = CreateContact.builder()
+        CurrencyCloudCreateContactRequest contact = CurrencyCloudCreateContactRequest.builder()
                 .accountId(Objects.requireNonNull(account.getBody().get("id").asText()))
                 .firstName(user.getFirstname())
                 .lastName(user.getLastname())
@@ -366,6 +365,6 @@ public class KycService {
                 .status("enabled")
                 .dateOfBirth(user.getDob())
                 .build();
-        return contactsService.createContact(contact).block();
+        return contactsService.createContact(contact);
     }
 }

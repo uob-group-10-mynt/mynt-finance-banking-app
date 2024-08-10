@@ -1,6 +1,8 @@
 package com.mynt.banking.user;
 
 import com.mynt.banking.auth.TokenService;
+import com.mynt.banking.currency_cloud.manage.contacts.CurrencyCloudContactsService;
+import com.mynt.banking.currency_cloud.manage.contacts.requests.*;
 import com.mynt.banking.user.requests.ChangePasswordRequest;
 import com.mynt.banking.user.requests.UpdateUserDetailsRequest;
 import org.jetbrains.annotations.NotNull;
@@ -9,8 +11,6 @@ import org.springframework.stereotype.Service;
 import java.security.Principal;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.manage.contacts.ContactsService;
-import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.*;
 import com.mynt.banking.user.responses.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
   private final TokenService tokenService;
-  private final ContactsService contactsService;
+  private final CurrencyCloudContactsService contactsService;
   private final UserContextService userContextService;
 
 
@@ -70,15 +70,14 @@ public class UserService {
 
     String currencyCloudContactUUID = userContextService.getCurrentUserUuid();
 
-    UpdateContactRequest updateContactRequest = UpdateContactRequest.builder()
-            .firstname(request.getFirstname())
-            .lastname(request.getLastname())
+    CurrencyCloudUpdateContactRequest updateContactRequest = CurrencyCloudUpdateContactRequest.builder()
+            .firstName(request.getFirstname())
+            .lastName(request.getLastname())
             .phoneNumber(request.getPhoneNumber())
             .build();
 
     ResponseEntity<JsonNode> updateContactResponse = contactsService
-            .updateContact(currencyCloudContactUUID, updateContactRequest)
-            .block();
+            .updateContact(currencyCloudContactUUID, updateContactRequest);
 
       assert updateContactResponse != null;
       if (updateContactResponse.getStatusCode().isError()) throw new RuntimeException("");

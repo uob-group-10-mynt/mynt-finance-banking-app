@@ -3,13 +3,17 @@ package com.mynt.banking.client.manage.transactions;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.mynt.banking.client.pay.beneficiaries.MyntBeneficiaryDetail;
-import com.mynt.banking.currency_cloud.collect.funding.FindAccountDetailsRequest;
-import com.mynt.banking.currency_cloud.collect.funding.FundingService;
-import com.mynt.banking.currency_cloud.convert.conversions.ConversionService;
-import com.mynt.banking.currency_cloud.manage.transactions.TransactionService;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
-import com.mynt.banking.currency_cloud.pay.payments.PaymentService;
+import com.mynt.banking.currency_cloud.collect.funding.CurrencyCloudFundingService;
+import com.mynt.banking.currency_cloud.collect.funding.requests.CurrencyCloudFindFundingAccountsRequest;
+import com.mynt.banking.currency_cloud.convert.conversions.CurrencyCloudConversionsService;
+import com.mynt.banking.currency_cloud.convert.conversions.requests.CurrencyCloudGetConversionRequest;
+import com.mynt.banking.currency_cloud.manage.transactions.CurrencyCloudTransactionsService;
+import com.mynt.banking.currency_cloud.manage.transactions.requests.CurrencyCloudFindTransactionsRequest;
+import com.mynt.banking.currency_cloud.manage.transactions.requests.CurrencyCloudGetTransactionRequest;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.CurrencyCloudBeneficiariesService;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.CurrencyCloudGetBeneficiaryRequest;
+import com.mynt.banking.currency_cloud.pay.payments.CurrencyCloudPaymentsService;
+import com.mynt.banking.currency_cloud.pay.payments.requests.CurrencyCloudGetPaymentRequest;
 import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
 import lombok.RequiredArgsConstructor;
@@ -27,16 +31,22 @@ import java.util.Optional;
 public class MyntTransactionService {
 
     private final UserContextService userContextService;
-    private final TransactionService transactionService;
-    private final FundingService fundingService;
-    private final PaymentService paymentService;
-    private final BeneficiaryService beneficiaryService;
-    private final ConversionService conversionService;
+    private final CurrencyCloudTransactionsService transactionService;
+    private final CurrencyCloudFundingService fundingService;
+    private final CurrencyCloudPaymentsService paymentService;
+    private final CurrencyCloudBeneficiariesService beneficiaryService;
+    private final CurrencyCloudConversionsService conversionService;
 
     public MyntTransactionsDetailResponse find(String currency, String relatedEntityType, Integer perPage, Integer page) {
         // Fetch Transactions
-        ResponseEntity<JsonNode> currencyCloudTransactionResponse = transactionService.find(
-                currency, relatedEntityType, userContextService.getCurrentUserUuid(), perPage, page);
+        CurrencyCloudFindTransactionsRequest findTransactionsRequest = CurrencyCloudFindTransactionsRequest.builder()
+                .onBehalfOf(userContextService.getCurrentUserUuid())
+                .currency(currency)
+                .relatedEntityType(relatedEntityType)
+                .perPage(String.valueOf(perPage))
+                .page(String.valueOf(page))
+                .build();
+        ResponseEntity<JsonNode> currencyCloudTransactionResponse = transactionService.findTransactions(findTransactionsRequest);
 
         // Form TransactionDetailResponse:
         JsonNode responseBody = currencyCloudTransactionResponse.getBody();
@@ -94,9 +104,12 @@ public class MyntTransactionService {
 
     private MyntTransactionsDetailResponse.Transaction get(String transactionId) {
         // Fetch Transactions
-        ResponseEntity<JsonNode> currencyCloudTransactionResponse = transactionService.get(
+        CurrencyCloudGetTransactionRequest getTransactionRequest = CurrencyCloudGetTransactionRequest.builder()
+                .onBehalfOf(userContextService.getCurrentUserUuid())
+                .build();
+        ResponseEntity<JsonNode> currencyCloudTransactionResponse = transactionService.getTransaction(
                 transactionId,
-                userContextService.getCurrentUserUuid());
+                getTransactionRequest);
 
         // Form TransactionDetailResponse:
         JsonNode transactionDetail = currencyCloudTransactionResponse.getBody();
@@ -136,14 +149,14 @@ public class MyntTransactionService {
         }
 
         // Fetch Account Details:
-        FindAccountDetailsRequest findAccountDetailsRequest = FindAccountDetailsRequest.builder()
+        CurrencyCloudFindFundingAccountsRequest findAccountDetailsRequest = CurrencyCloudFindFundingAccountsRequest.builder()
                 .accountId(accountID)
                 .currency(transactionDetail.getCurrency())
                 .onBehalfOf(userContextService.getCurrentUserUuid())
                 .paymentType("priority")
                 .build();
 
-        ResponseEntity<JsonNode> findAccountDetailResponse = fundingService.findAccountDetails(findAccountDetailsRequest);
+        ResponseEntity<JsonNode> findAccountDetailResponse = fundingService.findFundingAccounts(findAccountDetailsRequest);
         JsonNode accountDetails = Optional.ofNullable(findAccountDetailResponse.getBody())
                 .map(body -> body.get("funding_accounts"))
                 .filter(node -> !node.isEmpty() && node.size() == 1)
@@ -162,7 +175,10 @@ public class MyntTransactionService {
                 .build();
 
         // Fetch Payment details using related_entity_id:
-        ResponseEntity<JsonNode> paymentDetailsResponse = paymentService.get(relatedEntityId, userContextService.getCurrentUserUuid());
+        CurrencyCloudGetPaymentRequest getPaymentRequest = CurrencyCloudGetPaymentRequest.builder()
+                .onBehalfOf(userContextService.getCurrentUserUuid())
+                .build();
+        ResponseEntity<JsonNode> paymentDetailsResponse = paymentService.getPayment(relatedEntityId, getPaymentRequest);
 
         JsonNode paymentDetails = Optional.ofNullable(paymentDetailsResponse.getBody())
                 .filter(node -> !node.isEmpty())
@@ -176,8 +192,11 @@ public class MyntTransactionService {
                 .orElseThrow(() -> new CurrencyCloudException("Currency Cloud Error: Failed to fetch payment details.",
                         HttpStatus.UNPROCESSABLE_ENTITY));
 
-        ResponseEntity<JsonNode> beneficiaryDetailsResponse = beneficiaryService.get(beneficiaryId,
-                userContextService.getCurrentUserUuid());
+        CurrencyCloudGetBeneficiaryRequest getBeneficiaryRequest = CurrencyCloudGetBeneficiaryRequest.builder()
+                .onBehalfOf(userContextService.getCurrentUserUuid())
+                .build();
+        ResponseEntity<JsonNode> beneficiaryDetailsResponse = beneficiaryService.getBeneficiary(beneficiaryId,
+                getBeneficiaryRequest);
 
         JsonNode beneficiaryDetails = Optional.ofNullable(beneficiaryDetailsResponse.getBody())
                 .filter(node -> !node.isEmpty())
@@ -222,8 +241,11 @@ public class MyntTransactionService {
         }
 
         // Fetch Payment details using related_entity_id:
-        ResponseEntity<JsonNode> conversionDetailResponse = conversionService.get(
-                relatedEntityId, userContextService.getCurrentUserUuid());
+        CurrencyCloudGetConversionRequest getConversionRequest = CurrencyCloudGetConversionRequest.builder()
+                .onBehalfOf(userContextService.getCurrentUserUuid())
+                .build();
+        ResponseEntity<JsonNode> conversionDetailResponse = conversionService.getConversion(
+                relatedEntityId, getConversionRequest);
 
         JsonNode conversionDetails = Optional.ofNullable(conversionDetailResponse.getBody())
                 .filter(node -> !node.isEmpty())
