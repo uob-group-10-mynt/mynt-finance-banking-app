@@ -18,7 +18,7 @@ public class MyntPaymentsController {
     private final MyntPaymentsService myntPaymentsService;
 
     @PostMapping("/createPayment")
-    public Mono<ResponseEntity<JsonNode>> createPayment(@Valid @RequestBody MyntCreatePaymentRequest request) {
-        return Mono.just(myntPaymentsService.createPayment(request));
+    public ResponseEntity<JsonNode> createPayment(@Valid @RequestBody MyntCreatePaymentRequest request) {
+        return myntPaymentsService.createPayment(request);
     }
 }
