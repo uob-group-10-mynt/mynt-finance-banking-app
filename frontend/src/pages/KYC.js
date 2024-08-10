@@ -1,55 +1,39 @@
 import axios from 'axios';
-import { Onfido } from 'onfido-sdk-ui';
 import { useEffect, useState } from 'react';
-import signUp from './Signup';
 import { useNavigate } from 'react-router-dom';
 import { Flex, Box, Heading, FormControl, FormLabel, Input, Button, Text } from "@chakra-ui/react";
 import Cookies from 'js-cookie';
 import { validateKYCAPI } from '../utils/APIEndpoints';
+import SplashPage from './SplashPage';
 
-//TODO: call validateKyc and check KYC critiria to see if the user is approved
 function kyc(){
-
-    const navigate = useNavigate();
-
+    const [loading, setLoading] = useState(true)
     const [apiResponse, setApiResponse] = useState();  
     const [message, setMessage] = useState();  
+    const navigate = useNavigate();
 
-    async function api(){
-            
+    const api = async () => {
         const email = Cookies.get("email");
-
         try{
-            
-            console.log("\n\n\n\n\nvalidateKYCAPI: "+validateKYCAPI);
-            console.log("email: "+email) ;
-            
-            const response = await axios({
-                method:'post',
-                url: validateKYCAPI,
-                data:{
-                    "email": email,
-                  }
-            });
-            
-            console.log(response);
-            console.log(apiResponse);
-            
+            const response = await axios.post(validateKYCAPI, {"email" :email})
             setMessage(`Your account has been ${JSON.parse(response.data.data).status} by our team.`);
-            
             Cookies.set("email","");
         } catch (error){
             setApiResponse(error);
         }
-        
+        setLoading(false)
     }
     
     const handleButtonClick = () => {
-        api()
-        .then(navigate('/login'))
+        navigate('/login')
     };
 
+    useEffect(()=>{
+        api()
+    },[])
+
     return(
+        loading ? <SplashPage /> :
         <Flex height="100vh" width="full" align="center" justifyContent="center">
           
           <Box>
