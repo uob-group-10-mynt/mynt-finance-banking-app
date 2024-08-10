@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mynt.banking.Main;
-import com.mynt.banking.currency_cloud.manage.balances.FindBalanceRequest;
-import com.mynt.banking.currency_cloud.manage.balances.FindBalancesRequest;
+import com.mynt.banking.currency_cloud.manage.balances.requests.CurrencyCloudFindBalancesRequest;
+import com.mynt.banking.currency_cloud.manage.balances.requests.CurrencyCloudGetBalanceRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,23 +16,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BalanceServiceTest {
 
     @Autowired
-    private com.mynt.banking.currency_cloud.manage.balances.BalanceService balanceService;
+    private com.mynt.banking.currency_cloud.manage.balances.CurrencyCloudBalancesService balanceService;
 
     @Test
     public void testBalanceCC() {
-        FindBalanceRequest data = FindBalanceRequest.builder()
+        CurrencyCloudFindBalancesRequest data = CurrencyCloudFindBalancesRequest.builder()
                 .amountTo("")
                 .onBehalfOf("")
                 .amountFrom("")
-                .amountTo("")
                 .asAtDate("")
-                .createdAt("")
                 .page("")
                 .perPage("")
                 .order("")
                 .build();
 
-        ResponseEntity<JsonNode> response = balanceService.find(data).block();
+        ResponseEntity<JsonNode> response = balanceService.findBalances(data);
 
         assertNotNull(response);
         assertEquals(response.getStatusCode().value(),200);
@@ -44,11 +42,11 @@ public class BalanceServiceTest {
 
     @Test
     public void testFindBalancesForParticularCurrency() throws JsonProcessingException {
-        FindBalancesRequest data = FindBalancesRequest.builder()
+        CurrencyCloudGetBalanceRequest data = CurrencyCloudGetBalanceRequest.builder()
                 .onBehalfOf("")
                 .build();
 
-        ResponseEntity<JsonNode> response = balanceService.findForParticularCurrency(data,"GBP").block();
+        ResponseEntity<JsonNode> response = balanceService.getBalance("GBP",data);
 
         ObjectMapper mapper = new ObjectMapper();
         String output = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response.getBody());

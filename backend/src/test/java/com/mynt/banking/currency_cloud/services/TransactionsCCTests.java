@@ -1,9 +1,10 @@
 package com.mynt.banking.currency_cloud.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.manage.transactions.TransactionService;
-import com.mynt.banking.currency_cloud.manage.transactions.requests.FindTransaction;
+import com.mynt.banking.currency_cloud.manage.transactions.CurrencyCloudTransactionsService;
 import com.mynt.banking.Main;
+import com.mynt.banking.currency_cloud.manage.transactions.requests.CurrencyCloudFindTransactionsRequest;
+import com.mynt.banking.currency_cloud.manage.transactions.requests.CurrencyCloudGetTransactionRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,16 +16,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TransactionsCCTests {
 
     @Autowired
-    private TransactionService transactionService;
+    private CurrencyCloudTransactionsService transactionService;
 
     @Test
     void testTransactionsFind() {
 
 
-        FindTransaction findTransaction = FindTransaction.builder()
+        CurrencyCloudFindTransactionsRequest findTransaction = CurrencyCloudFindTransactionsRequest.builder()
                 .build();
 
-        ResponseEntity<JsonNode> response =  transactionService.find(findTransaction).block();
+        ResponseEntity<JsonNode> response =  transactionService.findTransactions(findTransaction);
 
         assert response != null;
         assertEquals("USD",response.getBody().get("transactions").get(0).get("currency").asText());
@@ -33,8 +34,9 @@ public class TransactionsCCTests {
 
     @Test
     void testFindTransactionID() {
-
-        ResponseEntity<JsonNode> response =  transactionService.findTransactionID("2259e26e-520a-4421-abe3-41748df64fde", "").block();
+        CurrencyCloudGetTransactionRequest request = CurrencyCloudGetTransactionRequest.builder()
+                .build();
+        ResponseEntity<JsonNode> response =  transactionService.getTransaction("2259e26e-520a-4421-abe3-41748df64fde",request);
 
         assert response != null;
         assertEquals("USD",response.getBody().get("currency").asText());

@@ -2,8 +2,9 @@ package com.mynt.banking.currency_cloud.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.Main;
-import com.mynt.banking.currency_cloud.manage.reference.ReferenceService;
-import com.mynt.banking.currency_cloud.manage.reference.requests.*;
+import com.mynt.banking.currency_cloud.manage.reference.CurrencyCloudReferenceService;
+import com.mynt.banking.currency_cloud.manage.reference.requests.CurrencyCloudGetBeneficiaryRequirementsRequest;
+import com.mynt.banking.currency_cloud.manage.reference.requests.CurrencyCloudGetPayerRequirementsRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,19 +18,19 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class ReferenceCCTest {
 
     @Autowired
-    private ReferenceService referenceService;
+    private CurrencyCloudReferenceService referenceService;
 
     @Test
     public void testGetPayerRequirements() {
 
-        GetPayerRequirementsRequest requestBody = GetPayerRequirementsRequest.builder()
+        CurrencyCloudGetPayerRequirementsRequest requestBody = CurrencyCloudGetPayerRequirementsRequest.builder()
                 .payerCountry("gb")
                 .payerEntityType("individual")
                 .paymentType("regular")
                 .currency("gbp")
                 .build();
 
-        ResponseEntity<JsonNode> result = referenceService.getPayerRequirements(requestBody).block();
+        ResponseEntity<JsonNode> result = referenceService.getPayerRequirements(requestBody);
 
         assert result != null;
         int responseCode = result.getStatusCode().value();
@@ -50,15 +51,14 @@ public class ReferenceCCTest {
 
     @Test
     public void testGetBeneficiaryRequirements(){
-        GetBeneficiaryRequirementsRequest getBeneficiaryRequirementsRequest = GetBeneficiaryRequirementsRequest.builder()
+        CurrencyCloudGetBeneficiaryRequirementsRequest getBeneficiaryRequirementsRequest = CurrencyCloudGetBeneficiaryRequirementsRequest.builder()
                 .currency("cny")
                 .bankAccountCountry("gb")
                 .beneficiaryCountry("gb")
                 .build();
 
         ResponseEntity<JsonNode> responseEntity = referenceService
-                .getBeneficiaryRequirements(getBeneficiaryRequirementsRequest)
-                .block();
+                .getBeneficiaryRequirements(getBeneficiaryRequirementsRequest);
 
         assertEquals(responseEntity.getStatusCode().value(), 200);
 

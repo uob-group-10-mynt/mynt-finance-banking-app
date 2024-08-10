@@ -63,7 +63,7 @@ public class KycTests {
     @Test
     public void testVaidate() throws JsonProcessingException {
 
-        String email = "blahblah@Jameslove.com";
+        String email = "blahblahblah1@Jameslove.com";
 
         //need to update email  within DB before running test
         ValidateKycRequest requestDtoValid = ValidateKycRequest.builder()

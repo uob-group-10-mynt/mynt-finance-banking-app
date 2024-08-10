@@ -1,9 +1,9 @@
 package com.mynt.banking.currency_cloud.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.pay.transfers.TransferService;
-import com.mynt.banking.currency_cloud.pay.transfers.requests.CreateTransferRequest;
 import com.mynt.banking.Main;
+import com.mynt.banking.currency_cloud.pay.transfers.CurrencyCloudTransfersService;
+import com.mynt.banking.currency_cloud.pay.transfers.requests.CurrencyCloudCreateTransferRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,19 +17,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TransferServiceTest {
 
     @Autowired
-    private TransferService transferService;
+    private CurrencyCloudTransfersService transferService;
 
     @Test
     public void testCreateTransfer() {
-        CreateTransferRequest transferRequest = CreateTransferRequest.builder()
+        CurrencyCloudCreateTransferRequest transferRequest = CurrencyCloudCreateTransferRequest.builder()
                 .uniqueRequestId(UUID.randomUUID().toString())
                 .sourceAccountId("0339d3cf-f7da-4471-b5bb-db8daa577235")
                 .destinationAccountId("b88968d1-8e87-4057-bb1c-9af86f12e7d8")
                 .currency("KES")
-                .amount(1000)
+                .amount(String.valueOf(1000))
                 .build();
 
-        ResponseEntity<JsonNode> result = this.transferService.createTransfer(transferRequest).block();
+        ResponseEntity<JsonNode> result = this.transferService.createTransfer(transferRequest);
 
         assert result != null;
         assert result.getBody() != null;

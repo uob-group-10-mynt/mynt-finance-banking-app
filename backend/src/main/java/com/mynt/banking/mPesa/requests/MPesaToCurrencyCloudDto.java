@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Schema(description = "CreateTransactionRequest")
 public class MPesaToCurrencyCloudDto {
@@ -17,6 +18,7 @@ public class MPesaToCurrencyCloudDto {
     @JsonProperty("amount")
     @Size(max = 255)
     @Schema(description = "Amount", example = "1")
+    @Builder.Default
     private String amount = "1";
 
 }

@@ -16,9 +16,7 @@ public class CurrencyCloudTransactionsService {
     private final CurrencyCloudClient currencyCloudClient;
     private final CurrencyCloudAuthenticator currencyCloudAuthenticator;
     
-    public ResponseEntity<JsonNode> findTransactions(
-            CurrencyCloudFindTransactionsRequest request
-    ) {
+    public ResponseEntity<JsonNode> findTransactions(CurrencyCloudFindTransactionsRequest request) {
         String uri = UriBuilderUtil.buildUriWithQueryParams("/v2/transactions/find", request);
         return currencyCloudClient.getClient()
                 .get()

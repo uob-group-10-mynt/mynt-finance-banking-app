@@ -47,7 +47,7 @@ public class TestTransactions {
         ResponseEntity<JsonNode> responce = flutterwaveService.mPesaToFlutterwave(mPesaToFlutterWearDto).block();
 
         String id = responce.getBody().get("data").get("id").asText();
-        ResponseEntity<JsonNode> responce1 = flutterwaveService.depoistTransactionCheck(id).block();
+        ResponseEntity<JsonNode> responce1 = flutterwaveService.depositTransactionCheck(id).block();
 
         assert responce1 != null;
         assertEquals(200,responce1.getStatusCode().value());
