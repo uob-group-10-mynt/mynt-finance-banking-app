@@ -8,13 +8,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class CurrencyCloudAuthenticator {
-    @Getter
+
     private String authToken;
+
+    private static final long TOKEN_EXPIRE_MINUTES = 29;
 
     @Value("${currency.cloud.api.url}")
     private String apiUrl;
@@ -28,12 +31,16 @@ public class CurrencyCloudAuthenticator {
     @Value("${currency.cloud.api.key}")
     private String apiKey;
 
+    private long lastAuthTime;
+
     @PostConstruct
     private void init() {
         authenticate();
     }
 
     public void authenticate() {
+        this.lastAuthTime = Instant.now().getEpochSecond();
+
         Map<String, String> requestBodyMap = new HashMap<>();
         requestBodyMap.put("login_id", loginId);
         requestBodyMap.put("api_key", apiKey);
@@ -50,6 +57,13 @@ public class CurrencyCloudAuthenticator {
                 .body(JsonNode.class);
         assert response != null;
         this.authToken = response.get("auth_token").asText();
+        System.out.println(this.authToken);
     }
 
+    public String getAuthToken() {
+        if (Instant.now().getEpochSecond() - this.lastAuthTime > TOKEN_EXPIRE_MINUTES*60) {
+            authenticate();
+        }
+        return authToken;
+    }
 }
