@@ -6,14 +6,10 @@ import com.mynt.banking.currency_cloud.collect.demo.DemoService;
 import com.mynt.banking.currency_cloud.collect.demo.requests.DemoFundingDto;
 import com.mynt.banking.currency_cloud.collect.funding.FindAccountDetailsRequest;
 import com.mynt.banking.currency_cloud.collect.funding.FundingService;
-import com.mynt.banking.currency_cloud.collect.funding.requests.FindAccountDetails;
-import okhttp3.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
-
-import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
