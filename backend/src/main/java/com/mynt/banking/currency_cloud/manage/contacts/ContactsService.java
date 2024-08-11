@@ -1,89 +1,56 @@
 package com.mynt.banking.currency_cloud.manage.contacts;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
-import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.*;
-import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountRequest;
-import com.mynt.banking.util.HashMapToQuiryPrams;
+import com.mynt.banking.util.UriBuilderUtil;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.processing.Find;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-
-import java.util.HashMap;
+import org.springframework.web.client.RestClient;
 
 @Service
 @RequiredArgsConstructor
 public class ContactsService {
 
     private final AuthenticationService authenticationService;
-    private final WebClient webClient;
+    private final RestClient restClient;
 
-    public Mono<ResponseEntity<JsonNode>> createContact(CreateContact requestBody) {
-        return webClient
+    public ResponseEntity<JsonNode> createContact(CreateContactRequest requestBody) {
+        return restClient
                 .post()
                 .uri("/v2/contacts/create")
-                .header("X-Auth-Token", authenticationService.getAuthToken())
-                .bodyValue(requestBody)
-                .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(response -> {
-                    if(response.getStatusCode().is2xxSuccessful()) {
-                        JsonNode jsonNode = response.getBody();
-                        ResponseEntity<JsonNode> newResponseEntity = new ResponseEntity<>(jsonNode, response.getStatusCode());
-                        return Mono.just(newResponseEntity);
-                    }
-                    return Mono.just(response);
-                });
+                .body(requestBody)
+                .retrieve()
+                .toEntity(JsonNode.class);
     }
 
-    public Mono<ResponseEntity<JsonNode>> findContact(FindContact requestBody) {
-        return webClient
+    public ResponseEntity<JsonNode> findContact(FindContactRequest requestBody) {
+        return restClient
                 .post()
                 .uri("/v2/contacts/find")
-                .header("X-Auth-Token", authenticationService.getAuthToken())
-                .bodyValue(requestBody)
-                .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(response -> {
-                    if(response.getStatusCode().is2xxSuccessful()) {
-                        JsonNode jsonNode = response.getBody();
-                        ResponseEntity<JsonNode> newResponseEntity = new ResponseEntity<>(jsonNode, response.getStatusCode());
-                        return Mono.just(newResponseEntity);
-                    }
-                    return Mono.just(response);
-                });
-
+                .body(requestBody)
+                .retrieve()
+                .toEntity(JsonNode.class);
     }
 
-    public Mono<ResponseEntity<JsonNode>> updateContact(
-            String id,
-            UpdateContactRequest request
-    ) {
+    public ResponseEntity<JsonNode> updateContact(String id, UpdateContactRequest request) {
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        String uri = UriBuilderUtil.buildUriWithQueryParams("/v2/contacts/" + id, request);
 
-        HashMap<String, Object> prams = objectMapper.convertValue(request, HashMap.class);
-        String url = "/v2/contacts/" + id + "" + HashMapToQuiryPrams.hashMapToString(prams);
-        return webClient
+        return restClient
                 .post()
-                .uri(url)
-                .header("X-Auth-Token", authenticationService.getAuthToken())
-                .bodyValue(request)
-                .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(Mono::just);
+                .uri(uri)
+                .body(request)
+                .retrieve()
+                .toEntity(JsonNode.class);
     }
 
-    public Mono<ResponseEntity<JsonNode>> getContact(
-            String id
-    ) {
-        String url = "/v2/contacts/" + id + "";
-        return webClient
+    public ResponseEntity<JsonNode> getContact(String id) {
+        String url = "/v2/contacts/" + id;
+        return restClient
                 .get()
                 .uri(url)
-                .header("X-Auth-Token", authenticationService.getAuthToken())
-                .exchangeToMono(response -> response.toEntity(JsonNode.class))
-                .flatMap(Mono::just);
+                .retrieve()
+                .toEntity(JsonNode.class);
     }
 }

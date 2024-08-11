@@ -30,10 +30,8 @@ public class KycTests {
 
     @BeforeEach
     public void setUp() {
-
         this.testAccountNum = (int)userRepository.count();
         this.testAccountNum++;
-
     }
 
     @AfterEach
@@ -57,11 +55,10 @@ public class KycTests {
         assert response != null;
         assertEquals(response.getStatusCode().value(), 200);
         assertEquals(response.getBody().getStage(),"SDKResponseDTO");
-
     }
 
     @Test
-    public void testVaidate() throws JsonProcessingException {
+    public void testValidate() throws JsonProcessingException {
 
         String email = "blahblah@Jameslove.com";
 
@@ -73,8 +70,6 @@ public class KycTests {
 
         assert responseValid != null;
         assertEquals(responseValid.getStage(),"approved");
-
-
     }
 
     // test will only work with the basic KYC workflow ID found within the
@@ -110,5 +105,4 @@ public class KycTests {
         assertEquals(responseValid.getStage(),"approved");
 
     }
-
 }

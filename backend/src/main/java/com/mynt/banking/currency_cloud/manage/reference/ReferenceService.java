@@ -1,59 +1,46 @@
 package com.mynt.banking.currency_cloud.manage.reference;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
-import com.mynt.banking.currency_cloud.manage.reference.requests.*;
-import com.mynt.banking.util.HashMapToQuiryPrams;
+import com.mynt.banking.util.UriBuilderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient;
 
-import java.util.HashMap;
 
 @RequiredArgsConstructor
 @Service
 public class ReferenceService {
 
     private final AuthenticationService authenticationService;
-    private final WebClient webClient;
+    private final RestClient restClient;
 
-    public Mono<ResponseEntity<JsonNode>> getPayerRequirements(GetPayerRequirementsRequest request) {
-        
-        ObjectMapper objectMapper = new ObjectMapper();
+    public ResponseEntity<JsonNode> getPayerRequirements(GetPayerRequirementsRequest request) {
+        String uri = UriBuilderUtil.buildUriWithQueryParams("/v2/reference/payer_required_details", request);
 
-        HashMap<String, Object> prams = objectMapper.convertValue(request, HashMap.class);
-        String url = "/v2/reference/payer_required_details" + HashMapToQuiryPrams.hashMapToString(prams);
-
-        return webClient
+        return restClient
                 .get()
-                .uri(url)
-                .header("X-Auth-Token", authenticationService.getAuthToken())
-                .exchangeToMono(response -> response.toEntity(JsonNode.class));
+                .uri(uri)
+                .retrieve()
+                .toEntity(JsonNode.class);
     }
 
-    public Mono<ResponseEntity<JsonNode>> getBeneficiaryRequirements(GetBeneficiaryRequirementsRequest request) {
+    public ResponseEntity<JsonNode> getBeneficiaryRequirements(GetBeneficiaryRequirementsRequest request) {
 
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        HashMap<String, Object> prams = objectMapper.convertValue(request, HashMap.class);
-        String url = "/v2/reference/beneficiary_required_details" + HashMapToQuiryPrams.hashMapToString(prams);
-
-        return webClient
+        String uri = UriBuilderUtil.buildUriWithQueryParams("/v2/reference/beneficiary_required_details", request);
+        return restClient
                 .get()
-                .uri(url)
-                .header("X-Auth-Token", authenticationService.getAuthToken())
-                .exchangeToMono(response -> response.toEntity(JsonNode.class));
+                .uri(uri)
+                .retrieve()
+                .toEntity(JsonNode.class);
     }
 
-    public Mono<ResponseEntity<JsonNode>> getAvailableCurrencies() {
-        return webClient
+    public ResponseEntity<JsonNode> getAvailableCurrencies() {
+        return restClient
                 .get()
                 .uri("/v2/reference/currencies")
-                .header("X-Auth-Token", authenticationService.getAuthToken())
-                .exchangeToMono(response -> response.toEntity(JsonNode.class));
+                .retrieve()
+                .toEntity(JsonNode.class);
     }
-
 }

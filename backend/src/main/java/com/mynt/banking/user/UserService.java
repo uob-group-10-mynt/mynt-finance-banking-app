@@ -1,6 +1,7 @@
 package com.mynt.banking.user;
 
 import com.mynt.banking.auth.TokenService;
+import com.mynt.banking.currency_cloud.manage.contacts.UpdateContactRequest;
 import com.mynt.banking.user.requests.ChangePasswordRequest;
 import com.mynt.banking.user.requests.UpdateUserDetailsRequest;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,6 @@ import java.security.Principal;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.manage.contacts.ContactsService;
-import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.*;
 import com.mynt.banking.user.responses.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -77,8 +77,7 @@ public class UserService {
             .build();
 
     ResponseEntity<JsonNode> updateContactResponse = contactsService
-            .updateContact(currencyCloudContactUUID, updateContactRequest)
-            .block();
+            .updateContact(currencyCloudContactUUID, updateContactRequest);
 
       assert updateContactResponse != null;
       if (updateContactResponse.getStatusCode().isError()) throw new RuntimeException("");

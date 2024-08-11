@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.CreateBeneficiaryRequest;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.FindBeneficiaryRequest;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.ValidateBeneficiaryRequest;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.CreateBeneficiaryRequest;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.FindBeneficiaryRequest;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.ValidateBeneficiaryRequest;
 import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
 import lombok.RequiredArgsConstructor;
@@ -76,7 +76,7 @@ public class MyntBeneficiaryService {
         ValidateBeneficiaryRequest validateBeneficiaryRequest = mapToValidateBeneficiaryRequest(request);
         validateBeneficiaryRequest.setBeneficiaryEntityType("individual");
         validateBeneficiaryRequest.setOnBehalfOf(userContextService.getCurrentUserUuid());
-        beneficiaryService.validate(validateBeneficiaryRequest);
+        ResponseEntity<JsonNode> validation = beneficiaryService.validate(validateBeneficiaryRequest);
 
         // Create beneficiary:
         MyntBeneficiaryDetail beneficiaryDetail;

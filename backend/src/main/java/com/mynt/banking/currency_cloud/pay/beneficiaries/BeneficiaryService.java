@@ -1,28 +1,19 @@
 package com.mynt.banking.currency_cloud.pay.beneficiaries;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.config.WebClientErrorHandler;
-import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.CreateBeneficiaryRequest;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.FindBeneficiaryRequest;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.ValidateBeneficiaryRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
 public class BeneficiaryService {
 
-    private final AuthenticationService authenticationService;
-    private final WebClient webClient;
-    private final WebClientErrorHandler webClientErrorHandler;
+    private final RestClient restClient;
 
     public ResponseEntity<JsonNode> get(String id, String onBehalfOf) {
         // Build the URI with the provided parameters
@@ -31,57 +22,37 @@ public class BeneficiaryService {
                 .toUriString();
 
         // Execute the GET request and retrieve the response
-        return webClient.get()
+        return restClient.get()
                 .uri(uri)
-                .header("X-Auth-Token", authenticationService.getAuthToken())
                 .retrieve()
-                .onStatus(HttpStatus.UNAUTHORIZED::equals, response -> webClientErrorHandler.handleUnauthorized(uri))
-                .onStatus(HttpStatusCode::is4xxClientError, webClientErrorHandler::handleClientError)
-                .onStatus(HttpStatusCode::is5xxServerError, webClientErrorHandler::handleServerError)
-                .toEntity(JsonNode.class)
-                .block();
+                .toEntity(JsonNode.class);
     }
 
     public ResponseEntity<JsonNode> find(FindBeneficiaryRequest requestBody) {
-        return webClient
+        return restClient
                 .post()
                 .uri("/v2/beneficiaries/find")
-                .header("X-Auth-Token", authenticationService.getAuthToken())
-                .bodyValue(requestBody)
+                .body(requestBody)
                 .retrieve()
-                .onStatus(HttpStatus.UNAUTHORIZED::equals, response -> webClientErrorHandler.handleUnauthorized("/v2/beneficiaries/find"))
-                .onStatus(HttpStatusCode::is4xxClientError, webClientErrorHandler::handleClientError)
-                .onStatus(HttpStatusCode::is5xxServerError, webClientErrorHandler::handleServerError)
-                .toEntity(JsonNode.class)
-                .block();
+                .toEntity(JsonNode.class);
     }
 
     public ResponseEntity<JsonNode> validate(ValidateBeneficiaryRequest requestBody) {
-        return webClient
+        return restClient
                 .post()
                 .uri("/v2/beneficiaries/validate")
-                .header("X-Auth-Token", authenticationService.getAuthToken())
-                .bodyValue(requestBody)
+                .body(requestBody)
                 .retrieve()
-                .onStatus(HttpStatus.UNAUTHORIZED::equals, response -> webClientErrorHandler.handleUnauthorized("/v2/beneficiaries/find"))
-                .onStatus(HttpStatusCode::is4xxClientError, webClientErrorHandler::handleClientError)
-                .onStatus(HttpStatusCode::is5xxServerError, webClientErrorHandler::handleServerError)
-                .toEntity(JsonNode.class)
-                .block();
+                .toEntity(JsonNode.class);
     }
 
     public ResponseEntity<JsonNode> create(CreateBeneficiaryRequest requestBody) {
-        return webClient
+        return restClient
                 .post()
                 .uri("/v2/beneficiaries/create")
-                .header("X-Auth-Token", authenticationService.getAuthToken())
-                .bodyValue(requestBody)
+                .body(requestBody)
                 .retrieve()
-                .onStatus(HttpStatus.UNAUTHORIZED::equals, response -> webClientErrorHandler.handleUnauthorized("/v2/beneficiaries/find"))
-                .onStatus(HttpStatusCode::is4xxClientError, webClientErrorHandler::handleClientError)
-                .onStatus(HttpStatusCode::is5xxServerError, webClientErrorHandler::handleServerError)
-                .toEntity(JsonNode.class)
-                .block();
+                .toEntity(JsonNode.class);
     }
 
     public ResponseEntity<JsonNode> delete(String id, String onBehalfOf) {
@@ -92,16 +63,11 @@ public class BeneficiaryService {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("on_behalf_of", onBehalfOf);
 
-        return webClient.post()
+        return restClient.post()
                 .uri(uri)
-                .header("X-Auth-Token", authenticationService.getAuthToken())
                 .contentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED)
-                .bodyValue(formData)
+                .body(formData)
                 .retrieve()
-                .onStatus(HttpStatus.UNAUTHORIZED::equals, response -> webClientErrorHandler.handleUnauthorized(uri))
-                .onStatus(HttpStatusCode::is4xxClientError, webClientErrorHandler::handleClientError)
-                .onStatus(HttpStatusCode::is5xxServerError, webClientErrorHandler::handleServerError)
-                .toEntity(JsonNode.class)
-                .block();
+                .toEntity(JsonNode.class);
     }
 }
