@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = Main.class)
-public class TransactionsCCTests {
+public class TransactionServiceTest {
 
     @Autowired
     private TransactionService transactionService;

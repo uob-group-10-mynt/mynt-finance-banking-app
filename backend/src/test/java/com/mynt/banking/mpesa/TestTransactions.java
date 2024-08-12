@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = Main.class)
@@ -127,9 +129,7 @@ public class TestTransactions {
 
         assert response != null;
         assertEquals(200,response.getStatusCode().value());
-        String sucessMessage = "successful transfer of funds to Benificaries MPesa Account";
-        assertEquals(sucessMessage,response.getBody().get("status").asText());
-
+        String successMessage = "successful transfer of funds to Beneficiaries MPesa Account";
+        assertEquals(successMessage, Objects.requireNonNull(response.getBody()).get("status").asText());
     }
-
 }

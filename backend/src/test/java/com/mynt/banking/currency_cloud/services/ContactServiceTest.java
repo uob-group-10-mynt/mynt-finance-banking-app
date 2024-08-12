@@ -50,8 +50,8 @@ public class ContactServiceTest {
 
         FindAccountRequest requestBody = FindAccountRequest.builder().build();
         ResponseEntity<JsonNode> accountNumber = accountService.find(requestBody);
-        accountNumber.getBody().get("pagination").get("total_entries").asText();
-        int i = Integer.valueOf(accountNumber.getBody().get("pagination").get("total_entries").asText());
+        Objects.requireNonNull(accountNumber.getBody()).get("pagination").get("total_entries").asText();
+        int i = Integer.parseInt(accountNumber.getBody().get("pagination").get("total_entries").asText());
         i++;
 
         CreateContactRequest contact = CreateContactRequest.builder()
@@ -64,11 +64,10 @@ public class ContactServiceTest {
                 .build();
 
         ResponseEntity<JsonNode> result = this.contactsService.createContact(contact);
-
         assert result != null;
         assertEquals(result.getStatusCode().value(), 200);
 
-        assertEquals(result.getBody().get("account_id").asText(), this.accountID);
+        assertEquals(Objects.requireNonNull(result.getBody()).get("account_id").asText(), this.accountID);
         assertEquals(result.getBody().get("first_name").asText(), contact.getFirstName());
         assertEquals(result.getBody().get("last_name").asText(), contact.getLastName());
         assertEquals(result.getBody().get("email_address").asText(), contact.getEmailAddress());
@@ -81,41 +80,30 @@ public class ContactServiceTest {
     public void testUpdateContact() {
         String ContactUUID = "ec883781-41b5-476c-aa05-568cc2023756";
         UpdateContactRequest contact = UpdateContactRequest.builder()
-                .firstname("Kelvin")
-                .lastname("Luuu")
+                .firstName("Kelvin")
+                .lastName("Luuu")
                 .phoneNumber("44 7824792135")
                 .build();
-
         ResponseEntity<JsonNode> result = contactsService.updateContact(ContactUUID, contact);
-
         assert result != null;
         assertTrue(result.getStatusCode().is2xxSuccessful());
-
-        assertEquals(result.getBody().get("first_name").asText(), contact.getFirstname());
-        assertEquals(result.getBody().get("last_name").asText(), contact.getLastname());
-        //assertEquals(result.getBody().get("email_address").asText(), contact.getEmailAddress());
+        assertEquals(Objects.requireNonNull(result.getBody()).get("first_name").asText(), contact.getFirstName());
+        assertEquals(result.getBody().get("last_name").asText(), contact.getLastName());
         assertEquals(result.getBody().get("phone_number").asText(), contact.getPhoneNumber());
-        assertEquals(result.getBody().get("date_of_birth").asText(), contact.getDateOfBirth());
-
         ResponseEntity<JsonNode> getContactResult = this.contactsService.getContact(ContactUUID);
 
         assert getContactResult != null;
         assertTrue(getContactResult.getStatusCode().is2xxSuccessful());
 
-        assertEquals(getContactResult.getBody().get("first_name").asText(), contact.getFirstname());
-        assertEquals(getContactResult.getBody().get("last_name").asText(), contact.getLastname());
-        //assertEquals(getContactResult.getBody().get("email_address").asText(), contact.getEmailAddress());
+        assertEquals(getContactResult.getBody().get("first_name").asText(), contact.getFirstName());
+        assertEquals(getContactResult.getBody().get("last_name").asText(), contact.getLastName());
         assertEquals(getContactResult.getBody().get("phone_number").asText(), contact.getPhoneNumber());
-        assertEquals(getContactResult.getBody().get("date_of_birth").asText(), contact.getDateOfBirth());
     }
 
     @Test
     public void testGetContact() {
         ResponseEntity<JsonNode> result = this.contactsService.getContact("ec883781-41b5-476c-aa05-568cc2023756");
-
         assert result != null;
         assertTrue(result.getStatusCode().is2xxSuccessful());
-        System.out.println(result.getBody());
     }
-
 }

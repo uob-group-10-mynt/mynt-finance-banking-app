@@ -71,8 +71,8 @@ public class UserService {
     String currencyCloudContactUUID = userContextService.getCurrentUserUuid();
 
     UpdateContactRequest updateContactRequest = UpdateContactRequest.builder()
-            .firstname(request.getFirstname())
-            .lastname(request.getLastname())
+            .firstName(request.getFirstname())
+            .lastName(request.getLastname())
             .phoneNumber(request.getPhoneNumber())
             .build();
 

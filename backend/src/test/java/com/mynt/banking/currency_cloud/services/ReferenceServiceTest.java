@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @SpringBootTest(classes = Main.class)
-public class ReferenceCCTest {
+public class ReferenceServiceTest {
 
     @Autowired
     private ReferenceService referenceService;
