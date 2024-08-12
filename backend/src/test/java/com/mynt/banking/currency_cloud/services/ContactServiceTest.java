@@ -83,17 +83,13 @@ public class ContactServiceTest {
         UpdateContactRequest contact = UpdateContactRequest.builder()
                 .firstname("Kelvin")
                 .lastname("Luuu")
-                //.emailAddress("james.love@gmail.com")
-                // A request to update a contact's email address does not immediately update the value. Instead, an email change request flow is initiated
-
-                .phoneNumber("+44 7824792135")
-                .dateOfBirth("1998-08-13")
+                .phoneNumber("44 7824792135")
                 .build();
 
         ResponseEntity<JsonNode> result = contactsService.updateContact(ContactUUID, contact);
 
         assert result != null;
-        assertEquals(result.getStatusCode().is2xxSuccessful(), true);
+        assertTrue(result.getStatusCode().is2xxSuccessful());
 
         assertEquals(result.getBody().get("first_name").asText(), contact.getFirstname());
         assertEquals(result.getBody().get("last_name").asText(), contact.getLastname());

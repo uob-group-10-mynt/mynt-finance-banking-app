@@ -40,7 +40,6 @@ public class ContactsService {
         return restClient
                 .post()
                 .uri(uri)
-                .body(request)
                 .retrieve()
                 .toEntity(JsonNode.class);
     }

@@ -25,58 +25,44 @@ repositories {
 }
 
 dependencies {
-	// Spring Boot Starters
+	implementation 'io.github.resilience4j:resilience4j-ratelimiter:2.2.0'
+	implementation 'io.github.resilience4j:resilience4j-retry:2.2.0'
+	implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
+
+
+	implementation 'com.fasterxml.uuid:java-uuid-generator:4.0.1'
+	implementation 'com.google.code.gson:gson:2.8.9'
+	implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+	implementation 'com.squareup.retrofit2:converter-gson:2.9.0' // for JSON parsing
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-logging'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
-	implementation 'org.springframework:spring-webflux:6.1.11'
-
-	// Jackson dependencies
-	implementation 'com.fasterxml.jackson.core:jackson-core:2.15.1' // Use the latest version
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.1' // Use the latest version
-	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.1' // Use the latest version
-
-
-	// Database
-	runtimeOnly 'org.postgresql:postgresql:42.7.3'
-
-	// JWT
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.postgresql:postgresql:42.7.3'
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+	implementation 'org.springframework.boot:spring-boot-starter-logging'
+	implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'
+	implementation 'com.nimbusds:nimbus-jose-jwt:9.37.2'
+	compileOnly 'org.projectlombok:lombok'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'io.projectreactor:reactor-core'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'org.postgresql:postgresql'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
-	implementation 'com.nimbusds:nimbus-jose-jwt:9.37.2'
-
-	// Resilience4j
-	implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
-	implementation 'io.github.resilience4j:resilience4j-retry:2.2.0'
-	implementation 'io.github.resilience4j:resilience4j-ratelimiter:2.2.0'
-
-	// Retrofit
-	implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-	implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-
-	// JSON and UUID Utilities
-	implementation 'com.fasterxml.uuid:java-uuid-generator:4.0.1'
-	implementation 'com.google.code.gson:gson:2.8.9'
-	implementation 'com.fasterxml.jackson.core:jackson-databind'
-	implementation 'com.fasterxml.jackson.core:jackson-core:2.15.1' // Use the latest version
-	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.1' // Use the latest version
-
-	// Lombok
-	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
-
-	// Development and Testing
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.mockito:mockito-core:5.5.0'
-	testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'com.fasterxml.jackson.core:jackson-databind'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.projectlombok:lombok:1.18.24'
+	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+	testImplementation 'org.mockito:mockito-core:5.5.0'
+	testImplementation 'junit:junit:4.13.2'
 }
 
 

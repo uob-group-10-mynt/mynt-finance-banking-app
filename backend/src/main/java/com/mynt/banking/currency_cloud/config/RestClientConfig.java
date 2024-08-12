@@ -29,8 +29,8 @@ public class RestClientConfig {
         return RestClient.builder()
                 .baseUrl(apiUrl)
                 .defaultHeader("X-Auth-Token", authenticationService.getAuthToken())
-                .requestInterceptor(new AuthTokenInterceptor(authenticationService))
-                .requestInterceptor(new LoggingInterceptor())
+//                .requestInterceptor(new AuthTokenInterceptor(authenticationService))
+//                .requestInterceptor(new LoggingInterceptor())
 //                .requestInterceptor(new RateLimitingInterceptor(rateLimiterRegistry))
                 .build();
     }
