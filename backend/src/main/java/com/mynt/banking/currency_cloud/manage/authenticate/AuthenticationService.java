@@ -2,6 +2,8 @@ package com.mynt.banking.currency_cloud.manage.authenticate;
 
 import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

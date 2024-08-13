@@ -2,6 +2,8 @@ package com.mynt.banking.currency_cloud.convert.rates;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.util.UriBuilderUtil;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

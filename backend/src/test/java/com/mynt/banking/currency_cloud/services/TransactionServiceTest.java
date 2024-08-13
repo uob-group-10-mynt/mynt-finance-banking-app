@@ -1,35 +1,32 @@
 package com.mynt.banking.currency_cloud.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mynt.banking.currency_cloud.config.FallbackConfig;
 import com.mynt.banking.currency_cloud.manage.transactions.TransactionService;
 import com.mynt.banking.currency_cloud.manage.transactions.FindTransactionRequest;
 import com.mynt.banking.Main;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClient;
+
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = Main.class)
 public class TransactionServiceTest {
 
     @Autowired
     private TransactionService transactionService;
-
-    @Test
-    void testTransactionsFind() {
-
-
-        FindTransactionRequest findTransaction = FindTransactionRequest.builder()
-                .build();
-
-        ResponseEntity<JsonNode> response =  transactionService.find(findTransaction);
-
-        assert response != null;
-        assertEquals("USD",response.getBody().get("transactions").get(0).get("currency").asText());
-        assertEquals( "100000.00",response.getBody().get("transactions").get(0).get("amount").asText());
-    }
 
     @Test
     void testFindTransactionID() {

@@ -2,6 +2,8 @@ package com.mynt.banking.currency_cloud.pay.payments;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,7 +14,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private final AuthenticationService authenticationService;
     private final RestClient restClient;
 
     public ResponseEntity<JsonNode> get(String id, String onBehalfOf) {

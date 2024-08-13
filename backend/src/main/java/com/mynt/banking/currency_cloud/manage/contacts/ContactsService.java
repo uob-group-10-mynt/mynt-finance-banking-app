@@ -1,7 +1,6 @@
 package com.mynt.banking.currency_cloud.manage.contacts;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.manage.authenticate.AuthenticationService;
 import com.mynt.banking.util.UriBuilderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,6 @@ import org.springframework.web.client.RestClient;
 @RequiredArgsConstructor
 public class ContactsService {
 
-    private final AuthenticationService authenticationService;
     private final RestClient restClient;
 
     public ResponseEntity<JsonNode> createContact(CreateContactRequest requestBody) {
