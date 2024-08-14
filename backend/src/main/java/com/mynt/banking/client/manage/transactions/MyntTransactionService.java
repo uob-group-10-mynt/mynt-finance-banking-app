@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mynt.banking.currency_cloud.collect.funding.FindAccountDetailsRequest;
 import com.mynt.banking.currency_cloud.collect.funding.FundingService;
-import com.mynt.banking.currency_cloud.config.FallbackConfig;
 import com.mynt.banking.currency_cloud.convert.conversions.ConversionService;
 import com.mynt.banking.currency_cloud.manage.transactions.TransactionService;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
@@ -21,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,36 +36,18 @@ public class MyntTransactionService {
     private final PaymentService paymentService;
     private final BeneficiaryService beneficiaryService;
     private final ConversionService conversionService;
-    private final FallbackConfig fallbackConfig;
-
-//    public MyntTransactionsDetailResponse rateLimiterFallback(String currency, String relatedEntityType, Integer perPage, Integer page, Throwable throwable) {
-//        log.warn("Rate limiter triggered for find method with currency: {}, relatedEntityType: {}, perPage: {}, page: {}. Fallback method invoked.",
-//                currency != null ? currency : "N/A",
-//                relatedEntityType != null ? relatedEntityType : "N/A",
-//                perPage != null ? perPage : "N/A",
-//                page != null ? page : "N/A",
-//                throwable);
-//        throw new CurrencyCloudException("Rate limiter triggered. Unable to process the request at this time.", HttpStatus.TOO_MANY_REQUESTS);
-//    }
-//
-//    public MyntTransactionsDetailResponse retryFallback(String currency, String relatedEntityType, Integer perPage, Integer page, Throwable throwable) {
-//        log.warn("Retry mechanism triggered for find method with currency: {}, relatedEntityType: {}, perPage: {}, page: {}. Fallback method invoked.",
-//                currency != null ? currency : "N/A",
-//                relatedEntityType != null ? relatedEntityType : "N/A",
-//                perPage != null ? perPage : "N/A",
-//                page != null ? page : "N/A",
-//                throwable);
-//        throw new CurrencyCloudException("Retry mechanism triggered. Unable to process the request at this time.", HttpStatus.SERVICE_UNAVAILABLE);
-//    }
-
-
 
     @RateLimiter(name = "currencyCloudRequests")
     @Retry(name = "defaultRetry")
-    public MyntTransactionsDetailResponse find(String currency, String relatedEntityType, Integer perPage, Integer page) {
+    public MyntTransactionsDetailResponse find(String currency,
+                                               String relatedEntityType,
+                                               LocalDate createdAtFrom,
+                                               LocalDate createdAtTo,
+                                               Integer perPage,
+                                               Integer page) {
         // Fetch Transactions
         ResponseEntity<JsonNode> currencyCloudTransactionResponse = transactionService.find(
-                currency, relatedEntityType, userContextService.getCurrentUserUuid(), perPage, page);
+                currency, relatedEntityType, userContextService.getCurrentUserUuid(), createdAtFrom, createdAtTo, perPage, page);
 
         // Form TransactionDetailResponse:
         JsonNode responseBody = currencyCloudTransactionResponse.getBody();
