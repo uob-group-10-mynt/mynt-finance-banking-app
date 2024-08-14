@@ -1,0 +1,54 @@
+name: BUILD_AND_TEST
+on:
+  push:
+    branches:
+      - main
+      - 'init/backend'
+      - 'feature/backend-**'
+      - '**/backend**'
+jobs:
+  build_and_test:
+    environment: Testing_Environment
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      RDS_SSL_CERT_PATH: ${{ secrets.RDS_SSL_CERT_PATH }}
+      PEM_CONTENT: ${{ secrets.PEM_CONTENT }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./backend/gradlew
+
+      - name: Create Pem File
+        run: |
+          mkdir .env
+          cd .env
+          echo "${{ env.PEM_CONTENT }}" >> "${{ env.RDS_SSL_CERT_PATH }}"
+          ls
+          cd ../
+
+      - name: Build Gradle
+        id: test
+        run: |
+          cd backend
+          ./gradlew clean build test
+
+      - name: Upload A test file for failures
+        if: failure() && steps.test.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: ./backend/build/reports/tests/test/index.html

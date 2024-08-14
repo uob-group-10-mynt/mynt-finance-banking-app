@@ -1,0 +1,245 @@
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// Find Balances:
+
+// get-request returns list<balance>: api/v1/balance/find/ 
+// get-request returns list<balance>: api/v1/balance?currency_code=value   *note list will be length == 1:
+const findBalancesResponse = [
+    {
+        'bank': 'mynt',
+        'label': 'USD Current Account',
+        "account_number_type": "iban",
+        "account_number": "GB88TCCL12345674642170",
+        "routing_code": "TCCLGB3L",
+        "routing_code_type": "bic_swift",
+        'balance': '1010234.0',
+        'currency': 'USD',
+    },
+    {
+        'bank': 'mynt',
+        'label': 'KES Current Account',
+        "account_number_type": "iban",
+        "account_number": "GB88TCCL12345674642170",
+        "routing_code": "TCCLGB3L",
+        "routing_code_type": "bic_swift",
+        'balance': '1000',
+        'currency': 'USD',
+    },
+];
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Find Account Deatils 
+const findAccountDetailsRequest = {
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Find transactions:
+const findTransactionsRequest = [
+    {
+        "currency": "KES",
+        "related_entity_type": "payment",
+        "per_page" 1,
+        "page", 1
+    }
+]
+
+Enum - The related entity that created the transaction:
+conversion
+payment
+inbound_funds
+deposit
+transfer
+
+* All optional paramas. If none provided them returns all transacations for that subaccount:
+
+const findTransactinosResponse = [
+    {
+        "transactions": [
+            {
+            "id": "889330a4-5c21-487c-a24d-7026d31d9b49",
+            "account_id": "d0528032-d1f4-4cab-97b6-65133a811abe",
+            "currency": "KES",
+            "amount": "1000.00",
+            "balance_amount": "14000.00",
+            "type": "debit",
+            "related_entity_type": "payment",
+            "related_entity_id": "81d2047f-466d-4eba-a509-5333517cf83d",
+            "related_entity_short_reference": "240706-LXCQ3L584",
+            "status": "completed",
+            "reason": "",
+            "created_at": "2024-07-06T11:58:50+00:00",
+            "action": "payment"
+            }
+        ],
+        "pagination": {
+            "total_entries": 3,
+            "total_pages": 3,
+            "current_page": 2,
+            "per_page": 1,
+            "previous_page": 1,
+            "next_page": 3,
+            "order": "default",
+            "order_asc_desc": "asc"
+        }
+    }
+]
+
+GUI DISPLAY LIST OF TRANSACTIONS:
+
+Reference           Created Completed           Type        Status          Amount          Balance
+IF-20240803-FAOXV9	03 Aug 2024	03 Aug 2024	    Funding	    Completed	    + 30,000.00	    30,000.00
+IF-20240803-FAOXV9	03 Aug 2024	03 Aug 2024	    Funding	    Completed	    + 30,000.00	    30,000.00
+IF-20240803-FAOXV9	03 Aug 2024	03 Aug 2024	    Funding	    Completed	    + 30,000.00	    30,000.00
+IF-20240803-FAOXV9	03 Aug 2024	03 Aug 2024	    Funding	    Completed	    + 30,000.00	    30,000.00
+IF-20240803-FAOXV9	03 Aug 2024	03 Aug 2024	    Funding	    Completed	    + 30,000.00	    30,000.00
+IF-20240803-FAOXV9	03 Aug 2024	03 Aug 2024	    Funding	    Completed	    + 30,000.00	    30,000.00
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Transaction Details:
+
+EntityType = Payment:
+
+
+
+Request:
+
+{
+    "transaction_id"
+}
+
+
+Response:
+
+1. transaction.account_id -> fetch account deatils from find_funding:
+[
+    "account_holder_name": "My Test Account Holder",
+    "bank_country": "GB",
+    "bank_name": "TEST BANK NAME"
+    "account_number_type": "iban",
+    "account_number": "GB63TCCL12345654082403",
+    "routing_code_type": "bic_swift"
+    "routing_code": "TCCLGB3L",
+]
+
+2. use related_entity_id --> get_payment_details:
+{
+    "id": "dbec7699-6508-479e-b1cf-d4fbe4bed798",
+    "amount": "10.00",
+    "currency": "GBP",
+    "reference": "This is a test reference.",
+    "reason": "This is a test payment.",
+    "status": "ready_to_send",
+    "payment_type": "regular",
+    "payment_date": "2022-01-31",
+    "short_reference": "220131-R2M0R4791",
+    "payer_deatils":
+    "created_at": "2022-01-31T14:30:46+00:00",
+    "review_status": "in_review",
+}
+      
+3. use beneficiary_id --> get beneficiary_details
+[
+    "account_holder_name": "My Test Account Holder",
+    "bank_country": "GB",
+    "bank_name": "TEST BANK NAME"
+    "bic_swift": null,
+    "iban": null,
+],
+
+
+Final Response Body:
+{
+    "id": "dbec7699-6508-479e-b1cf-d4fbe4bed798",
+    "amount": "10.00",
+    "currency": "GBP",
+    "beneficiary_account_details": [
+            "account_holder_name": "My Test Account Holder",
+            "bank_country": "GB",
+            "bank_name": "TEST BANK NAME"
+            "bic_swift": null,
+            "iban": null,
+        ],
+    "payer_account_details": [
+            "account_holder_name": "My Test Account Holder",
+            "bank_country": "GB",
+            "bank_name": "TEST BANK NAME"
+            "account_number_type": "iban",
+            "account_number": "GB63TCCL12345654082403",
+            "routing_code_type": "bic_swift"
+            "routing_code": "TCCLGB3L",
+        ],
+    "reference": "This is a test reference.",
+    "reason": "This is a test payment.",
+    "status": "ready_to_send",
+    "payment_type": "regular",
+    "payment_date": "2022-01-31",
+    "short_reference": "220131-R2M0R4791",
+    "payer_deatils":
+    "created_at": "2022-01-31T14:30:46+00:00",
+    "review_status": "in_review",
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Transaction Details:
+
+EntityType = Conversion:
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+specific detail on transaction using related_entity_id
+
+list of beneficiaries 
+specific detail on beneficiary 
+create_beneficiary
+    use regex and valid 
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Beneficiary Required Details:
+
+
+validate beneficiary:
+
+{
+
+
+}
+
+
+
+{
+      "payment_type": "priority",
+      "beneficiary_entity_type": "individual",
+      "beneficiary_address": "^.{1,255}",
+      "beneficiary_city": "^.{1,255}",
+      "beneficiary_country": "^[A-z]{2}$",
+      "beneficiary_first_name": "^([^0-9]{2,255})$",
+      "beneficiary_last_name": "^([^0-9]{2,255})$",
+      "iban": "([A-Z0-9]\\s*){15,34}",
+      "bic_swift": "^[0-9A-Z]{8}$|^[0-9A-Z]{11}$"
+    },
+
+    "payment_type": "priority",
+          "beneficiary_entity_type": "individual",
+          "beneficiary_address": "^.{1,255}",
+          "beneficiary_city": "^.{1,255}",
+          "beneficiary_country": "^[A-z]{2}$",
+          "beneficiary_first_name": "^([^0-9]{2,255})$",
+          "beneficiary_last_name": "^([^0-9]{2,255})$",
+          "acct_number": "^[0-9A-Z]{1,50}$",
+          "bic_swift": "^[0-9A-Z]{8}$|^[0-9A-Z]{11}$"
+        },
+
+

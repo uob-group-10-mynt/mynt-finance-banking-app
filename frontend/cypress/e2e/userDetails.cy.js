@@ -1,0 +1,41 @@
+describe('user details page', ()  => {
+    it('can view and update user details', () => {
+        let timestamp = Date.now()
+        const firstname = 'Cypress' + timestamp
+        const lastname = 'Test' + timestamp
+        const address = 'Bristol' + timestamp
+        const phoneNumber = '07123123123' + timestamp
+
+        cy.loginTestUser()
+        cy.get('[data-cy="navButton"]').click()
+        cy.get('[data-cy="DetailsLink"]').click()
+
+        //set new details
+        cy.get('[data-cy="EditButton"]').click()
+        cy.get('[data-cy="saveDetailsButton"]').should('be.visible')
+        cy.get('[data-cy="firstnameInput"]').clear()
+        cy.get('[data-cy="firstnameInput"]').type(firstname)
+        cy.get('[data-cy="lastnameInput"]').clear()
+        cy.get('[data-cy="lastnameInput"]').type(lastname)
+        cy.get('[data-cy="dobInput"]').should('have.attr', 'readonly')
+        cy.get('[data-cy="emailInput"]').should('have.attr', 'readonly')
+        cy.get('[data-cy="addressInput"]').clear().type(address)
+        cy.get('[data-cy="phoneNumberInput"]').clear().type(phoneNumber)
+        cy.get('[data-cy="saveDetailsButton"]').click()
+        cy.get('[data-cy="EditButton"]').should('be.visible')
+
+        //navigate away and back to page
+        cy.get('[data-cy="navButton"]').click()
+        cy.get('[data-cy="RemittanceLink"]').click()
+        cy.get('[data-cy="navButton"]').click()
+        cy.get('[data-cy="DetailsLink"]').click()
+
+        //assert changes
+        cy.get('[data-cy="firstnameInput"]').should('have.value', firstname).should('have.attr', 'readonly')
+        cy.get('[data-cy="lastnameInput"]').should('have.value', lastname).should('have.attr', 'readonly')
+        cy.get('[data-cy="dobInput"]').should('have.value', '2024-08-04').should('have.attr', 'readonly')
+        cy.get('[data-cy="emailInput"]').should('have.value', 'testaccount@cypress.com').should('have.attr', 'readonly')
+        cy.get('[data-cy="addressInput"]').should('have.value', address).should('have.attr', 'readonly')
+        cy.get('[data-cy="phoneNumberInput"]').should('have.value', phoneNumber).should('have.attr', 'readonly')
+    })
+})

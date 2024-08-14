@@ -1,0 +1,50 @@
+package com.mynt.banking.user;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "_users", schema = "public")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "firstname", nullable = false, length = 50)
+    private String firstname;
+
+    @Column(name = "lastname", nullable = false, length = 50)
+    private String lastname;
+
+    @Column(name = "address", nullable = false, length = 50)
+    private String address;
+
+    @Column(name = "phone_number", nullable = false, length = 50)
+    private String phone_number;
+
+    @Column(name = "dob", nullable = false, length = 50)
+    private String dob;
+
+    @Column(name = "password", nullable = false, length = 100)
+    private String password;
+
+    @Column(name = "email", nullable = false, length = 100, unique = true)
+    private String email;
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Column(name = "base_currency", nullable = false, length = 100)
+    @Builder.Default
+    private String baseCurrency = "KES";
+}
