@@ -1,0 +1,1 @@
+{"path":"/api/v1/transaction","error":"Too Many Requests","message":"Rate limit exceeded. Please wait and try again later.","timestamp":"1723576631116","status":"429"}
