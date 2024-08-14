@@ -66,7 +66,6 @@ public class UserService {
     user.setLastname(request.getLastname());
     user.setPhone_number(request.getPhoneNumber());
     user.setAddress(request.getAddress());
-    userRepository.save(user);
 
     String currencyCloudContactUUID = userContextService.getCurrentUserUuid();
 
@@ -80,7 +79,8 @@ public class UserService {
             .updateContact(currencyCloudContactUUID, updateContactRequest)
             .block();
 
-      assert updateContactResponse != null;
-      if (updateContactResponse.getStatusCode().isError()) throw new RuntimeException("");
+    assert updateContactResponse != null;
+    if (updateContactResponse.getStatusCode().isError()) throw new RuntimeException("");
+    userRepository.save(user);
   }
 }
