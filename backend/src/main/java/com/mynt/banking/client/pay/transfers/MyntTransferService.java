@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mynt.banking.currency_cloud.manage.contacts.ContactsService;
-import com.mynt.banking.currency_cloud.manage.contacts.requestsDtos.FindContact;
+import com.mynt.banking.currency_cloud.manage.contacts.FindContactRequest;
 import com.mynt.banking.currency_cloud.pay.transfers.TransferService;
-import com.mynt.banking.currency_cloud.pay.transfers.requests.CreateTransferRequest;
+import com.mynt.banking.currency_cloud.pay.transfers.CreateTransferRequest;
 import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +27,8 @@ public class MyntTransferService {
         String sourceEmail = userContextService.getCurrentUsername();
 
         // get current user account ID
-        FindContact findContact = FindContact.builder().emailAddress(sourceEmail).build();
-        ResponseEntity<JsonNode> sourceAccountID = contactsService.findContact(findContact).block();
+        FindContactRequest findContact = FindContactRequest.builder().emailAddress(sourceEmail).build();
+        ResponseEntity<JsonNode> sourceAccountID = contactsService.findContact(findContact);
 
 
         if(sourceAccountID == null || !sourceAccountID.getStatusCode().is2xxSuccessful()){
@@ -42,8 +42,8 @@ public class MyntTransferService {
         String recipiantEmail =  userRepository.findByEmail(emailTransferTo).get().getEmail();
 
         // get recipient ID
-        FindContact findRecipiantContact = FindContact.builder().emailAddress(recipiantEmail).build();
-        ResponseEntity<JsonNode> recipiantAccountID = contactsService.findContact(findRecipiantContact).block();
+        FindContactRequest findRecipiantContact = FindContactRequest.builder().emailAddress(recipiantEmail).build();
+        ResponseEntity<JsonNode> recipiantAccountID = contactsService.findContact(findRecipiantContact);
 
         if(recipiantAccountID == null || !recipiantAccountID.getStatusCode().is2xxSuccessful()){
             ObjectMapper mapper = new ObjectMapper();
@@ -60,7 +60,7 @@ public class MyntTransferService {
                 .build();
 
         //call transfer
-        ResponseEntity<JsonNode> response = this.transferService.createTransfer(createTransferRequest).block();
+        ResponseEntity<JsonNode> response = this.transferService.createTransfer(createTransferRequest);
 
         if(response != null && response.getStatusCode().is2xxSuccessful()){
             ObjectMapper mapper = new ObjectMapper();
@@ -69,7 +69,9 @@ public class MyntTransferService {
             return ResponseEntity.ok(jsonObject);
         }
 
+        assert response != null;
         ObjectNode errorResponse = (ObjectNode)response.getBody();
+        assert errorResponse != null;
         errorResponse.put("message", "Error with transaction \n transaction has failed");
 
         return ResponseEntity.badRequest().body(errorResponse);

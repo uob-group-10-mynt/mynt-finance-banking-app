@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.mynt.banking.client.convert.rates.requests.MyntUpdateBaseCurrencyRequest;
 import com.mynt.banking.client.convert.rates.responses.MyntGetBasicRatesResponse;
 import com.mynt.banking.currency_cloud.convert.rates.RateService;
-import com.mynt.banking.currency_cloud.convert.rates.requests.GetBasicRatesRequest;
+import com.mynt.banking.currency_cloud.convert.rates.GetBasicRatesRequest;
 import com.mynt.banking.currency_cloud.manage.reference.ReferenceService;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserContextService;
@@ -55,7 +55,7 @@ public class MyntRatesService {
                 .onBehalfOf(contactUUID)
                 .build();
 
-        ResponseEntity<JsonNode> ccResponse =  rateService.getBasicRates(getBasicRatesRequest).block();
+        ResponseEntity<JsonNode> ccResponse =  rateService.getBasicRates(getBasicRatesRequest);
 
         assert ccResponse != null;
         if (ccResponse.getStatusCode().isError()) return ccResponse;
@@ -91,7 +91,7 @@ public class MyntRatesService {
     private List<String> getAvailableCurrenciesAsStringList() {
         List<String> codes = new LinkedList<>();
 
-        ResponseEntity<JsonNode> ccResponse = referenceService.getAvailableCurrencies().block();
+        ResponseEntity<JsonNode> ccResponse = referenceService.getAvailableCurrencies();
         assert ccResponse != null;
         assert ccResponse.getStatusCode().is2xxSuccessful();
         JsonNode currenciesNode = Objects.requireNonNull(ccResponse.getBody()).get("currencies");

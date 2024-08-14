@@ -6,13 +6,14 @@ import com.mynt.banking.Main;
 import com.mynt.banking.auth.KycService;
 import com.mynt.banking.auth.requests.SignUpRequest;
 import com.mynt.banking.auth.responses.SDKResponse;
-import com.mynt.banking.mPesa.FlutterwaveService;
-import com.mynt.banking.mPesa.requests.*;
+import com.mynt.banking.mpesa.requests.*;
 import com.mynt.banking.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -47,7 +48,7 @@ public class TestTransactions {
         ResponseEntity<JsonNode> responce = flutterwaveService.mPesaToFlutterwave(mPesaToFlutterWearDto).block();
 
         String id = responce.getBody().get("data").get("id").asText();
-        ResponseEntity<JsonNode> responce1 = flutterwaveService.depoistTransactionCheck(id).block();
+        ResponseEntity<JsonNode> responce1 = flutterwaveService.depositTransactionCheck(id).block();
 
         assert responce1 != null;
         assertEquals(200,responce1.getStatusCode().value());
@@ -128,9 +129,7 @@ public class TestTransactions {
 
         assert response != null;
         assertEquals(200,response.getStatusCode().value());
-        String sucessMessage = "successful transfer of funds to Benificaries MPesa Account";
-        assertEquals(sucessMessage,response.getBody().get("status").asText());
-
+        String successMessage = "successful transfer of funds to Beneficiaries MPesa Account";
+        assertEquals(successMessage, Objects.requireNonNull(response.getBody()).get("status").asText());
     }
-
 }

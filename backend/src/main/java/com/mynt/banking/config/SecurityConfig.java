@@ -32,22 +32,27 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
-
     private static final String[] WHITE_LIST_URL = {
             "/api/v1/auth/**",
             "/api/v1/auth/sdk**",
-            "/api/v1/users/**",
-            "/api/v1/currency-cloud/beneficiaries/**",
-            "/api/v1/payments/**",
             "/v3/api-docs/**",
+            "/actuator/**",
             "/swagger-resources",
             "/swagger-resources/**",
             "/configuration/ui",
             "/configuration/security",
             "/swagger-ui/**",
-            "/webjars/**",
-            "/api/v1/payments/**",
+            "/webjars/**"
+    };
+
+    private static final String[] PROTECTED_API_URL = {
+            "/api/v1/flutterwave/**",
+            "/api/v1/transaction/**",
             "/api/v1/rates/**",
+            "/api/v1/users/**",
+            "/api/v1/beneficiary/**",
+            "/api/v1/transfer/**",
+            "/api/v1/payments/**",
             "/api/v1/conversions/**"
     };
 
@@ -66,7 +71,6 @@ public class SecurityConfig {
         };
     }
 
-
     @Bean
     public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 
@@ -83,15 +87,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(WHITE_LIST_URL)
                         .permitAll()
-                        .requestMatchers("/api/v1/currency-cloud/**").hasRole("USER")
-                        .requestMatchers("/api/v1/demo-controller/**").hasRole("USER")
-                        .requestMatchers("/api/v1/flutterwave/**").hasRole("USER")
-                        .requestMatchers("/api/v1/transaction/**").hasRole("USER")
-                        .requestMatchers("/api/v1/rates/**").hasRole("USER")
-                        .requestMatchers("/api/v1/users/**").hasRole("USER")
-                        .requestMatchers("/api/v1/beneficiary/**").hasRole("USER")
-                        .requestMatchers("/api/v1/transfer/**").hasRole("USER")
-                        .requestMatchers("/api/v1/payments/**").hasRole("USER")
+                        .requestMatchers(PROTECTED_API_URL)
+                        .hasRole("USER")
                         .anyRequest()
                         .authenticated()
                 )

@@ -2,7 +2,7 @@ package com.mynt.banking.currency_cloud.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.currency_cloud.pay.transfers.TransferService;
-import com.mynt.banking.currency_cloud.pay.transfers.requests.CreateTransferRequest;
+import com.mynt.banking.currency_cloud.pay.transfers.CreateTransferRequest;
 import com.mynt.banking.Main;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class TransferServiceTest {
                 .amount(1000)
                 .build();
 
-        ResponseEntity<JsonNode> result = this.transferService.createTransfer(transferRequest).block();
+        ResponseEntity<JsonNode> result = this.transferService.createTransfer(transferRequest);
 
         assert result != null;
         assert result.getBody() != null;

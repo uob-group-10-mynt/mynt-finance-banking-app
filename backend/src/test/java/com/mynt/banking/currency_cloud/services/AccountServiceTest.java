@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mynt.banking.currency_cloud.manage.accounts.requests.CreateAccountRequest;
+import com.mynt.banking.currency_cloud.manage.accounts.CreateAccountRequest;
 import com.mynt.banking.Main;
-import com.mynt.banking.currency_cloud.manage.accounts.requests.UpdateAccountRequest;
+import com.mynt.banking.currency_cloud.manage.accounts.UpdateAccountRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,7 +43,7 @@ public class AccountServiceTest {
                 .termsAndConditionsAccepted(null)
                 .build();
 
-        ResponseEntity<JsonNode> result = accountService.create(requestBody).block();
+        ResponseEntity<JsonNode> result = accountService.create(requestBody);
 
         assert result != null;
         int responseCode = result.getStatusCode().value();
@@ -83,7 +83,7 @@ public class AccountServiceTest {
                 .country("GB")
                 .build();
 
-        ResponseEntity<JsonNode> result = accountService.create(requestBody).block();
+        ResponseEntity<JsonNode> result = accountService.create(requestBody);
 
         assert result != null;
         assertEquals(result.getStatusCode().value(),200);
@@ -120,7 +120,7 @@ public class AccountServiceTest {
                 .build();
 
         String id = "44f353c2-d97f-4bf6-86d1-4b668c9dbcef";
-        ResponseEntity<JsonNode> result = accountService.update(requestBody, id).block();
+        ResponseEntity<JsonNode> result = accountService.update(requestBody, id);
 
         assert result != null;
         assertEquals(result.getStatusCode().value(),200);

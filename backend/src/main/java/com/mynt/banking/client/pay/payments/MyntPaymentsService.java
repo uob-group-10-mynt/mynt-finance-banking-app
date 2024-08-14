@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mynt.banking.currency_cloud.convert.conversions.ConversionService;
-import com.mynt.banking.currency_cloud.convert.conversions.requests.CreateConversionRequest;
+import com.mynt.banking.currency_cloud.convert.conversions.CreateConversionRequest;
 import com.mynt.banking.currency_cloud.convert.rates.RateService;
-import com.mynt.banking.currency_cloud.convert.rates.requests.GetBasicRatesRequest;
+import com.mynt.banking.currency_cloud.convert.rates.GetBasicRatesRequest;
 import com.mynt.banking.currency_cloud.manage.balances.BalanceService;
 import com.mynt.banking.currency_cloud.manage.balances.GetBalanceRequest;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
 import com.mynt.banking.currency_cloud.pay.payments.PaymentService;
-import com.mynt.banking.currency_cloud.pay.payments.requests.CreatePaymentRequest;
+import com.mynt.banking.currency_cloud.pay.payments.CreatePaymentRequest;
 import com.mynt.banking.user.UserContextService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -84,7 +84,7 @@ public class MyntPaymentsService {
                 .uniqueRequestId(uniqueRequestId)
                 .build();
 
-        ResponseEntity<JsonNode> ccCreatePaymentResponse = paymentService.create(createPaymentRequest).block();
+        ResponseEntity<JsonNode> ccCreatePaymentResponse = paymentService.create(createPaymentRequest);
         assert ccCreatePaymentResponse != null;
         if(!ccCreatePaymentResponse.getStatusCode().is2xxSuccessful()) return ccCreatePaymentResponse;
 
@@ -96,7 +96,7 @@ public class MyntPaymentsService {
         GetBalanceRequest getBalanceRequest = GetBalanceRequest.builder()
                 .onBehalfOf(contactUuid)
                 .build();
-        ResponseEntity<JsonNode> getBalanceResponse = balanceService.getBalance(currency,getBalanceRequest).block();
+        ResponseEntity<JsonNode> getBalanceResponse = balanceService.getBalance(currency,getBalanceRequest);
         assert getBalanceResponse != null;
         if (!getBalanceResponse.getStatusCode().is2xxSuccessful()) return false;
         double balance = Objects.requireNonNull(getBalanceResponse.getBody()).get("amount").asDouble();
@@ -109,7 +109,7 @@ public class MyntPaymentsService {
                 .onBehalfOf(contactUuid)
                 .currencyPair(sellCurrency+buyCurrency)
                 .build();
-        return rateService.getBasicRates(getBasicRatesRequest).block();
+        return rateService.getBasicRates(getBasicRatesRequest);
     }
     private ResponseEntity<JsonNode> convertBeforePayment(String fromCurrency, String toCurrency, String amount) {
         String contactUuid = userContextService.getCurrentUserUuid();
@@ -121,6 +121,6 @@ public class MyntPaymentsService {
                 .amount(amount)
                 .termAgreement(true)
                 .build();
-        return conversionService.createConversion(createConversionRequest).block();
+        return conversionService.createConversion(createConversionRequest);
     }
 }

@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.CreateBeneficiaryRequest;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.FindBeneficiaryRequest;
-import com.mynt.banking.currency_cloud.pay.beneficiaries.requests.ValidateBeneficiaryRequest;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.CreateBeneficiaryRequest;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.FindBeneficiaryRequest;
+import com.mynt.banking.currency_cloud.pay.beneficiaries.ValidateBeneficiaryRequest;
 import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,8 @@ public class MyntBeneficiaryService {
     private final BeneficiaryService beneficiaryService;
     private final UserContextService userContextService;
 
+    @RateLimiter(name = "currencyCloudRequests", fallbackMethod = "genericFallback")
+    @Retry(name = "defaultRetry", fallbackMethod = "genericFallback")
     public MyntBeneficiariesDetailResponse find(Integer perPage, Integer page) {
         // Form Beneficiary Request:
         FindBeneficiaryRequest findBeneficiaryRequest = FindBeneficiaryRequest.builder()
@@ -76,7 +80,7 @@ public class MyntBeneficiaryService {
         ValidateBeneficiaryRequest validateBeneficiaryRequest = mapToValidateBeneficiaryRequest(request);
         validateBeneficiaryRequest.setBeneficiaryEntityType("individual");
         validateBeneficiaryRequest.setOnBehalfOf(userContextService.getCurrentUserUuid());
-        beneficiaryService.validate(validateBeneficiaryRequest);
+        ResponseEntity<JsonNode> validation = beneficiaryService.validate(validateBeneficiaryRequest);
 
         // Create beneficiary:
         MyntBeneficiaryDetail beneficiaryDetail;

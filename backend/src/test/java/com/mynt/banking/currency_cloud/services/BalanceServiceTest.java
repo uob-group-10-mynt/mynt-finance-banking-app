@@ -32,7 +32,7 @@ public class BalanceServiceTest {
                 .order("")
                 .build();
 
-        ResponseEntity<JsonNode> response = balanceService.find(data).block();
+        ResponseEntity<JsonNode> response = balanceService.find(data);
 
         assertNotNull(response);
         assertEquals(response.getStatusCode().value(),200);
@@ -48,7 +48,7 @@ public class BalanceServiceTest {
                 .onBehalfOf("")
                 .build();
 
-        ResponseEntity<JsonNode> response = balanceService.findForParticularCurrency(data,"GBP").block();
+        ResponseEntity<JsonNode> response = balanceService.findForParticularCurrency(data,"GBP");
 
         ObjectMapper mapper = new ObjectMapper();
         String output = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response.getBody());

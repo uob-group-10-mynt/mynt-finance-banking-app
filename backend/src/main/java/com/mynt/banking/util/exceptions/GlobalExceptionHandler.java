@@ -5,6 +5,7 @@ import com.mynt.banking.util.exceptions.authentication.TokenException;
 import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
 import com.mynt.banking.util.exceptions.registration.RegistrationException;
 import com.mynt.banking.util.exceptions.registration.UserAlreadyExistsException;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
@@ -77,11 +78,23 @@ public class GlobalExceptionHandler {
     }
 
 
-    // Currency Cloud Exceptions
-    @ExceptionHandler(CurrencyCloudException.class)
-    public ResponseEntity<Map<String, String>> handleCloudCurrencyException(CurrencyCloudException ex) {
-        return buildResponseEntity(HttpStatus.valueOf(ex.getStatus().value()), ex.getMessage(), null);
+    /// Rate Limiting and Service Unavailable Exceptions:
+    @ExceptionHandler(RequestNotPermitted.class)
+    public ResponseEntity<Map<String, String>> handleRateLimiterException(RequestNotPermitted ex, HttpServletRequest request) {
+        log.info("Rate limiter triggered: {}", ex.getMessage(), ex);
+        return buildResponseEntity(HttpStatus.TOO_MANY_REQUESTS, "Rate limit exceeded. Please wait and try again later.", request);
     }
+    @ExceptionHandler(CurrencyCloudException.class)
+    public ResponseEntity<Map<String, String>> handleCloudCurrencyException(CurrencyCloudException ex, HttpServletRequest request) {
+        log.info("Service unavailable: {}", ex.getMessage(), ex);
+        return buildResponseEntity(HttpStatus.SERVICE_UNAVAILABLE, "Service Unavailable: " + ex.getMessage(), request);
+    }
+
+//    // Currency Cloud Exceptions
+//    @ExceptionHandler(CurrencyCloudException.class)
+//    public ResponseEntity<Map<String, String>> handleCloudCurrencyException(CurrencyCloudException ex) {
+//        return buildResponseEntity(HttpStatus.valueOf(ex.getStatus().value()), ex.getMessage(), null);
+//    }
 
     /// Response
     @NotNull

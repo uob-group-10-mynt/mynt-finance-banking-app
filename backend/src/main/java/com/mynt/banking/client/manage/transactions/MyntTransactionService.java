@@ -3,7 +3,6 @@ package com.mynt.banking.client.manage.transactions;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.mynt.banking.client.pay.beneficiaries.MyntBeneficiaryDetail;
 import com.mynt.banking.currency_cloud.collect.funding.FindAccountDetailsRequest;
 import com.mynt.banking.currency_cloud.collect.funding.FundingService;
 import com.mynt.banking.currency_cloud.convert.conversions.ConversionService;
@@ -12,18 +11,23 @@ import com.mynt.banking.currency_cloud.pay.beneficiaries.BeneficiaryService;
 import com.mynt.banking.currency_cloud.pay.payments.PaymentService;
 import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Service
 @RequiredArgsConstructor
+@Slf4j
 public class MyntTransactionService {
 
     private final UserContextService userContextService;
@@ -33,10 +37,17 @@ public class MyntTransactionService {
     private final BeneficiaryService beneficiaryService;
     private final ConversionService conversionService;
 
-    public MyntTransactionsDetailResponse find(String currency, String relatedEntityType, Integer perPage, Integer page) {
+    @RateLimiter(name = "currencyCloudRequests")
+    @Retry(name = "defaultRetry")
+    public MyntTransactionsDetailResponse find(String currency,
+                                               String relatedEntityType,
+                                               LocalDate createdAtFrom,
+                                               LocalDate createdAtTo,
+                                               Integer perPage,
+                                               Integer page) {
         // Fetch Transactions
         ResponseEntity<JsonNode> currencyCloudTransactionResponse = transactionService.find(
-                currency, relatedEntityType, userContextService.getCurrentUserUuid(), perPage, page);
+                currency, relatedEntityType, userContextService.getCurrentUserUuid(), createdAtFrom, createdAtTo, perPage, page);
 
         // Form TransactionDetailResponse:
         JsonNode responseBody = currencyCloudTransactionResponse.getBody();
