@@ -27,7 +27,6 @@ public class RestClientConfig {
     private String apiUrl;
 
     private final AuthenticationService authenticationService;
-//    private final RateLimitingAndRetryInterceptor rateLimitingAndRetryInterceptor;
     private final LoggingInterceptor loggingInterceptor;
 
     @Bean
@@ -44,7 +43,6 @@ public class RestClientConfig {
                 .defaultHeader("X-Auth-Token", authenticationService.getAuthToken())
                 .requestInterceptor(new AuthTokenInterceptor(authenticationService))
                 .requestInterceptor(loggingInterceptor)
-//                .requestInterceptor(rateLimitingAndRetryInterceptor)
                 .build();
     }
 }
