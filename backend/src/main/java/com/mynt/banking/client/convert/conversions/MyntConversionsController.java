@@ -19,7 +19,7 @@ public class MyntConversionsController {
     private final MyntConversionsService myntConversionsService;
 
     @PostMapping("/createConversion")
-    public Mono<ResponseEntity<JsonNode>> createConversion(@Valid @RequestBody MyntCreateConversionRequest request) {
-        return Mono.just(myntConversionsService.createConversion(request));
+    public ResponseEntity<JsonNode> createConversion(@Valid @RequestBody MyntCreateConversionRequest request) {
+        return myntConversionsService.createConversion(request);
     }
 }

@@ -20,7 +20,7 @@ public class MyntRatesController {
     private final MyntRatesService myntRatesService;
 
     @GetMapping("/getBasicRates")
-    public Mono<ResponseEntity<JsonNode>> getBasicRates(
+    public ResponseEntity<JsonNode> getBasicRates(
             @Valid
             @Pattern(regexp = "^([A-z]{3})?$", message = "please follow the pattern \"\" or \"gbp\"")
             @Parameter(description = "Sell currency. " +
@@ -37,11 +37,11 @@ public class MyntRatesController {
             @RequestParam(value = "buy_currencies", required = false)
             String buyCurrencies
     ) {
-        return Mono.just(myntRatesService.getBasicRates(sellCurrency, buyCurrencies));
+        return myntRatesService.getBasicRates(sellCurrency, buyCurrencies);
     }
 
     @PostMapping("updateBaseCurrency")
-    public Mono<ResponseEntity<String>> updateBaseCurrency(
+    public ResponseEntity<String> updateBaseCurrency(
             @Valid
             @RequestBody MyntUpdateBaseCurrencyRequest request
     ) {
@@ -50,8 +50,8 @@ public class MyntRatesController {
             response = myntRatesService.updateBaseCurrency(request);
         }
         catch (Exception e) {
-            return Mono.just(ResponseEntity.badRequest().build());
+            return ResponseEntity.badRequest().build();
         }
-        return Mono.just(response);
+        return response;
     }
 }
