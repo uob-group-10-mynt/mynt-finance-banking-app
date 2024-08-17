@@ -3,7 +3,7 @@ package com.mynt.banking.mpesa;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mynt.banking.Main;
-import com.mynt.banking.auth.KycService;
+import com.mynt.banking.auth.kyc.KycService;
 import com.mynt.banking.auth.requests.SignUpRequest;
 import com.mynt.banking.auth.responses.SDKResponse;
 import com.mynt.banking.mpesa.requests.*;

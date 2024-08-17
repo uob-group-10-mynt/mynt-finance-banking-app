@@ -15,9 +15,6 @@ public class AuthenticationResponse {
     @JsonProperty("refresh_token")
     private String refreshToken;
 
-    @JsonProperty("uuid")
-    private String uuid;
-
     @JsonProperty("message")
     private String message;
 }

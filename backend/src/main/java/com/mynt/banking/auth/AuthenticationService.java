@@ -3,9 +3,11 @@ package com.mynt.banking.auth;
 import com.mynt.banking.auth.requests.AuthenticationRequest;
 import com.mynt.banking.auth.requests.RegisterRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
+import com.mynt.banking.currency_cloud.repo.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
+import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
 import com.mynt.banking.util.exceptions.registration.RegistrationException;
 import com.mynt.banking.util.exceptions.registration.UserAlreadyExistsException;
 import com.mynt.banking.util.exceptions.authentication.KycException;
@@ -58,7 +60,6 @@ public class AuthenticationService {
         }
     }
 
-    @SneakyThrows
     public AuthenticationResponse authenticate(@NotNull AuthenticationRequest request) {
         // Step 1: Authenticate user
         authenticationManager.authenticate(
@@ -73,20 +74,21 @@ public class AuthenticationService {
             throw new KycException.KycNotApprovedException("User's status is not approved for login");
         }
 
-        // Step 3: Fetch user and create JwtUserDetails
+        // Step 3: Fetch user and create MyntUserDetails
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User should exist at this point, but was not found"));
-
-        JwtUserDetails jwtUserDetails = new JwtUserDetails(user, currencyCloudRepository);
+        String uuid = currencyCloudRepository.findByUser(user)
+                .map(CurrencyCloudEntity::getUuid)
+                .orElseThrow(() -> new RuntimeException("User should have an associated currency cloud uuid, but was not found"));
+        MyntUserDetails userDetails = new MyntUserDetails(user.getEmail(), uuid, user.getRole());
 
         // Step 4: Generate tokens
-        String accessToken = tokenService.generateToken(jwtUserDetails);
-        String refreshToken = tokenService.generateRefreshToken(jwtUserDetails);
+        String accessToken = tokenService.generateToken(userDetails);
+        String refreshToken = tokenService.generateRefreshToken(userDetails);
 
         return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .uuid(jwtUserDetails.getUuid())
                 .build();
     }
 
@@ -108,7 +110,7 @@ public class AuthenticationService {
 
         // Generate new access and refresh tokens
         try {
-            var user = (JwtUserDetails) authentication.getPrincipal();
+            var user = (MyntUserDetails) authentication.getPrincipal();
             var accessToken = tokenService.generateToken(user);
             var newRefreshToken = tokenService.generateRefreshToken(user);
 

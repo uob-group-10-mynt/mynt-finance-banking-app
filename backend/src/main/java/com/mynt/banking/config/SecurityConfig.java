@@ -3,8 +3,10 @@ package com.mynt.banking.config;
 import com.mynt.banking.auth.AuthenticationFailureHandler;
 import com.mynt.banking.auth.AuthenticationFilter;
 import com.mynt.banking.auth.ForbiddenAccessHandler;
-import com.mynt.banking.auth.JwtUserDetails;
+import com.mynt.banking.auth.MyntUserDetails;
+import com.mynt.banking.currency_cloud.repo.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
+import com.mynt.banking.user.Role;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -61,14 +63,19 @@ public class SecurityConfig {
     private final AuthenticationFailureHandler authenticationFailureHandler;
     private final ForbiddenAccessHandler forbiddenAccessHandler;
     private final UserRepository userRepository;
+    private final CurrencyCloudRepository currencyCloudRepository;
 
 
     @Bean
-    public UserDetailsService userDetailsService(CurrencyCloudRepository currencyCloudRepository) {
-        return username -> {
+    public UserDetailsService userDetailsService() {
+        return (username) -> {
             User user = userRepository.findByEmail(username)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-            return new JwtUserDetails(user, currencyCloudRepository);
+            return new org.springframework.security.core.userdetails.User(
+                    user.getEmail(),
+                    user.getPassword(),
+                    user.getRole().getAuthorities()
+            );
         };
     }
 
@@ -89,7 +96,7 @@ public class SecurityConfig {
                         .requestMatchers(WHITE_LIST_URL)
                         .permitAll()
                         .requestMatchers(PROTECTED_API_URL)
-                        .hasRole("USER")
+                        .hasAnyRole("USER", "ADMIN", "MANAGER")
                         .anyRequest()
                         .authenticated()
                 )

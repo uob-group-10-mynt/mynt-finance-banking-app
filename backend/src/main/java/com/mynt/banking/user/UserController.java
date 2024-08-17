@@ -19,8 +19,8 @@ public class UserController {
     private final UserService userService;
 
     @PatchMapping
-    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request, Principal connectedUser) {
-        userService.changePassword(request, connectedUser);
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
+        userService.changePassword(request);
         return ResponseEntity.ok().build();
     }
 

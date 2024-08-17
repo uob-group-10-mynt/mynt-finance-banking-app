@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import com.mynt.banking.auth.requests.AuthenticationRequest;
 import com.mynt.banking.auth.requests.RegisterRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
+import com.mynt.banking.currency_cloud.repo.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
 import com.mynt.banking.user.Role;
 import com.mynt.banking.user.User;
@@ -39,7 +40,7 @@ public class AuthenticationServiceTest {
     private AuthenticationManager authenticationManager;
 
     @Mock
-    private CurrencyCloudRepository cloudCurrencyRepository;
+    private CurrencyCloudRepository currencyCloudRepository;
 
     @InjectMocks
     private AuthenticationService authenticationService;
@@ -95,10 +96,14 @@ public class AuthenticationServiceTest {
         user.setEmail("test@example.com");
         user.setRole(Role.USER);
 
+        CurrencyCloudEntity currencyCloudEntity = new CurrencyCloudEntity();
+        currencyCloudEntity.setUuid("some-uuid");
+
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(userRepository.getKycStatus(anyString())).thenReturn(Optional.of("approved"));
-        when(tokenService.generateToken(any(JwtUserDetails.class))).thenReturn("jwtToken");
-        when(tokenService.generateRefreshToken(any(JwtUserDetails.class))).thenReturn("refreshToken");
+        when(currencyCloudRepository.findByUser(any(User.class))).thenReturn(Optional.of(currencyCloudEntity));
+        when(tokenService.generateToken(any(MyntUserDetails.class))).thenReturn("jwtToken");
+        when(tokenService.generateRefreshToken(any(MyntUserDetails.class))).thenReturn("refreshToken");
 
         // Act
         AuthenticationResponse response = authenticationService.authenticate(request);

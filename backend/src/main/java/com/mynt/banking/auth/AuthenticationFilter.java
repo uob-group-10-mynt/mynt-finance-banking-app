@@ -1,6 +1,5 @@
 package com.mynt.banking.auth;
 
-import com.mynt.banking.auth.JwtUserDetails;
 import com.mynt.banking.util.exceptions.authentication.KycException;
 import com.mynt.banking.util.exceptions.authentication.TokenException;
 import io.jsonwebtoken.io.IOException;
@@ -41,34 +40,28 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        accessToken = authHeader.substring(7);
-
         try {
             // Decrypt and extract username from token
+            accessToken = authHeader.substring(7);
             String decryptedToken = tokenService.decryptToken(accessToken);
-            String username = tokenService.extractUsername(decryptedToken);
-
-            JwtUserDetails jwtUserDetails = tokenService.extractUserDetails(decryptedToken);
+            MyntUserDetails userDetails = tokenService.extractUserDetails(decryptedToken);
 
             // Log extracted user details
-            log.info("Extracted username: {}", username);
-            log.info("Extracted user details: {}", jwtUserDetails);
+            log.info("Extracted username: {}", userDetails.username());
+            log.info("Extracted user details: {}", userDetails);
 
             // Check if user is not authenticated already
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                // Validate the token
-                if (tokenService.isTokenValid(decryptedToken, jwtUserDetails)) {
-                    SecurityContext context = SecurityContextHolder.createEmptyContext();
-                    Authentication authentication = new UsernamePasswordAuthenticationToken(
-                            jwtUserDetails,
-                            null,
-                            jwtUserDetails.getAuthorities()
-                    );
-                    context.setAuthentication(authentication);
-                    SecurityContextHolder.setContext(context);
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                SecurityContext context = SecurityContextHolder.createEmptyContext();
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
+                context.setAuthentication(authentication);
+                SecurityContextHolder.setContext(context);
 
-                    log.info("Authentication set in SecurityContext.");
-                }
+                log.info("Authentication set in SecurityContext.");
             }
         } catch (TokenException | KycException ex) {
             log.error("Authentication error: {}", ex.getMessage());
