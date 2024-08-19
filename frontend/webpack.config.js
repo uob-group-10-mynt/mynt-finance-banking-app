@@ -9,7 +9,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'webApp'),
         filename: 'bundle.js',
-        publicPath: '/'
+        publicPath: 'auto'
     },
     module: {
         rules: [
