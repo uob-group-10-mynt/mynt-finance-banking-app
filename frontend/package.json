@@ -13,7 +13,8 @@
     "cy:open": "cypress open",
     "e2e:chrome": "cypress run --browser chrome --headed --spec './cypress/e2e/*.cy.js'",
     "frontend:chrome": "cypress run --browser chrome --headed --spec './cypress/frontendOnly/*.cy.js'",
-    "cy:all": "cypress run --browser chrome"
+    "cy:all": "cypress run --browser chrome",
+    "electron" : "electron ."
   },
   "author": "Group10",
   "license": "ISC",
