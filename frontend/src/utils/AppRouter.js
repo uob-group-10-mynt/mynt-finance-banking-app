@@ -7,6 +7,7 @@ import {
     Navigate,
     Route, 
     createBrowserRouter, 
+    createHashRouter, 
     createRoutesFromElements
 } from 'react-router-dom';
 import Loading from '../components/util/Loading';
@@ -50,45 +51,52 @@ function ProtectedRoute({element, loadingComponent}) {
     return loggedIn ? lazyLoad(element, loadingComponent) : <Navigate to="/login"/>;
 }
 
-const AppRouter = createBrowserRouter(
-    createRoutesFromElements(
-        <Route path='/' element={lazyLoad(RootLayout, <Loading/>)}>
-            {/* <Route index element={lazyLoad(Home, <Loading/>)}/> */}
-            <Route index element={lazyLoad(HomePage, <Loading/>)}/>
-            <Route path='login' element={lazyLoad(Login, <Loading/>)}/>
-            {/* <Route path='remittance' element={lazyLoad(Remittance, <Loading/>)}> */}
-            <Route path='remittance' element={<ProtectedRoute element={Remittance} loadingComponent={<Loading/>}/>}>
-                <Route path='payee' element={lazyLoad(Payee, <Loading/>)}/>
-                <Route path='amount' element={lazyLoad(Amount, <Loading/>)}/>
-                <Route path='transfer' element={lazyLoad(Transfer, <Loading/>)}/>
-            </Route>
-            <Route path='userDetails' element={<ProtectedRoute element={UserDetails} loadingComponent={<Loading/>}/>}/>
-            <Route path='signup' element={lazyLoad(Signup, <Loading/>)}/>
-            <Route path='KYC' element={lazyLoad(Kyc, <Loading/>)}/>
-            <Route path='dashboard' element={<ProtectedRoute element={DashBoard} loadingComponent={<Loading/>}/>}/>
-            <Route path='accounts/:id' element={<ProtectedRoute element={Account} loadingComponent={<Loading/>}/>}/>
-            <Route path='transactions/:type/:id' element={<ProtectedRoute element={Transaction} loadingComponent={<Loading/>}/>}/>
-            <Route path='currencies/:currency' element={<ProtectedRoute element={CurrencyPage} loadingComponent={<Loading/>}/>}/>
-            <Route path='currencies' element={<ProtectedRoute element={ForeignExchangePage} loadingComponent={<Loading/>}/>}/>
-            <Route path='conversions' element={<ProtectedRoute element={ConversionPage} loadingComponent={<Loading/>}/>}/>
-            <Route path='conversions/confirm' element={<ProtectedRoute element={ConversionConfirmPage} loadingComponent={<Loading/>}/>}/>
+const target = process.env.REACT_APP_TARGET 
 
-
-
-            <Route path='accounts' element={lazyLoad(Home, <Loading/>)}/>
-            {/* <Route path='dashboard' element={lazyLoad(DashBoard, <Loading/>)}></Route>
-            <Route path='accounts/:id' element={lazyLoad(Account, <Loading/>)}></Route>
-            <Route path='transactions/:id' element={lazyLoad(Transaction, <Loading/>)}></Route>
-            
-            <Route path='currencies/:currency' element={lazyLoad(CurrencyPage, <Loading/>)}></Route> */}
-            {/* <Route path='conversions' element={lazyLoad(ConversionPage, <Loading/>)}> */}
-                {/* <Route path='confirm' element={lazyLoad(ConversionConfirmPage, <Loading/>)} /> */}
-            {/* </Route> */}
-            <Route path='conversions/confirm' element={lazyLoad(ConversionConfirmPage, <Loading/>)} />
-            <Route path={'*'} element={lazyLoad(NotFound404, <Loading/>)}/>
+// const targetRouter = process.env.REACT_APP_MODE === 'electron' ? HashRouter : BrowserRouter;
+const routes = createRoutesFromElements(
+    <Route path='/' element={lazyLoad(RootLayout, <Loading/>)}>
+        {/* <Route index element={lazyLoad(Home, <Loading/>)}/> */}
+        <Route index element={lazyLoad(HomePage, <Loading/>)}/>
+        <Route path='login' element={lazyLoad(Login, <Loading/>)}/>
+        {/* <Route path='remittance' element={lazyLoad(Remittance, <Loading/>)}> */}
+        <Route path='remittance' element={<ProtectedRoute element={Remittance} loadingComponent={<Loading/>}/>}>
+            <Route path='payee' element={lazyLoad(Payee, <Loading/>)}/>
+            <Route path='amount' element={lazyLoad(Amount, <Loading/>)}/>
+            <Route path='transfer' element={lazyLoad(Transfer, <Loading/>)}/>
         </Route>
-    )
-);
+        <Route path='userDetails' element={<ProtectedRoute element={UserDetails} loadingComponent={<Loading/>}/>}/>
+        <Route path='signup' element={lazyLoad(Signup, <Loading/>)}/>
+        <Route path='KYC' element={lazyLoad(Kyc, <Loading/>)}/>
+        <Route path='dashboard' element={<ProtectedRoute element={DashBoard} loadingComponent={<Loading/>}/>}/>
+        <Route path='accounts/:id' element={<ProtectedRoute element={Account} loadingComponent={<Loading/>}/>}/>
+        <Route path='transactions/:type/:id' element={<ProtectedRoute element={Transaction} loadingComponent={<Loading/>}/>}/>
+        <Route path='currencies/:currency' element={<ProtectedRoute element={CurrencyPage} loadingComponent={<Loading/>}/>}/>
+        <Route path='currencies' element={<ProtectedRoute element={ForeignExchangePage} loadingComponent={<Loading/>}/>}/>
+        <Route path='conversions' element={<ProtectedRoute element={ConversionPage} loadingComponent={<Loading/>}/>}/>
+        <Route path='conversions/confirm' element={<ProtectedRoute element={ConversionConfirmPage} loadingComponent={<Loading/>}/>}/>
+
+
+
+        <Route path='accounts' element={lazyLoad(Home, <Loading/>)}/>
+        {/* <Route path='dashboard' element={lazyLoad(DashBoard, <Loading/>)}></Route>
+        <Route path='accounts/:id' element={lazyLoad(Account, <Loading/>)}></Route>
+        <Route path='transactions/:id' element={lazyLoad(Transaction, <Loading/>)}></Route>
+        
+        <Route path='currencies/:currency' element={lazyLoad(CurrencyPage, <Loading/>)}></Route> */}
+        {/* <Route path='conversions' element={lazyLoad(ConversionPage, <Loading/>)}> */}
+            {/* <Route path='confirm' element={lazyLoad(ConversionConfirmPage, <Loading/>)} /> */}
+        {/* </Route> */}
+        <Route path='conversions/confirm' element={lazyLoad(ConversionConfirmPage, <Loading/>)} />
+        <Route path={'*'} element={lazyLoad(NotFound404, <Loading/>)}/>
+    </Route>
+)
+
+
+const AppRouter = target === 'web' ?
+createBrowserRouter(routes)
+:
+createHashRouter(routes)
 
 
 
