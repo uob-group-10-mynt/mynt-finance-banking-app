@@ -81,12 +81,12 @@ public class GlobalExceptionHandler {
     /// Rate Limiting and Service Unavailable Exceptions:
     @ExceptionHandler(RequestNotPermitted.class)
     public ResponseEntity<Map<String, String>> handleRateLimiterException(RequestNotPermitted ex, HttpServletRequest request) {
-        log.info("Rate limiter triggered: {}", ex.getMessage(), ex);
+        log.info("Rate limiter triggered: {}", ex.getMessage());
         return buildResponseEntity(HttpStatus.TOO_MANY_REQUESTS, "Rate limit exceeded. Please wait and try again later.", request);
     }
     @ExceptionHandler(CurrencyCloudException.class)
     public ResponseEntity<Map<String, String>> handleCloudCurrencyException(CurrencyCloudException ex, HttpServletRequest request) {
-        log.info("Service unavailable: {}", ex.getMessage(), ex);
+        log.info("Service unavailable: {}", ex.getMessage());
         return buildResponseEntity(HttpStatus.SERVICE_UNAVAILABLE, "Service Unavailable: " + ex.getMessage(), request);
     }
 

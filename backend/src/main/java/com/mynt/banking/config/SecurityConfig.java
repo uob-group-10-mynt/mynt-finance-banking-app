@@ -42,7 +42,8 @@ public class SecurityConfig {
             "/configuration/ui",
             "/configuration/security",
             "/swagger-ui/**",
-            "/webjars/**"
+            "/webjars/**",
+            "/api/v1/flutterwave/**"
     };
 
     private static final String[] PROTECTED_API_URL = {

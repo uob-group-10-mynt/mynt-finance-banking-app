@@ -25,25 +25,25 @@ public class UserController {
     }
 
     @GetMapping("/getUserDetails")
-    public Mono<ResponseEntity<GetUserDetailsResponse>> getUserDetails() {
+    public ResponseEntity<GetUserDetailsResponse> getUserDetails() {
         GetUserDetailsResponse response;
         try {
             response = userService.getUserDetails();
         }
         catch (IOException e) {
-            return Mono.just(ResponseEntity.badRequest().build());
+            return ResponseEntity.badRequest().build();
         }
-        return Mono.just(ResponseEntity.ok(response));
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/updateUserDetails")
-    public Mono<ResponseEntity<UpdateUserDetailsRequest>> updateUserDetails(@RequestBody UpdateUserDetailsRequest request) {
+    public ResponseEntity<UpdateUserDetailsRequest> updateUserDetails(@RequestBody UpdateUserDetailsRequest request) {
         try {
             userService.updateUserDetails(request);
         }
         catch (Exception e) {
-            return Mono.just(ResponseEntity.badRequest().build());
+            return ResponseEntity.badRequest().build();
         }
-        return Mono.just(ResponseEntity.ok().build());
+        return ResponseEntity.ok().build();
     }
 }
