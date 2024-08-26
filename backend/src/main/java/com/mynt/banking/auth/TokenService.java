@@ -110,7 +110,7 @@ public class TokenService {
                 throw new TokenException.TokenValidationException("JWT: token validation failed");
             }
 
-            return new MyntUserDetails(username, uuid, role);
+            return new MyntUserDetails(username, null, uuid, role);
         } catch (ExpiredJwtException | MalformedJwtException | SignatureException | UnsupportedJwtException |
                  IllegalArgumentException e) {
             throw new TokenException.TokenValidationException("JWT: token validation failed", e);

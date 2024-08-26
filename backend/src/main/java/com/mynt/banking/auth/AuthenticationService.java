@@ -19,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,8 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
-    private final CurrencyCloudRepository currencyCloudRepository;
     private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
 
 
     public void register(@NotNull RegisterRequest request) {
@@ -75,14 +76,15 @@ public class AuthenticationService {
         }
 
         // Step 3: Fetch user and create MyntUserDetails
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User should exist at this point, but was not found"));
-        String uuid = currencyCloudRepository.findByUser(user)
-                .map(CurrencyCloudEntity::getUuid)
-                .orElseThrow(() -> new RuntimeException("User should have an associated currency cloud uuid, but was not found"));
-        MyntUserDetails userDetails = new MyntUserDetails(user.getEmail(), uuid, user.getRole());
+//        User user = userRepository.findByEmail(request.getEmail())
+//                .orElseThrow(() -> new RuntimeException("User should exist at this point, but was not found"));
+//        String uuid = currencyCloudRepository.findByUser(user)
+//                .map(CurrencyCloudEntity::getUuid)
+//                .orElseThrow(() -> new RuntimeException("User should have an associated currency cloud uuid, but was not found"));
+//        MyntUserDetails userDetails = new MyntUserDetails(user.getEmail(), uuid, user.getRole());
 
         // Step 4: Generate tokens
+        MyntUserDetails userDetails = (MyntUserDetails) userDetailsService.loadUserByUsername(request.getEmail());
         String accessToken = tokenService.generateToken(userDetails);
         String refreshToken = tokenService.generateRefreshToken(userDetails);
 

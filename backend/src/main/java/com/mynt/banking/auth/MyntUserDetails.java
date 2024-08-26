@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
-public record MyntUserDetails(String username, String uuid, Role role) implements UserDetails {
+public record MyntUserDetails(String username, String password, String uuid, Role role) implements UserDetails {
 
     @NotNull
     @Override
@@ -16,7 +16,7 @@ public record MyntUserDetails(String username, String uuid, Role role) implement
 
     @Nullable
     @Override
-    public String getPassword() { return null; }
+    public String getPassword() { return password; }
 
     @Override
     public String getUsername() { return username; }

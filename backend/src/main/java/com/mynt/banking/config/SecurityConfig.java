@@ -34,6 +34,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    private final CurrencyCloudRepository currencyCloudRepository;
+
     private static final String[] WHITE_LIST_URL = {
             "/api/v1/auth/**",
             "/api/v1/auth/sdk**",
@@ -63,18 +66,35 @@ public class SecurityConfig {
     private final AuthenticationFailureHandler authenticationFailureHandler;
     private final ForbiddenAccessHandler forbiddenAccessHandler;
     private final UserRepository userRepository;
-    private final CurrencyCloudRepository currencyCloudRepository;
 
+
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        return (username) -> {
+//            User user = userRepository.findByEmail(username)
+//                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+//            return new org.springframework.security.core.userdetails.User(
+//                    user.getEmail(),
+//                    user.getPassword(),
+//                    user.getRole().getAuthorities()
+//            );
+//        };
+//    }
 
     @Bean
     public UserDetailsService userDetailsService() {
         return (username) -> {
             User user = userRepository.findByEmail(username)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-            return new org.springframework.security.core.userdetails.User(
+            String uuid = currencyCloudRepository.findByUser(user)
+                    .map(CurrencyCloudEntity::getUuid)
+                    .orElseThrow(() -> new UsernameNotFoundException("Currency cloud UUID not found for user"));
+
+            return new MyntUserDetails(
                     user.getEmail(),
                     user.getPassword(),
-                    user.getRole().getAuthorities()
+                    uuid,
+                    user.getRole()
             );
         };
     }

@@ -10,6 +10,7 @@ import com.mynt.banking.currency_cloud.repo.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
 import com.mynt.banking.user.Role;
 import com.mynt.banking.user.User;
+import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.user.UserRepository;
 import com.mynt.banking.util.exceptions.authentication.KycException;
 import com.mynt.banking.util.exceptions.registration.RegistrationException;
@@ -21,6 +22,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -41,6 +43,9 @@ public class AuthenticationServiceTest {
 
     @Mock
     private CurrencyCloudRepository currencyCloudRepository;
+
+    @Mock
+    private UserDetailsService userDetailsService;
 
     @InjectMocks
     private AuthenticationService authenticationService;
@@ -98,11 +103,14 @@ public class AuthenticationServiceTest {
 
         CurrencyCloudEntity currencyCloudEntity = new CurrencyCloudEntity();
         currencyCloudEntity.setUuid("some-uuid");
+        MyntUserDetails mockUserDetails = new MyntUserDetails(null, null, null, null);
+
 
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(userRepository.getKycStatus(anyString())).thenReturn(Optional.of("approved"));
         when(currencyCloudRepository.findByUser(any(User.class))).thenReturn(Optional.of(currencyCloudEntity));
         when(tokenService.generateToken(any(MyntUserDetails.class))).thenReturn("jwtToken");
+        when(userDetailsService.loadUserByUsername(anyString())).thenReturn(mockUserDetails);
         when(tokenService.generateRefreshToken(any(MyntUserDetails.class))).thenReturn("refreshToken");
 
         // Act
