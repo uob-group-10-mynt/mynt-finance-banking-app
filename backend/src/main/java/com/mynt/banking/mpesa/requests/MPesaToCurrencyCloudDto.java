@@ -11,14 +11,12 @@ import lombok.Data;
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Schema(description = "CreateTransactionRequest")
-@Builder
 public class MPesaToCurrencyCloudDto {
 
     @NotNull
     @JsonProperty("amount")
     @Size(max = 255)
     @Schema(description = "Amount", example = "1")
-    @Builder.Default
     private String amount = "1";
 
 }
