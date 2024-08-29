@@ -53,7 +53,6 @@ function ProtectedRoute({element, loadingComponent}) {
 
 const target = process.env.REACT_APP_TARGET 
 
-// const targetRouter = process.env.REACT_APP_MODE === 'electron' ? HashRouter : BrowserRouter;
 const routes = createRoutesFromElements(
     <Route path='/' element={lazyLoad(RootLayout, <Loading/>)}>
         {/* <Route index element={lazyLoad(Home, <Loading/>)}/> */}
