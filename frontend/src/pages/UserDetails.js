@@ -3,7 +3,11 @@ import CustomForm from "../components/forms/CustomForm";
 import { getUserDetailsAPI, updateUserDetailsAPI } from "../utils/APIEndpoints";
 import Page from "../components/Page";
 import { Heading } from "@chakra-ui/react";
-import makeRequest from "../utils/Requester";
+import makeRequest, { TokenExpiredError } from "../utils/Requester";
+import {useContext} from "react";
+import {LoggedInContext} from "../App";
+import {useNavigate} from "react-router-dom";
+
 
 const accountFields = [
     {
@@ -60,6 +64,8 @@ const accountFields = [
 
 export default function UserDetails() {
     const [details, setDetails] = useState(accountFields)
+    const [loggedIn, setLoggedIn, logOut] = useContext(LoggedInContext)
+    const navigate = useNavigate()
 
     const getAndSetDetails = async () => {
         try {
@@ -75,6 +81,9 @@ export default function UserDetails() {
                 return field
             }))
         } catch (error) {
+            if (error instanceof TokenExpiredError) {
+                logOut();
+            }
             console.error(error);
         }
     }
@@ -98,8 +107,14 @@ export default function UserDetails() {
                 field.border = "none"
                 return field
             }))
+
         } catch (error) {
-            console.error(error);
+            if (error instanceof TokenExpiredError) {
+                logOut();
+                navigate("/login")
+                return;
+            }
+            console.error(error)
         }
     }
 
