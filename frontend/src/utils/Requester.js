@@ -1,5 +1,12 @@
 import { refreshTokensAPI } from "./APIEndpoints";
 
+export class TokenExpiredError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'RefreshTokenExpired';
+    }
+}
+
 const makeRequest = async (method, endpointURL, requiresAuth, additionalHeaders = {}, requestBody = null) => {
     try {
         const headers = {
@@ -24,11 +31,11 @@ const makeRequest = async (method, endpointURL, requiresAuth, additionalHeaders 
                             Authorization: `Bearer ${sessionStorage.getItem('refresh')}`
                         }
                     });
-
+                    
                     if (!tokenResponse.ok) {
-                        throw new Error('Failed to refresh tokens');
+                        throw new TokenExpiredError('Failed to refresh tokens');
                     }
-
+                    
                     const newTokens = await tokenResponse.json();
                     sessionStorage.setItem('access', newTokens.access_token);
                     sessionStorage.setItem('refresh', newTokens.refresh_token);
@@ -38,7 +45,7 @@ const makeRequest = async (method, endpointURL, requiresAuth, additionalHeaders 
                         headers: {
                             ...additionalHeaders,
                             "Content-type": "application/json",
-                            Authorization: `Bearer ${newTokens.access_token}`
+                            Authorization: `Bearer ${sessionStorage.getItem('access')}`
                         },
                         body: requestBody ? JSON.stringify(requestBody) : null
                     });
@@ -46,7 +53,6 @@ const makeRequest = async (method, endpointURL, requiresAuth, additionalHeaders 
                     if (!retryResponse.ok) {
                         throw new Error('Retry request failed');
                     }
-
                     return retryResponse;
                 } else {
                     const errorDetails = await response.text();
@@ -55,7 +61,6 @@ const makeRequest = async (method, endpointURL, requiresAuth, additionalHeaders 
             }
             return response;
         };
-
         const finalResponse = await handleResponse(response);
 
         const contentType = finalResponse.headers.get('content-type');
@@ -64,7 +69,11 @@ const makeRequest = async (method, endpointURL, requiresAuth, additionalHeaders 
         } else {
             return await finalResponse.text();
         }
+
     } catch (error) {
+        if (error instanceof TokenExpiredError) {
+            throw new TokenExpiredError("Failed to get new refresh token")
+        }
         console.error('Error making request:', error);
         throw new Error('Error making request: ' + error.message);
     }
