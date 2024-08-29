@@ -3,7 +3,7 @@ describe('user must be logged in to access a protected page', () => {
         let protectedRoutes = ['remittance', 'dashboard']
         protectedRoutes.forEach((route) => {
             cy.visit(`/${route}`)
-            cy.url().should('eq', 'http://localhost:9001/login')
+            cy.url().should('eq', 'http://localhost:9001/#/login')
 
         })
     })
