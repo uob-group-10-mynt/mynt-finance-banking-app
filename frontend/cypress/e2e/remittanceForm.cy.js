@@ -1,8 +1,25 @@
-describe('remittance page', () => {
-    it('can be found via /remittance, can edit form and click submit', () => {
-        cy.loginTestUser()
+describe('remittance flow', () => {
+    it('end-to-end remittance flow', () => {
+        cy.visit('/')
+        //login
         cy.get('[data-cy="navButton"]').click()
-        cy.get('[data-cy="RemittanceLink"]').click()
-        // need new tests for remittance because the page has changed
+        cy.get('[data-cy="LoginLink"]').click()
+        cy.get('[data-cy="emailInput"]').type("kelvin@email.com")
+        cy.get('[data-cy="passwordInput"]').type("password")
+        cy.get('[data-cy="submitButton"]').click()
+        cy.url().should('eq', 'http://localhost:9001/#/accounts')
+        cy.get('[data-cy="navButton"]').click()
+        cy.get('[data-cy="RemittanceLink"]').should('be.visible', { timeout: 1000000 }) .click()
+
+        cy.get('[data-cy="sendBtn"]').should('be.visible', { timeout: 1000000 })
+        cy.get('[data-cy="sendBtn"]').eq(0).click()
+        cy.get('[data-cy="sendPayeeBtn"]').should('be.visible', { timeout: 1000000 })
+        cy.get('[data-cy="sendPayeeBtn"]').eq(0).click()
+        cy.get('[data-cy="transfer-amountInput"]').should('be.visible', { timeout: 1000000 })
+        cy.get('[data-cy="transfer-amountInput"]').type("10")
+        cy.get('[data-cy="amountButton"]').should('be.visible', { timeout: 1000000 })
+        cy.get('[data-cy="amountButton"]').click()
+        cy.get('[data-cy="confirmTransfer"]').should('be.visible', { timeout: 1000000 })
+        cy.get('[data-cy="confirmTransfer"]').click()
     })
 })

@@ -44,8 +44,8 @@ export default function Transfer() {
             <CustomHeading>Confirm your payment details:</CustomHeading>
             <Container name='Selected Payee & Transfer Amount' data={renderSelectedPayee}
                        keyFn={(info) => info.id}/>
-            <CustomButton confirm onClick={handleConfirm} data-cy='confirmPayment'>
-                Confirm Payment
+            <CustomButton confirm onClick={handleConfirm} data-cy='confirmTransfer'>
+                Confirm Transfer
             </CustomButton>
             {loading && <CustomText>Processing...</CustomText>}
             {error && <CustomText>Error {error.message}</CustomText>}

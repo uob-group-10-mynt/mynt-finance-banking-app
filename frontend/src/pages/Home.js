@@ -158,7 +158,7 @@ export default function Home() {
                         <CustomText gray small>{account_label}</CustomText>
                         <CustomText black big>{useFormatAmount(balance, currency)}</CustomText>
                     </InfoBlock>
-                    <CustomButton side onClick={(e) => handleSendOnClick(e)}>send</CustomButton>
+                    <CustomButton side onClick={(e) => handleSendOnClick(e)} data-cy={'sendBtn'}>send</CustomButton>
                 </>
             ),
             onClick: () => {
