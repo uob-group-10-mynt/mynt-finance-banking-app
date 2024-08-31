@@ -110,7 +110,7 @@ function AccountPage() {
         justifyContent="space-between"
       >
         <CustomButton medium style={{ flex: 1, marginRight: '0.5em' }} colorScheme='blue' onClick={withdrawalOnClick}>Withdraw</CustomButton>
-        <CustomButton medium style={{flex: 1, marginRight: '0.5em'}} onClick={(e) => handleSendOnClick(e)}>Send</CustomButton>
+        <CustomButton medium style={{flex: 1, marginRight: '0.5em'}} onClick={(e) => handleSendOnClick(e)} data-cy={'sendBtn'}>Send</CustomButton>
       </Box>
     </CustomBox>
   );

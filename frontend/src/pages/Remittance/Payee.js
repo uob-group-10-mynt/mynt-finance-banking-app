@@ -172,7 +172,7 @@ function MyPayeesPanel() {
                                 <CustomText gray xsmall>{"Currency: " + payee.currency}</CustomText>
                                 <CustomText gray xsmall>{"IBAN: " + payee.iban}</CustomText>
                             </InfoBlock>
-                            <CustomButton side onClick={() => {
+                            <CustomButton side data-cy={'sendPayeeBtn'} onClick={() => {
                                 navigate('/remittance/amount', {
                                     state: {
                                         selectedPayee: payee,
