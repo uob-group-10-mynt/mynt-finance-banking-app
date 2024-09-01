@@ -105,7 +105,7 @@ public class TestTransactions {
                 .build();
         ResponseEntity<SDKResponse>  getOnfidoSDK = kycService.getOnfidoSDK(dto);
 
-        MPesaToCurrencyCloudDto dto1 = MPesaToCurrencyCloudDto.builder().build();
+        MPesaToCurrencyCloudDto dto1 = new MPesaToCurrencyCloudDto();
         ResponseEntity<JsonNode> response = flutterwaveService.mpesaToCloudCurrency(dto1,email);
 
         assert response != null;
