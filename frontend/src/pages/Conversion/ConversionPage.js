@@ -13,7 +13,7 @@ import Icon from "../../components/util/Icon";
 
 const formatNumberWithCommas = (number) => {
   if (number === null || number === undefined || isNaN(number)) return '';
-  const [integer, decimal] = number.toString().split('.');
+  const [ integer, decimal ] = number.toString().split('.');
   const formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return decimal ? `${formattedInteger}.${decimal}` : formattedInteger;
 };
@@ -25,9 +25,9 @@ const parseNumberFromString = (numberString) => {
 
 export default function ConversionPage() {
   const query = useQuery();
-  const [rates, setRates] = useState(null);
-  const [baseValue, setBaseValue] = useState(1);
-  const [compareValue, setCompareValue] = useState('');
+  const [ rates, setRates ] = useState(null);
+  const [ baseValue, setBaseValue ] = useState(1);
+  const [ compareValue, setCompareValue ] = useState('');
 
   const { conversionRequest, setConversionRequest } = useConversion();
   const navigate = useNavigate();
@@ -51,14 +51,14 @@ export default function ConversionPage() {
 
   const handleOnChangeBaseValue = (e) => {
     const value = parseNumberFromString(e.target.value);
-    setBaseValue(formatNumberWithCommas(value));
-    setCompareValue(formatNumberWithCommas(value * rates));
+    setBaseValue(value);
+    setCompareValue(value * rates);
   };
 
   const handleOnChangeCompareValue = (e) => {
     const value = parseNumberFromString(e.target.value);
-    setCompareValue(formatNumberWithCommas(value));
-    setBaseValue(formatNumberWithCommas(value / rates));
+    setCompareValue(value);
+    setBaseValue(value / rates);
   };
 
   const handleNextOnClick = () => {
@@ -104,7 +104,7 @@ export default function ConversionPage() {
           boxShadow: 'none',
         }}
         min={0}
-        value={value.toString()}
+        value={formatNumberWithCommas(value)}
         onChange={onChange}
       />
       <Box
