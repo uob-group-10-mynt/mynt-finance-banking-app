@@ -36,6 +36,7 @@ export default function ForeignExchangePage() {
       });
       const data = await response.json();
       setExchangeRates(data);
+      
 
       if (!baseCurrency && data.length > 0) {
         setBaseCurrency(data[0].currency);
@@ -145,7 +146,7 @@ export default function ForeignExchangePage() {
 
   const filteredAllCurrencyList = filterData(allCurrencyList);
   const showFilteredResults = searchTerm.length > 0;
-
+  
   return (
     loading
       ? <SplashPage />
@@ -167,7 +168,7 @@ export default function ForeignExchangePage() {
             <CustomText black marginBottom="0.7em">
               Live Exchange Rates At:
             </CustomText>
-            <DateTimeDisplay time={"2024-07-22T14:13:18+00:00"} />
+            <DateTimeDisplay time={`${new Date().toLocaleDateString()}T${new Date().toTimeString()}+`} />
           </CustomBox>
           <CustomBox
             alignItems='center'

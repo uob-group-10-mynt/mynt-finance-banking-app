@@ -26,17 +26,14 @@ function getColorForTransactionVolume(count) {
   }
 }
 
-function getLastDateOfMonth(year, month) {
-  return new Date(year, month, 0).getDate();
-}
-
 function getFirstDayOfMonth(year, month) {
   return new Date(year, month - 1, 1).getDay();
 }
 
 function generateCalendar(year, month, data, onClick) {
   const firstDayOfMonth = getFirstDayOfMonth(year, month);
-  const daysInMonth = getLastDateOfMonth(year, month);
+  const daysInMonth = LASTDAYS[month - 1];
+  
   const numOfWeeks = Math.ceil((firstDayOfMonth + daysInMonth) / 7);
 
   let currentDay = 1;

@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import {Box, useColorModeValue} from "@chakra-ui/react";
 
 const Page = ({children}) => (
     <Box
@@ -10,7 +10,7 @@ const Page = ({children}) => (
         alignItems="center"
         gap='1.3em'
         margin='auto'
-        bg='white'
+        bg={useColorModeValue("white", "")}
     >
         {children}
     </Box>

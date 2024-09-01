@@ -10,7 +10,7 @@ describe('log in page', () => {
         cy.get('[data-cy="passwordInput"]').type(testUser.password)
         cy.get('[data-cy="submitButton"]').click()
         
-        cy.url().should('eq', 'http://localhost:9001/')
+        cy.url().should('eq', 'http://localhost:9001/accounts')
 
         cy.get('[data-cy="navButton"]').click()
         cy.get('[data-cy="RemittanceLink"]').contains('Transfer')

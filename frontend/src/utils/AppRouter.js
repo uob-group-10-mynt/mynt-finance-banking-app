@@ -53,7 +53,6 @@ function ProtectedRoute({element, loadingComponent}) {
 
 const target = process.env.REACT_APP_TARGET 
 
-// const targetRouter = process.env.REACT_APP_MODE === 'electron' ? HashRouter : BrowserRouter;
 const routes = createRoutesFromElements(
     <Route path='/' element={lazyLoad(RootLayout, <Loading/>)}>
         {/* <Route index element={lazyLoad(Home, <Loading/>)}/> */}
@@ -78,7 +77,7 @@ const routes = createRoutesFromElements(
 
 
 
-        <Route path='accounts' element={lazyLoad(Home, <Loading/>)}/>
+        <Route path='accounts' element={<ProtectedRoute element={Home} loadingComponent={<Loading/>}/>}/>
         {/* <Route path='dashboard' element={lazyLoad(DashBoard, <Loading/>)}></Route>
         <Route path='accounts/:id' element={lazyLoad(Account, <Loading/>)}></Route>
         <Route path='transactions/:id' element={lazyLoad(Transaction, <Loading/>)}></Route>

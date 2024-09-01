@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 
-function CalendarRow({
+export default function CalendarRow({
   children,
   ...rest
 }) {
@@ -17,5 +17,3 @@ function CalendarRow({
     </Box>
   );
 }
-
-export default CalendarRow;
