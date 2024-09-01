@@ -3,15 +3,14 @@ package com.mynt.banking.auth;
 import com.mynt.banking.auth.requests.AuthenticationRequest;
 import com.mynt.banking.auth.requests.RegisterRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
-import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
 import com.mynt.banking.user.User;
+import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.user.UserRepository;
 import com.mynt.banking.util.exceptions.registration.RegistrationException;
 import com.mynt.banking.util.exceptions.registration.UserAlreadyExistsException;
 import com.mynt.banking.util.exceptions.authentication.KycException;
 import com.mynt.banking.util.exceptions.authentication.TokenException;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +27,6 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
-    private final CurrencyCloudRepository currencyCloudRepository;
     private final AuthenticationManager authenticationManager;
 
 
@@ -58,12 +56,12 @@ public class AuthenticationService {
         }
     }
 
-    @SneakyThrows
     public AuthenticationResponse authenticate(@NotNull AuthenticationRequest request) {
         // Step 1: Authenticate user
-        authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Step 2: Check KYC status
         var kycStatus = userRepository.getKycStatus(request.getEmail())
@@ -73,20 +71,13 @@ public class AuthenticationService {
             throw new KycException.KycNotApprovedException("User's status is not approved for login");
         }
 
-        // Step 3: Fetch user and create JwtUserDetails
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User should exist at this point, but was not found"));
-
-        JwtUserDetails jwtUserDetails = new JwtUserDetails(user, currencyCloudRepository);
-
-        // Step 4: Generate tokens
-        String accessToken = tokenService.generateToken(jwtUserDetails);
-        String refreshToken = tokenService.generateRefreshToken(jwtUserDetails);
+        // Step 3: Generate tokens
+        String accessToken = tokenService.generateToken();
+        String refreshToken = tokenService.generateRefreshToken();
 
         return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .uuid(jwtUserDetails.getUuid())
                 .build();
     }
 
@@ -108,9 +99,8 @@ public class AuthenticationService {
 
         // Generate new access and refresh tokens
         try {
-            var user = (JwtUserDetails) authentication.getPrincipal();
-            var accessToken = tokenService.generateToken(user);
-            var newRefreshToken = tokenService.generateRefreshToken(user);
+            var accessToken = tokenService.generateToken();
+            var newRefreshToken = tokenService.generateRefreshToken();
 
             return AuthenticationResponse.builder()
                     .accessToken(accessToken)

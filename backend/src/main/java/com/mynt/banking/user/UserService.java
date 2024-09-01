@@ -25,13 +25,11 @@ public class UserService {
 
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
-  private final TokenService tokenService;
   private final ContactsService contactsService;
   private final UserContextService userContextService;
 
-
-  public void changePassword(@NotNull ChangePasswordRequest request, Principal connectedUser) {
-    var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+  public void changePassword(@NotNull ChangePasswordRequest request) {
+    var user = userRepository.findByEmail(userContextService.getCurrentUsername()).orElseThrow();
 
     if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
       throw new IllegalStateException("Wrong password");
@@ -45,7 +43,6 @@ public class UserService {
   }
 
   public GetUserDetailsResponse getUserDetails() throws IOException {
-
     String userEmail = userContextService.getCurrentUsername();
     var user = userRepository.findByEmail(userEmail).orElseThrow();
     return GetUserDetailsResponse.builder()
@@ -59,7 +56,6 @@ public class UserService {
   }
 
   public void updateUserDetails(@NotNull UpdateUserDetailsRequest request) throws RuntimeException {
-
     String userEmail = userContextService.getCurrentUsername();
     User user = userRepository.findByEmail(userEmail).orElseThrow();
     user.setFirstname(request.getFirstname());

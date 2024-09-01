@@ -9,7 +9,7 @@ PASSWORD="cake"
 ACCESS_TOKEN=""
 REFRESH_TOKEN=""
 TOTAL_REQUESTS=6  # Total number of requests to send in the test
-REQUEST_INTERVAL=600  # Interval between requests in seconds (10 minutes)
+REQUEST_INTERVAL=90  # Interval between requests in seconds (10 minutes)
 
 # Counters
 successful_requests=0

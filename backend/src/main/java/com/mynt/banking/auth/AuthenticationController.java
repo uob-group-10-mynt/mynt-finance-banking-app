@@ -6,6 +6,7 @@ import com.mynt.banking.auth.requests.SignUpRequest;
 import com.mynt.banking.auth.requests.ValidateKycRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
 import com.mynt.banking.auth.responses.SDKResponse;
+import com.mynt.banking.auth.kyc.KycService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

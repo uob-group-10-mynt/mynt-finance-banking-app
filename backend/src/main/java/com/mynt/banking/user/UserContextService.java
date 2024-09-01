@@ -1,6 +1,6 @@
 package com.mynt.banking.user;
 
-import com.mynt.banking.auth.JwtUserDetails;
+import com.mynt.banking.auth.MyntUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,15 +15,15 @@ public class UserContextService {
      * @return JwtUserDetails of the authenticated user
      * @throws SecurityException if no user is authenticated or principal is not of type JwtUserDetails
      */
-    public JwtUserDetails getCurrentUserDetails() {
+    public MyntUserDetails getCurrentUserDetails() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
 
-        if (authentication == null || !(authentication.getPrincipal() instanceof JwtUserDetails)) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof MyntUserDetails)) {
             throw new SecurityException("Authentication not available or principal is not of type JwtUserDetails");
         }
 
-        return (JwtUserDetails) authentication.getPrincipal();
+        return (MyntUserDetails) authentication.getPrincipal();
     }
 
     /**
@@ -32,9 +32,7 @@ public class UserContextService {
      * @return UUID of the authenticated user
      * @throws SecurityException if no user is authenticated or principal is not of type JwtUserDetails
      */
-    public String getCurrentUserUuid() {
-        return getCurrentUserDetails().getUuid();
-    }
+    public String getCurrentUserUuid() { return getCurrentUserDetails().uuid(); }
 
     /**
      * Retrieves the username of the current authenticated user.
@@ -43,6 +41,6 @@ public class UserContextService {
      * @throws SecurityException if no user is authenticated or principal is not of type JwtUserDetails
      */
     public String getCurrentUsername() {
-        return getCurrentUserDetails().getUsername();
+        return getCurrentUserDetails().username();
     }
 }
