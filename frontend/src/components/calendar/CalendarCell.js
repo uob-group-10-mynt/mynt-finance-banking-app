@@ -2,7 +2,7 @@ import { Box } from "@chakra-ui/react";
 import { useState } from "react";
 
 
-function CalendarCell({ 
+export default function CalendarCell({ 
   children,
   ...rest 
 }) {
@@ -27,5 +27,3 @@ function CalendarCell({
     </Box>
   );
 }
-
-export default CalendarCell;

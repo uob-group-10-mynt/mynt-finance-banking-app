@@ -1,8 +1,7 @@
 import { Box } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import useAxios from '../../hooks/useAxios';
 import useCurrencyDescription from '../../hooks/useCurrencyDescription';
 import useCurrencySymbols from '../../hooks/useCurrencySymbols';
 import useFormatAmount from '../../hooks/useFormatAmount';
@@ -14,6 +13,7 @@ import DateTimeDisplay from '../../components/util/DateTimeDisplay';
 import ContainerRowBalanceWrapper from '../../components/container/ContainerRowBalanceWrapper';
 import CustomBox from '../../components/util/CustomBox';
 import Calendar from '../../components/calendar/Calendar';
+import SplashPage from '../SplashPage';
 
 
 const MONTHS = {
@@ -30,54 +30,6 @@ const MONTHS = {
   11: 'NOV',
   12: 'DEC',
 }
-
-const fetchTransactionData = [
-  {
-    'id': '1',
-    'payee_bank': 'mynt',
-    'payer_bank': 'mynt',
-    'amount': '100',
-    'currency': 'EUR',
-    'flow': '+',
-    'created_at': "2024-07-01T14:13:18+00:00",
-  },
-  {
-    'id': '2',
-    'payee_bank': 'others',
-    'payer_bank': 'mynt',
-    'amount': '100',
-    'currency': 'KES',
-    'flow': '-',
-    'created_at': "2024-07-04T14:13:18+00:00",
-  },
-  {
-    'id': '3',
-    'payee_bank': 'others',
-    'payer_bank': 'mynt',
-    'amount': '200',
-    'currency': 'GBP',
-    'flow': '-',
-    'created_at': "2024-07-13T14:13:18+00:00",
-  },
-  {
-    'id': '4',
-    'payee_bank': 'mynt',
-    'payer_bank': 'mynt',
-    'amount': '150',
-    'currency': 'KES',
-    'flow': '-',
-    'created_at': "2024-07-13T14:13:18+00:00",
-  },
-  {
-    'id': '5',
-    'payee_bank': 'mynt',
-    'payer_bank': 'mynt',
-    'amount': '2605000.3',
-    'currency': 'USD',
-    'flow': '+',
-    'created_at': "2024-07-13T14:13:18+00:00",
-  },
-];
 
 function countTransactionsByDate(transactions) {
   const transactionCounts = {};
@@ -97,16 +49,60 @@ function countTransactionsByDate(transactions) {
   return transactionCounts;
 }
 
+function addZeroIfLessThanTen(number) {
+  return (number / 10 < 1) ? `0${number}` : number.toString();
+}
+
 
 function DashboardPage() {
-  const [ year, setYear ] = useState(new Date().getFullYear());
-  const [ month, setMonth ] = useState(new Date().getMonth() + 1);
-  const [day, setDay] = useState(null);
+  const today = new Date();
+
+  const [ year, setYear ] = useState(today.getFullYear());
+  const [ month, setMonth ] = useState(today.getMonth() + 1);
+  const [ startDay, setStartDay ] = useState("01");
+  const [ endDay, setEndDay ] = useState(addZeroIfLessThanTen(new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()));
+  const [ transactions, setTransactions ] = useState([]);
+  const [ loading, setLoading ] = useState(true); 
+  const [ monthHasChanged, setMonthHasChanged ] = useState(true);
+  const [ trafficData, setTrafficData ] = useState({});
+
   const navigate = useNavigate();
 
 
-  const handleCalendarDateClick = (e) => {
-    setDay(parseInt(e.target.innerText));
+  useEffect(() => {
+    setLoading(true); 
+
+    fetch(`http://localhost:8080/api/v1/transaction?created_at_from=${year}-${addZeroIfLessThanTen(month)}-${startDay}&created_at_to=${year}-${addZeroIfLessThanTen(month)}-${endDay}`, {
+      headers: { 'Authorization': `Bearer ${sessionStorage.getItem('access')}` }
+    })
+      .then(response => response.json())
+      .then(data => {
+        setTransactions([ ...data.transactions ]);
+        setLoading(false); 
+      })
+      .catch(e => {
+        console.error("ERROR: ", e);
+        setLoading(false); 
+      });
+  }, [ month, startDay, endDay ]);
+
+  useEffect(() => {
+    if (monthHasChanged) {
+      setTrafficData(countTransactionsByDate(transactions));
+      setMonthHasChanged(false);
+    }
+  }, [ transactions ]);
+
+  const handleCalendarDateClick = (e) => {    
+    if (e.target.innerText === "") {
+      alert("Please Click Again!!!");
+    }
+
+    else {
+      setStartDay(addZeroIfLessThanTen(parseInt(e.target.innerText)));
+      setEndDay(addZeroIfLessThanTen(parseInt(e.target.innerText)));
+      setMonthHasChanged(false);
+    }  
   }
 
   const handleMonthLeftClick = () => {
@@ -117,7 +113,9 @@ function DashboardPage() {
       setMonth(month - 1);
     }
 
-    setDay(null);
+    setStartDay("01");
+    setEndDay(addZeroIfLessThanTen(new Date(year, month + 1, 0).getDate()));
+    setMonthHasChanged(true);
   }
 
   const handleMonthRightClick = () => {
@@ -128,18 +126,20 @@ function DashboardPage() {
       setMonth(month + 1);
     }
 
-    setDay(null);
+    setStartDay("01");
+    setEndDay(addZeroIfLessThanTen(new Date(year, month + 1, 0).getDate()));
+    setMonthHasChanged(true);
   }
   
-  const transactionKeyFn = (info) => info.id; 
+  const transactionKeyFn = (info) => info.id;
 
-  const totalAmountsByCurrency = fetchTransactionData.reduce((acc, transaction) => {
-    const { currency, amount, flow } = transaction;
+  const totalAmountsByCurrency = transactions.reduce((acc, transaction) => {
+    const { currency, amount } = transaction;
     if (!acc[currency]) {
       acc[currency] = 0;
     }
 
-    acc[currency] += (flow === '+' ? parseFloat(amount) : -parseFloat(amount));
+    acc[currency] += parseFloat(amount);
     return acc;
   }, {});
 
@@ -155,31 +155,31 @@ function DashboardPage() {
         </InfoBlock>
       </>
     )
-  }));
+  }));  
 
-  const transactionData = fetchTransactionData.map((data) => {
+  const transactionData = transactions.map((data) => {
+    const { id, created_at, amount, currency, type, related_entity_type } = data;
+
     return {
-        ...data,
-        render: () => {
-            return (
-                <>
-                    <Icon name={data.payee_bank} />
-                    <InfoBlock>
-                        <CustomText black small>{data.payee_bank}</CustomText>
-                        <DateTimeDisplay time={data.created_at}/>
-                    </InfoBlock>
-                    <ContainerRowBalanceWrapper>
-                      <CustomText black big>
-                        {data.flow}{useFormatAmount(data.amount, data.currency)}
-                      </CustomText>
-                    </ContainerRowBalanceWrapper>
-                </>
-            );
-        },
+      ...data,
+      render: () => {
+        return (
+          <>
+            <Icon name={'The Currency Cloud Limited'} />
+            <InfoBlock>
+              <CustomText black small>{'The Currency Cloud Limited'}</CustomText>
+              <DateTimeDisplay time={created_at} />
+            </InfoBlock>
+            <ContainerRowBalanceWrapper>
+              <CustomText black big>{type === 'credit' ? '+' : '-'}{useFormatAmount(amount, currency)}</CustomText>
+            </ContainerRowBalanceWrapper>
+          </>
+        );
+      },
 
-        onClick: () => {
-          navigate('/transactions/' + data.id);
-        },
+      onClick: () => {
+        navigate(`/transactions/${related_entity_type}/${id}`);
+      },
     }
   });
 
@@ -198,24 +198,26 @@ function DashboardPage() {
   );
 
   return (
-    <Box
-      display="flex"
-      flexDirection='column'
-      justifyContent="center"
-      alignItems="center"
-      gap='1.3em'
-      margin='auto'
-    >
-      <CustomBox justifyContent="center" alignItems="center">
-        <CustomText small black>{year}</CustomText>
-        {monthBlock}
-      </CustomBox>
-      <CustomBox>
-        <Calendar year={year} month={month} data={countTransactionsByDate(transactionData)} onClick={handleCalendarDateClick} />
-      </CustomBox>
-      <Container name='Summary' data={summaryData} keyFn={(info) => info.currency}></Container>
-      <Container name='Transactions' data={transactionData} keyFn={transactionKeyFn} />
-    </Box>
+    loading 
+    ? <SplashPage />
+    : <Box
+        display="flex"
+        flexDirection='column'
+        justifyContent="center"
+        alignItems="center"
+        gap='1.3em'
+        margin='auto'
+      >
+        <CustomBox justifyContent="center" alignItems="center">
+          <CustomText small black>{year}</CustomText>
+          {monthBlock}
+        </CustomBox>
+        <CustomBox>
+          <Calendar year={year} month={month} data={trafficData} onClick={handleCalendarDateClick} />
+        </CustomBox>
+        <Container name='Summary' data={summaryData} keyFn={(info) => info.currency}></Container>
+        <Container name='Transactions' data={transactionData} keyFn={transactionKeyFn} />
+      </Box>
   );
 }
 
