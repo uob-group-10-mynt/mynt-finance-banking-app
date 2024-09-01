@@ -3,23 +3,19 @@ package com.mynt.banking.auth;
 import com.mynt.banking.auth.requests.AuthenticationRequest;
 import com.mynt.banking.auth.requests.RegisterRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
-import com.mynt.banking.currency_cloud.repo.CurrencyCloudEntity;
-import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
 import com.mynt.banking.user.User;
+import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.user.UserRepository;
-import com.mynt.banking.util.exceptions.currency_cloud.CurrencyCloudException;
 import com.mynt.banking.util.exceptions.registration.RegistrationException;
 import com.mynt.banking.util.exceptions.registration.UserAlreadyExistsException;
 import com.mynt.banking.util.exceptions.authentication.KycException;
 import com.mynt.banking.util.exceptions.authentication.TokenException;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +28,6 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
-    private final UserDetailsService userDetailsService;
 
 
     public void register(@NotNull RegisterRequest request) {
@@ -63,9 +58,10 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticate(@NotNull AuthenticationRequest request) {
         // Step 1: Authenticate user
-        authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Step 2: Check KYC status
         var kycStatus = userRepository.getKycStatus(request.getEmail())
@@ -75,18 +71,9 @@ public class AuthenticationService {
             throw new KycException.KycNotApprovedException("User's status is not approved for login");
         }
 
-        // Step 3: Fetch user and create MyntUserDetails
-//        User user = userRepository.findByEmail(request.getEmail())
-//                .orElseThrow(() -> new RuntimeException("User should exist at this point, but was not found"));
-//        String uuid = currencyCloudRepository.findByUser(user)
-//                .map(CurrencyCloudEntity::getUuid)
-//                .orElseThrow(() -> new RuntimeException("User should have an associated currency cloud uuid, but was not found"));
-//        MyntUserDetails userDetails = new MyntUserDetails(user.getEmail(), uuid, user.getRole());
-
-        // Step 4: Generate tokens
-        MyntUserDetails userDetails = (MyntUserDetails) userDetailsService.loadUserByUsername(request.getEmail());
-        String accessToken = tokenService.generateToken(userDetails);
-        String refreshToken = tokenService.generateRefreshToken(userDetails);
+        // Step 3: Generate tokens
+        String accessToken = tokenService.generateToken();
+        String refreshToken = tokenService.generateRefreshToken();
 
         return AuthenticationResponse.builder()
                 .accessToken(accessToken)
@@ -112,9 +99,8 @@ public class AuthenticationService {
 
         // Generate new access and refresh tokens
         try {
-            var user = (MyntUserDetails) authentication.getPrincipal();
-            var accessToken = tokenService.generateToken(user);
-            var newRefreshToken = tokenService.generateRefreshToken(user);
+            var accessToken = tokenService.generateToken();
+            var newRefreshToken = tokenService.generateRefreshToken();
 
             return AuthenticationResponse.builder()
                     .accessToken(accessToken)

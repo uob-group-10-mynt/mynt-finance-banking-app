@@ -109,9 +109,9 @@ public class AuthenticationServiceTest {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(userRepository.getKycStatus(anyString())).thenReturn(Optional.of("approved"));
         when(currencyCloudRepository.findByUser(any(User.class))).thenReturn(Optional.of(currencyCloudEntity));
-        when(tokenService.generateToken(any(MyntUserDetails.class))).thenReturn("jwtToken");
+        when(tokenService.generateToken()).thenReturn("jwtToken");
         when(userDetailsService.loadUserByUsername(anyString())).thenReturn(mockUserDetails);
-        when(tokenService.generateRefreshToken(any(MyntUserDetails.class))).thenReturn("refreshToken");
+        when(tokenService.generateRefreshToken()).thenReturn("refreshToken");
 
         // Act
         AuthenticationResponse response = authenticationService.authenticate(request);

@@ -1,6 +1,7 @@
 package com.mynt.banking.auth;
 
 import com.mynt.banking.user.Role;
+import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.util.exceptions.authentication.TokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -21,6 +22,7 @@ import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.sql.SQLOutput;
 import java.text.ParseException;
 import java.util.*;
 import java.time.Clock;
@@ -54,6 +56,8 @@ public class TokenService {
 
     private PrivateKey privateKey;
 
+    private final UserContextService userContextService;
+
     @Setter
     private Clock clock = Clock.systemDefaultZone();
 
@@ -67,12 +71,12 @@ public class TokenService {
         }
     }
 
-    public String generateToken(@NotNull MyntUserDetails userDetails) {
-        return generateTokenWithExpiration(userDetails, jwtExpiration);
+    public String generateToken() {
+        return generateTokenWithExpiration(userContextService.getCurrentUserDetails(), jwtExpiration);
     }
 
-    public String generateRefreshToken(@NotNull MyntUserDetails userDetails) {
-        return generateTokenWithExpiration(userDetails, refreshExpiration);
+    public String generateRefreshToken() {
+        return generateTokenWithExpiration(userContextService.getCurrentUserDetails(), refreshExpiration);
     }
 
     private String generateTokenWithExpiration(@NotNull MyntUserDetails userDetails, long expiration) {
@@ -156,8 +160,9 @@ public class TokenService {
         String key = loadKey(PUBLIC_KEY_PATH);
         String publicKeyPEM = key
                 .replace("-----BEGIN PUBLIC KEY-----", "")
-                .replaceAll(System.lineSeparator(), "")
-                .replace("-----END PUBLIC KEY-----", "");
+                .replace("-----END PUBLIC KEY-----", "")
+                .replace("\n", "")
+                .replace("\r", "");
 
         byte[] encoded = Base64.getDecoder().decode(publicKeyPEM);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -169,8 +174,9 @@ public class TokenService {
         String key = loadKey(PRIVATE_KEY_PATH);
         String privateKeyPEM = key
                 .replace("-----BEGIN PRIVATE KEY-----", "")
-                .replaceAll(System.lineSeparator(), "")
-                .replace("-----END PRIVATE KEY-----", "");
+                .replace("-----END PRIVATE KEY-----", "")
+                .replace("\n", "")
+                .replace("\r", "");
 
         byte[] encoded = Base64.getDecoder().decode(privateKeyPEM);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
