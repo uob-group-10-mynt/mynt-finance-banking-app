@@ -6,9 +6,11 @@ import static org.mockito.Mockito.*;
 import com.mynt.banking.auth.requests.AuthenticationRequest;
 import com.mynt.banking.auth.requests.RegisterRequest;
 import com.mynt.banking.auth.responses.AuthenticationResponse;
+import com.mynt.banking.currency_cloud.repo.CurrencyCloudEntity;
 import com.mynt.banking.currency_cloud.repo.CurrencyCloudRepository;
 import com.mynt.banking.user.Role;
 import com.mynt.banking.user.User;
+import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.user.UserRepository;
 import com.mynt.banking.util.exceptions.authentication.KycException;
 import com.mynt.banking.util.exceptions.registration.RegistrationException;
@@ -20,6 +22,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -39,7 +42,10 @@ public class AuthenticationServiceTest {
     private AuthenticationManager authenticationManager;
 
     @Mock
-    private CurrencyCloudRepository cloudCurrencyRepository;
+    private CurrencyCloudRepository currencyCloudRepository;
+
+    @Mock
+    private UserDetailsService userDetailsService;
 
     @InjectMocks
     private AuthenticationService authenticationService;
@@ -95,10 +101,17 @@ public class AuthenticationServiceTest {
         user.setEmail("test@example.com");
         user.setRole(Role.USER);
 
+        CurrencyCloudEntity currencyCloudEntity = new CurrencyCloudEntity();
+        currencyCloudEntity.setUuid("some-uuid");
+        MyntUserDetails mockUserDetails = new MyntUserDetails(null, null, null, null);
+
+
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(userRepository.getKycStatus(anyString())).thenReturn(Optional.of("approved"));
-        when(tokenService.generateToken(any(JwtUserDetails.class))).thenReturn("jwtToken");
-        when(tokenService.generateRefreshToken(any(JwtUserDetails.class))).thenReturn("refreshToken");
+        when(currencyCloudRepository.findByUser(any(User.class))).thenReturn(Optional.of(currencyCloudEntity));
+        when(tokenService.generateToken()).thenReturn("jwtToken");
+        when(userDetailsService.loadUserByUsername(anyString())).thenReturn(mockUserDetails);
+        when(tokenService.generateRefreshToken()).thenReturn("refreshToken");
 
         // Act
         AuthenticationResponse response = authenticationService.authenticate(request);

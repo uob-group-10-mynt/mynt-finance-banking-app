@@ -1,4 +1,4 @@
-package com.mynt.banking.auth;
+package com.mynt.banking.auth.kyc;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;

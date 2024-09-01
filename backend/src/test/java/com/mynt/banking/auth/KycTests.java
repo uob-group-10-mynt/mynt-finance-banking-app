@@ -1,10 +1,9 @@
 package com.mynt.banking.auth;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mynt.banking.auth.requests.SignUpRequest;
-import com.mynt.banking.auth.requests.ValidateKycRequest;
 import com.mynt.banking.auth.responses.SDKResponse;
 import com.mynt.banking.Main;
+import com.mynt.banking.auth.kyc.KycService;
 import com.mynt.banking.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
