@@ -20,7 +20,7 @@ const formatNumberWithCommas = (number) => {
 
 const parseNumberFromString = (numberString) => {
   if (!numberString) return 0;
-  return parseFloat(numberString.replace(/,/g, ''));
+  return parseFloat(numberString.toString().replace(/,/g, ''));
 };
 
 export default function ConversionPage() {
