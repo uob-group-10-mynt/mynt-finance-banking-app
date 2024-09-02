@@ -28,8 +28,8 @@ public class Resilience4jConfig {
     @Bean
     public RateLimiterConfig rateLimiterConfig() {
         return RateLimiterConfig.custom()
-                .limitForPeriod(10)
-                .timeoutDuration(Duration.ofMillis(500))
+                .limitForPeriod(150)
+                .timeoutDuration(Duration.ofMillis(1000))
                 .limitRefreshPeriod(Duration.ofSeconds(60))
                 .build();
     }

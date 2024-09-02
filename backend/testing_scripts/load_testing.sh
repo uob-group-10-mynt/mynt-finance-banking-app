@@ -8,8 +8,8 @@ EMAIL="alexandermichael@mail.com"
 PASSWORD="cake"
 ACCESS_TOKEN=""
 REFRESH_TOKEN=""
-REQUESTS_PER_MIN=300  # Number of requests per minute
-TEST_DURATION_MIN=1  # Total duration of the test in minutes
+REQUESTS_PER_MIN=200  # Number of requests per minute
+TEST_DURATION_MIN=5  # Total duration of the test in minutes
 RESPONSE_FILE="api_responses_${1}.txt"  # File to store all responses
 
 # Derived Configuration

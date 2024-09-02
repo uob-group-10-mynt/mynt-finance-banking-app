@@ -11,6 +11,8 @@ import com.mynt.banking.currency_cloud.manage.reference.ReferenceService;
 import com.mynt.banking.user.User;
 import com.mynt.banking.user.UserContextService;
 import com.mynt.banking.user.UserRepository;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ public class MyntRatesService {
     private final RateService rateService;
     private final ReferenceService referenceService;
 
+    @RateLimiter(name = "currencyCloudRequests")
+    @Retry(name = "defaultRetry")
     public ResponseEntity<JsonNode> getBasicRates (
             String sellCurrency,
             String buyCurrencies
